@@ -1,0 +1,21 @@
+{
+  "name": "deluxe-group-portal",
+  "version": "1.0.0",
+  "description": "Deluxe Group Portal - shared backend for generator/LPO/invoice tracking",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "better-sqlite3": "^11.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
