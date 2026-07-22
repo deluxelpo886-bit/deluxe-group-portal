@@ -29,7 +29,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "comment": "Firebase config is read from src/firebaseConfig.js. Fill in the apiKey/appId/messagingSenderId from the Firebase console for project 'deluxe-go'."
+      "comment": "Firebase config is read from src/firebaseConfig.js (project 'deluxego-17b2a')."
     }
   }
 }

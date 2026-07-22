@@ -1,24 +1,21 @@
 // -----------------------------------------------------------------------------
-// Firebase configuration for the "deluxe-go" project.
+// Firebase configuration for the "deluxego-17b2a" project.
 //
-// The three values marked PASTE_FROM_CONSOLE below come from the Firebase
-// console and are NOT secret (they ship inside every client app), but they are
-// specific to your project. To get them:
+// These values come from the Firebase console (Project settings > Your apps >
+// Web app). They are NOT secret — they ship inside every client app — so it is
+// normal for them to live in the repository.
 //
-//   1. Go to https://console.firebase.google.com/project/deluxe-go/settings/general
-//   2. Under "Your apps", add (or open) a Web app (</> icon).
-//   3. Copy apiKey, messagingSenderId and appId from the shown config object.
-//
-// The other fields are derived from the project id and are already filled in.
+// Console: https://console.firebase.google.com/project/deluxego-17b2a/settings/general
 // -----------------------------------------------------------------------------
 
 export const firebaseConfig = {
-  apiKey: 'PASTE_FROM_CONSOLE',
-  authDomain: 'deluxe-go.firebaseapp.com',
-  projectId: 'deluxe-go',
-  storageBucket: 'deluxe-go.appspot.com',
-  messagingSenderId: 'PASTE_FROM_CONSOLE',
-  appId: 'PASTE_FROM_CONSOLE',
+  apiKey: 'AIzaSyCQRYWoMKk8UpLCuhG7npnbzEvgq1T8CcI',
+  authDomain: 'deluxego-17b2a.firebaseapp.com',
+  projectId: 'deluxego-17b2a',
+  storageBucket: 'deluxego-17b2a.firebasestorage.app',
+  messagingSenderId: '697935424437',
+  appId: '1:697935424437:web:1e56ca815b6b188228c7fc',
+  measurementId: 'G-1GTQWHGZ9Y',
 };
 
 // True once the placeholders above have been replaced with real values.

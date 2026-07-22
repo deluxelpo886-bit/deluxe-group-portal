@@ -1,7 +1,8 @@
 # Deluxe Go — mobile app
 
 An Expo (React Native) app for **Deluxe** customers to browse services and submit
-service requests on their phone, backed by the Firebase project **`deluxe-go`**.
+service requests on their phone, backed by the Firebase project
+**`deluxego-17b2a`**.
 
 It shares the industrial cream / navy / gold identity of the Deluxe Service
 Portal web app and the same service catalogue (Repair & Rewinding, Marine,
@@ -24,59 +25,52 @@ Testing, Rental, Fleet).
 ```
 mobile/
   App.js                     # navigation + auth-gated routing
-  app.json                   # Expo config (name "Deluxe Go", project deluxe-go)
+  app.json                   # Expo config (app name "Deluxe Go")
   src/
-    firebaseConfig.js        # <-- paste your Firebase web config here
+    firebaseConfig.js        # Firebase web config for deluxego-17b2a (filled in)
     firebase.js              # Firebase app / auth / firestore init
     theme.js                 # shared colours
     data/services.js         # categories + services catalogue
     context/AuthContext.js   # auth state provider
     components/ui.js         # Field / Button / Card
     screens/                 # Login, Home, NewRequest, MyRequests
-  .firebaserc                # pins the CLI to project "deluxe-go"
+  .firebaserc                # pins the Firebase CLI to project deluxego-17b2a
   firebase.json              # Firestore rules + indexes config
   firestore.rules            # per-user access rules for serviceRequests
 ```
 
-## Finish the Firebase connection (3 steps, done on your machine)
+## Firebase setup status
 
-The Firebase CLI and all project files are already set up. Two things need
-**your** Google login, which can only be done interactively:
+- ✅ **Connection keys** — already filled into `src/firebaseConfig.js`
+  (project `deluxego-17b2a`).
+- ⏳ **Sign-in methods** — enable **Email/Password** and **Phone** in the
+  console (see below).
+- ⏳ **Firestore security rules** — publish the rules from `firestore.rules`
+  (see below).
 
-### 1. Log in to the Firebase CLI
+These last two are done with clicks in the [Firebase
+console](https://console.firebase.google.com/project/deluxego-17b2a) — no
+terminal required.
 
-```bash
-firebase login
-```
+### Enable the sign-in methods (console)
 
-This opens a browser to authenticate with the Google account that owns the
-`deluxe-go` project. (The project is already selected — see `.firebaserc`.)
-Verify with:
+1. Open **Authentication → Sign-in method**:
+   https://console.firebase.google.com/project/deluxego-17b2a/authentication/providers
+2. Enable **Email/Password**, then **Save**.
+3. Enable **Phone**, then **Save**. (Phone/SMS sign-in requires the project to
+   be on the **Blaze** pay-as-you-go plan; the free tier includes a monthly SMS
+   allowance.)
 
-```bash
-cd mobile
-firebase use          # should print: Now using project deluxe-go
-```
+### Publish the Firestore security rules (console)
 
-### 2. Add your Firebase web config
+1. Open **Firestore Database → Rules**:
+   https://console.firebase.google.com/project/deluxego-17b2a/firestore/rules
+2. Replace the contents with the rules in `mobile/firestore.rules`.
+3. Click **Publish**.
 
-In the [Firebase console](https://console.firebase.google.com/project/deluxe-go/settings/general)
-→ **Your apps** → add/open a **Web app**, then copy `apiKey`,
-`messagingSenderId` and `appId` into **`src/firebaseConfig.js`** (the other
-fields are already filled in for the `deluxe-go` project).
-
-### 3. Enable the sign-in methods & deploy rules
-
-In the console → **Authentication → Sign-in method**, enable:
-- **Email/Password**
-- **Phone**
-
-Then deploy the Firestore security rules:
-
-```bash
-cd mobile
-firebase deploy --only firestore:rules
-```
+*(If you ever do get access to a terminal, `firebase deploy --only
+firestore:rules` from the `mobile/` folder does the same thing — `.firebaserc`
+already points at `deluxego-17b2a`.)*
 
 ## Run the app
 
