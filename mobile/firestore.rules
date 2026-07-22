@@ -2,15 +2,42 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Service requests: a signed-in user may create requests tied to their own
-    // uid, and may read/update only their own requests. Tighten or add staff
-    // roles as needed.
+    // A user is "staff" if there is a staff/{their-email} document.
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isStaff() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/staff/$(request.auth.token.email));
+    }
+
+    // Staff roster. Each doc id is a lowercase staff email. Managed by an admin
+    // in the Firebase console — never writable from a client. A signed-in user
+    // may read only their own staff doc (needed for the admin portal's gate).
+    match /staff/{email} {
+      allow read: if isSignedIn() && request.auth.token.email == email;
+      allow write: if false;
+    }
+
+    // Service requests. Customers create/read/update their own; staff see all.
     match /serviceRequests/{requestId} {
-      allow create: if request.auth != null
-                    && request.resource.data.uid == request.auth.uid;
-      allow read, update: if request.auth != null
-                    && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow read, update: if isStaff()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
       allow delete: if false;
+    }
+
+    // Zones + inspection fees. Any signed-in user may read; only staff may edit.
+    match /zones/{zoneId} {
+      allow read: if isSignedIn();
+      allow write: if isStaff();
+    }
+
+    // Customer profiles (company details + verification). Only staff may write
+    // (so customers can't self-verify); staff or the customer may read.
+    match /customers/{uid} {
+      allow read: if isStaff() || (isSignedIn() && request.auth.uid == uid);
+      allow write: if isStaff();
     }
   }
 }
