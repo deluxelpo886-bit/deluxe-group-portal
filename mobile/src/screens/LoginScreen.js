@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,49 +9,37 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  PhoneAuthProvider,
-  signInWithCredential,
 } from 'firebase/auth';
-import { auth, app } from '../firebase';
-import { firebaseConfig, firebaseConfigured } from '../firebaseConfig';
+import { auth } from '../firebase';
+import { firebaseConfigured } from '../firebaseConfig';
 import { colors, radius, spacing } from '../theme';
 import { Field, Button } from '../components/ui';
 
 const MODE = { EMAIL: 'email', PHONE: 'phone' };
 
+// NOTE: Phone / SMS OTP sign-in is intentionally not wired up in this build.
+// A standalone (built) Android app needs a native reCAPTCHA/App-Check verifier
+// for Firebase phone auth; the old `expo-firebase-recaptcha` library is
+// abandoned and breaks modern native builds. When we enable Phone sign-in we'll
+// add it back with a build-compatible approach (e.g. @react-native-firebase).
 export default function LoginScreen() {
   const [mode, setMode] = useState(MODE.EMAIL);
-  const recaptchaRef = useRef(null);
 
-  // Email/password state
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // Phone/OTP state
-  const [phone, setPhone] = useState('+971');
-  const [verificationId, setVerificationId] = useState(null);
-  const [code, setCode] = useState('');
-
   const [loading, setLoading] = useState(false);
 
-  const guard = () => {
-    if (!firebaseConfigured) {
-      Alert.alert(
-        'Firebase not configured',
-        'Add your apiKey, appId and messagingSenderId in src/firebaseConfig.js first.'
-      );
-      return false;
-    }
-    return true;
-  };
-
   const handleEmail = async () => {
-    if (!guard()) return;
+    if (!firebaseConfigured) {
+      return Alert.alert(
+        'Firebase not configured',
+        'Add your Firebase keys in src/firebaseConfig.js first.'
+      );
+    }
     if (!email.trim() || !password) {
       return Alert.alert('Missing details', 'Enter both email and password.');
     }
@@ -70,50 +58,11 @@ export default function LoginScreen() {
     }
   };
 
-  const sendOtp = async () => {
-    if (!guard()) return;
-    if (!/^\+\d{8,15}$/.test(phone.trim())) {
-      return Alert.alert('Invalid number', 'Use full international format, e.g. +9715xxxxxxxx.');
-    }
-    setLoading(true);
-    try {
-      const provider = new PhoneAuthProvider(auth);
-      const id = await provider.verifyPhoneNumber(phone.trim(), recaptchaRef.current);
-      setVerificationId(id);
-      Alert.alert('Code sent', `We texted a 6-digit code to ${phone.trim()}.`);
-    } catch (e) {
-      Alert.alert('Could not send code', prettyError(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const confirmOtp = async () => {
-    if (!verificationId) return;
-    if (code.trim().length < 6) {
-      return Alert.alert('Enter the code', 'Type the 6-digit code from the SMS.');
-    }
-    setLoading(true);
-    try {
-      const credential = PhoneAuthProvider.credential(verificationId, code.trim());
-      await signInWithCredential(auth, credential);
-    } catch (e) {
-      Alert.alert('Wrong code', prettyError(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: colors.navy }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaRef}
-        firebaseConfig={firebaseConfig}
-        attemptInvisibleVerification
-      />
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.brand}>
           <View style={styles.logoMark}>
@@ -158,40 +107,18 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </View>
           ) : (
-            <View>
-              {!verificationId ? (
-                <>
-                  <Field
-                    label="Phone number"
-                    value={phone}
-                    onChangeText={setPhone}
-                    keyboardType="phone-pad"
-                    placeholder="+971 5xx xxx xxx"
-                  />
-                  <Button title="Send code" onPress={sendOtp} loading={loading} />
-                </>
-              ) : (
-                <>
-                  <Field
-                    label="6-digit code"
-                    value={code}
-                    onChangeText={setCode}
-                    keyboardType="number-pad"
-                    maxLength={6}
-                    placeholder="123456"
-                  />
-                  <Button title="Verify & sign in" onPress={confirmOtp} loading={loading} />
-                  <TouchableOpacity
-                    onPress={() => {
-                      setVerificationId(null);
-                      setCode('');
-                    }}
-                    style={{ marginTop: 14 }}
-                  >
-                    <Text style={styles.switchText}>Use a different number</Text>
-                  </TouchableOpacity>
-                </>
-              )}
+            <View style={styles.comingSoon}>
+              <Text style={styles.comingSoonEmoji}>📱</Text>
+              <Text style={styles.comingSoonTitle}>Phone sign-in is coming soon</Text>
+              <Text style={styles.comingSoonBody}>
+                For now, please sign in with your email and password.
+              </Text>
+              <Button
+                title="Use email instead"
+                variant="ghost"
+                onPress={() => setMode(MODE.EMAIL)}
+                style={{ marginTop: 18, alignSelf: 'stretch' }}
+              />
             </View>
           )}
         </View>
@@ -224,7 +151,6 @@ function prettyError(e) {
     'auth/email-already-in-use': 'That email is already registered.',
     'auth/weak-password': 'Password should be at least 6 characters.',
     'auth/too-many-requests': 'Too many attempts. Try again later.',
-    'auth/invalid-verification-code': 'That code is not correct.',
     'auth/operation-not-allowed': 'Enable this sign-in method in the Firebase console.',
   };
   return map[code] || (e && e.message) || 'Something went wrong.';
@@ -262,5 +188,9 @@ const styles = StyleSheet.create({
   tabText: { fontWeight: '700', color: colors.steel },
   tabTextActive: { color: colors.cream },
   switchText: { color: colors.goldDim, textAlign: 'center', fontWeight: '600' },
+  comingSoon: { alignItems: 'center', paddingVertical: spacing(2) },
+  comingSoonEmoji: { fontSize: 40, marginBottom: 10 },
+  comingSoonTitle: { fontSize: 18, fontWeight: '800', color: colors.navy, marginBottom: 6 },
+  comingSoonBody: { fontSize: 14, color: colors.steel, textAlign: 'center', lineHeight: 20 },
   warn: { color: colors.cream, textAlign: 'center', marginTop: spacing(3), fontSize: 12 },
 });

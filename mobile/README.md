@@ -10,8 +10,9 @@ Testing, Rental, Fleet).
 
 ## What's built
 
-- **Login screen** — email/password (with sign-up) **and** phone number / SMS OTP,
-  via Firebase Authentication.
+- **Login screen** — email/password sign-in and sign-up via Firebase
+  Authentication. (A Phone / SMS OTP tab is present but shows a "coming soon"
+  state — see Notes.)
 - **Home screen** — greeting plus a grid of the five service categories, a
   shortcut to "My service requests", and a "Submit a service request" button.
 - **New request screen** — pick a category and service, fill in equipment
@@ -82,8 +83,11 @@ npm start          # then press i / a, or scan the QR with Expo Go
 
 ## Notes
 
-- Phone/OTP uses `expo-firebase-recaptcha`, which shows an invisible reCAPTCHA
-  in **Expo Go / the managed workflow**. For a production standalone build you
-  may switch to the native `@react-native-firebase/auth` phone flow.
+- **Phone / SMS OTP** is not wired up in the built app yet. Firebase phone auth
+  needs a reCAPTCHA/App-Check verifier, and the old `expo-firebase-recaptcha`
+  library is abandoned and breaks modern native (APK) builds, so it was removed.
+  To enable Phone sign-in later, add it back with a build-compatible approach
+  such as `@react-native-firebase/auth`, then enable **Phone** in the Firebase
+  console (Blaze plan required for SMS).
 - Firestore security rules currently scope each request to its creator
   (`uid`). Add staff/admin roles when you build the back-office side.
