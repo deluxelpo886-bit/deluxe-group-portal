@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Deluxe Go",
+    "slug": "deluxe-go",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "deluxego",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "backgroundColor": "#0F2438",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.deluxe.go"
+    },
+    "android": {
+      "package": "com.deluxe.go",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F2438"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "comment": "Firebase config is read from src/firebaseConfig.js. Fill in the apiKey/appId/messagingSenderId from the Firebase console for project 'deluxe-go'."
+    }
+  }
+}
