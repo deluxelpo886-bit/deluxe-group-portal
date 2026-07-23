@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -20,12 +20,23 @@ import {
 } from '../data/services';
 import { colors, radius, spacing } from '../theme';
 import { Field, Button } from '../components/ui';
+import ScreenHeader from '../components/ScreenHeader';
 
 export default function NewRequestScreen({ route, navigation }) {
   const { user } = useAuth();
   const initialCategory = route.params?.categoryId || CATEGORIES[0].id;
 
   const [categoryId, setCategoryId] = useState(initialCategory);
+
+  // When arriving from a Home category tile (tab already mounted), sync selection.
+  useEffect(() => {
+    if (route.params?.categoryId) {
+      setCategoryId(route.params.categoryId);
+      const first = servicesForCategory(route.params.categoryId)[0];
+      setServiceId(first ? first.id : undefined);
+    }
+  }, [route.params?.categoryId]);
+
   const services = useMemo(() => servicesForCategory(categoryId), [categoryId]);
   const [serviceId, setServiceId] = useState(services[0]?.id);
 
@@ -70,7 +81,7 @@ export default function NewRequestScreen({ route, navigation }) {
         createdAt: serverTimestamp(),
       });
       Alert.alert('Request submitted', "We're reviewing it and will be in touch.", [
-        { text: 'OK', onPress: () => navigation.navigate('MyRequests') },
+        { text: 'OK', onPress: () => navigation.navigate('Requests') },
       ]);
     } catch (e) {
       Alert.alert('Could not submit', e?.message || 'Please try again.');
@@ -80,10 +91,12 @@ export default function NewRequestScreen({ route, navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.cream }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <View style={{ flex: 1, backgroundColor: colors.cream }}>
+      <ScreenHeader title="New Request" />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
       <ScrollView
         contentContainerStyle={{ padding: spacing(2.5), paddingBottom: spacing(6) }}
         keyboardShouldPersistTaps="handled"
@@ -175,7 +188,8 @@ export default function NewRequestScreen({ route, navigation }) {
 
         <Button title="Submit request" onPress={submit} loading={saving} />
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 

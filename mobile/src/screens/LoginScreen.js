@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -63,6 +64,7 @@ export default function LoginScreen() {
       style={{ flex: 1, backgroundColor: colors.navy }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.brand}>
           <View style={styles.logoMark}>

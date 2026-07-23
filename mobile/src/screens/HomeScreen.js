@@ -30,7 +30,7 @@ export default function HomeScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.requestsBtn}
-          onPress={() => navigation.navigate('MyRequests')}
+          onPress={() => navigation.navigate('Requests')}
           activeOpacity={0.85}
         >
           <Text style={styles.requestsBtnText}>My service requests</Text>

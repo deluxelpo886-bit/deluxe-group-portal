@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
@@ -10,21 +11,63 @@ import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import NewRequestScreen from './src/screens/NewRequestScreen';
 import MyRequestsScreen from './src/screens/MyRequestsScreen';
+import AccountScreen from './src/screens/AccountScreen';
+import JobStatusScreen from './src/screens/JobStatusScreen';
+import QuoteApprovalScreen from './src/screens/QuoteApprovalScreen';
 import { colors } from './src/theme';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const navTheme = {
   ...DefaultTheme,
   colors: { ...DefaultTheme.colors, background: colors.cream, primary: colors.gold },
 };
 
-const screenOptions = {
-  headerStyle: { backgroundColor: colors.navy },
-  headerTintColor: colors.cream,
-  headerTitleStyle: { fontWeight: '800' },
-  contentStyle: { backgroundColor: colors.cream },
-};
+function TabIcon({ emoji, focused }) {
+  return <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>{emoji}</Text>;
+}
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.navy,
+        tabBarInactiveTintColor: colors.gray,
+        tabBarStyle: {
+          backgroundColor: colors.panel,
+          borderTopColor: colors.line,
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 6,
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarLabel: 'Home', tabBarIcon: (p) => <TabIcon emoji="🏠" {...p} /> }}
+      />
+      <Tab.Screen
+        name="NewRequest"
+        component={NewRequestScreen}
+        options={{ tabBarLabel: 'New Request', tabBarIcon: (p) => <TabIcon emoji="📝" {...p} /> }}
+      />
+      <Tab.Screen
+        name="Requests"
+        component={MyRequestsScreen}
+        options={{ tabBarLabel: 'Requests', tabBarIcon: (p) => <TabIcon emoji="📄" {...p} /> }}
+      />
+      <Tab.Screen
+        name="Account"
+        component={AccountScreen}
+        options={{ tabBarLabel: 'Account', tabBarIcon: (p) => <TabIcon emoji="👤" {...p} /> }}
+      />
+    </Tab.Navigator>
+  );
+}
 
 function RootNavigator() {
   const { user, initializing } = useAuth();
@@ -38,27 +81,15 @@ function RootNavigator() {
   }
 
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
         <>
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="NewRequest"
-            component={NewRequestScreen}
-            options={{ title: 'New Service Request' }}
-          />
-          <Stack.Screen
-            name="MyRequests"
-            component={MyRequestsScreen}
-            options={{ title: 'My Requests' }}
-          />
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen name="JobStatus" component={JobStatusScreen} />
+          <Stack.Screen name="QuoteApproval" component={QuoteApprovalScreen} />
         </>
       ) : (
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={LoginScreen} />
       )}
     </Stack.Navigator>
   );
@@ -69,7 +100,7 @@ export default function App() {
     <SafeAreaProvider>
       <AuthProvider>
         <NavigationContainer theme={navTheme}>
-          <StatusBar style="light" />
+          <StatusBar style="dark" />
           <RootNavigator />
         </NavigationContainer>
       </AuthProvider>
