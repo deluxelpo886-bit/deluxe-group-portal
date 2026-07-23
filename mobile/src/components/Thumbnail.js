@@ -1,38 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Image } from 'react-native';
 import { colors } from '../theme';
-import { CATEGORIES } from '../data/services';
+import { imageFor } from '../data/serviceImages';
 
-// Placeholder equipment thumbnail (category-coloured tile with an icon).
-// Real equipment photos can replace this once image upload is added.
-const CATEGORY_TINT = {
-  repair: colors.blue,
-  marine: colors.navy2,
-  testing: colors.green,
-  rental: colors.orange,
-  fleet: colors.goldDim,
-};
-
-export default function Thumbnail({ category, size = 64, radius = 12 }) {
-  const cat = CATEGORIES.find((c) => c.id === category);
-  const icon = cat ? cat.icon : '🧰';
-  const tint = CATEGORY_TINT[category] || colors.steel;
+// Real equipment/service photo. Resolves the image from the service id
+// (falling back to the request's category).
+export default function Thumbnail({ service, category, size = 64, radius = 12, style }) {
   return (
-    <View
+    <Image
+      source={imageFor({ service, category })}
       style={[
-        styles.box,
-        { width: size, height: size, borderRadius: radius, backgroundColor: tint + '22', borderColor: tint + '55' },
+        {
+          width: size,
+          height: size,
+          borderRadius: radius,
+          borderWidth: 1,
+          borderColor: colors.line,
+          backgroundColor: colors.panel2,
+        },
+        style,
       ]}
-    >
-      <Text style={{ fontSize: size * 0.42 }}>{icon}</Text>
-    </View>
+      resizeMode="cover"
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  box: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-  },
-});

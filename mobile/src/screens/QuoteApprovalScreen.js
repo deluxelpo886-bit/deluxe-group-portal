@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert,
+  View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert,
 } from 'react-native';
 import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { serviceName } from '../data/services';
+import { imageFor } from '../data/serviceImages';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
-import Thumbnail from '../components/Thumbnail';
 import { money, ticketNo } from '../lib/requests';
 
 export default function QuoteApprovalScreen({ route, navigation }) {
@@ -74,7 +74,7 @@ export default function QuoteApprovalScreen({ route, navigation }) {
     <View style={styles.screen}>
       <ScreenHeader title="Quote Ready" />
       <ScrollView contentContainerStyle={{ padding: spacing(2), paddingBottom: spacing(4) }}>
-        <View style={styles.hero}><Thumbnail category={req.category} size={120} radius={16} /></View>
+        <Image source={imageFor(req)} style={styles.hero} resizeMode="cover" />
         <Text style={styles.ticket}>{ticketNo(req)}</Text>
 
         {!quote ? (
@@ -155,7 +155,10 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.cream },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing(4) },
   muted: { color: colors.steel },
-  hero: { alignItems: 'center', marginTop: spacing(1), marginBottom: spacing(1) },
+  hero: {
+    width: '100%', height: 180, borderRadius: 16, marginTop: spacing(1),
+    marginBottom: spacing(1), borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel2,
+  },
   ticket: { textAlign: 'center', fontSize: 14, fontWeight: '800', color: colors.steel, marginBottom: spacing(1) },
   section: { padding: spacing(2) },
   sectionLabel: { backgroundColor: '#E9EEF3', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 12, marginTop: spacing(2) },

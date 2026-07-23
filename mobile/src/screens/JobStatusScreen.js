@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert,
+  View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert,
 } from 'react-native';
 import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { serviceName } from '../data/services';
+import { imageFor } from '../data/serviceImages';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import Thumbnail from '../components/Thumbnail';
@@ -65,9 +66,7 @@ export default function JobStatusScreen({ route, navigation }) {
     <View style={styles.screen}>
       <ScreenHeader title="Job Status" />
       <ScrollView contentContainerStyle={{ padding: spacing(2), paddingBottom: spacing(5) }}>
-        <View style={styles.hero}>
-          <Thumbnail category={req.category} size={120} radius={16} />
-        </View>
+        <Image source={imageFor(req)} style={styles.hero} resizeMode="cover" />
         <Text style={styles.ticket}>{ticketNo(req)}</Text>
         <Text style={styles.service}>{serviceName(req.service)}</Text>
 
@@ -95,8 +94,8 @@ export default function JobStatusScreen({ route, navigation }) {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Service Report</Text>
             <View style={styles.photoRow}>
-              <ReportPhoto label="Before" category={req.category} />
-              <ReportPhoto label="After" category={req.category} />
+              <ReportPhoto label="Before" service={req.service} category={req.category} />
+              <ReportPhoto label="After" service={req.service} category={req.category} />
             </View>
             <View style={{ marginTop: 12 }}>
               <ReportLine label="Technician" value={report.technician || req.assignedTechnician || '—'} />
@@ -150,10 +149,10 @@ function Stepper({ current }) {
   );
 }
 
-function ReportPhoto({ label, category }) {
+function ReportPhoto({ label, service, category }) {
   return (
     <View style={{ alignItems: 'center', flex: 1 }}>
-      <Thumbnail category={category} size={110} radius={12} />
+      <Thumbnail service={service} category={category} size={110} radius={12} style={{ width: '100%' }} />
       <Text style={styles.photoLabel}>{label}</Text>
     </View>
   );
@@ -172,7 +171,10 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.cream },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing(4) },
   muted: { color: colors.steel },
-  hero: { alignItems: 'center', marginTop: spacing(1), marginBottom: spacing(2) },
+  hero: {
+    width: '100%', height: 190, borderRadius: 16, marginTop: spacing(1),
+    marginBottom: spacing(2), borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel2,
+  },
   ticket: { textAlign: 'center', fontSize: 18, fontWeight: '900', color: colors.navy, letterSpacing: 0.5 },
   service: { textAlign: 'center', fontSize: 14, color: colors.steel, marginTop: 2, marginBottom: spacing(2) },
   stepper: { flexDirection: 'row', marginTop: spacing(1), marginBottom: spacing(2) },

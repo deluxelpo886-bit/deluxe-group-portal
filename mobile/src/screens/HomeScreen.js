@@ -2,6 +2,7 @@ import React from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -9,6 +10,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { CATEGORIES, servicesForCategory } from '../data/services';
+import { SERVICE_IMAGES } from '../data/serviceImages';
 import { colors, radius, spacing } from '../theme';
 
 export default function HomeScreen({ navigation }) {
@@ -17,7 +19,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={{ padding: spacing(2.5), paddingBottom: spacing(5) }}>
+      <ScrollView contentContainerStyle={{ padding: spacing(2), paddingBottom: spacing(5) }}>
         <View style={styles.header}>
           <View style={{ flex: 1 }}>
             <Text style={styles.hello}>Welcome,</Text>
@@ -39,25 +41,32 @@ export default function HomeScreen({ navigation }) {
 
         <Text style={styles.sectionTitle}>Our Services</Text>
 
-        <View style={styles.grid}>
-          {CATEGORIES.map((cat) => {
-            const count = servicesForCategory(cat.id).length;
-            return (
-              <TouchableOpacity
-                key={cat.id}
-                style={styles.tile}
-                activeOpacity={0.85}
-                onPress={() => navigation.navigate('NewRequest', { categoryId: cat.id })}
-              >
-                <Text style={styles.tileIcon}>{cat.icon}</Text>
-                <Text style={styles.tileName}>{cat.name}</Text>
-                <Text style={styles.tileMeta}>
-                  {count} {count === 1 ? 'service' : 'services'}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        {CATEGORIES.map((cat) => {
+          const services = servicesForCategory(cat.id);
+          if (services.length === 0) return null;
+          return (
+            <View key={cat.id} style={styles.catBlock}>
+              <Text style={styles.catTitle}>{cat.name}</Text>
+              <View style={styles.grid}>
+                {services.map((s) => (
+                  <TouchableOpacity
+                    key={s.id}
+                    style={styles.card}
+                    activeOpacity={0.85}
+                    onPress={() =>
+                      navigation.navigate('NewRequest', { categoryId: cat.id, serviceId: s.id })
+                    }
+                  >
+                    <Image source={SERVICE_IMAGES[s.id]} style={styles.cardImg} resizeMode="cover" />
+                    <View style={styles.cardBody}>
+                      <Text style={styles.cardName} numberOfLines={2}>{s.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          );
+        })}
 
         <TouchableOpacity
           style={styles.cta}
@@ -79,14 +88,12 @@ function displayName(user) {
   return 'there';
 }
 
-const TILE_GAP = spacing(1.5);
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.cream },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing(2.5),
+    marginBottom: spacing(2),
     marginTop: spacing(1),
   },
   hello: { color: colors.steel, fontSize: 15 },
@@ -108,39 +115,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     marginBottom: spacing(3),
   },
-  requestsBtnText: { color: colors.cream, fontWeight: '700', fontSize: 16, flex: 1 },
+  requestsBtnText: { color: '#fff', fontWeight: '700', fontSize: 16, flex: 1 },
   requestsBtnArrow: { color: colors.gold, fontSize: 20, fontWeight: '800' },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '800',
     color: colors.navy,
-    marginBottom: spacing(2),
+    marginBottom: spacing(1.5),
+  },
+  catBlock: { marginBottom: spacing(3) },
+  catTitle: {
+    color: colors.goldDim,
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+    paddingBottom: 8,
+    marginBottom: 12,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  tile: {
-    width: '48%',
+  card: {
+    width: '48.5%',
     backgroundColor: colors.panel,
     borderWidth: 1,
     borderColor: colors.line,
-    borderRadius: radius.lg,
-    padding: spacing(2),
-    marginBottom: TILE_GAP,
-    minHeight: 128,
-    justifyContent: 'space-between',
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 12,
   },
-  tileIcon: { fontSize: 30 },
-  tileName: { fontSize: 15, fontWeight: '700', color: colors.navy, marginTop: 8 },
-  tileMeta: { fontSize: 12, color: colors.steel, marginTop: 4 },
+  cardImg: { width: '100%', height: 100, backgroundColor: colors.panel2 },
+  cardBody: { paddingHorizontal: 12, paddingVertical: 10 },
+  cardName: { fontSize: 13, fontWeight: '800', color: colors.navy, lineHeight: 17 },
   cta: {
     backgroundColor: colors.gold,
     borderRadius: radius.md,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: spacing(2),
+    marginTop: spacing(1),
   },
-  ctaText: { color: colors.navy, fontWeight: '800', fontSize: 16 },
+  ctaText: { color: '#fff', fontWeight: '800', fontSize: 16 },
 });

@@ -61,10 +61,10 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.navy }}
+      style={{ flex: 1, backgroundColor: colors.cream }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.brand}>
           <View style={styles.logoMark}>
@@ -170,13 +170,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 14,
   },
-  logoMarkText: { color: colors.navy, fontSize: 34, fontWeight: '900' },
-  brandTitle: { color: colors.cream, fontSize: 30, fontWeight: '800', letterSpacing: 1 },
+  logoMarkText: { color: '#fff', fontSize: 34, fontWeight: '900' },
+  brandTitle: { color: colors.navy, fontSize: 30, fontWeight: '800', letterSpacing: 1 },
   brandSub: { color: colors.gold, fontSize: 14, marginTop: 4 },
   sheet: {
-    backgroundColor: colors.cream,
+    backgroundColor: colors.panel,
     borderRadius: radius.lg,
     padding: spacing(3),
+    borderWidth: 1,
+    borderColor: colors.line,
   },
   tabs: {
     flexDirection: 'row',
@@ -188,11 +190,11 @@ const styles = StyleSheet.create({
   tab: { flex: 1, paddingVertical: 10, borderRadius: radius.pill, alignItems: 'center' },
   tabActive: { backgroundColor: colors.navy },
   tabText: { fontWeight: '700', color: colors.steel },
-  tabTextActive: { color: colors.cream },
+  tabTextActive: { color: '#fff' },
   switchText: { color: colors.goldDim, textAlign: 'center', fontWeight: '600' },
   comingSoon: { alignItems: 'center', paddingVertical: spacing(2) },
   comingSoonEmoji: { fontSize: 40, marginBottom: 10 },
   comingSoonTitle: { fontSize: 18, fontWeight: '800', color: colors.navy, marginBottom: 6 },
   comingSoonBody: { fontSize: 14, color: colors.steel, textAlign: 'center', lineHeight: 20 },
-  warn: { color: colors.cream, textAlign: 'center', marginTop: spacing(3), fontSize: 12 },
+  warn: { color: colors.red, textAlign: 'center', marginTop: spacing(3), fontSize: 12 },
 });

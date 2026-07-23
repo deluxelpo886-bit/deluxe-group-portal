@@ -62,7 +62,7 @@ export default function MyRequestsScreen({ navigation }) {
             const ub = urgencyBadge(item.urgency);
             return (
               <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={() => openRequest(item)}>
-                <Thumbnail category={item.category} size={62} />
+                <Thumbnail service={item.service} category={item.category} size={58} radius={10} />
                 <View style={{ flex: 1, marginLeft: 12 }}>
                   <Text style={styles.ticket}>{ticketNo(item)}</Text>
                   <Text style={styles.service} numberOfLines={1}>{serviceName(item.service)}</Text>

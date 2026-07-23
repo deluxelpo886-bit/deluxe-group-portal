@@ -1,21 +1,21 @@
-// Palette lifted from the Deluxe Service Portal web app so the mobile app
-// shares the same industrial cream / navy / gold identity.
+// White / blue theme, matching the Deluxe Go reference design.
+// Light backgrounds, dark-navy text, blue primary accent.
 export const colors = {
-  navy: '#0F2438',
-  navy2: '#16324D',
-  panel: '#FFFFFF',
-  panel2: '#F3EFE6',
-  cream: '#FBF7EE',
-  line: '#E4DDCB',
-  ink: '#1E2A22',
-  steel: '#6B6558',
-  gold: '#C08A28',
-  goldDim: '#8F661C',
-  green: '#1F6F4A',
-  red: '#B8483D',
-  blue: '#3A6B8A',
-  orange: '#B8763A',
-  gray: '#8A8578',
+  navy: '#122142',    // primary dark: headings, dark buttons, brand text
+  navy2: '#0E3E8F',   // deep blue accent
+  panel: '#FFFFFF',   // cards / surfaces
+  panel2: '#EAF1FB',  // subtle blue fill
+  cream: '#F7FAFD',   // app background (near-white)
+  line: '#D8E3F0',    // borders / dividers
+  ink: '#122142',     // primary text
+  steel: '#5C6B82',   // secondary text
+  gold: '#1657C4',    // primary accent (blue)
+  goldDim: '#0E3E8F',
+  green: '#1E8A56',
+  red: '#D64545',
+  blue: '#0E7C86',
+  orange: '#C97A1D',
+  gray: '#7C8798',
 };
 
 export const spacing = (n) => n * 8;

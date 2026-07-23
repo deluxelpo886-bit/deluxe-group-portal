@@ -28,17 +28,18 @@ export default function NewRequestScreen({ route, navigation }) {
 
   const [categoryId, setCategoryId] = useState(initialCategory);
 
-  // When arriving from a Home category tile (tab already mounted), sync selection.
+  // When arriving from a Home service card (tab already mounted), sync selection.
   useEffect(() => {
     if (route.params?.categoryId) {
       setCategoryId(route.params.categoryId);
-      const first = servicesForCategory(route.params.categoryId)[0];
-      setServiceId(first ? first.id : undefined);
+      const list = servicesForCategory(route.params.categoryId);
+      const wanted = route.params.serviceId && list.find((s) => s.id === route.params.serviceId);
+      setServiceId(wanted ? wanted.id : list[0] ? list[0].id : undefined);
     }
-  }, [route.params?.categoryId]);
+  }, [route.params?.categoryId, route.params?.serviceId]);
 
   const services = useMemo(() => servicesForCategory(categoryId), [categoryId]);
-  const [serviceId, setServiceId] = useState(services[0]?.id);
+  const [serviceId, setServiceId] = useState(route.params?.serviceId || services[0]?.id);
 
   const [form, setForm] = useState({
     equipmentType: '',
