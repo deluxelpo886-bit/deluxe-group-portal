@@ -21,11 +21,30 @@ const VALID_COMPANIES = ['energy', 'heavy'];
 app.set('trust proxy', 1);
 
 // Security headers via Helmet (HSTS, X-Content-Type-Options, frameguard, etc).
-// Content-Security-Policy is intentionally disabled: the frontend relies on a
-// large inline <script>, many inline style= attributes, and the external
-// EmailJS CDN, all of which Helmet's default CSP would block and break the app.
-// Tightening CSP later is a separate, deliberate effort.
-app.use(helmet({ contentSecurityPolicy: false }));
+// Content-Security-Policy. The single inline <script> in index.html is allowed
+// by its SHA-256 hash (INLINE_SCRIPT_HASH) rather than 'unsafe-inline', so the
+// policy still blocks any injected script. A static hash (not a per-request
+// nonce) is used deliberately: the service worker caches the HTML, and a hash
+// stays valid across cached loads. Inline style= attributes remain allowed via
+// style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
+// NOTE: if the inline <script> in public/index.html changes, recompute this
+// hash (npm run csp-hash) or the page's own script will be blocked.
+const INLINE_SCRIPT_HASH = "'sha256-DEXJOItMD1MNCUOdPwZlhFMovOJbOMkotjHjwY+Wn1Q='";
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      scriptSrc: ["'self'", INLINE_SCRIPT_HASH, 'https://cdn.jsdelivr.net'],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:'],
+      fontSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'", 'https://api.emailjs.com'],
+      workerSrc: ["'self'"],
+      manifestSrc: ["'self'"],
+      frameAncestors: ["'none'"]
+    }
+  }
+}));
 
 // CORS: only allow the deployed frontend origin (and localhost for dev).
 // Configurable via ALLOWED_ORIGINS (comma-separated). Requests with no Origin

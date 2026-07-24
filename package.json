@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server/server.js",
     "dev": "node server/server.js",
-    "backup": "node scripts/backup-db.js"
+    "backup": "node scripts/backup-db.js",
+    "csp-hash": "node scripts/csp-hash.js"
   },
   "dependencies": {
     "express": "^4.19.2",
