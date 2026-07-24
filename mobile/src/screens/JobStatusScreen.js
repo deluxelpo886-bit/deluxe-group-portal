@@ -4,8 +4,8 @@ import {
 } from 'react-native';
 import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
-import { serviceName } from '../data/services';
 import { imageFor } from '../data/serviceImages';
+import { useI18n } from '../i18n/I18nContext';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import Thumbnail from '../components/Thumbnail';
@@ -14,6 +14,7 @@ import { ticketNo, CUSTOMER_STEPS, statusStep, formatDay } from '../lib/requests
 
 export default function JobStatusScreen({ route, navigation }) {
   const { id } = route.params || {};
+  const { t, tService, tStatus } = useI18n();
   const [req, setReq] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [signing, setSigning] = useState(false);
@@ -30,15 +31,15 @@ export default function JobStatusScreen({ route, navigation }) {
   if (notFound) {
     return (
       <View style={styles.screen}>
-        <ScreenHeader title="Job Status" />
-        <View style={styles.center}><Text style={styles.muted}>This request no longer exists.</Text></View>
+        <ScreenHeader title={t('job.title')} />
+        <View style={styles.center}><Text style={styles.muted}>{t('common.notExist')}</Text></View>
       </View>
     );
   }
   if (!req) {
     return (
       <View style={styles.screen}>
-        <ScreenHeader title="Job Status" />
+        <ScreenHeader title={t('job.title')} />
         <View style={styles.center}><ActivityIndicator color={colors.gold} size="large" /></View>
       </View>
     );
@@ -58,9 +59,9 @@ export default function JobStatusScreen({ route, navigation }) {
         signedOffAt: serverTimestamp(),
         signature: dataUrl,
       });
-      Alert.alert('Thank you', 'Completion signed off.');
+      Alert.alert(t('job.thanksTitle'), t('job.thanksBody'));
     } catch (e) {
-      Alert.alert('Could not sign off', e?.message || 'Please try again.');
+      Alert.alert(t('job.couldNotSignOff'), e?.message || '');
     } finally {
       setSigning(false);
     }
@@ -68,17 +69,15 @@ export default function JobStatusScreen({ route, navigation }) {
 
   return (
     <View style={styles.screen}>
-      <ScreenHeader title="Job Status" />
+      <ScreenHeader title={t('job.title')} />
       <ScrollView contentContainerStyle={{ padding: spacing(2), paddingBottom: spacing(5) }}>
         <Image source={imageFor(req)} style={styles.hero} resizeMode="cover" />
         <Text style={styles.ticket}>{ticketNo(req)}</Text>
-        <Text style={styles.service}>{serviceName(req.service)}</Text>
+        <Text style={styles.service}>{tService(req.service)}</Text>
 
         {declined ? (
           <View style={[styles.banner, { backgroundColor: '#fdecea', borderColor: '#f5c6c2' }]}>
-            <Text style={{ color: colors.red, fontWeight: '700' }}>
-              This request was {(req.status || '').toLowerCase()}.
-            </Text>
+            <Text style={{ color: colors.red, fontWeight: '700' }}>{t('job.declined', { status: tStatus(req.status) })}</Text>
           </View>
         ) : (
           <Stepper current={step} />
@@ -90,21 +89,21 @@ export default function JobStatusScreen({ route, navigation }) {
             activeOpacity={0.9}
             onPress={() => navigation.navigate('QuoteApproval', { id: req.id })}
           >
-            <Text style={styles.reviewBtnText}>Review quote</Text>
+            <Text style={styles.reviewBtnText}>{t('job.reviewQuote')}</Text>
           </TouchableOpacity>
         ) : null}
 
         {(isCompleted || report.technician || report.workDone) ? (
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Service Report</Text>
+            <Text style={styles.cardTitle}>{t('job.report')}</Text>
             <View style={styles.photoRow}>
-              <ReportPhoto label="Before" service={req.service} category={req.category} />
-              <ReportPhoto label="After" service={req.service} category={req.category} />
+              <ReportPhoto label={t('job.before')} service={req.service} category={req.category} />
+              <ReportPhoto label={t('job.after')} service={req.service} category={req.category} />
             </View>
             <View style={{ marginTop: 12 }}>
-              <ReportLine label="Technician" value={report.technician || req.assignedTechnician || '—'} />
-              <ReportLine label="Work Done" value={report.workDone || '—'} />
-              <ReportLine label="Completed" value={report.completedAt ? formatDay(report.completedAt) : (isCompleted ? formatDay(req.updatedAt) : '—')} />
+              <ReportLine label={t('job.technician')} value={report.technician || req.assignedTechnician || '—'} />
+              <ReportLine label={t('job.workDone')} value={report.workDone || '—'} />
+              <ReportLine label={t('job.completed')} value={report.completedAt ? formatDay(report.completedAt) : (isCompleted ? formatDay(req.updatedAt) : '—')} />
             </View>
           </View>
         ) : null}
@@ -112,14 +111,14 @@ export default function JobStatusScreen({ route, navigation }) {
         {isCompleted ? (
           req.customerSignedOff ? (
             <View style={[styles.banner, { backgroundColor: '#eaf6ef', borderColor: '#bfe3cd' }]}>
-              <Text style={{ color: colors.green, fontWeight: '700' }}>✓ You signed off this completion.</Text>
+              <Text style={{ color: colors.green, fontWeight: '700' }}>{t('job.signedOff')}</Text>
               {req.signature ? (
                 <Image source={{ uri: req.signature }} style={styles.signatureImg} resizeMode="contain" />
               ) : null}
             </View>
           ) : (
             <TouchableOpacity style={styles.signBtn} activeOpacity={0.9} onPress={() => setSignVisible(true)} disabled={signing}>
-              <Text style={styles.signBtnText}>{signing ? 'Signing…' : 'Sign Off Completion'}</Text>
+              <Text style={styles.signBtnText}>{signing ? t('job.signing') : t('job.signOff')}</Text>
             </TouchableOpacity>
           )
         ) : null}
@@ -135,6 +134,7 @@ export default function JobStatusScreen({ route, navigation }) {
 }
 
 function Stepper({ current }) {
+  const { tStep } = useI18n();
   return (
     <View style={styles.stepper}>
       {CUSTOMER_STEPS.map((label, i) => {
@@ -153,7 +153,7 @@ function Stepper({ current }) {
               <View style={[styles.line, { backgroundColor: i === CUSTOMER_STEPS.length - 1 ? 'transparent' : (i < current ? colors.green : colors.line) }]} />
             </View>
             <Text style={[styles.stepLabel, (done || active) && { color: colors.navy, fontWeight: '700' }]} numberOfLines={2}>
-              {label}
+              {tStep(i)}
             </Text>
           </View>
         );

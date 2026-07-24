@@ -5,7 +5,7 @@ import {
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
-import { serviceName } from '../data/services';
+import { useI18n } from '../i18n/I18nContext';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import Thumbnail from '../components/Thumbnail';
@@ -13,6 +13,7 @@ import { ticketNo, statusBadge, urgencyBadge } from '../lib/requests';
 
 export default function MyRequestsScreen({ navigation }) {
   const { user } = useAuth();
+  const { t, tService, tStatus, tUrgency } = useI18n();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +44,7 @@ export default function MyRequestsScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <ScreenHeader title="My Requests" />
+      <ScreenHeader title={t('req.title')} />
       {loading ? (
         <View style={styles.center}><ActivityIndicator color={colors.gold} size="large" /></View>
       ) : (
@@ -53,8 +54,8 @@ export default function MyRequestsScreen({ navigation }) {
           contentContainerStyle={{ padding: spacing(2), flexGrow: 1 }}
           ListEmptyComponent={
             <View style={styles.center}>
-              <Text style={styles.emptyTitle}>No requests yet</Text>
-              <Text style={styles.emptySub}>Submit a service request and it'll show up here.</Text>
+              <Text style={styles.emptyTitle}>{t('req.empty')}</Text>
+              <Text style={styles.emptySub}>{t('req.emptySub')}</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -63,13 +64,13 @@ export default function MyRequestsScreen({ navigation }) {
             return (
               <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={() => openRequest(item)}>
                 <Thumbnail service={item.service} category={item.category} size={58} radius={10} />
-                <View style={{ flex: 1, marginLeft: 12 }}>
+                <View style={{ flex: 1, marginHorizontal: 12 }}>
                   <Text style={styles.ticket}>{ticketNo(item)}</Text>
-                  <Text style={styles.service} numberOfLines={1}>{serviceName(item.service)}</Text>
+                  <Text style={styles.service} numberOfLines={1}>{tService(item.service)}</Text>
                   <Text style={styles.sub} numberOfLines={1}>{item.equipmentType || '—'}</Text>
                   <View style={styles.badges}>
-                    {ub ? <Badge label={ub.label} color={ub.color} /> : null}
-                    <Badge label={sb.label} color={sb.color} />
+                    {ub ? <Badge label={tUrgency(item.urgency)} color={ub.color} /> : null}
+                    <Badge label={tStatus(item.status)} color={sb.color} />
                   </View>
                 </View>
               </TouchableOpacity>

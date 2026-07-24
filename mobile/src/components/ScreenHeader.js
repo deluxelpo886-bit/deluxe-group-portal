@@ -3,12 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme';
+import { useI18n } from '../i18n/I18nContext';
 
 // White top bar shared across screens: back arrow (left), centered title,
 // profile icon (right) that jumps to the Account tab.
 export default function ScreenHeader({ title, showBack = true, showProfile = true }) {
   const nav = useNavigation();
   const canBack = nav.canGoBack();
+  const { isRTL } = useI18n();
 
   return (
     <SafeAreaView edges={['top']} style={{ backgroundColor: colors.panel }}>
@@ -16,7 +18,7 @@ export default function ScreenHeader({ title, showBack = true, showProfile = tru
         <View style={styles.side}>
           {showBack && canBack ? (
             <TouchableOpacity hitSlop={10} onPress={() => nav.goBack()}>
-              <Text style={styles.arrow}>‹</Text>
+              <Text style={styles.arrow}>{isRTL ? '›' : '‹'}</Text>
             </TouchableOpacity>
           ) : null}
         </View>

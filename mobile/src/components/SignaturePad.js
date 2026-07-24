@@ -3,6 +3,7 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet, Alert } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Signature from 'react-native-signature-canvas';
 import { colors, radius, spacing } from '../theme';
+import { useI18n } from '../i18n/I18nContext';
 
 // Full-screen modal that lets the customer draw a signature. Returns a PNG
 // data URL via onSave. Built on react-native-signature-canvas (WebView-based).
@@ -15,17 +16,18 @@ const webStyle = `
 
 export default function SignaturePad({ visible, onCancel, onSave }) {
   const ref = useRef(null);
+  const { t } = useI18n();
 
   const handleOK = (signature) => onSave(signature);
   const handleEmpty = () =>
-    Alert.alert('Please sign', 'Draw your signature in the box first.');
+    Alert.alert(t('sig.pleaseTitle'), t('sig.pleaseBody'));
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onCancel}>
       <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
         <View style={styles.header}>
-          <Text style={styles.title}>Sign to confirm completion</Text>
-          <Text style={styles.sub}>Sign in the box below, then tap Save.</Text>
+          <Text style={styles.title}>{t('sig.title')}</Text>
+          <Text style={styles.sub}>{t('sig.sub')}</Text>
         </View>
 
         <View style={styles.canvasWrap}>
@@ -46,16 +48,16 @@ export default function SignaturePad({ visible, onCancel, onSave }) {
             style={[styles.btn, styles.ghost]}
             onPress={() => ref.current?.clearSignature()}
           >
-            <Text style={styles.ghostText}>Clear</Text>
+            <Text style={styles.ghostText}>{t('common.clear')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.btn, styles.ghost]} onPress={onCancel}>
-            <Text style={styles.ghostText}>Cancel</Text>
+            <Text style={styles.ghostText}>{t('common.cancel')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.btn, styles.save]}
             onPress={() => ref.current?.readSignature()}
           >
-            <Text style={styles.saveText}>Save</Text>
+            <Text style={styles.saveText}>{t('common.save')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

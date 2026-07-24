@@ -12,6 +12,7 @@ import {
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../i18n/I18nContext';
 import {
   CATEGORIES,
   SERVICES,
@@ -24,6 +25,7 @@ import ScreenHeader from '../components/ScreenHeader';
 
 export default function NewRequestScreen({ route, navigation }) {
   const { user } = useAuth();
+  const { t, tCategory, tService, tUrgency } = useI18n();
   const initialCategory = route.params?.categoryId || CATEGORIES[0].id;
 
   const [categoryId, setCategoryId] = useState(initialCategory);
@@ -62,11 +64,11 @@ export default function NewRequestScreen({ route, navigation }) {
   };
 
   const submit = async () => {
-    if (!serviceId) return Alert.alert('Pick a service', 'Choose a service to continue.');
+    if (!serviceId) return Alert.alert(t('nr.pickServiceTitle'), t('nr.pickServiceBody'));
     if (!form.equipmentType.trim() && !form.description.trim()) {
       return Alert.alert(
-        'Add some detail',
-        'Tell us the equipment type or describe the problem.'
+        t('nr.detailTitle'),
+        t('nr.detailBody')
       );
     }
     setSaving(true);
@@ -81,11 +83,11 @@ export default function NewRequestScreen({ route, navigation }) {
         userPhone: user?.phoneNumber || null,
         createdAt: serverTimestamp(),
       });
-      Alert.alert('Request submitted', "We're reviewing it and will be in touch.", [
+      Alert.alert(t('nr.submittedTitle'), t('nr.submittedBody'), [
         { text: 'OK', onPress: () => navigation.navigate('Requests') },
       ]);
     } catch (e) {
-      Alert.alert('Could not submit', e?.message || 'Please try again.');
+      Alert.alert(t('nr.couldNotSubmit'), e?.message || '');
     } finally {
       setSaving(false);
     }
@@ -93,7 +95,7 @@ export default function NewRequestScreen({ route, navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.cream }}>
-      <ScreenHeader title="New Request" />
+      <ScreenHeader title={t('nr.title')} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -102,19 +104,19 @@ export default function NewRequestScreen({ route, navigation }) {
         contentContainerStyle={{ padding: spacing(2.5), paddingBottom: spacing(6) }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.label}>Category</Text>
+        <Text style={styles.label}>{t('nr.category')}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
           {CATEGORIES.map((c) => (
             <Chip
               key={c.id}
-              label={`${c.icon}  ${c.name}`}
+              label={`${c.icon}  ${tCategory(c.id)}`}
               active={c.id === categoryId}
               onPress={() => onSelectCategory(c.id)}
             />
           ))}
         </ScrollView>
 
-        <Text style={styles.label}>Service</Text>
+        <Text style={styles.label}>{t('nr.service')}</Text>
         <View style={{ marginBottom: 16 }}>
           {services.map((s) => (
             <TouchableOpacity
@@ -125,44 +127,44 @@ export default function NewRequestScreen({ route, navigation }) {
             >
               <View style={[styles.radio, s.id === serviceId && styles.radioActive]} />
               <Text style={[styles.serviceText, s.id === serviceId && { color: colors.navy }]}>
-                {s.name}
+                {tService(s.id)}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
         <Field
-          label="Equipment type"
+          label={t('nr.equipmentType')}
           value={form.equipmentType}
           onChangeText={set('equipmentType')}
-          placeholder="e.g. Diesel Generator"
+          placeholder={t('nr.equipmentPh')}
         />
-        <Field label="Model" value={form.model} onChangeText={set('model')} placeholder="Model" />
+        <Field label={t('nr.model')} value={form.model} onChangeText={set('model')} placeholder={t('nr.model')} />
         <Field
-          label="Serial number"
+          label={t('nr.serial')}
           value={form.serial}
           onChangeText={set('serial')}
-          placeholder="Serial"
+          placeholder={t('nr.serial')}
         />
         <Field
-          label="Site / location"
+          label={t('nr.site')}
           value={form.siteLocation}
           onChangeText={set('siteLocation')}
-          placeholder="Where is the equipment?"
+          placeholder={t('nr.sitePh')}
         />
         <Field
-          label="Preferred date"
+          label={t('nr.preferredDate')}
           value={form.preferredDate}
           onChangeText={set('preferredDate')}
-          placeholder="e.g. 2026-07-30"
+          placeholder={t('nr.datePh')}
         />
 
-        <Text style={styles.label}>Urgency</Text>
+        <Text style={styles.label}>{t('nr.urgency')}</Text>
         <View style={styles.urgencyRow}>
           {URGENCY.map((u) => (
             <Chip
               key={u}
-              label={u}
+              label={tUrgency(u)}
               active={form.urgency === u}
               onPress={() => set('urgency')(u)}
               style={{ flex: 1 }}
@@ -171,23 +173,23 @@ export default function NewRequestScreen({ route, navigation }) {
         </View>
 
         <Field
-          label="Contact phone"
+          label={t('nr.contactPhone')}
           value={form.contactPhone}
           onChangeText={set('contactPhone')}
           keyboardType="phone-pad"
           placeholder="+971 5xx xxx xxx"
         />
         <Field
-          label="Description"
+          label={t('nr.description')}
           value={form.description}
           onChangeText={set('description')}
-          placeholder="What's happening with the equipment?"
+          placeholder={t('nr.descPh')}
           multiline
           numberOfLines={4}
           style={{ height: 110, textAlignVertical: 'top' }}
         />
 
-        <Button title="Submit request" onPress={submit} loading={saving} />
+        <Button title={t('nr.submit')} onPress={submit} loading={saving} />
       </ScrollView>
       </KeyboardAvoidingView>
     </View>

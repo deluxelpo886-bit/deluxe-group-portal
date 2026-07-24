@@ -4,14 +4,15 @@ import {
 } from 'react-native';
 import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
-import { serviceName } from '../data/services';
 import { imageFor } from '../data/serviceImages';
+import { useI18n } from '../i18n/I18nContext';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { money, ticketNo } from '../lib/requests';
 
 export default function QuoteApprovalScreen({ route, navigation }) {
   const { id } = route.params || {};
+  const { t, tService } = useI18n();
   const [req, setReq] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [busy, setBusy] = useState('');
@@ -27,15 +28,15 @@ export default function QuoteApprovalScreen({ route, navigation }) {
   if (notFound) {
     return (
       <View style={styles.screen}>
-        <ScreenHeader title="Quote" />
-        <View style={styles.center}><Text style={styles.muted}>This request no longer exists.</Text></View>
+        <ScreenHeader title={t('quote.title')} />
+        <View style={styles.center}><Text style={styles.muted}>{t('common.notExist')}</Text></View>
       </View>
     );
   }
   if (!req) {
     return (
       <View style={styles.screen}>
-        <ScreenHeader title="Quote" />
+        <ScreenHeader title={t('quote.title')} />
         <View style={styles.center}><ActivityIndicator color={colors.gold} size="large" /></View>
       </View>
     );
@@ -56,37 +57,37 @@ export default function QuoteApprovalScreen({ route, navigation }) {
         updatedAt: serverTimestamp(),
       });
       Alert.alert(
-        approve ? 'Quote approved' : 'Quote declined',
-        approve ? 'Thanks — our team will proceed.' : 'You have declined this quote.',
+        approve ? t('quote.approvedTitle') : t('quote.declinedTitle'),
+        approve ? t('quote.approvedBody') : t('quote.declinedBody'),
         [{ text: 'OK', onPress: () => navigation.navigate('JobStatus', { id }) }]
       );
     } catch (e) {
-      Alert.alert('Something went wrong', e?.message || 'Please try again.');
+      Alert.alert(t('quote.errorTitle'), e?.message || '');
     } finally {
       setBusy('');
     }
   };
 
   const description =
-    serviceName(req.service) + (req.model ? ' — ' + req.model : req.equipmentType ? ' — ' + req.equipmentType : '');
+    tService(req.service) + (req.model ? ' — ' + req.model : req.equipmentType ? ' — ' + req.equipmentType : '');
 
   return (
     <View style={styles.screen}>
-      <ScreenHeader title="Quote Ready" />
+      <ScreenHeader title={t('quote.title')} />
       <ScrollView contentContainerStyle={{ padding: spacing(2), paddingBottom: spacing(4) }}>
         <Image source={imageFor(req)} style={styles.hero} resizeMode="cover" />
         <Text style={styles.ticket}>{ticketNo(req)}</Text>
 
         {!quote ? (
           <View style={styles.section}>
-            <Text style={styles.muted}>No quote has been sent for this request yet.</Text>
+            <Text style={styles.muted}>{t('quote.none')}</Text>
           </View>
         ) : (
           <>
-            <SectionLabel>Service Description</SectionLabel>
+            <SectionLabel>{t('quote.desc')}</SectionLabel>
             <Text style={styles.desc}>{description}</Text>
 
-            <SectionLabel>Quote Items</SectionLabel>
+            <SectionLabel>{t('quote.items')}</SectionLabel>
             <View style={styles.itemsBox}>
               {(quote.items || []).map((it, i) => (
                 <View key={i} style={styles.itemRow}>
@@ -99,41 +100,39 @@ export default function QuoteApprovalScreen({ route, navigation }) {
               ))}
               <View style={styles.divider} />
               <View style={styles.itemRow}>
-                <Text style={styles.subLabel}>Subtotal</Text>
+                <Text style={styles.subLabel}>{t('quote.subtotal')}</Text>
                 <Text style={styles.subVal}>{money(quote.subtotal)}</Text>
               </View>
               <View style={styles.itemRow}>
-                <Text style={styles.subLabel}>VAT ({Math.round((quote.vatRate ?? 0.05) * 100)}%)</Text>
+                <Text style={styles.subLabel}>{t('quote.vat', { p: Math.round((quote.vatRate ?? 0.05) * 100) })}</Text>
                 <Text style={styles.subVal}>{money(quote.vat)}</Text>
               </View>
               <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Total</Text>
-                <Text style={styles.totalVal}>{money(quote.total)}  <Text style={styles.incl}>(including VAT)</Text></Text>
+                <Text style={styles.totalLabel}>{t('quote.total')}</Text>
+                <Text style={styles.totalVal}>{money(quote.total)}  <Text style={styles.incl}>{t('quote.inclVat')}</Text></Text>
               </View>
             </View>
 
-            <SectionLabel>Terms</SectionLabel>
+            <SectionLabel>{t('quote.terms')}</SectionLabel>
             <View style={styles.termsBox}>
-              <TermLine label="Payment Terms" value={quote.paymentTerms || '30 Days'} />
-              <TermLine label="Validity" value={quote.validity || '30 Days'} />
-              <TermLine label="Remarks" value={quote.remarks || 'Job commences only after approval'} />
+              <TermLine label={t('quote.payment')} value={quote.paymentTerms || t('quote.days')} />
+              <TermLine label={t('quote.validity')} value={quote.validity || t('quote.days')} />
+              <TermLine label={t('quote.remarks')} value={quote.remarks || t('quote.defaultRemarks')} />
             </View>
 
             {alreadyDecided ? (
               <View style={[styles.banner, req.status === 'Approved'
                 ? { backgroundColor: '#eaf6ef', borderColor: '#bfe3cd' }
                 : { backgroundColor: '#fdecea', borderColor: '#f5c6c2' }]}>
-                <Text style={{ fontWeight: '800', color: req.status === 'Approved' ? colors.green : colors.red }}>
-                  You have {req.status === 'Approved' ? 'approved' : 'declined'} this quote.
-                </Text>
+                <Text style={{ fontWeight: '800', color: req.status === 'Approved' ? colors.green : colors.red }}>{req.status === 'Approved' ? t('quote.decidedApproved') : t('quote.decidedDeclined')}</Text>
               </View>
             ) : (
               <View style={styles.actions}>
                 <TouchableOpacity style={[styles.btn, styles.declineBtn]} disabled={!!busy} onPress={() => respond(false)}>
-                  <Text style={styles.declineText}>{busy === 'decline' ? '…' : 'Decline'}</Text>
+                  <Text style={styles.declineText}>{busy === 'decline' ? '…' : t('quote.decline')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.btn, styles.approveBtn]} disabled={!!busy} onPress={() => respond(true)}>
-                  <Text style={styles.approveText}>{busy === 'approve' ? '…' : 'Approve Quote'}</Text>
+                  <Text style={styles.approveText}>{busy === 'approve' ? '…' : t('quote.approve')}</Text>
                 </TouchableOpacity>
               </View>
             )}

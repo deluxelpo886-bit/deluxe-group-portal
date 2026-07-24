@@ -19,6 +19,7 @@ import { auth } from '../firebase';
 import { firebaseConfigured } from '../firebaseConfig';
 import { colors, radius, spacing } from '../theme';
 import { Field, Button } from '../components/ui';
+import { useI18n } from '../i18n/I18nContext';
 
 const MODE = { EMAIL: 'email', PHONE: 'phone' };
 
@@ -28,6 +29,7 @@ const MODE = { EMAIL: 'email', PHONE: 'phone' };
 // abandoned and breaks modern native builds. When we enable Phone sign-in we'll
 // add it back with a build-compatible approach (e.g. @react-native-firebase).
 export default function LoginScreen() {
+  const { t } = useI18n();
   const [mode, setMode] = useState(MODE.EMAIL);
 
   const [isSignup, setIsSignup] = useState(false);
@@ -43,7 +45,7 @@ export default function LoginScreen() {
       );
     }
     if (!email.trim() || !password) {
-      return Alert.alert('Missing details', 'Enter both email and password.');
+      return Alert.alert(t('login.missingTitle'), t('login.missingBody'));
     }
     setLoading(true);
     try {
@@ -54,7 +56,7 @@ export default function LoginScreen() {
       }
       // AuthContext's onAuthStateChanged handles navigation.
     } catch (e) {
-      Alert.alert('Sign-in failed', prettyError(e));
+      Alert.alert(t('login.failed'), t(errKey(e)));
     } finally {
       setLoading(false);
     }
@@ -74,52 +76,50 @@ export default function LoginScreen() {
             resizeMode="contain"
           />
           <Text style={styles.brandTitle}>Deluxe Go</Text>
-          <Text style={styles.brandSub}>Service requests, on the move.</Text>
+          <Text style={styles.brandSub}>{t('login.tagline')}</Text>
         </View>
 
         <View style={styles.sheet}>
           <View style={styles.tabs}>
-            <Tab label="Email" active={mode === MODE.EMAIL} onPress={() => setMode(MODE.EMAIL)} />
-            <Tab label="Phone" active={mode === MODE.PHONE} onPress={() => setMode(MODE.PHONE)} />
+            <Tab label={t('login.tabEmail')} active={mode === MODE.EMAIL} onPress={() => setMode(MODE.EMAIL)} />
+            <Tab label={t('login.tabPhone')} active={mode === MODE.PHONE} onPress={() => setMode(MODE.PHONE)} />
           </View>
 
           {mode === MODE.EMAIL ? (
             <View>
               <Field
-                label="Email"
+                label={t('login.email')}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                placeholder="you@company.com"
+                placeholder={t('login.emailPh')}
               />
               <Field
-                label="Password"
+                label={t('login.password')}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
                 placeholder="••••••••"
               />
               <Button
-                title={isSignup ? 'Create account' : 'Sign in'}
+                title={isSignup ? t('login.createAccount') : t('login.signIn')}
                 onPress={handleEmail}
                 loading={loading}
               />
               <TouchableOpacity onPress={() => setIsSignup((v) => !v)} style={{ marginTop: 14 }}>
                 <Text style={styles.switchText}>
-                  {isSignup ? 'Have an account? Sign in' : 'New here? Create an account'}
+                  {isSignup ? t('login.toSignin') : t('login.toSignup')}
                 </Text>
               </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.comingSoon}>
               <Text style={styles.comingSoonEmoji}>📱</Text>
-              <Text style={styles.comingSoonTitle}>Phone sign-in is coming soon</Text>
-              <Text style={styles.comingSoonBody}>
-                For now, please sign in with your email and password.
-              </Text>
+              <Text style={styles.comingSoonTitle}>{t('login.phoneSoonTitle')}</Text>
+              <Text style={styles.comingSoonBody}>{t('login.phoneSoonBody')}</Text>
               <Button
-                title="Use email instead"
+                title={t('login.useEmail')}
                 variant="ghost"
                 onPress={() => setMode(MODE.EMAIL)}
                 style={{ marginTop: 18, alignSelf: 'stretch' }}
@@ -146,19 +146,13 @@ function Tab({ label, active, onPress }) {
   );
 }
 
-function prettyError(e) {
-  const code = (e && e.code) || '';
-  const map = {
-    'auth/invalid-email': 'That email address looks invalid.',
-    'auth/user-not-found': 'No account with that email.',
-    'auth/wrong-password': 'Incorrect password.',
-    'auth/invalid-credential': 'Incorrect email or password.',
-    'auth/email-already-in-use': 'That email is already registered.',
-    'auth/weak-password': 'Password should be at least 6 characters.',
-    'auth/too-many-requests': 'Too many attempts. Try again later.',
-    'auth/operation-not-allowed': 'Enable this sign-in method in the Firebase console.',
-  };
-  return map[code] || (e && e.message) || 'Something went wrong.';
+function errKey(e) {
+  const code = ((e && e.code) || '').replace('auth/', '');
+  const known = [
+    'invalid-email', 'user-not-found', 'wrong-password', 'invalid-credential',
+    'email-already-in-use', 'weak-password', 'too-many-requests', 'operation-not-allowed',
+  ];
+  return known.includes(code) ? 'err.' + code : 'err.generic';
 }
 
 const styles = StyleSheet.create({

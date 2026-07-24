@@ -9,12 +9,14 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../i18n/I18nContext';
 import { CATEGORIES, servicesForCategory } from '../data/services';
 import { SERVICE_IMAGES } from '../data/serviceImages';
 import { colors, radius, spacing } from '../theme';
 
 export default function HomeScreen({ navigation }) {
   const { user, logout } = useAuth();
+  const { t, tCategory, tService } = useI18n();
   const greetingName = displayName(user);
 
   return (
@@ -22,11 +24,11 @@ export default function HomeScreen({ navigation }) {
       <ScrollView contentContainerStyle={{ padding: spacing(2), paddingBottom: spacing(5) }}>
         <View style={styles.header}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.hello}>Welcome,</Text>
+            <Text style={styles.hello}>{t('home.welcome')}</Text>
             <Text style={styles.name}>{greetingName}</Text>
           </View>
           <TouchableOpacity onPress={logout} style={styles.logout}>
-            <Text style={styles.logoutText}>Sign out</Text>
+            <Text style={styles.logoutText}>{t('home.signOut')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -35,18 +37,18 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('Requests')}
           activeOpacity={0.85}
         >
-          <Text style={styles.requestsBtnText}>My service requests</Text>
+          <Text style={styles.requestsBtnText}>{t('home.myRequests')}</Text>
           <Text style={styles.requestsBtnArrow}>→</Text>
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Our Services</Text>
+        <Text style={styles.sectionTitle}>{t('home.ourServices')}</Text>
 
         {CATEGORIES.map((cat) => {
           const services = servicesForCategory(cat.id);
           if (services.length === 0) return null;
           return (
             <View key={cat.id} style={styles.catBlock}>
-              <Text style={styles.catTitle}>{cat.name}</Text>
+              <Text style={styles.catTitle}>{tCategory(cat.id)}</Text>
               <View style={styles.grid}>
                 {services.map((s) => (
                   <TouchableOpacity
@@ -59,7 +61,7 @@ export default function HomeScreen({ navigation }) {
                   >
                     <Image source={SERVICE_IMAGES[s.id]} style={styles.cardImg} resizeMode="cover" />
                     <View style={styles.cardBody}>
-                      <Text style={styles.cardName} numberOfLines={2}>{s.name}</Text>
+                      <Text style={styles.cardName} numberOfLines={2}>{tService(s.id)}</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -73,7 +75,7 @@ export default function HomeScreen({ navigation }) {
           activeOpacity={0.9}
           onPress={() => navigation.navigate('NewRequest', {})}
         >
-          <Text style={styles.ctaText}>+  Submit a service request</Text>
+          <Text style={styles.ctaText}>+  {t('home.submit')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

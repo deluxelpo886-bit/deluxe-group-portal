@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { I18nProvider, useI18n } from './src/i18n/I18nContext';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import NewRequestScreen from './src/screens/NewRequestScreen';
@@ -29,6 +30,7 @@ function TabIcon({ emoji, focused }) {
 }
 
 function MainTabs() {
+  const { t } = useI18n();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -48,22 +50,22 @@ function MainTabs() {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarLabel: 'Home', tabBarIcon: (p) => <TabIcon emoji="🏠" {...p} /> }}
+        options={{ tabBarLabel: t('tab.home'), tabBarIcon: (p) => <TabIcon emoji="🏠" {...p} /> }}
       />
       <Tab.Screen
         name="NewRequest"
         component={NewRequestScreen}
-        options={{ tabBarLabel: 'New Request', tabBarIcon: (p) => <TabIcon emoji="📝" {...p} /> }}
+        options={{ tabBarLabel: t('tab.newRequest'), tabBarIcon: (p) => <TabIcon emoji="📝" {...p} /> }}
       />
       <Tab.Screen
         name="Requests"
         component={MyRequestsScreen}
-        options={{ tabBarLabel: 'Requests', tabBarIcon: (p) => <TabIcon emoji="📄" {...p} /> }}
+        options={{ tabBarLabel: t('tab.requests'), tabBarIcon: (p) => <TabIcon emoji="📄" {...p} /> }}
       />
       <Tab.Screen
         name="Account"
         component={AccountScreen}
-        options={{ tabBarLabel: 'Account', tabBarIcon: (p) => <TabIcon emoji="👤" {...p} /> }}
+        options={{ tabBarLabel: t('tab.account'), tabBarIcon: (p) => <TabIcon emoji="👤" {...p} /> }}
       />
     </Tab.Navigator>
   );
@@ -98,12 +100,14 @@ function RootNavigator() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <NavigationContainer theme={navTheme}>
-          <StatusBar style="dark" />
-          <RootNavigator />
-        </NavigationContainer>
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <NavigationContainer theme={navTheme}>
+            <StatusBar style="dark" />
+            <RootNavigator />
+          </NavigationContainer>
+        </AuthProvider>
+      </I18nProvider>
     </SafeAreaProvider>
   );
 }
