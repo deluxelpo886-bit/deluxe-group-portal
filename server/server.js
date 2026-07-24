@@ -2,6 +2,8 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -12,8 +14,44 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_THIS_SECRET_BEFORE_DEPLOYING';
 const VALID_COMPANIES = ['energy', 'heavy'];
 
-app.use(cors());
+// Render (and most PaaS hosts) terminate TLS at a proxy and forward the real
+// client IP in X-Forwarded-For. Trust the first proxy hop so req.ip reflects
+// the actual visitor - required for the login rate limiter below to work per
+// user instead of lumping everyone under the proxy's IP.
+app.set('trust proxy', 1);
+
+// Security headers via Helmet (HSTS, X-Content-Type-Options, frameguard, etc).
+// Content-Security-Policy is intentionally disabled: the frontend relies on a
+// large inline <script>, many inline style= attributes, and the external
+// EmailJS CDN, all of which Helmet's default CSP would block and break the app.
+// Tightening CSP later is a separate, deliberate effort.
+app.use(helmet({ contentSecurityPolicy: false }));
+
+// CORS: only allow the deployed frontend origin (and localhost for dev).
+// Configurable via ALLOWED_ORIGINS (comma-separated). Requests with no Origin
+// header - same-origin browser calls, curl, health checks - are allowed.
+const ALLOWED_ORIGINS = (
+  process.env.ALLOWED_ORIGINS ||
+  'https://deluxe-group-portal.onrender.com,http://localhost:3000'
+).split(',').map((o) => o.trim()).filter(Boolean);
+app.use(cors({
+  origin(origin, cb) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(new Error('Not allowed by CORS'));
+  }
+}));
+
 app.use(express.json({ limit: '5mb' })); // company state blobs can be a few hundred KB with lots of records
+
+// Throttle login attempts to slow brute-force / credential-stuffing: at most
+// 10 attempts per IP per 15-minute window. Applied only to /api/login below.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts. Please try again in a few minutes.' }
+});
 
 // ---------- Auth middleware ----------
 function authRequired(req, res, next) {
@@ -37,7 +75,7 @@ function validCompany(req, res, next) {
 }
 
 // ---------- Auth routes ----------
-app.post('/api/login', (req, res) => {
+app.post('/api/login', loginLimiter, (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
   const user = findUser(username);
@@ -94,6 +132,20 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
+
+// ---------- Optional in-process daily backups ----------
+// On Render, a separate cron-job container cannot see the web service's
+// persistent disk, so the most reliable way to back up the SQLite file is from
+// inside this process. Enable by setting ENABLE_DAILY_BACKUP=true. Runs once on
+// startup, then every 24h. See scripts/backup-db.js and BACKUPS.md.
+if (process.env.ENABLE_DAILY_BACKUP === 'true') {
+  const { runBackup } = require('../scripts/backup-db');
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+  const tick = () => runBackup().catch((e) => console.error('Scheduled backup failed:', e));
+  tick();
+  setInterval(tick, ONE_DAY_MS);
+  console.log('Daily in-process DB backups enabled');
+}
 
 app.listen(PORT, () => {
   console.log('Deluxe Group Portal server running on port ' + PORT);
