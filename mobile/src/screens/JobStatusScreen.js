@@ -9,6 +9,7 @@ import { imageFor } from '../data/serviceImages';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import Thumbnail from '../components/Thumbnail';
+import SignaturePad from '../components/SignaturePad';
 import { ticketNo, CUSTOMER_STEPS, statusStep, formatDay } from '../lib/requests';
 
 export default function JobStatusScreen({ route, navigation }) {
@@ -16,6 +17,7 @@ export default function JobStatusScreen({ route, navigation }) {
   const [req, setReq] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [signing, setSigning] = useState(false);
+  const [signVisible, setSignVisible] = useState(false);
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'serviceRequests', id), (snap) => {
@@ -47,12 +49,14 @@ export default function JobStatusScreen({ route, navigation }) {
   const report = req.serviceReport || {};
   const isCompleted = req.status === 'Completed';
 
-  const signOff = async () => {
+  const saveSignature = async (dataUrl) => {
+    setSignVisible(false);
     setSigning(true);
     try {
       await updateDoc(doc(db, 'serviceRequests', id), {
         customerSignedOff: true,
         signedOffAt: serverTimestamp(),
+        signature: dataUrl,
       });
       Alert.alert('Thank you', 'Completion signed off.');
     } catch (e) {
@@ -109,14 +113,23 @@ export default function JobStatusScreen({ route, navigation }) {
           req.customerSignedOff ? (
             <View style={[styles.banner, { backgroundColor: '#eaf6ef', borderColor: '#bfe3cd' }]}>
               <Text style={{ color: colors.green, fontWeight: '700' }}>✓ You signed off this completion.</Text>
+              {req.signature ? (
+                <Image source={{ uri: req.signature }} style={styles.signatureImg} resizeMode="contain" />
+              ) : null}
             </View>
           ) : (
-            <TouchableOpacity style={styles.signBtn} activeOpacity={0.9} onPress={signOff} disabled={signing}>
+            <TouchableOpacity style={styles.signBtn} activeOpacity={0.9} onPress={() => setSignVisible(true)} disabled={signing}>
               <Text style={styles.signBtnText}>{signing ? 'Signing…' : 'Sign Off Completion'}</Text>
             </TouchableOpacity>
           )
         ) : null}
       </ScrollView>
+
+      <SignaturePad
+        visible={signVisible}
+        onCancel={() => setSignVisible(false)}
+        onSave={saveSignature}
+      />
     </View>
   );
 }
@@ -203,5 +216,9 @@ const styles = StyleSheet.create({
   reportLine: { fontSize: 14, lineHeight: 22 },
   banner: { borderWidth: 1, borderRadius: radius.md, padding: 14, marginTop: spacing(2) },
   signBtn: { backgroundColor: colors.navy, borderRadius: radius.md, paddingVertical: 16, alignItems: 'center', marginTop: spacing(2) },
-  signBtnText: { color: colors.cream, fontWeight: '800', fontSize: 16 },
+  signBtnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  signatureImg: {
+    width: '100%', height: 90, marginTop: 10, backgroundColor: '#fff',
+    borderRadius: 8, borderWidth: 1, borderColor: colors.line,
+  },
 });

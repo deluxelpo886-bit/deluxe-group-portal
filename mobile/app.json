@@ -9,7 +9,7 @@
     "scheme": "deluxego",
     "splash": {
       "image": "./assets/splash-icon.png",
-      "backgroundColor": "#0F2438",
+      "backgroundColor": "#FFFFFF",
       "resizeMode": "contain"
     },
     "assetBundlePatterns": ["**/*"],
@@ -21,7 +21,7 @@
       "package": "com.deluxe.go",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0F2438"
+        "backgroundColor": "#FFFFFF"
       }
     },
     "web": {

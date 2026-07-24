@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -67,9 +68,11 @@ export default function LoginScreen() {
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.brand}>
-          <View style={styles.logoMark}>
-            <Text style={styles.logoMarkText}>D</Text>
-          </View>
+          <Image
+            source={require('../../assets/brand-icon.png')}
+            style={styles.logoMark}
+            resizeMode="contain"
+          />
           <Text style={styles.brandTitle}>Deluxe Go</Text>
           <Text style={styles.brandSub}>Service requests, on the move.</Text>
         </View>
@@ -162,15 +165,11 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, padding: spacing(3), justifyContent: 'center' },
   brand: { alignItems: 'center', marginBottom: spacing(4) },
   logoMark: {
-    width: 64,
-    height: 64,
+    width: 76,
+    height: 76,
     borderRadius: radius.md,
-    backgroundColor: colors.gold,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: 14,
   },
-  logoMarkText: { color: '#fff', fontSize: 34, fontWeight: '900' },
   brandTitle: { color: colors.navy, fontSize: 30, fontWeight: '800', letterSpacing: 1 },
   brandSub: { color: colors.gold, fontSize: 14, marginTop: 4 },
   sheet: {
