@@ -1046,7 +1046,7 @@ function renderDash(){
     html = '<div style="background:#fff;border-radius:12px;padding:32px;text-align:center;color:#aaa;border:1px solid #E8E8E8;font-size:14px;">All systems normal - No alerts</div>';
   } else {
     if(gAlerts.length){
-      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">Generator Alerts ('+gAlerts.length+')<button onclick="sendWAAlerts()" style="background:#25D366;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">Send WhatsApp Alert</button></div>';
+      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">Generator Alerts ('+gAlerts.length+')<button data-act="sendWA" style="background:#25D366;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">Send WhatsApp Alert</button></div>';
       gAlerts.forEach(function(g){
         var s=gStatus(g), r=gRem(g);
         var ic = s==='danger'?'[RED]':s==='urgent'?'[ORANGE]':'[WARN]';
@@ -1055,7 +1055,7 @@ function renderDash(){
       html += '</div>';
     }
     if(lAlerts.length){
-      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">LPO Alerts ('+lAlerts.length+')<button onclick="sendWAAlerts()" style="background:#25D366;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">Send WhatsApp Alert</button></div>';
+      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">LPO Alerts ('+lAlerts.length+')<button data-act="sendWA" style="background:#25D366;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">Send WhatsApp Alert</button></div>';
       lAlerts.forEach(function(l){
         var s=lStatus(l), d=daysDiff(l.exp);
         var ic = s==='danger'?'[RED]':s==='urgent'?'[ORANGE]':'[WARN]';
@@ -1064,7 +1064,7 @@ function renderDash(){
       html += '</div>';
     }
     if(iAlerts.length){
-      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">Invoice Alerts ('+iAlerts.length+')<button onclick="go(\'invoice\')" style="background:#1E2A44;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">View Invoices</button></div>';
+      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">Invoice Alerts ('+iAlerts.length+')<button data-act="go" data-v="invoice" style="background:#1E2A44;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">View Invoices</button></div>';
       iAlerts.forEach(function(i){
         var age = ageDays(i.date);
         var s = age>=60?'danger':'urgent';
@@ -1074,7 +1074,7 @@ function renderDash(){
       html += '</div>';
     }
     if(pAlerts.length){
-      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">Part Alerts ('+pAlerts.length+')<button onclick="go(\'parts\')" style="background:#1E2A44;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">View Inventory</button></div>';
+      html += '<div class="aPanel"><div class="aPH" style="display:flex;align-items:center;justify-content:space-between;">Part Alerts ('+pAlerts.length+')<button data-act="go" data-v="parts" style="background:#1E2A44;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">View Inventory</button></div>';
       pAlerts.forEach(function(p){
         var s = pStatus(p);
         var ic = s==='danger'?'[RED]':'[ORANGE]';
@@ -1161,11 +1161,11 @@ function renderGen(){
       '<td><small>'+(g.tech||'-')+'</small></td>' +
       '<td>'+badge(s)+'</td>' +
       '<td style="white-space:nowrap">' +
-        '<button class="btnP btnSm" onclick="openLogReading('+idx+')">Log</button> ' +
-        '<button class="btnP btnSm" onclick="openLogFuel('+idx+')">Fuel</button> ' +
-        '<button class="btnP btnSm" onclick="editGen('+idx+')">Edit</button> ' +
-        '<button class="btnP btnSm btnRed" onclick="archiveGen('+idx+')">Archive</button> ' +
-        '<button class="btnP btnSm btnDR" onclick="delGen('+idx+')">Del</button>' +
+        '<button class="btnP btnSm" data-act="logReading" data-i="'+idx+'">Log</button> ' +
+        '<button class="btnP btnSm" data-act="logFuel" data-i="'+idx+'">Fuel</button> ' +
+        '<button class="btnP btnSm" data-act="editGen" data-i="'+idx+'">Edit</button> ' +
+        '<button class="btnP btnSm btnRed" data-act="archiveGen" data-i="'+idx+'">Archive</button> ' +
+        '<button class="btnP btnSm btnDR" data-act="delGen" data-i="'+idx+'">Del</button>' +
       '</td></tr>';
   });
   body.innerHTML = rows;
@@ -1330,8 +1330,8 @@ function renderLpo(){
     var balQty = '';
     scpParts.forEach(function(p){ if(p.indexOf('Bal Qty')>=0) balQty=p.replace('Bal Qty:','').trim(); });
     var letterBtns = (s==='urgent'||s==='danger') ?
-      '<button class="btnP btnSm" style="background:#E65100" onclick="openLetter('+idx+',\'ext\')">Ext. Letter</button> '+
-      '<button class="btnP btnSm btnRed" onclick="openLetter('+idx+',\'offhire\')">Off-Hire</button> ' : '';
+      '<button class="btnP btnSm" style="background:#E65100" data-act="letter" data-i="'+idx+'" data-v="ext">Ext. Letter</button> '+
+      '<button class="btnP btnSm btnRed" data-act="letter" data-i="'+idx+'" data-v="offhire">Off-Hire</button> ' : '';
     rows+='<tr>'+
       '<td><strong>'+l.num+'</strong></td>'+
       '<td><small style="color:#555">'+(l.site||'-')+'</small></td>'+
@@ -1344,9 +1344,9 @@ function renderLpo(){
       '<td>'+badge(s)+'</td>'+
       '<td style="white-space:nowrap">'+
         letterBtns+
-        '<button class="btnP btnSm" onclick="editLpo('+idx+')">Edit</button> '+
-        '<button class="btnP btnSm btnRed" onclick="archiveLpo('+idx+')">Archive</button> '+
-        '<button class="btnP btnSm btnDR" onclick="delLpo('+idx+')">Del</button>'+
+        '<button class="btnP btnSm" data-act="editLpo" data-i="'+idx+'">Edit</button> '+
+        '<button class="btnP btnSm btnRed" data-act="archiveLpo" data-i="'+idx+'">Archive</button> '+
+        '<button class="btnP btnSm btnDR" data-act="delLpo" data-i="'+idx+'">Del</button>'+
       '</td></tr>';
   });
   body.innerHTML=rows;
@@ -1437,7 +1437,7 @@ function buildLetterHTML(l, type){
     +'.printBar button{background:#1E2A44;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;}'
     +'@media print{.printBar{display:none;}}'
     +'</style></head><body>'
-    +'<div class="printBar"><button onclick="window.print()">Print / Save as PDF</button></div>'
+    +'<div class="printBar"><button data-act="print">Print / Save as PDF</button></div>'
     +'<div class="lhead"><img src="'+c.logo+'"/><h2>'+c.name+'</h2></div>'
     +'<div class="lmeta">Date: '+dateStr+'</div>'
     +'<div class="lmeta">To,<br>'+client+(site?('<br>'+site):'')+'</div>'
@@ -1501,7 +1501,7 @@ function buildReportHTML(){
     +'.printBar button{background:#1E2A44;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;}'
     +'@media print{.printBar{display:none;}}'
     +'</style></head><body>'
-    +'<div class="printBar"><button onclick="window.print()">Print / Save as PDF</button></div>'
+    +'<div class="printBar"><button data-act="print">Print / Save as PDF</button></div>'
     +'<div class="rhead"><img src="'+c.logo+'"/><div><h1>'+c.name+'</h1><p>Monthly Summary Report - Generated '+dateStr+'</p></div></div>'
     +'<div class="rSummary">'
       +'<div class="rCard"><div class="n">'+S.gens.length+'</div><div class="l">Generators</div></div>'
@@ -1562,7 +1562,7 @@ function renderTs(){
       '<td>'+(t.days||'-')+' days</td><td>'+(t.hrs||'-')+' hrs</td>'+
       '<td><strong style="color:'+sc+'">'+(t.sign||'Pending')+'</strong></td>'+
       '<td><small>'+(t.rem||'-')+'</small></td>'+
-      '<td><button class="btnP btnSm" onclick="editTs('+idx+')">Edit</button> <button class="btnP btnSm btnDR" onclick="delTs('+idx+')">Del</button></td>'+
+      '<td><button class="btnP btnSm" data-act="editTs" data-i="'+idx+'">Edit</button> <button class="btnP btnSm btnDR" data-act="delTs" data-i="'+idx+'">Del</button></td>'+
     '</tr>';
   });
   body.innerHTML=rows;
@@ -1652,8 +1652,8 @@ function renderInv(){
       '<td><strong style="color:'+ac+'">'+(inv.status==='Paid'?'-':age+' days')+'</strong></td>'+
       '<td>'+badge(inv.status==='Paid'?'ok':inv.status==='Approved'?'warn':s)+' <small>'+inv.status+'</small></td>'+
       '<td style="white-space:nowrap">'+
-        '<button class="btnP btnSm" onclick="editInv('+idx+')">Edit</button> '+
-        '<button class="btnP btnSm btnDR" onclick="delInv('+idx+')">Del</button>'+
+        '<button class="btnP btnSm" data-act="editInv" data-i="'+idx+'">Edit</button> '+
+        '<button class="btnP btnSm btnDR" data-act="delInv" data-i="'+idx+'">Del</button>'+
       '</td></tr>';
   });
   body.innerHTML = rows;
@@ -1729,8 +1729,8 @@ function renderTrash(){
   list.innerHTML = S.trash.map(function(t,i){
     return '<div class="trashItem"><span class="tType">'+typeLabel[t.type]+'</span>'+
       '<span style="flex:1">'+t.label+'</span>'+
-      '<button class="btnP btnSm" onclick="restoreTrash('+i+')">Restore</button>'+
-      '<button class="btnP btnSm btnDR" onclick="purgeTrashItem('+i+')">Delete</button></div>';
+      '<button class="btnP btnSm" data-act="restoreTrash" data-i="'+i+'">Restore</button>'+
+      '<button class="btnP btnSm btnDR" data-act="purgeTrash" data-i="'+i+'">Delete</button></div>';
   }).join('');
 }
 
@@ -1784,7 +1784,7 @@ function renderCalendar(){
       var color = e.level==='danger'?'#B71C1C':(e.kind==='lpo'?'#E0A82E':'#1565C0');
       return '<span class="calDot" style="background:'+color+'"></span>';
     }).join('');
-    html += '<div class="calCell'+(isToday?' calToday':'')+(isSelected?' calSelected':'')+'" onclick="calSelectDay(\''+dateStr+'\')">'+
+    html += '<div class="calCell'+(isToday?' calToday':'')+(isSelected?' calSelected':'')+'" data-act="calDay" data-v="'+dateStr+'">'+
       '<div class="calDayNum">'+day+'</div>'+
       '<div class="calDots">'+dots+'</div>'+
       '</div>';
@@ -1864,8 +1864,8 @@ function renderParts(){
       '<td>'+fDate(p.restocked)+'</td>'+
       '<td>'+badge(s)+'</td>'+
       '<td style="white-space:nowrap">'+
-        '<button class="btnP btnSm" onclick="editPart('+idx+')">Edit</button> '+
-        '<button class="btnP btnSm btnDR" onclick="delPart('+idx+')">Del</button>'+
+        '<button class="btnP btnSm" data-act="editPart" data-i="'+idx+'">Edit</button> '+
+        '<button class="btnP btnSm btnDR" data-act="delPart" data-i="'+idx+'">Del</button>'+
       '</td></tr>';
   });
   body.innerHTML = rows;
@@ -1952,7 +1952,7 @@ function renderActivityLog(){
 }
 function renderTechList(){
   var list=document.getElementById('techList');
-  list.innerHTML=S.techs.length?S.techs.map(function(t,i){ return '<div class="techItem"><span>'+t+'</span><button onclick="delTech('+i+')">x</button></div>'; }).join(''):'<div style="color:#aaa;font-size:12px;padding:8px">No technicians added yet</div>';
+  list.innerHTML=S.techs.length?S.techs.map(function(t,i){ return '<div class="techItem"><span>'+t+'</span><button data-act="delTech" data-i="'+i+'">x</button></div>'; }).join(''):'<div style="color:#aaa;font-size:12px;padding:8px">No technicians added yet</div>';
   var opts='<option value="">-- Select Technician --</option>'+S.techs.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
   document.getElementById('g_tech').innerHTML=opts;
   document.getElementById('t_tech').innerHTML=opts;
@@ -1963,7 +1963,7 @@ function delTech(i){ if(!confirm('Remove '+S.techs[i]+'?')) return; S.techs.spli
 function renderClientList(){
   var list=document.getElementById('clientDirList');
   if(list){
-    list.innerHTML = S.clients.length ? S.clients.map(function(c,i){ return '<div class="techItem"><span>'+c+'</span><button onclick="delClient('+i+')">x</button></div>'; }).join('') : '<div style="color:#aaa;font-size:12px;padding:8px">No clients added yet</div>';
+    list.innerHTML = S.clients.length ? S.clients.map(function(c,i){ return '<div class="techItem"><span>'+c+'</span><button data-act="delClient" data-i="'+i+'">x</button></div>'; }).join('') : '<div style="color:#aaa;font-size:12px;padding:8px">No clients added yet</div>';
   }
   var dl = document.getElementById('clientList');
   if(dl) dl.innerHTML = S.clients.map(function(c){ return '<option value="'+c+'">'; }).join('');
@@ -2259,10 +2259,10 @@ function renderAlarmBanner(items){
     '<div class="alarmBanner"><div class="alarmIcon">&#128680;</div>'+
     '<div class="alarmBody"><strong>ALARM - Action Required</strong><span>'+summary+'</span></div>'+
     '<div class="alarmActions">'+
-      '<button class="waBtn" onclick="copyAlertMessage()">Copy for WA Group</button>'+
-      '<button class="waBtn" onclick="sendWAAlerts()">Send WhatsApp</button>'+
-      (S.email.enabled?'<button class="mailBtn" onclick="sendAlertEmail(\'Deluxe Energy Alert\', buildAlertMsg().msg)">Send Email</button>':'')+
-      '<button class="ackBtn" onclick="ackAlarm()">Acknowledge</button>'+
+      '<button class="waBtn" data-act="copyAlert">Copy for WA Group</button>'+
+      '<button class="waBtn" data-act="sendWA">Send WhatsApp</button>'+
+      (S.email.enabled?'<button class="mailBtn" data-act="sendEmail">Send Email</button>':'')+
+      '<button class="ackBtn" data-act="ackAlarm">Acknowledge</button>'+
     '</div></div>';
 }
 function ackAlarm(){
@@ -2464,6 +2464,42 @@ window.addEventListener('DOMContentLoaded', function(){
       document.getElementById('companySelect').classList.add('open');
     }
   }catch(e){}
+  // Delegated click handler (replaces former inline handlers, required by strict CSP script-src)
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('[data-act]');
+    if(!el) return;
+    var act = el.getAttribute('data-act');
+    var i = el.getAttribute('data-i');
+    var v = el.getAttribute('data-v');
+    switch(act){
+      case 'sendWA': sendWAAlerts(); break;
+      case 'go': go(v); break;
+      case 'logReading': openLogReading(+i); break;
+      case 'logFuel': openLogFuel(+i); break;
+      case 'editGen': editGen(+i); break;
+      case 'archiveGen': archiveGen(+i); break;
+      case 'delGen': delGen(+i); break;
+      case 'letter': openLetter(+i, v); break;
+      case 'editLpo': editLpo(+i); break;
+      case 'archiveLpo': archiveLpo(+i); break;
+      case 'delLpo': delLpo(+i); break;
+      case 'print': window.print(); break;
+      case 'editTs': editTs(+i); break;
+      case 'delTs': delTs(+i); break;
+      case 'editInv': editInv(+i); break;
+      case 'delInv': delInv(+i); break;
+      case 'restoreTrash': restoreTrash(+i); break;
+      case 'purgeTrash': purgeTrashItem(+i); break;
+      case 'calDay': calSelectDay(v); break;
+      case 'editPart': editPart(+i); break;
+      case 'delPart': delPart(+i); break;
+      case 'delTech': delTech(+i); break;
+      case 'delClient': delClient(+i); break;
+      case 'copyAlert': copyAlertMessage(); break;
+      case 'sendEmail': sendAlertEmail('Deluxe Energy Alert', buildAlertMsg().msg); break;
+      case 'ackAlarm': ackAlarm(); break;
+    }
+  });
   document.getElementById('loginBtn').addEventListener('click', doLogin);
   document.getElementById('lu').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
   document.getElementById('lp').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
