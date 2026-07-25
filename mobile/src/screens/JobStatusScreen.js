@@ -11,6 +11,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import Thumbnail from '../components/Thumbnail';
 import SignaturePad from '../components/SignaturePad';
 import { ticketNo, CUSTOMER_STEPS, statusStep, formatDay } from '../lib/requests';
+import { generateQuotePdf } from '../pdf/generatePdf';
 
 export default function JobStatusScreen({ route, navigation }) {
   const { id } = route.params || {};
@@ -19,6 +20,7 @@ export default function JobStatusScreen({ route, navigation }) {
   const [notFound, setNotFound] = useState(false);
   const [signing, setSigning] = useState(false);
   const [signVisible, setSignVisible] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'serviceRequests', id), (snap) => {
@@ -49,6 +51,17 @@ export default function JobStatusScreen({ route, navigation }) {
   const declined = step === -1;
   const report = req.serviceReport || {};
   const isCompleted = req.status === 'Completed';
+
+  const downloadInvoice = async () => {
+    setPdfBusy(true);
+    try {
+      await generateQuotePdf(req, 'invoice');
+    } catch (e) {
+      Alert.alert(t('pdf.error'), e?.message || '');
+    } finally {
+      setPdfBusy(false);
+    }
+  };
 
   const saveSignature = async (dataUrl) => {
     setSignVisible(false);
@@ -106,6 +119,12 @@ export default function JobStatusScreen({ route, navigation }) {
               <ReportLine label={t('job.completed')} value={report.completedAt ? formatDay(report.completedAt) : (isCompleted ? formatDay(req.updatedAt) : '—')} />
             </View>
           </View>
+        ) : null}
+
+        {isCompleted && req.quote ? (
+          <TouchableOpacity style={styles.pdfBtn} disabled={pdfBusy} onPress={downloadInvoice} activeOpacity={0.85}>
+            <Text style={styles.pdfBtnText}>{pdfBusy ? t('pdf.preparing') : '⬇  ' + t('job.downloadInvoice')}</Text>
+          </TouchableOpacity>
         ) : null}
 
         {isCompleted ? (
@@ -217,6 +236,11 @@ const styles = StyleSheet.create({
   banner: { borderWidth: 1, borderRadius: radius.md, padding: 14, marginTop: spacing(2) },
   signBtn: { backgroundColor: colors.navy, borderRadius: radius.md, paddingVertical: 16, alignItems: 'center', marginTop: spacing(2) },
   signBtnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  pdfBtn: {
+    borderWidth: 1.5, borderColor: colors.navy, borderRadius: radius.md,
+    paddingVertical: 14, alignItems: 'center', marginTop: spacing(2),
+  },
+  pdfBtnText: { color: colors.navy, fontWeight: '800', fontSize: 15 },
   signatureImg: {
     width: '100%', height: 90, marginTop: 10, backgroundColor: '#fff',
     borderRadius: 8, borderWidth: 1, borderColor: colors.line,

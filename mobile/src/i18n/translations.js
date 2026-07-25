@@ -119,6 +119,11 @@ export const UI = {
     'quote.decidedApproved': 'You have approved this quote.',
     'quote.decidedDeclined': 'You have declined this quote.',
     'quote.errorTitle': 'Something went wrong',
+    'quote.downloadPdf': 'Download PDF quote',
+    'job.downloadInvoice': 'Download PDF invoice',
+    'pdf.preparing': 'Preparing…',
+    'pdf.error': 'Could not create the PDF',
+    'pdf.noQuote': 'No quote to export yet.',
 
     'acc.title': 'Account',
     'acc.individual': 'Individual',
@@ -252,6 +257,11 @@ export const UI = {
     'quote.decidedApproved': 'لقد وافقت على هذا العرض.',
     'quote.decidedDeclined': 'لقد رفضت هذا العرض.',
     'quote.errorTitle': 'حدث خطأ ما',
+    'quote.downloadPdf': 'تحميل عرض السعر (PDF)',
+    'job.downloadInvoice': 'تحميل الفاتورة (PDF)',
+    'pdf.preparing': 'جارٍ التحضير…',
+    'pdf.error': 'تعذّر إنشاء ملف PDF',
+    'pdf.noQuote': 'لا يوجد عرض سعر للتصدير بعد.',
 
     'acc.title': 'الحساب',
     'acc.individual': 'فرد',

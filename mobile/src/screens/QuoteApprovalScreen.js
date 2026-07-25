@@ -9,6 +9,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { colors, radius, spacing } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { money, ticketNo } from '../lib/requests';
+import { generateQuotePdf } from '../pdf/generatePdf';
 
 export default function QuoteApprovalScreen({ route, navigation }) {
   const { id } = route.params || {};
@@ -16,6 +17,7 @@ export default function QuoteApprovalScreen({ route, navigation }) {
   const [req, setReq] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [busy, setBusy] = useState('');
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'serviceRequests', id), (snap) => {
@@ -65,6 +67,18 @@ export default function QuoteApprovalScreen({ route, navigation }) {
       Alert.alert(t('quote.errorTitle'), e?.message || '');
     } finally {
       setBusy('');
+    }
+  };
+
+  const downloadPdf = async () => {
+    if (!quote) return Alert.alert(t('pdf.error'), t('pdf.noQuote'));
+    setPdfBusy(true);
+    try {
+      await generateQuotePdf(req, 'quote');
+    } catch (e) {
+      Alert.alert(t('pdf.error'), e?.message || '');
+    } finally {
+      setPdfBusy(false);
     }
   };
 
@@ -119,6 +133,10 @@ export default function QuoteApprovalScreen({ route, navigation }) {
               <TermLine label={t('quote.validity')} value={quote.validity || t('quote.days')} />
               <TermLine label={t('quote.remarks')} value={quote.remarks || t('quote.defaultRemarks')} />
             </View>
+
+            <TouchableOpacity style={styles.pdfBtn} disabled={pdfBusy} onPress={downloadPdf} activeOpacity={0.85}>
+              <Text style={styles.pdfBtnText}>{pdfBusy ? t('pdf.preparing') : '⬇  ' + t('quote.downloadPdf')}</Text>
+            </TouchableOpacity>
 
             {alreadyDecided ? (
               <View style={[styles.banner, req.status === 'Approved'
@@ -183,4 +201,9 @@ const styles = StyleSheet.create({
   approveBtn: { backgroundColor: colors.navy },
   approveText: { color: colors.cream, fontWeight: '800', fontSize: 16 },
   banner: { borderWidth: 1, borderRadius: radius.md, padding: 14, marginTop: spacing(3) },
+  pdfBtn: {
+    borderWidth: 1.5, borderColor: colors.navy, borderRadius: radius.md,
+    paddingVertical: 14, alignItems: 'center', marginTop: spacing(3),
+  },
+  pdfBtnText: { color: colors.navy, fontWeight: '800', fontSize: 15 },
 });

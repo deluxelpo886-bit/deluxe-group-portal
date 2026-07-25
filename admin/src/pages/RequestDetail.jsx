@@ -26,6 +26,7 @@ export default function RequestDetail() {
   const [items, setItems] = useState([blankItem()]);
   const [status, setStatus] = useState('New');
   const [zoneId, setZoneId] = useState('');
+  const [letterhead, setLetterhead] = useState('heavy');
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'serviceRequests', id), (snap) => {
@@ -35,6 +36,7 @@ export default function RequestDetail() {
       setStatus(data.status || 'New');
       if (data.quote?.items?.length) setItems(data.quote.items.map((i) => ({ ...i })));
       if (data.inspection?.zoneId) setZoneId(data.inspection.zoneId);
+      if (data.letterhead) setLetterhead(data.letterhead);
     });
     return unsub;
   }, [id]);
@@ -102,6 +104,7 @@ export default function RequestDetail() {
     patch(
       {
         quote: { items: clean, ...t, sentAt: new Date().toISOString(), sentBy: by },
+        letterhead,
         status: 'Quoted',
         statusHistory: arrayUnion({ status: 'Quoted', at: new Date().toISOString(), by }),
       },
@@ -223,6 +226,20 @@ export default function RequestDetail() {
           {req.quote?.sentAt ? (
             <span className="muted small">Last sent {formatDate({ seconds: Date.parse(req.quote.sentAt) / 1000 })} by {req.quote.sentBy}</span>
           ) : null}
+        </div>
+
+        <div className="row items-center wrap mb-3" style={{ gap: 10 }}>
+          <span className="label" style={{ margin: 0 }}>Letterhead</span>
+          <select
+            className="input"
+            style={{ width: 'auto' }}
+            value={letterhead}
+            onChange={(e) => { setLetterhead(e.target.value); patch({ letterhead: e.target.value }, 'letterhead'); }}
+          >
+            <option value="heavy">Deluxe Heavy Equipment</option>
+            <option value="energy">Deluxe Energy Solutions</option>
+          </select>
+          <span className="muted small">Shown on the customer's PDF quote / invoice.</span>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
