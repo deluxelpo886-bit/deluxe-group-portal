@@ -44,7 +44,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-0k3KuvoY82foJfipoH5fExC4SBM5gsH0s86flr2nUlU='";
+const INLINE_SCRIPT_HASH = "'sha256-L2o4BxIOyc+V+yP3ggqhUtuESjNc+3lp/clWAq7xaB0='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -140,12 +140,26 @@ app.get('/api/state/:company', authRequired, validCompany, (req, res) => {
   res.json(state);
 });
 
-// PUT (replace) the full state blob for a company workspace
+// PUT (replace) the full state blob for a company workspace.
+// Optimistic concurrency: the client sends the `rev` it last loaded. If the
+// stored rev has moved on (another device saved), respond 409 with the latest
+// state so the client can re-sync instead of silently overwriting it.
 app.put('/api/state/:company', authRequired, validCompany, (req, res) => {
-  const { data } = req.body || {};
+  const { data, rev } = req.body || {};
   if (!data || typeof data !== 'object') return res.status(400).json({ error: 'Missing data payload' });
-  const updated_at = saveState(req.params.company, data, req.user.username);
-  res.json({ ok: true, updated_at });
+  const result = saveState(req.params.company, data, req.user.username, rev);
+  if (result.conflict) {
+    const current = getState(req.params.company);
+    return res.status(409).json({
+      error: 'conflict',
+      message: 'This workspace was updated on another device since you loaded it.',
+      rev: current.rev,
+      updated_at: current.updated_at,
+      updated_by: current.updated_by,
+      data: current.data
+    });
+  }
+  res.json({ ok: true, updated_at: result.updated_at, rev: result.rev });
 });
 
 // Lightweight activity log (who saved what, when) - useful once more than one person has access

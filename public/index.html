@@ -773,6 +773,7 @@ var API_BASE = '';
 var authToken = null;
 var syncing = false;
 var pendingSave = false;
+var stateRev = null; // server version of the loaded state, for optimistic concurrency
 
 function apiHeaders(){
   var h = {'Content-Type':'application/json'};
@@ -789,22 +790,48 @@ function save(){
   if(syncing){ pendingSave = true; return; }
   syncing = true;
   setSyncStatus('Saving...');
-  fetch(API_BASE+'/api/state/'+currentCompany, { method:'PUT', headers:apiHeaders(), body:JSON.stringify({data:S}) })
+  fetch(API_BASE+'/api/state/'+currentCompany, { method:'PUT', headers:apiHeaders(), body:JSON.stringify({data:S, rev:stateRev}) })
     .then(function(r){
       if(r.status===401){ handleAuthExpired(); throw new Error('auth'); }
+      if(r.status===409){ return r.json().then(function(res){ throw { conflict:true, res:res }; }); }
       if(!r.ok) throw new Error('save-failed');
       return r.json();
     })
-    .then(function(){
+    .then(function(res){
+      if(res && res.rev!=null) stateRev = res.rev;
       setSyncStatus('Synced just now');
       // Lightweight activity log: records WHO saved and WHEN, not a field-level diff of WHAT changed.
       fetch(API_BASE+'/api/activity/'+currentCompany, { method:'POST', headers:apiHeaders(), body:JSON.stringify({action:'Workspace updated'}) }).catch(function(){});
     })
-    .catch(function(err){ if(err.message!=='auth'){ setSyncStatus('Save failed - offline?'); toast('danger','Could not save to server - check your connection'); } })
+    .catch(function(err){
+      if(err && err.conflict){ handleSaveConflict(err.res); }
+      else if(err.message!=='auth'){ setSyncStatus('Save failed - offline?'); toast('danger','Could not save to server - check your connection'); }
+    })
     .then(function(){
       syncing = false;
       if(pendingSave){ pendingSave = false; save(); }
     });
+}
+
+// Another device saved since we loaded. Reload the server's latest state, update
+// our version, refresh the view, and warn the user so their change isn't lost
+// silently (and so we don't clobber the other device's save).
+function handleSaveConflict(res){
+  pendingSave = false;
+  if(res && res.data){
+    S = defaultState();
+    var p = res.data;
+    Object.keys(S).forEach(function(k){ if(p[k]!==undefined) S[k]=p[k]; });
+    if(!S.letter.signName){ S.letter.signName=COMPANIES[currentCompany].signName; S.letter.signTitle=COMPANIES[currentCompany].signTitle; S.letter.signPhone=COMPANIES[currentCompany].signPhone; }
+    if(!S.settings.wa){ S.settings.wa=COMPANIES[currentCompany].wa; }
+  }
+  if(res && res.rev!=null) stateRev = res.rev;
+  applyTheme();
+  var active = document.querySelector('.page.active');
+  if(active && active.id.indexOf('page-')===0){ go(active.id.slice(5)); }
+  setSyncStatus('Reloaded latest');
+  var who = (res && res.updated_by) ? (' by '+res.updated_by) : '';
+  toast('warn','This workspace was just updated on another device'+who+'. The latest version has been loaded - please re-enter your last change.');
 }
 
 function load(){
@@ -818,6 +845,7 @@ function load(){
       return r.json();
     })
     .then(function(res){
+      stateRev = (res && res.rev!=null) ? res.rev : 0;
       var isFirstEver = !res || !res.data;
       if(res && res.data){
         var p = res.data;
@@ -2506,6 +2534,7 @@ function pullRemoteState(){
       return r.json();
     })
     .then(function(res){
+      stateRev = (res && res.rev!=null) ? res.rev : stateRev;
       if(res && res.data){
         var p = res.data;
         Object.keys(S).forEach(function(k){ if(p[k]!==undefined) S[k]=p[k]; });
