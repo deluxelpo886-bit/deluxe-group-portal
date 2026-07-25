@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const { findUser, updateUserPassword, getState, saveState, logActivity, getActivity } = require('./db');
+const { extractFields } = require('./extract');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,7 +30,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-DEXJOItMD1MNCUOdPwZlhFMovOJbOMkotjHjwY+Wn1Q='";
+const INLINE_SCRIPT_HASH = "'sha256-ZW6yTU3s4KA3FxjvNBaQG7ZB7ZMWvzNuSa8xrEqXSVA='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -141,6 +142,28 @@ app.post('/api/activity/:company', authRequired, validCompany, (req, res) => {
   const { action } = req.body || {};
   logActivity(req.params.company, req.user.username, action || 'update');
   res.json({ ok: true });
+});
+
+// ---------- PDF extraction ----------
+// Accepts a raw PDF (Content-Type: application/pdf), extracts LPO/invoice fields
+// via the Anthropic API, and returns them for the frontend to pre-fill (never
+// auto-saves). Always responds 200 with a `fields` object; on any failure the
+// object is empty so the user can fill the form manually.
+app.post('/api/extract/:type', authRequired, express.raw({ type: 'application/pdf', limit: '20mb' }), async (req, res) => {
+  const type = req.params.type;
+  if (type !== 'lpo' && type !== 'invoice') {
+    return res.status(400).json({ ok: false, fields: {}, error: 'Unknown extract type: ' + type });
+  }
+  if (!req.body || !req.body.length) {
+    return res.status(400).json({ ok: false, fields: {}, message: 'No PDF received' });
+  }
+  try {
+    const result = await extractFields(type, req.body);
+    res.json(result);
+  } catch (e) {
+    console.error('PDF extraction failed:', e && e.message);
+    res.json({ ok: false, fields: {}, message: 'Extraction failed - please enter the details manually' });
+  }
 });
 
 // ---------- Health check ----------

@@ -342,7 +342,9 @@ body.dark #calDetails .calItm{border-color:var(--border);}
         <div class="secHdr">
           <h2>LPO Tracker</h2>
           <button class="btnG" id="exportLpoCsvBtn" style="margin-right:8px;">Export CSV</button>
+          <button class="btnP" id="uploadLpoBtn" style="margin-right:8px;">&#8593; Import from PDF</button>
           <button class="btnP" id="addLpoBtn">+ Add LPO</button>
+          <input type="file" id="lpoPdfInput" accept="application/pdf" style="display:none"/>
         </div>
         <div class="srch">
           <input type="text" id="lSrch" placeholder="Search LPO number, supplier..."/>
@@ -375,7 +377,9 @@ body.dark #calDetails .calItm{border-color:var(--border);}
         <div class="secHdr">
           <h2>Invoice Tracker</h2>
           <button class="btnG" id="exportInvCsvBtn" style="margin-right:8px;">Export CSV</button>
+          <button class="btnP" id="uploadInvBtn" style="margin-right:8px;">&#8593; Import from PDF</button>
           <button class="btnP" id="addInvBtn">+ Add Invoice</button>
+          <input type="file" id="invPdfInput" accept="application/pdf" style="display:none"/>
         </div>
         <div class="srch">
           <input type="text" id="iSrch" placeholder="Search invoice number, LPO, client..."/>
@@ -1350,6 +1354,67 @@ function renderLpo(){
       '</td></tr>';
   });
   body.innerHTML=rows;
+}
+function resetLpoForm(){
+  document.getElementById('lIdx').value='-1';
+  ['l_num','l_sup','l_site','l_con','l_ph','l_em','l_amt','l_scp'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('l_iss').value=today();
+  document.getElementById('l_exp').value='';
+}
+function resetInvForm(){
+  document.getElementById('iIdx').value='-1';
+  ['i_num','i_lpo','i_dg','i_client','i_amt','i_notes'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('i_date').value=today();
+  document.getElementById('i_status').value='Open';
+}
+// Upload a PDF, extract fields via the backend, pre-fill the Add form (never
+// auto-saves), and open it for review. On any failure, open a blank form so the
+// user can enter the details manually.
+function importFromPdf(type, file){
+  if(!file) return;
+  if(file.type!=='application/pdf'){ toast('warn','Please choose a PDF file.'); return; }
+  if(file.size > 20*1024*1024){ toast('warn','That PDF is too large (max 20 MB).'); return; }
+  var btn=document.getElementById(type==='lpo'?'uploadLpoBtn':'uploadInvBtn');
+  var orig=btn?btn.innerHTML:'';
+  if(btn){ btn.disabled=true; btn.textContent='Reading PDF...'; }
+  function openBlank(){
+    if(type==='lpo'){ resetLpoForm(); openM('lModal'); }
+    else { resetInvForm(); renderLpoNumList(); openM('iModal'); }
+  }
+  fetch(API_BASE+'/api/extract/'+type, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/pdf', 'Authorization':'Bearer '+authToken },
+    body:file
+  }).then(function(r){
+    if(r.status===401){ handleAuthExpired(); throw new Error('auth'); }
+    return r.json();
+  }).then(function(res){
+    var f=(res&&res.fields)||{};
+    if(type==='lpo'){
+      resetLpoForm();
+      if(f.lpo_number) document.getElementById('l_num').value=f.lpo_number;
+      if(f.client_name) document.getElementById('l_sup').value=f.client_name;
+      if(f.site) document.getElementById('l_site').value=f.site;
+      if(f.amount!=null) document.getElementById('l_amt').value=f.amount;
+      if(f.issue_date) document.getElementById('l_iss').value=f.issue_date;
+      if(f.expiry_date) document.getElementById('l_exp').value=f.expiry_date;
+      openM('lModal');
+    } else {
+      resetInvForm();
+      if(f.invoice_number) document.getElementById('i_num').value=f.invoice_number;
+      if(f.date) document.getElementById('i_date').value=f.date;
+      if(f.lpo_reference) document.getElementById('i_lpo').value=f.lpo_reference;
+      if(f.amount!=null) document.getElementById('i_amt').value=f.amount;
+      renderLpoNumList();
+      openM('iModal');
+    }
+    if(res&&res.ok===false){ toast('warn','Could not auto-read the PDF - please fill in and review the fields.'); }
+    else { toast('ok','Fields extracted from PDF - please review before saving.'); }
+  }).catch(function(e){
+    if(e&&e.message==='auth') return;
+    openBlank();
+    toast('warn','PDF import failed - please enter the details manually.');
+  }).then(function(){ if(btn){ btn.disabled=false; btn.innerHTML=orig; } });
 }
 function editLpo(idx){
   var l=S.lpos[idx];
@@ -2537,11 +2602,15 @@ window.addEventListener('DOMContentLoaded', function(){
   document.getElementById('saveFuelBtn').addEventListener('click', saveFuel);
   document.getElementById('fModalClose').addEventListener('click', function(){ closeM('fModal'); });
   document.getElementById('exportLpoCsvBtn').addEventListener('click', exportLposCSV);
-  document.getElementById('addLpoBtn').addEventListener('click', function(){ document.getElementById('lIdx').value='-1'; ['l_num','l_sup','l_site','l_con','l_ph','l_em','l_amt','l_scp'].forEach(function(id){ document.getElementById(id).value=''; }); document.getElementById('l_iss').value=today(); document.getElementById('l_exp').value=''; openM('lModal'); });
+  document.getElementById('addLpoBtn').addEventListener('click', function(){ resetLpoForm(); openM('lModal'); });
+  document.getElementById('uploadLpoBtn').addEventListener('click', function(){ document.getElementById('lpoPdfInput').click(); });
+  document.getElementById('lpoPdfInput').addEventListener('change', function(e){ var f=e.target.files&&e.target.files[0]; e.target.value=''; importFromPdf('lpo', f); });
   document.getElementById('saveLpoBtn').addEventListener('click', saveLpo);
   document.getElementById('lModalClose').addEventListener('click', function(){ closeM('lModal'); });
   document.getElementById('exportInvCsvBtn').addEventListener('click', exportInvsCSV);
-  document.getElementById('addInvBtn').addEventListener('click', function(){ document.getElementById('iIdx').value='-1'; ['i_num','i_lpo','i_dg','i_client','i_amt','i_notes'].forEach(function(id){ document.getElementById(id).value=''; }); document.getElementById('i_date').value=today(); document.getElementById('i_status').value='Open'; renderLpoNumList(); openM('iModal'); });
+  document.getElementById('addInvBtn').addEventListener('click', function(){ resetInvForm(); renderLpoNumList(); openM('iModal'); });
+  document.getElementById('uploadInvBtn').addEventListener('click', function(){ document.getElementById('invPdfInput').click(); });
+  document.getElementById('invPdfInput').addEventListener('change', function(e){ var f=e.target.files&&e.target.files[0]; e.target.value=''; importFromPdf('invoice', f); });
   document.getElementById('saveInvBtn').addEventListener('click', saveInv);
   document.getElementById('iModalClose').addEventListener('click', function(){ closeM('iModal'); });
   document.getElementById('iSrch').addEventListener('input', renderInv);
