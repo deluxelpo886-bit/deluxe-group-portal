@@ -11,6 +11,8 @@ const bcrypt = require('bcryptjs');
 const { findUser, updateUserPassword, getState, saveState, logActivity, getActivity } = require('./db');
 const { extractFields } = require('./extract');
 const { sendWhatsApp } = require('./whatsapp');
+const { sendEmail } = require('./email');
+const { computeAlerts, buildMessage } = require('./alerts');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -195,6 +197,63 @@ app.post('/api/send-wa', authRequired, async (req, res) => {
   }
 });
 
+// ---------- Automated alerts (email + WhatsApp) ----------
+const COMPANY_NAMES = {
+  energy: 'Deluxe Energy Solutions L.L.C',
+  heavy: 'Deluxe Heavy Equipment Rental L.L.C'
+};
+
+// Compute a company's alerts from stored state and send them by email and/or
+// WhatsApp. Each channel degrades independently. With opts.force=false the send
+// is skipped entirely when there are no alerts (used by the daily scheduler so
+// it doesn't send an "all clear" every day).
+async function runCompanyAlerts(company, opts) {
+  const force = !!(opts && opts.force);
+  const row = getState(company);
+  const state = (row && row.data) ? row.data : {};
+  const result = computeAlerts(state);
+  const companyName = COMPANY_NAMES[company] || company;
+  const out = { company: company, count: result.count, sent: false, email: null, whatsapp: null };
+
+  if (!force && result.count === 0) {
+    out.email = { ok: false, skipped: true, message: 'No alerts' };
+    out.whatsapp = { ok: false, skipped: true, message: 'No alerts' };
+    return out;
+  }
+  out.sent = true;
+
+  const message = buildMessage(companyName, result);
+  const subject = companyName + ' - ' + result.count + ' alert(s) need attention';
+
+  const to = (state.email && state.email.to) || process.env.ALERT_EMAIL_TO;
+  if (to) {
+    try { out.email = await sendEmail({ to: to, subject: subject, text: message }); }
+    catch (e) { out.email = { ok: false, message: (e && e.message) || 'email failed' }; }
+  } else {
+    out.email = { ok: false, message: 'No recipient email configured' };
+  }
+
+  const waNum = state.settings && state.settings.wa;
+  if (waNum) {
+    try { out.whatsapp = await sendWhatsApp({ to: waNum, body: message }); }
+    catch (e) { out.whatsapp = { ok: false, message: (e && e.message) || 'whatsapp failed' }; }
+  } else {
+    out.whatsapp = { ok: false, message: 'No WhatsApp number configured' };
+  }
+  return out;
+}
+
+// Manual trigger: compute and send this company's alerts now (always sends).
+app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, res) => {
+  try {
+    const out = await runCompanyAlerts(req.params.company, { force: true });
+    res.json(Object.assign({ ok: true }, out));
+  } catch (e) {
+    console.error('Alert send failed:', e && e.message);
+    res.json({ ok: false, message: (e && e.message) || 'Alert send failed' });
+  }
+});
+
 // ---------- Health check ----------
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
@@ -216,6 +275,31 @@ if (process.env.ENABLE_DAILY_BACKUP === 'true') {
   tick();
   setInterval(tick, ONE_DAY_MS);
   console.log('Daily in-process DB backups enabled');
+}
+
+// ---------- Optional daily automated alerts (email + WhatsApp) ----------
+// Enable with ENABLE_DAILY_ALERTS=true. Once a day, for each company, compute
+// expiring-LPO / overdue-invoice / generator-service / low-parts alerts from
+// stored state and send them by email (SMTP) and/or WhatsApp (Twilio) - only
+// when there is at least one alert. See server/alerts.js and ALERTS.md.
+if (process.env.ENABLE_DAILY_ALERTS === 'true') {
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+  const tick = async () => {
+    for (const company of VALID_COMPANIES) {
+      try {
+        const out = await runCompanyAlerts(company, { force: false });
+        if (out.sent) {
+          console.log('Daily alerts [' + company + ']: ' + out.count + ' alert(s) - email ok=' +
+            (out.email && out.email.ok) + ', whatsapp ok=' + (out.whatsapp && out.whatsapp.ok));
+        }
+      } catch (e) {
+        console.error('Daily alerts failed for ' + company + ':', e && e.message);
+      }
+    }
+  };
+  setTimeout(tick, 15000); // first run shortly after startup
+  setInterval(tick, ONE_DAY_MS);
+  console.log('Daily automated alerts enabled (email + WhatsApp)');
 }
 
 app.listen(PORT, () => {
