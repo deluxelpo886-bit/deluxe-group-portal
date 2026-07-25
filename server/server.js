@@ -1,5 +1,6 @@
 require('dotenv').config();
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -13,7 +14,17 @@ const { sendWhatsApp } = require('./whatsapp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_THIS_SECRET_BEFORE_DEPLOYING';
+// JWT signing secret. It MUST come from the environment - the old hardcoded
+// fallback was public in the repo, so anyone could forge admin tokens. If it's
+// missing (or still the placeholder), generate a strong random secret at
+// startup and warn loudly. That closes the forgery hole; the trade-off is that
+// tokens don't survive a restart until a stable JWT_SECRET is set in the env.
+let JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET === 'CHANGE_THIS_SECRET_BEFORE_DEPLOYING') {
+  JWT_SECRET = crypto.randomBytes(48).toString('hex');
+  console.warn('[SECURITY] JWT_SECRET is not set (or is the placeholder). Generated a random secret for this run. ' +
+    'Set a strong JWT_SECRET environment variable so login sessions survive restarts and cannot be forged.');
+}
 const VALID_COMPANIES = ['energy', 'heavy'];
 
 // Render (and most PaaS hosts) terminate TLS at a proxy and forward the real
