@@ -17,6 +17,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     username TEXT PRIMARY KEY,
     password_hash TEXT NOT NULL,
+    is_admin INTEGER NOT NULL DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now'))
   );
 
@@ -43,13 +44,22 @@ if (!hasRev) {
   db.exec('ALTER TABLE company_state ADD COLUMN rev INTEGER NOT NULL DEFAULT 0');
 }
 
+// Migration: add the `is_admin` column to pre-existing users tables.
+const hasIsAdmin = db.prepare("PRAGMA table_info(users)").all().some(function (c) { return c.name === 'is_admin'; });
+if (!hasIsAdmin) {
+  db.exec('ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0');
+}
+
 // ---- Seed default admin user (matches the original app's hardcoded login) ----
 function seedDefaultUser() {
   const existing = db.prepare('SELECT username FROM users WHERE username = ?').get('deluxelpoadmin');
   if (!existing) {
     const hash = bcrypt.hashSync('Deluxe@123', 10);
-    db.prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)').run('deluxelpoadmin', hash);
+    db.prepare('INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, 1)').run('deluxelpoadmin', hash);
     console.log('Seeded default user: deluxelpoadmin (password: Deluxe@123 - CHANGE THIS after first login)');
+  } else {
+    // Ensure the original admin keeps admin rights after the is_admin migration.
+    db.prepare('UPDATE users SET is_admin = 1 WHERE username = ?').run('deluxelpoadmin');
   }
 }
 seedDefaultUser();
@@ -61,6 +71,20 @@ function findUser(username) {
 function updateUserPassword(username, newPassword) {
   const hash = bcrypt.hashSync(newPassword, 10);
   db.prepare('UPDATE users SET password_hash = ? WHERE username = ?').run(hash, username);
+}
+function listUsers() {
+  return db.prepare('SELECT username, is_admin, created_at FROM users ORDER BY username').all();
+}
+function createUser(username, password, isAdmin) {
+  const hash = bcrypt.hashSync(password, 10);
+  db.prepare('INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)')
+    .run(username, hash, isAdmin ? 1 : 0);
+}
+function deleteUser(username) {
+  db.prepare('DELETE FROM users WHERE username = ?').run(username);
+}
+function countAdmins() {
+  return db.prepare('SELECT COUNT(*) AS n FROM users WHERE is_admin = 1').get().n;
 }
 
 // ---- Company state helpers ----
@@ -99,5 +123,6 @@ function getActivity(company, limit) {
 }
 
 module.exports = {
-  db, findUser, updateUserPassword, getState, saveState, logActivity, getActivity
+  db, findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins,
+  getState, saveState, logActivity, getActivity
 };

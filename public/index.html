@@ -546,6 +546,15 @@ body.dark #calDetails .calItm{border-color:var(--border);}
             <p style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.6;">When configured on the server, the alert summary is emailed (and sent via WhatsApp) automatically once a day - even when nobody has the app open. Use this button to send the current summary right now.</p>
             <button class="btnG" id="serverAlertBtn" style="width:100%;">Send Alert Summary Now</button>
           </div>
+          <div class="setCard" id="userMgmtCard" style="display:none;">
+            <h3>User Accounts <span style="font-size:11px;color:#aaa;font-weight:600;text-transform:none;letter-spacing:0;">(admin only)</span></h3>
+            <p style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.6;">Give each person their own login so the activity log shows who did what. Only admins can add or remove accounts.</p>
+            <div id="userList" style="margin-bottom:12px;"></div>
+            <div class="fGS"><label>New Username</label><input type="text" id="nu_name" placeholder="e.g. ahmed" autocomplete="off"/></div>
+            <div class="fGS"><label>Temporary Password</label><input type="text" id="nu_pass" placeholder="at least 6 characters"/></div>
+            <div class="notifRow"><span>Make this user an admin</span><input type="checkbox" id="nu_admin" style="width:18px;height:18px;"/></div>
+            <button class="btnG" id="addUserBtn" style="width:100%;margin-top:6px;">Add User</button>
+          </div>
           <div class="setCard">
             <h3>Letter Settings</h3>
             <p style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.6;">Used to sign LPO Extension Request and Off-Hire Notice letters generated from the LPO Tracker.</p>
@@ -774,6 +783,8 @@ var authToken = null;
 var syncing = false;
 var pendingSave = false;
 var stateRev = null; // server version of the loaded state, for optimistic concurrency
+var currentUser = null;   // logged-in username
+var isAdminUser = false;  // whether the logged-in user can manage accounts
 
 function apiHeaders(){
   var h = {'Content-Type':'application/json'};
@@ -918,6 +929,7 @@ function doLogin(){
       }
       authToken = res.body.token;
       try{ localStorage.setItem('dlxgrp_token', authToken); }catch(e){}
+      currentUser = res.body.username; isAdminUser = !!res.body.isAdmin; applyUserAdminUI();
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('companySelect').classList.add('open');
     })
@@ -2018,6 +2030,57 @@ function histTab(id, el){
   document.getElementById('tab-lh').classList.toggle('active', id==='lh');
 }
 
+// ---- User accounts (admin) ----
+function applyUserAdminUI(){
+  var card=document.getElementById('userMgmtCard');
+  if(card) card.style.display = isAdminUser ? '' : 'none';
+}
+function fetchMe(){
+  return fetch(API_BASE+'/api/me', { headers:apiHeaders() })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } return r.json(); })
+    .then(function(me){ currentUser=me.username; isAdminUser=!!me.isAdmin; applyUserAdminUI(); })
+    .catch(function(){});
+}
+function renderUsers(list){
+  var el=document.getElementById('userList');
+  if(!el) return;
+  var rows=(list||[]).map(function(u){
+    var badge=u.isAdmin?'<span style="color:#E0A82E;font-weight:700;font-size:11px;">ADMIN</span>':'<span style="color:#aaa;font-size:11px;">user</span>';
+    var right=(u.username===currentUser)?'<span style="color:#aaa;font-size:11px;">(you)</span>':'<button class="btnP btnSm btnDR" data-act="userDel" data-v="'+u.username+'">Remove</button>';
+    return '<div class="notifRow"><span>'+u.username+' &nbsp; '+badge+'</span>'+right+'</div>';
+  }).join('');
+  el.innerHTML = rows || '<p style="color:#aaa;font-size:12px;">No users yet.</p>';
+}
+function loadUsers(){
+  if(!isAdminUser) return;
+  fetch(API_BASE+'/api/users', { headers:apiHeaders() })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } if(!r.ok) throw new Error('users'); return r.json(); })
+    .then(function(list){ renderUsers(list); })
+    .catch(function(){});
+}
+function addUser(){
+  var name=document.getElementById('nu_name').value.trim();
+  var pass=document.getElementById('nu_pass').value;
+  var admin=document.getElementById('nu_admin').checked;
+  if(!name||!pass){ toast('warn','Enter a username and password'); return; }
+  var btn=document.getElementById('addUserBtn'); if(btn){ btn.disabled=true; }
+  fetch(API_BASE+'/api/users', { method:'POST', headers:apiHeaders(), body:JSON.stringify({username:name, password:pass, isAdmin:admin}) })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } return r.json().then(function(b){ return {ok:r.ok, body:b}; }); })
+    .then(function(res){
+      if(res.ok){ toast('ok','User "'+name+'" added'); document.getElementById('nu_name').value=''; document.getElementById('nu_pass').value=''; document.getElementById('nu_admin').checked=false; loadUsers(); }
+      else { toast('warn', (res.body&&res.body.error)||'Could not add user'); }
+    })
+    .catch(function(e){ if(e&&e.message!=='auth') toast('warn','Could not add user'); })
+    .then(function(){ if(btn){ btn.disabled=false; } });
+}
+function delUserByName(username){
+  if(!confirm('Remove user "'+username+'"? They will no longer be able to log in.')) return;
+  fetch(API_BASE+'/api/users/'+encodeURIComponent(username), { method:'DELETE', headers:apiHeaders() })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } return r.json().then(function(b){ return {ok:r.ok, body:b}; }); })
+    .then(function(res){ if(res.ok){ toast('ok','User removed'); loadUsers(); } else { toast('warn',(res.body&&res.body.error)||'Could not remove user'); } })
+    .catch(function(e){ if(e&&e.message!=='auth') toast('warn','Could not remove user'); });
+}
+
 function renderSettings(){
   document.getElementById('sInt').value=S.settings.interval;
   document.getElementById('sWA').value=S.settings.wa;
@@ -2029,6 +2092,8 @@ function renderSettings(){
   renderLetterSettings();
   renderClientList();
   renderActivityLog();
+  applyUserAdminUI();
+  if(isAdminUser) loadUsers();
 }
 function renderActivityLog(){
   var list = document.getElementById('activityList');
@@ -2592,6 +2657,7 @@ window.addEventListener('DOMContentLoaded', function(){
     var savedToken = localStorage.getItem('dlxgrp_token');
     if(savedToken){
       authToken = savedToken;
+      fetchMe();
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('companySelect').classList.add('open');
     }
@@ -2630,6 +2696,7 @@ window.addEventListener('DOMContentLoaded', function(){
       case 'copyAlert': copyAlertMessage(); break;
       case 'sendEmail': sendAlertEmail('Deluxe Energy Alert', buildAlertMsg().msg); break;
       case 'ackAlarm': ackAlarm(); break;
+      case 'userDel': delUserByName(v); break;
     }
   });
   document.getElementById('loginBtn').addEventListener('click', doLogin);
@@ -2698,6 +2765,7 @@ window.addEventListener('DOMContentLoaded', function(){
   document.getElementById('copyWABtn').addEventListener('click', copyAlertMessage);
   document.getElementById('runAlertBtn').addEventListener('click', runAlerts);
   document.getElementById('serverAlertBtn').addEventListener('click', sendServerAlerts);
+  document.getElementById('addUserBtn').addEventListener('click', addUser);
   document.getElementById('gSrch').addEventListener('input', renderGen);
   document.getElementById('gFlt').addEventListener('change', renderGen);
   document.getElementById('lSrch').addEventListener('input', renderLpo);
