@@ -542,6 +542,11 @@ body.dark #calDetails .calItm{border-color:var(--border);}
             <p class="helpTxt">This runs entirely from your browser - no server needed. Create a free account at emailjs.com, add an Email Service and a Template with variables <code>to_email</code>, <code>subject</code>, <code>message</code>, then paste the 3 IDs above.</p>
           </div>
           <div class="setCard">
+            <h3>Server Alerts <span style="font-size:11px;color:#aaa;font-weight:600;text-transform:none;letter-spacing:0;">(automatic - email + WhatsApp)</span></h3>
+            <p style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.6;">When configured on the server, the alert summary is emailed (and sent via WhatsApp) automatically once a day - even when nobody has the app open. Use this button to send the current summary right now.</p>
+            <button class="btnG" id="serverAlertBtn" style="width:100%;">Send Alert Summary Now</button>
+          </div>
+          <div class="setCard">
             <h3>Letter Settings</h3>
             <p style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.6;">Used to sign LPO Extension Request and Off-Hire Notice letters generated from the LPO Tracker.</p>
             <div class="fGS"><label>Signatory Name</label><input type="text" id="ltName" placeholder="e.g. Jerin Johnson"/></div>
@@ -2129,6 +2134,28 @@ function sendWAAlerts(){
   return true;
 }
 
+// Trigger the server to send this company's alert summary now (email + WhatsApp),
+// using the real automated backend rather than the browser-only path.
+function sendServerAlerts(){
+  if(!currentCompany){ toast('warn','Open a company workspace first'); return; }
+  var btn=document.getElementById('serverAlertBtn');
+  var orig=btn?btn.textContent:'';
+  if(btn){ btn.disabled=true; btn.textContent='Sending...'; }
+  fetch(API_BASE+'/api/send-alerts/'+currentCompany, { method:'POST', headers:apiHeaders() })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } return r.json(); })
+    .then(function(res){
+      if(res && res.ok){
+        function label(ch){ if(!ch) return 'n/a'; if(ch.ok) return 'sent'; if(ch.configured===false) return 'not set up'; return (ch.message||'failed'); }
+        var anyOk=(res.email&&res.email.ok)||(res.whatsapp&&res.whatsapp.ok);
+        toast(anyOk?'ok':'warn', res.count+' alert(s) - Email: '+label(res.email)+' | WhatsApp: '+label(res.whatsapp));
+      } else {
+        toast('warn', (res&&res.message)||'Could not send alerts');
+      }
+    })
+    .catch(function(e){ if(e&&e.message==='auth') return; toast('warn','Could not reach the server to send alerts'); })
+    .then(function(){ if(btn){ btn.disabled=false; btn.textContent=orig; } });
+}
+
 function testWA(){
   var num = (S.settings.wa||'').replace(/[^0-9]/g,'');
   if(!num){ toast('warn','Please set WhatsApp number in Settings first'); return; }
@@ -2641,6 +2668,7 @@ window.addEventListener('DOMContentLoaded', function(){
   document.getElementById('testWABtn').addEventListener('click', testWA);
   document.getElementById('copyWABtn').addEventListener('click', copyAlertMessage);
   document.getElementById('runAlertBtn').addEventListener('click', runAlerts);
+  document.getElementById('serverAlertBtn').addEventListener('click', sendServerAlerts);
   document.getElementById('gSrch').addEventListener('input', renderGen);
   document.getElementById('gFlt').addEventListener('change', renderGen);
   document.getElementById('lSrch').addEventListener('input', renderLpo);

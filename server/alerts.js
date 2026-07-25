@@ -70,4 +70,31 @@ function buildMessage(companyName, result) {
   return lines.join('\n');
 }
 
-module.exports = { computeAlerts, buildMessage };
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"]/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+  });
+}
+
+// Color-coded HTML version of the alert summary, for email.
+function buildHtml(companyName, result) {
+  const colors = { danger: '#B71C1C', urgent: '#E65100', warn: '#F9A825' };
+  let rows;
+  if (result.count === 0) {
+    rows = '<tr><td style="padding:10px 12px;color:#2E7D32;">All systems normal - no alerts.</td></tr>';
+  } else {
+    rows = result.items.map(function (it) {
+      const c = colors[it.level] || '#888888';
+      return '<tr><td style="padding:9px 12px;border-left:4px solid ' + c +
+        ';background:#faf8f3;color:#1E2A44;font-size:14px;">' + escapeHtml(it.text) + '</td></tr>';
+    }).join('<tr><td style="height:6px;"></td></tr>');
+  }
+  return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:620px;margin:0 auto;">' +
+    '<h2 style="color:#1E2A44;margin:0 0 2px;">' + escapeHtml(companyName) + '</h2>' +
+    '<p style="color:#6B7686;margin:0 0 16px;font-size:13px;">Alert summary — ' +
+    result.count + ' item(s) need attention</p>' +
+    '<table style="border-collapse:collapse;width:100%;">' + rows + '</table>' +
+    '<p style="color:#94A0B3;font-size:12px;margin-top:18px;">Deluxe Group Portal — automated alert</p></div>';
+}
+
+module.exports = { computeAlerts, buildMessage, buildHtml };

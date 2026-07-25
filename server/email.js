@@ -39,17 +39,14 @@ function getTransport() {
   return transporter;
 }
 
-// opts: { to, subject, text }
+// opts: { to, subject, text, html? }
 async function sendEmail(opts) {
   if (!isConfigured()) {
     return { ok: false, configured: false, message: 'Email (SMTP) is not configured' };
   }
-  const info = await getTransport().sendMail({
-    from: FROM,
-    to: opts.to,
-    subject: opts.subject,
-    text: opts.text
-  });
+  const mail = { from: FROM, to: opts.to, subject: opts.subject, text: opts.text };
+  if (opts.html) mail.html = opts.html;
+  const info = await getTransport().sendMail(mail);
   return { ok: true, id: info.messageId };
 }
 
