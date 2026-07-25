@@ -2099,30 +2099,41 @@ function buildAlertMsg(){
   return { msg: lines.join('\n'), count: count };
 }
 
+// Send a WhatsApp message via the Twilio backend; if Twilio isn't configured
+// or the send fails, fall back to opening a pre-filled wa.me link so the app
+// keeps working exactly as before.
+function waSendOrLink(num, msg, okLabel){
+  fetch(API_BASE+'/api/send-wa', { method:'POST', headers:apiHeaders(), body:JSON.stringify({ to:num, body:msg }) })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } return r.json(); })
+    .then(function(res){
+      if(res && res.ok){
+        toast('ok', okLabel);
+      } else {
+        window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
+        if(res && res.configured===false){ toast('warn','Twilio not set up - opening WhatsApp to send manually...'); }
+        else { toast('warn', ((res&&res.message)||'WhatsApp send failed')+' - opening WhatsApp instead'); }
+      }
+    })
+    .catch(function(e){
+      if(e && e.message==='auth') return;
+      window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
+      toast('warn','Opening WhatsApp to send manually...');
+    });
+}
+
 function sendWAAlerts(){
   var result = buildAlertMsg();
-  var num = S.settings.wa.replace(/[^0-9]/g,'');
+  var num = (S.settings.wa||'').replace(/[^0-9]/g,'');
   if(!num){ toast('warn','Please set WhatsApp number in Settings first'); return false; }
-  var encoded = encodeURIComponent(result.msg);
-  var win = window.open('https://wa.me/'+num+'?text='+encoded,'_blank');
-  if(!win || win.closed || typeof win.closed==='undefined'){
-    return false;
-  }
-  if(result.count > 0){
-    toast('warn','Opening WhatsApp with '+result.count+' alert(s)...');
-  } else {
-    toast('ok','Opening WhatsApp - All systems normal');
-  }
+  waSendOrLink(num, result.msg, 'WhatsApp alert sent'+(result.count>0?(' - '+result.count+' alert(s)'):' - all systems normal'));
   return true;
 }
 
 function testWA(){
-  var num = S.settings.wa.replace(/[^0-9]/g,'');
+  var num = (S.settings.wa||'').replace(/[^0-9]/g,'');
   if(!num){ toast('warn','Please set WhatsApp number in Settings first'); return; }
   var cName = COMPANIES[currentCompany] ? COMPANIES[currentCompany].name : 'Deluxe Group';
-  var msg = encodeURIComponent(cName+' - Test Alert - WhatsApp alert system is working correctly - '+cName);
-  window.open('https://wa.me/'+num+'?text='+msg,'_blank');
-  toast('ok','Opening WhatsApp test message...');
+  waSendOrLink(num, cName+' - Test Alert - WhatsApp alert system is working correctly - '+cName, 'Test WhatsApp message sent');
 }
 
 function copyAlertMessage(){

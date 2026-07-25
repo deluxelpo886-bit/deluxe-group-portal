@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 
 const { findUser, updateUserPassword, getState, saveState, logActivity, getActivity } = require('./db');
 const { extractFields } = require('./extract');
+const { sendWhatsApp } = require('./whatsapp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,7 +31,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-ZW6yTU3s4KA3FxjvNBaQG7ZB7ZMWvzNuSa8xrEqXSVA='";
+const INLINE_SCRIPT_HASH = "'sha256-5uv1zd1x0f5NnRzZhZ/PmpzPg9VJGorpu9ZIKZsFgFo='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -163,6 +164,23 @@ app.post('/api/extract/:type', authRequired, express.raw({ type: 'application/pd
   } catch (e) {
     console.error('PDF extraction failed:', e && e.message);
     res.json({ ok: false, fields: {}, message: 'Extraction failed - please enter the details manually' });
+  }
+});
+
+// ---------- Automated WhatsApp send (Twilio) ----------
+// Sends a WhatsApp message via Twilio. Responds 200 in all non-fatal cases so
+// the frontend can fall back to a wa.me link: { ok:false, configured:false }
+// when Twilio isn't set up, or { ok:false, message } on a send error.
+app.post('/api/send-wa', authRequired, async (req, res) => {
+  const { to, body, contentSid, contentVariables } = req.body || {};
+  if (!to) return res.status(400).json({ ok: false, message: 'Recipient number is required' });
+  if (!body && !contentSid) return res.status(400).json({ ok: false, message: 'Message body or template is required' });
+  try {
+    const result = await sendWhatsApp({ to, body, contentSid, contentVariables });
+    res.json(result);
+  } catch (e) {
+    console.error('WhatsApp send failed:', e && e.message);
+    res.json({ ok: false, message: (e && e.message) || 'WhatsApp send failed' });
   }
 });
 
