@@ -8,7 +8,7 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { findUser, updateUserPassword, getState, saveState, logActivity, getActivity } = require('./db');
+const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity } = require('./db');
 const { extractFields } = require('./extract');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
@@ -44,7 +44,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-L2o4BxIOyc+V+yP3ggqhUtuESjNc+3lp/clWAq7xaB0='";
+const INLINE_SCRIPT_HASH = "'sha256-iEl7S+ADhnY11bTFGUb2RlzFiL5L6PtdQxOVi9tqdIA='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -100,6 +100,13 @@ function authRequired(req, res, next) {
   }
 }
 
+// Admin gate - checks the live is_admin flag from the DB (not the token).
+function adminRequired(req, res, next) {
+  const u = findUser(req.user.username);
+  if (!u || !u.is_admin) return res.status(403).json({ error: 'Admin access required' });
+  next();
+}
+
 function validCompany(req, res, next) {
   const company = req.params.company;
   if (!VALID_COMPANIES.includes(company)) {
@@ -117,7 +124,7 @@ app.post('/api/login', loginLimiter, (req, res) => {
     return res.status(401).json({ error: 'Invalid username or password' });
   }
   const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30d' });
-  res.json({ token, username });
+  res.json({ token, username, isAdmin: !!user.is_admin });
 });
 
 app.post('/api/change-password', authRequired, (req, res) => {
@@ -129,6 +136,49 @@ app.post('/api/change-password', authRequired, (req, res) => {
     return res.status(401).json({ error: 'Current password is incorrect' });
   }
   updateUserPassword(req.user.username, newPassword);
+  res.json({ ok: true });
+});
+
+// ---------- Current user ----------
+app.get('/api/me', authRequired, (req, res) => {
+  const u = findUser(req.user.username);
+  if (!u) return res.status(401).json({ error: 'Unknown user' });
+  res.json({ username: u.username, isAdmin: !!u.is_admin });
+});
+
+// ---------- User management (admin only) ----------
+app.get('/api/users', authRequired, adminRequired, (req, res) => {
+  res.json(listUsers().map((u) => ({ username: u.username, isAdmin: !!u.is_admin, created_at: u.created_at })));
+});
+
+app.post('/api/users', authRequired, adminRequired, (req, res) => {
+  const { username, password, isAdmin } = req.body || {};
+  const uname = (username || '').trim();
+  if (!uname || !password) return res.status(400).json({ error: 'Username and password are required' });
+  if (!/^[a-zA-Z0-9._-]{3,32}$/.test(uname)) return res.status(400).json({ error: 'Username must be 3-32 characters: letters, numbers, . _ -' });
+  if (String(password).length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  if (findUser(uname)) return res.status(409).json({ error: 'That username already exists' });
+  createUser(uname, password, !!isAdmin);
+  res.json({ ok: true });
+});
+
+// Admin resets another user's password.
+app.post('/api/users/:username/password', authRequired, adminRequired, (req, res) => {
+  const target = req.params.username;
+  const { newPassword } = req.body || {};
+  if (!findUser(target)) return res.status(404).json({ error: 'User not found' });
+  if (!newPassword || String(newPassword).length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  updateUserPassword(target, newPassword);
+  res.json({ ok: true });
+});
+
+app.delete('/api/users/:username', authRequired, adminRequired, (req, res) => {
+  const target = req.params.username;
+  const u = findUser(target);
+  if (!u) return res.status(404).json({ error: 'User not found' });
+  if (target === req.user.username) return res.status(400).json({ error: "You can't delete your own account" });
+  if (u.is_admin && countAdmins() <= 1) return res.status(400).json({ error: "Can't delete the last remaining admin" });
+  deleteUser(target);
   res.json({ ok: true });
 });
 
