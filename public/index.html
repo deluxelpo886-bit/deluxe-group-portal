@@ -544,7 +544,8 @@ body.dark #calDetails .calItm{border-color:var(--border);}
           <div class="setCard">
             <h3>Server Alerts <span style="font-size:11px;color:#aaa;font-weight:600;text-transform:none;letter-spacing:0;">(automatic - email + WhatsApp)</span></h3>
             <p style="font-size:12px;color:#aaa;margin-bottom:10px;line-height:1.6;">When configured on the server, the alert summary is emailed (and sent via WhatsApp) automatically once a day - even when nobody has the app open. Use this button to send the current summary right now.</p>
-            <button class="btnG" id="serverAlertBtn" style="width:100%;">Send Alert Summary Now</button>
+            <div class="fGS"><label>Send daily alerts at (Dubai time)</label><select id="sAlertHour"></select></div>
+            <button class="btnG" id="serverAlertBtn" style="width:100%;margin-top:6px;">Send Alert Summary Now</button>
           </div>
           <div class="setCard" id="userMgmtCard" style="display:none;">
             <h3>User Accounts <span style="font-size:11px;color:#aaa;font-weight:600;text-transform:none;letter-spacing:0;">(admin only)</span></h3>
@@ -762,7 +763,7 @@ var currentCompany = null;
 function defaultState(){
   return {
     customPass: null,
-    settings: { interval:350, wa:'', warnHrs:100, lpoWarn:30 },
+    settings: { interval:350, wa:'', warnHrs:100, lpoWarn:30, alertHour:7 },
     techs: ['Ahmed Al Mansoori','Raju Krishnan','Santhosh Kumar','Mohammed Salim'],
     gens:[], lpos:[], ts:[], invs:[], clients:[], parts:[], gHist:[], lHist:[], lastTs:null,
     trash:[], theme:'light',
@@ -2094,6 +2095,11 @@ function renderSettings(){
   renderActivityLog();
   applyUserAdminUI();
   if(isAdminUser) loadUsers();
+  var ah=document.getElementById('sAlertHour');
+  if(ah){
+    if(!ah.options.length){ var o=''; for(var h=0;h<24;h++){ o+='<option value="'+h+'">'+(h<10?'0':'')+h+':00</option>'; } ah.innerHTML=o; }
+    ah.value = (S.settings.alertHour!=null ? S.settings.alertHour : 7);
+  }
 }
 function renderActivityLog(){
   var list = document.getElementById('activityList');
@@ -2766,6 +2772,7 @@ window.addEventListener('DOMContentLoaded', function(){
   document.getElementById('runAlertBtn').addEventListener('click', runAlerts);
   document.getElementById('serverAlertBtn').addEventListener('click', sendServerAlerts);
   document.getElementById('addUserBtn').addEventListener('click', addUser);
+  document.getElementById('sAlertHour').addEventListener('change', function(){ S.settings.alertHour=parseInt(this.value); save(); toast('ok','Daily alert time set to '+(this.value<10?'0':'')+this.value+':00 (Dubai time)'); });
   document.getElementById('gSrch').addEventListener('input', renderGen);
   document.getElementById('gFlt').addEventListener('change', renderGen);
   document.getElementById('lSrch').addEventListener('input', renderLpo);

@@ -44,7 +44,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-iEl7S+ADhnY11bTFGUb2RlzFiL5L6PtdQxOVi9tqdIA='";
+const INLINE_SCRIPT_HASH = "'sha256-GSa5Q7Fz5Hcf1szDuhb661DPF8rvnPXmzgGv2Bl5KEo='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -342,28 +342,49 @@ if (process.env.ENABLE_DAILY_BACKUP === 'true') {
 }
 
 // ---------- Optional daily automated alerts (email + WhatsApp) ----------
-// Enable with ENABLE_DAILY_ALERTS=true. Once a day, for each company, compute
-// expiring-LPO / overdue-invoice / generator-service / low-parts alerts from
-// stored state and send them by email (SMTP) and/or WhatsApp (Twilio) - only
-// when there is at least one alert. See server/alerts.js and ALERTS.md.
+// Enable with ENABLE_DAILY_ALERTS=true. Sends each company's alert summary once
+// a day at a configurable hour (per-company Settings -> "Send daily alerts at",
+// default 07:00) in ALERT_TIMEZONE (default Asia/Dubai). The scheduler checks
+// every 15 minutes and fires when the local hour matches, deduping per day.
+// See server/alerts.js and ALERTS.md.
 if (process.env.ENABLE_DAILY_ALERTS === 'true') {
-  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-  const tick = async () => {
+  const ALERT_TZ = process.env.ALERT_TIMEZONE || 'Asia/Dubai';
+  const CHECK_MS = 15 * 60 * 1000;
+  const lastSent = {}; // company -> 'YYYY-MM-DD' (in ALERT_TZ) already handled today
+
+  function tzNow() {
+    const fmt = new Intl.DateTimeFormat('en-CA', {
+      timeZone: ALERT_TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false
+    });
+    const parts = {};
+    fmt.formatToParts(new Date()).forEach(function (p) { parts[p.type] = p.value; });
+    return { date: parts.year + '-' + parts.month + '-' + parts.day, hour: parseInt(parts.hour, 10) };
+  }
+
+  const check = async () => {
+    const now = tzNow();
     for (const company of VALID_COMPANIES) {
       try {
+        const row = getState(company);
+        const state = (row && row.data) ? row.data : {};
+        const hour = (state.settings && state.settings.alertHour != null) ? Number(state.settings.alertHour) : 7;
+        if (now.hour !== hour) continue;
+        if (lastSent[company] === now.date) continue; // already handled today
         const out = await runCompanyAlerts(company, { force: false });
+        lastSent[company] = now.date;
         if (out.sent) {
-          console.log('Daily alerts [' + company + ']: ' + out.count + ' alert(s) - email ok=' +
-            (out.email && out.email.ok) + ', whatsapp ok=' + (out.whatsapp && out.whatsapp.ok));
+          console.log('Daily alerts [' + company + '] at ' + now.hour + ':00 ' + ALERT_TZ + ': ' + out.count +
+            ' alert(s) - email ok=' + (out.email && out.email.ok) + ', whatsapp ok=' + (out.whatsapp && out.whatsapp.ok));
         }
       } catch (e) {
         console.error('Daily alerts failed for ' + company + ':', e && e.message);
       }
     }
   };
-  setTimeout(tick, 15000); // first run shortly after startup
-  setInterval(tick, ONE_DAY_MS);
-  console.log('Daily automated alerts enabled (email + WhatsApp)');
+
+  setTimeout(check, 15000); // first check shortly after startup
+  setInterval(check, CHECK_MS);
+  console.log('Daily automated alerts enabled (' + ALERT_TZ + '; per-company hour, default 07:00)');
 }
 
 app.listen(PORT, () => {

@@ -39,9 +39,18 @@ password; requires 2FA on the Google account).
 
 ## Scheduler
 
-With `ENABLE_DAILY_ALERTS=true`, the server runs once ~15s after startup and
-then every 24 hours. It sends **only when there is at least one alert**, so a
-quiet day produces no message.
+With `ENABLE_DAILY_ALERTS=true`, the server checks every 15 minutes and sends
+each company's summary **once a day at a configurable hour**. Set the hour per
+company in **Settings → Server Alerts → "Send daily alerts at"** (default
+**07:00**). The clock is `ALERT_TIMEZONE` (default **Asia/Dubai**). It sends
+**only when there is at least one alert**, so a quiet day produces no message.
+
+| Variable | Example | Purpose |
+| --- | --- | --- |
+| `ALERT_TIMEZONE` | `Asia/Dubai` | IANA timezone the send-hour is interpreted in |
+
+> The "already sent today" marker is in memory, so a server restart during the
+> configured hour could send a second time that day - a minor, rare edge.
 
 ## Manual trigger / testing
 
