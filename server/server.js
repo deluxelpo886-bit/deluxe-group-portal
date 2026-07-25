@@ -12,7 +12,7 @@ const { findUser, updateUserPassword, getState, saveState, logActivity, getActiv
 const { extractFields } = require('./extract');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
-const { computeAlerts, buildMessage } = require('./alerts');
+const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,7 +44,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-5uv1zd1x0f5NnRzZhZ/PmpzPg9VJGorpu9ZIKZsFgFo='";
+const INLINE_SCRIPT_HASH = "'sha256-0k3KuvoY82foJfipoH5fExC4SBM5gsH0s86flr2nUlU='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -227,7 +227,7 @@ async function runCompanyAlerts(company, opts) {
 
   const to = (state.email && state.email.to) || process.env.ALERT_EMAIL_TO;
   if (to) {
-    try { out.email = await sendEmail({ to: to, subject: subject, text: message }); }
+    try { out.email = await sendEmail({ to: to, subject: subject, text: message, html: buildHtml(companyName, result) }); }
     catch (e) { out.email = { ok: false, message: (e && e.message) || 'email failed' }; }
   } else {
     out.email = { ok: false, message: 'No recipient email configured' };
