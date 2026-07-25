@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const { findUser, updateUserPassword, getState, saveState, logActivity, getActivity } = require('./db');
+const { extractFields } = require('./extract');
+const { sendWhatsApp } = require('./whatsapp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,11 +23,30 @@ const VALID_COMPANIES = ['energy', 'heavy'];
 app.set('trust proxy', 1);
 
 // Security headers via Helmet (HSTS, X-Content-Type-Options, frameguard, etc).
-// Content-Security-Policy is intentionally disabled: the frontend relies on a
-// large inline <script>, many inline style= attributes, and the external
-// EmailJS CDN, all of which Helmet's default CSP would block and break the app.
-// Tightening CSP later is a separate, deliberate effort.
-app.use(helmet({ contentSecurityPolicy: false }));
+// Content-Security-Policy. The single inline <script> in index.html is allowed
+// by its SHA-256 hash (INLINE_SCRIPT_HASH) rather than 'unsafe-inline', so the
+// policy still blocks any injected script. A static hash (not a per-request
+// nonce) is used deliberately: the service worker caches the HTML, and a hash
+// stays valid across cached loads. Inline style= attributes remain allowed via
+// style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
+// NOTE: if the inline <script> in public/index.html changes, recompute this
+// hash (npm run csp-hash) or the page's own script will be blocked.
+const INLINE_SCRIPT_HASH = "'sha256-5uv1zd1x0f5NnRzZhZ/PmpzPg9VJGorpu9ZIKZsFgFo='";
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      scriptSrc: ["'self'", INLINE_SCRIPT_HASH, 'https://cdn.jsdelivr.net'],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:'],
+      fontSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'", 'https://api.emailjs.com'],
+      workerSrc: ["'self'"],
+      manifestSrc: ["'self'"],
+      frameAncestors: ["'none'"]
+    }
+  }
+}));
 
 // CORS: only allow the deployed frontend origin (and localhost for dev).
 // Configurable via ALLOWED_ORIGINS (comma-separated). Requests with no Origin
@@ -122,6 +143,45 @@ app.post('/api/activity/:company', authRequired, validCompany, (req, res) => {
   const { action } = req.body || {};
   logActivity(req.params.company, req.user.username, action || 'update');
   res.json({ ok: true });
+});
+
+// ---------- PDF extraction ----------
+// Accepts a raw PDF (Content-Type: application/pdf), extracts LPO/invoice fields
+// via the Anthropic API, and returns them for the frontend to pre-fill (never
+// auto-saves). Always responds 200 with a `fields` object; on any failure the
+// object is empty so the user can fill the form manually.
+app.post('/api/extract/:type', authRequired, express.raw({ type: 'application/pdf', limit: '20mb' }), async (req, res) => {
+  const type = req.params.type;
+  if (type !== 'lpo' && type !== 'invoice') {
+    return res.status(400).json({ ok: false, fields: {}, error: 'Unknown extract type: ' + type });
+  }
+  if (!req.body || !req.body.length) {
+    return res.status(400).json({ ok: false, fields: {}, message: 'No PDF received' });
+  }
+  try {
+    const result = await extractFields(type, req.body);
+    res.json(result);
+  } catch (e) {
+    console.error('PDF extraction failed:', e && e.message);
+    res.json({ ok: false, fields: {}, message: 'Extraction failed - please enter the details manually' });
+  }
+});
+
+// ---------- Automated WhatsApp send (Twilio) ----------
+// Sends a WhatsApp message via Twilio. Responds 200 in all non-fatal cases so
+// the frontend can fall back to a wa.me link: { ok:false, configured:false }
+// when Twilio isn't set up, or { ok:false, message } on a send error.
+app.post('/api/send-wa', authRequired, async (req, res) => {
+  const { to, body, contentSid, contentVariables } = req.body || {};
+  if (!to) return res.status(400).json({ ok: false, message: 'Recipient number is required' });
+  if (!body && !contentSid) return res.status(400).json({ ok: false, message: 'Message body or template is required' });
+  try {
+    const result = await sendWhatsApp({ to, body, contentSid, contentVariables });
+    res.json(result);
+  } catch (e) {
+    console.error('WhatsApp send failed:', e && e.message);
+    res.json({ ok: false, message: (e && e.message) || 'WhatsApp send failed' });
+  }
 });
 
 // ---------- Health check ----------
