@@ -798,10 +798,12 @@ function setSyncStatus(text){
   if(el) el.textContent = text;
 }
 
-function save(){
+var pendingActionDesc = null;
+function save(actionDesc){
   if(!currentCompany) return;
-  if(syncing){ pendingSave = true; return; }
+  if(syncing){ pendingSave = true; if(actionDesc) pendingActionDesc = actionDesc; return; }
   syncing = true;
+  var action = actionDesc || 'Workspace updated';
   setSyncStatus('Saving...');
   fetch(API_BASE+'/api/state/'+currentCompany, { method:'PUT', headers:apiHeaders(), body:JSON.stringify({data:S, rev:stateRev}) })
     .then(function(r){
@@ -813,8 +815,8 @@ function save(){
     .then(function(res){
       if(res && res.rev!=null) stateRev = res.rev;
       setSyncStatus('Synced just now');
-      // Lightweight activity log: records WHO saved and WHEN, not a field-level diff of WHAT changed.
-      fetch(API_BASE+'/api/activity/'+currentCompany, { method:'POST', headers:apiHeaders(), body:JSON.stringify({action:'Workspace updated'}) }).catch(function(){});
+      // Activity log: records WHO did WHAT and WHEN (the server stamps the username).
+      fetch(API_BASE+'/api/activity/'+currentCompany, { method:'POST', headers:apiHeaders(), body:JSON.stringify({action:action}) }).catch(function(){});
     })
     .catch(function(err){
       if(err && err.conflict){ handleSaveConflict(err.res); }
@@ -822,7 +824,7 @@ function save(){
     })
     .then(function(){
       syncing = false;
-      if(pendingSave){ pendingSave = false; save(); }
+      if(pendingSave){ pendingSave = false; var d = pendingActionDesc; pendingActionDesc = null; save(d); }
     });
 }
 
@@ -1297,7 +1299,7 @@ function saveGen(){
   };
   logReadingInternal(g, cdate, chrs);
   if(idx===-1) S.gens.push(g); else S.gens[idx]=g;
-  save(); closeM('gModal'); renderGen(); renderDash();
+  save((idx===-1?'added':'updated')+' generator '+g.id); closeM('gModal'); renderGen(); renderDash();
   toast('ok','Generator '+g.id+' saved - '+gRem(g)+' hrs remaining');
 }
 function logReadingInternal(g, date, hours){
@@ -1327,10 +1329,10 @@ function saveReading(){
   if(hours < Number(g.chrs||0)){ if(!confirm('This reading ('+hours+' hrs) is lower than the last recorded value ('+g.chrs+' hrs). Save anyway?')) return; }
   logReadingInternal(g, date, hours);
   g.cdate = date; g.chrs = hours;
-  save(); closeM('rModal'); renderGen(); renderDash();
+  save('logged reading for generator '+g.id); closeM('rModal'); renderGen(); renderDash();
   toast('ok','Reading logged for '+g.id+' - '+gRem(g)+' hrs remaining');
 }
-function archiveGen(idx){ S.gHist.push(Object.assign({},S.gens[idx],{archivedOn:today()})); S.gens.splice(idx,1); save(); renderGen(); renderDash(); toast('ok','Generator moved to history'); }
+function archiveGen(idx){ var _id=S.gens[idx].id; S.gHist.push(Object.assign({},S.gens[idx],{archivedOn:today()})); S.gens.splice(idx,1); save('archived generator '+_id); renderGen(); renderDash(); toast('ok','Generator moved to history'); }
 
 /* ===== Fuel tracking & basic profit margin ===== */
 function gFuelTotal(g){
@@ -1369,7 +1371,7 @@ function saveFuel(){
   if(!g.fuelLog) g.fuelLog = [];
   g.fuelLog.push({ date:date, liters: isNaN(liters)?0:liters, cost: isNaN(cost)?0:cost });
   if(g.fuelLog.length>100) g.fuelLog = g.fuelLog.slice(-100);
-  save(); closeM('fModal'); renderGen(); renderDash();
+  save('logged fuel for generator '+g.id); closeM('fModal'); renderGen(); renderDash();
   toast('ok','Fuel entry logged for '+g.id);
 }
 
@@ -1377,7 +1379,7 @@ function delGen(idx){
   if(!confirm('Delete this generator? You can restore it from Settings > Recently Deleted for 30 days.')) return;
   var item = S.gens.splice(idx,1)[0];
   S.trash.push({type:'gen', label:item.id+' ('+(item.brand||'Generator')+')', data:item, deletedAt:new Date().toISOString()});
-  save(); renderGen(); renderDash(); renderTrash();
+  save('deleted generator '+item.id); renderGen(); renderDash(); renderTrash();
   toast('warn','Generator moved to Recently Deleted');
 }
 
@@ -1507,11 +1509,11 @@ function saveLpo(){
   if(!exp){ toast('warn','Expiry date is required'); return; }
   var l={num:num,sup:document.getElementById('l_sup').value.trim(),site:document.getElementById('l_site').value.trim(),con:document.getElementById('l_con').value.trim(),ph:document.getElementById('l_ph').value.trim(),em:document.getElementById('l_em').value.trim(),amt:document.getElementById('l_amt').value,iss:document.getElementById('l_iss').value,exp:exp,scp:document.getElementById('l_scp').value.trim()};
   if(idx===-1) S.lpos.push(l); else S.lpos[idx]=l;
-  save(); closeM('lModal'); renderLpo(); renderDash();
+  save((idx===-1?'added':'updated')+' LPO '+num); closeM('lModal'); renderLpo(); renderDash();
   var d=daysDiff(exp);
   toast('ok','LPO '+num+' saved - '+(d<=0?'EXPIRED':d+' days remaining'));
 }
-function archiveLpo(idx){ S.lHist.push(Object.assign({},S.lpos[idx],{archivedOn:today()})); S.lpos.splice(idx,1); save(); renderLpo(); renderDash(); toast('ok','LPO moved to history'); }
+function archiveLpo(idx){ var _num=S.lpos[idx].num; S.lHist.push(Object.assign({},S.lpos[idx],{archivedOn:today()})); S.lpos.splice(idx,1); save('archived LPO '+_num); renderLpo(); renderDash(); toast('ok','LPO moved to history'); }
 
 /* ===== Letter generation: LPO Extension Request & Off-Hire Notice ===== */
 function extractDGs(scp){
@@ -1676,7 +1678,7 @@ function delLpo(idx){
   if(!confirm('Delete this LPO? You can restore it from Settings > Recently Deleted for 30 days.')) return;
   var item = S.lpos.splice(idx,1)[0];
   S.trash.push({type:'lpo', label:'LPO '+item.num+' - '+(item.sup||''), data:item, deletedAt:new Date().toISOString()});
-  save(); renderLpo(); renderDash(); renderTrash();
+  save('deleted LPO '+item.num); renderLpo(); renderDash(); renderTrash();
   toast('warn','LPO moved to Recently Deleted');
 }
 
@@ -1719,14 +1721,14 @@ function saveTs(){
   if(!tech){ toast('warn','Please select a technician'); return; }
   var t={tech:tech,period:document.getElementById('t_period').value,gen:document.getElementById('t_gen').value.trim(),svc:document.getElementById('t_svc').value,days:document.getElementById('t_days').value,hrs:document.getElementById('t_hrs').value,sign:document.getElementById('t_sign').value,rem:document.getElementById('t_rem').value.trim()};
   if(idx===-1) S.ts.push(t); else S.ts[idx]=t;
-  S.lastTs=today(); save(); closeM('tModal'); renderTs();
+  S.lastTs=today(); save((idx===-1?'added':'updated')+' timesheet for '+tech); closeM('tModal'); renderTs();
   toast('ok','Timesheet saved');
 }
 function delTs(idx){
   if(!confirm('Delete this timesheet? You can restore it from Settings > Recently Deleted for 30 days.')) return;
   var item = S.ts.splice(idx,1)[0];
   S.trash.push({type:'ts', label:(item.tech||'Timesheet')+' - '+(item.period||''), data:item, deletedAt:new Date().toISOString()});
-  save(); renderTs(); renderTrash();
+  save('deleted timesheet for '+(item.tech||'')); renderTs(); renderTrash();
   toast('warn','Timesheet moved to Recently Deleted');
 }
 
@@ -1820,14 +1822,14 @@ function saveInv(){
     notes:document.getElementById('i_notes').value.trim()
   };
   if(idx===-1) S.invs.push(inv); else S.invs[idx]=inv;
-  save(); closeM('iModal'); renderInv(); renderDash();
+  save((idx===-1?'added':'updated')+' invoice '+inv.num); closeM('iModal'); renderInv(); renderDash();
   toast('ok','Invoice '+num+' saved');
 }
 function delInv(idx){
   if(!confirm('Delete this invoice? You can restore it from Settings > Recently Deleted for 30 days.')) return;
   var item = S.invs.splice(idx,1)[0];
   S.trash.push({type:'inv', label:'Invoice '+item.num+' - '+(item.client||''), data:item, deletedAt:new Date().toISOString()});
-  save(); renderInv(); renderDash(); renderTrash();
+  save('deleted invoice '+item.num); renderInv(); renderDash(); renderTrash();
   toast('warn','Invoice moved to Recently Deleted');
 }
 
@@ -2030,14 +2032,14 @@ function savePart(){
     notes: document.getElementById('p_notes').value.trim()
   };
   if(idx===-1) S.parts.push(p); else S.parts[idx]=p;
-  save(); closeM('pModal'); renderParts(); renderDash();
+  save((idx===-1?'added':'updated')+' part '+p.name); closeM('pModal'); renderParts(); renderDash();
   toast('ok','Part '+p.name+' saved');
 }
 function delPart(idx){
   if(!confirm('Delete this part? You can restore it from Settings > Recently Deleted for 30 days.')) return;
   var item = S.parts.splice(idx,1)[0];
   S.trash.push({type:'part', label:item.name+' ('+(item.qty||0)+' '+(item.unit||'')+')', data:item, deletedAt:new Date().toISOString()});
-  save(); renderParts(); renderDash(); renderTrash();
+  save('deleted part '+item.name); renderParts(); renderDash(); renderTrash();
   toast('warn','Part moved to Recently Deleted');
 }
 
