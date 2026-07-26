@@ -14,6 +14,13 @@ const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 
+const fs = require('fs');
+// Uploaded PDFs are stored on the persistent disk next to the database, keyed
+// by a random id that the LPO/invoice record references.
+const DATA_DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 'data', 'deluxe.db'));
+const ATTACH_DIR = path.join(DATA_DIR, 'attachments');
+try { fs.mkdirSync(ATTACH_DIR, { recursive: true }); } catch (e) { /* created on first write */ }
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 // JWT signing secret. It MUST come from the environment - the old hardcoded
@@ -44,7 +51,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-l9YpWStwxKkI4uAyh7L+NWEp6ggJ5X0F5mf9FusZHog='";
+const INLINE_SCRIPT_HASH = "'sha256-BsFdV3Yzo2LfjIfAeLwy6x54vwvZ1d48RXYqV9ITrH4='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -235,13 +242,36 @@ app.post('/api/extract/:type', authRequired, express.raw({ type: 'application/pd
   if (!req.body || !req.body.length) {
     return res.status(400).json({ ok: false, fields: {}, message: 'No PDF received' });
   }
+  // Persist the uploaded PDF so it stays attached to the record. Keyed by a
+  // random 32-hex id; failure to store must not block extraction.
+  let attId = null;
+  try {
+    attId = crypto.randomBytes(16).toString('hex');
+    fs.writeFileSync(path.join(ATTACH_DIR, attId + '.pdf'), req.body);
+  } catch (e) {
+    console.error('Attachment store failed:', e && e.message);
+    attId = null;
+  }
   try {
     const result = await extractFields(type, req.body);
-    res.json(result);
+    res.json(Object.assign({ attId: attId }, result));
   } catch (e) {
     console.error('PDF extraction failed:', e && e.message);
-    res.json({ ok: false, fields: {}, message: 'Extraction failed - please enter the details manually' });
+    res.json({ ok: false, fields: {}, attId: attId, message: 'Extraction failed - please enter the details manually' });
   }
+});
+
+// ---------- Serve a stored PDF attachment ----------
+// Streams a previously-uploaded PDF inline. The id is validated to a strict
+// 32-hex pattern so it can't escape the attachments directory.
+app.get('/api/attachment/:id', authRequired, (req, res) => {
+  const id = req.params.id;
+  if (!/^[a-f0-9]{32}$/.test(id)) return res.status(400).json({ ok: false, message: 'Invalid attachment id' });
+  const file = path.join(ATTACH_DIR, id + '.pdf');
+  if (!fs.existsSync(file)) return res.status(404).json({ ok: false, message: 'Attachment not found' });
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename="' + id + '.pdf"');
+  fs.createReadStream(file).pipe(res);
 });
 
 // ---------- Automated WhatsApp send (Twilio) ----------
