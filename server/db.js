@@ -36,6 +36,14 @@ db.exec(`
     action TEXT NOT NULL,
     at TEXT DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS alert_status (
+    company TEXT PRIMARY KEY,
+    last_sent_at TEXT,
+    last_count INTEGER,
+    last_email TEXT,
+    last_whatsapp TEXT
+  );
 `);
 
 // Migration: add the `rev` version column to pre-existing company_state tables.
@@ -122,7 +130,20 @@ function getActivity(company, limit) {
     .all(company, limit || 50);
 }
 
+// ---- Last alert-send status (for the dashboard indicator) ----
+function recordAlertSent(company, count, email, whatsapp) {
+  db.prepare(
+    "INSERT INTO alert_status (company, last_sent_at, last_count, last_email, last_whatsapp) " +
+    "VALUES (?, datetime('now'), ?, ?, ?) " +
+    "ON CONFLICT(company) DO UPDATE SET last_sent_at = datetime('now'), " +
+    "last_count = excluded.last_count, last_email = excluded.last_email, last_whatsapp = excluded.last_whatsapp"
+  ).run(company, count, email, whatsapp);
+}
+function getAlertStatus(company) {
+  return db.prepare('SELECT last_sent_at, last_count, last_email, last_whatsapp FROM alert_status WHERE company = ?').get(company) || null;
+}
+
 module.exports = {
   db, findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins,
-  getState, saveState, logActivity, getActivity
+  getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus
 };
