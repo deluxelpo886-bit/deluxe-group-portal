@@ -663,6 +663,7 @@ body.dark #calDetails .calItm{border-color:var(--border);}
  <div class="modal">
   <h3>LPO Details</h3>
   <input type="hidden" id="lIdx" value="-1"/>
+  <input type="hidden" id="l_attId" value=""/>
   <div class="fGrid">
     <div class="fG"><label>LPO Number</label><input type="text" id="l_num" placeholder="e.g. LPO-2024-001"/></div>
     <div class="fG"><label>Client / Company Name</label><input type="text" id="l_sup" list="clientList" placeholder="e.g. Trojan General Contracting LLC"/><datalist id="clientList"></datalist></div>
@@ -709,6 +710,7 @@ body.dark #calDetails .calItm{border-color:var(--border);}
  <div class="modal">
   <h3>Invoice Entry</h3>
   <input type="hidden" id="iIdx" value="-1"/>
+  <input type="hidden" id="i_attId" value=""/>
   <div class="fGrid">
     <div class="fG"><label>Invoice Number</label><input type="text" id="i_num" placeholder="e.g. SAL2-000087"/></div>
     <div class="fG"><label>Invoice Date</label><input type="date" id="i_date"/></div>
@@ -1418,6 +1420,7 @@ function renderLpo(){
       '<td>'+badge(s)+'</td>'+
       '<td style="white-space:nowrap">'+
         letterBtns+
+        (l.attId?'<button class="btnP btnSm" data-act="viewAtt" data-v="'+l.attId+'">PDF</button> ':'')+
         '<button class="btnP btnSm" data-act="editLpo" data-i="'+idx+'">Edit</button> '+
         '<button class="btnP btnSm btnRed" data-act="archiveLpo" data-i="'+idx+'">Archive</button> '+
         '<button class="btnP btnSm btnDR" data-act="delLpo" data-i="'+idx+'">Del</button>'+
@@ -1427,12 +1430,14 @@ function renderLpo(){
 }
 function resetLpoForm(){
   document.getElementById('lIdx').value='-1';
+  document.getElementById('l_attId').value='';
   ['l_num','l_sup','l_site','l_con','l_ph','l_em','l_amt','l_scp'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('l_iss').value=today();
   document.getElementById('l_exp').value='';
 }
 function resetInvForm(){
   document.getElementById('iIdx').value='-1';
+  document.getElementById('i_attId').value='';
   ['i_num','i_lpo','i_dg','i_client','i_amt','i_notes'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('i_date').value=today();
   document.getElementById('i_status').value='Open';
@@ -1462,6 +1467,7 @@ function importFromPdf(type, file){
     var f=(res&&res.fields)||{};
     if(type==='lpo'){
       resetLpoForm();
+      if(res&&res.attId) document.getElementById('l_attId').value=res.attId;
       if(f.lpo_number) document.getElementById('l_num').value=f.lpo_number;
       if(f.client_name) document.getElementById('l_sup').value=f.client_name;
       if(f.site) document.getElementById('l_site').value=f.site;
@@ -1471,6 +1477,7 @@ function importFromPdf(type, file){
       openM('lModal');
     } else {
       resetInvForm();
+      if(res&&res.attId) document.getElementById('i_attId').value=res.attId;
       if(f.invoice_number) document.getElementById('i_num').value=f.invoice_number;
       if(f.date) document.getElementById('i_date').value=f.date;
       if(f.lpo_reference) document.getElementById('i_lpo').value=f.lpo_reference;
@@ -1486,9 +1493,23 @@ function importFromPdf(type, file){
     toast('warn','PDF import failed - please enter the details manually.');
   }).then(function(){ if(btn){ btn.disabled=false; btn.innerHTML=orig; } });
 }
+// Open a stored PDF attachment. The endpoint needs an auth header, so we fetch
+// it as a blob rather than navigating directly. A blank tab is opened
+// synchronously (within the click gesture) to avoid the popup blocker, then
+// pointed at the blob once it arrives.
+function viewAttachment(id){
+  if(!id) return;
+  if(!/^[a-f0-9]{32}$/.test(id)){ toast('warn','Invalid attachment.'); return; }
+  var w=window.open('','_blank');
+  fetch(API_BASE+'/api/attachment/'+id, { headers:apiHeaders() })
+    .then(function(r){ if(r.status===401){ handleAuthExpired(); throw new Error('auth'); } if(!r.ok) throw new Error('notfound'); return r.blob(); })
+    .then(function(b){ var url=URL.createObjectURL(b); if(w){ w.location=url; } else { window.open(url,'_blank'); } setTimeout(function(){ URL.revokeObjectURL(url); }, 60000); })
+    .catch(function(e){ if(w){ try{ w.close(); }catch(_){} } if(e&&e.message==='auth') return; toast('warn','Could not open the PDF attachment.'); });
+}
 function editLpo(idx){
   var l=S.lpos[idx];
   document.getElementById('lIdx').value=idx;
+  document.getElementById('l_attId').value=l.attId||'';
   document.getElementById('l_num').value=l.num||'';
   document.getElementById('l_sup').value=l.sup||'';
   document.getElementById('l_site').value=l.site||'';
@@ -1507,7 +1528,8 @@ function saveLpo(){
   var exp=document.getElementById('l_exp').value;
   if(!num){ toast('warn','LPO Number is required'); return; }
   if(!exp){ toast('warn','Expiry date is required'); return; }
-  var l={num:num,sup:document.getElementById('l_sup').value.trim(),site:document.getElementById('l_site').value.trim(),con:document.getElementById('l_con').value.trim(),ph:document.getElementById('l_ph').value.trim(),em:document.getElementById('l_em').value.trim(),amt:document.getElementById('l_amt').value,iss:document.getElementById('l_iss').value,exp:exp,scp:document.getElementById('l_scp').value.trim()};
+  var attId=document.getElementById('l_attId').value||'';
+  var l={num:num,sup:document.getElementById('l_sup').value.trim(),site:document.getElementById('l_site').value.trim(),con:document.getElementById('l_con').value.trim(),ph:document.getElementById('l_ph').value.trim(),em:document.getElementById('l_em').value.trim(),amt:document.getElementById('l_amt').value,iss:document.getElementById('l_iss').value,exp:exp,scp:document.getElementById('l_scp').value.trim(),attId:attId};
   if(idx===-1) S.lpos.push(l); else S.lpos[idx]=l;
   save((idx===-1?'added':'updated')+' LPO '+num); closeM('lModal'); renderLpo(); renderDash();
   var d=daysDiff(exp);
@@ -1787,6 +1809,7 @@ function renderInv(){
       '<td><strong style="color:'+ac+'">'+(inv.status==='Paid'?'-':age+' days')+'</strong></td>'+
       '<td>'+badge(inv.status==='Paid'?'ok':inv.status==='Approved'?'warn':s)+' <small>'+inv.status+'</small></td>'+
       '<td style="white-space:nowrap">'+
+        (inv.attId?'<button class="btnP btnSm" data-act="viewAtt" data-v="'+inv.attId+'">PDF</button> ':'')+
         '<button class="btnP btnSm" data-act="editInv" data-i="'+idx+'">Edit</button> '+
         '<button class="btnP btnSm btnDR" data-act="delInv" data-i="'+idx+'">Del</button>'+
       '</td></tr>';
@@ -1796,6 +1819,7 @@ function renderInv(){
 function editInv(idx){
   var i = S.invs[idx];
   document.getElementById('iIdx').value = idx;
+  document.getElementById('i_attId').value = i.attId||'';
   document.getElementById('i_num').value = i.num||'';
   document.getElementById('i_date').value = i.date||'';
   document.getElementById('i_lpo').value = i.lpo||'';
@@ -1819,7 +1843,8 @@ function saveInv(){
     client:document.getElementById('i_client').value.trim(),
     amt:document.getElementById('i_amt').value,
     status:document.getElementById('i_status').value,
-    notes:document.getElementById('i_notes').value.trim()
+    notes:document.getElementById('i_notes').value.trim(),
+    attId:document.getElementById('i_attId').value||''
   };
   if(idx===-1) S.invs.push(inv); else S.invs[idx]=inv;
   save((idx===-1?'added':'updated')+' invoice '+inv.num); closeM('iModal'); renderInv(); renderDash();
@@ -2727,6 +2752,7 @@ window.addEventListener('DOMContentLoaded', function(){
       case 'sendEmail': sendAlertEmail('Deluxe Energy Alert', buildAlertMsg().msg); break;
       case 'ackAlarm': ackAlarm(); break;
       case 'userDel': delUserByName(v); break;
+      case 'viewAtt': viewAttachment(v); break;
     }
   });
   document.getElementById('loginBtn').addEventListener('click', doLogin);
