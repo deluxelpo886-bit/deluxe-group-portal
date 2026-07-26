@@ -8,7 +8,7 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity } = require('./db');
+const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus } = require('./db');
 const { extractFields } = require('./extract');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
@@ -44,7 +44,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-GSa5Q7Fz5Hcf1szDuhb661DPF8rvnPXmzgGv2Bl5KEo='";
+const INLINE_SCRIPT_HASH = "'sha256-Cph7f+ii9laSpNHXynVzWvYJQPig+UNpNnXNJu0bltY='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -304,8 +304,26 @@ async function runCompanyAlerts(company, opts) {
   } else {
     out.whatsapp = { ok: false, message: 'No WhatsApp number configured' };
   }
+  if (out.sent) {
+    try { recordAlertSent(company, out.count, channelStatus(out.email), channelStatus(out.whatsapp)); } catch (e) { /* non-fatal */ }
+  }
   return out;
 }
+
+// Short channel status label for the dashboard "last alert sent" indicator.
+function channelStatus(ch) {
+  if (!ch) return 'n/a';
+  if (ch.ok) return 'sent';
+  if (ch.configured === false) return 'not configured';
+  if (ch.skipped) return 'skipped';
+  if (ch.message && /no recipient|no whatsapp/i.test(ch.message)) return 'no recipient';
+  return 'failed';
+}
+
+// Last alert-send status for the dashboard indicator.
+app.get('/api/alert-status/:company', authRequired, validCompany, (req, res) => {
+  res.json(getAlertStatus(req.params.company) || {});
+});
 
 // Manual trigger: compute and send this company's alerts now (always sends).
 app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, res) => {

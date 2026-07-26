@@ -297,6 +297,7 @@ body.dark #calDetails .calItm{border-color:var(--border);}
 
       <div class="page active" id="page-dashboard">
         <div id="dAlarm"></div>
+        <div id="dLastAlert"></div>
         <div class="statGrid" id="dStats"></div>
         <div class="chartRow" id="dCharts"></div>
         <div id="dAlerts"></div>
@@ -1056,8 +1057,29 @@ function renderCharts(gOk,gW,gU,gD,lOk,lW,lU,lD){
     '<div class="chartCard"><div>'+donutSVG(lSegs)+'</div><div><div class="chartTitle">LPO Status</div><div class="chartLegend">'+legend(lSegs)+'</div></div></div>';
 }
 
+// Show when the server last sent alerts (email/WhatsApp) and via which channel.
+function fmtAlertTime(s){
+  if(!s) return '';
+  var d=new Date(s.replace(' ','T')+'Z'); // stored as UTC by SQLite
+  if(isNaN(d)) return s;
+  return d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+function loadLastAlert(){
+  var el=document.getElementById('dLastAlert');
+  if(!el || !currentCompany) return;
+  fetch(API_BASE+'/api/alert-status/'+currentCompany, { headers:apiHeaders() })
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(s){
+      if(!s || !s.last_sent_at){ el.innerHTML=''; return; }
+      el.innerHTML='<div style="font-size:12px;color:var(--textDim);padding:4px 2px 12px;">'
+        +'&#128276; Alerts last sent '+fmtAlertTime(s.last_sent_at)+' &middot; '+(s.last_count||0)+' item(s) &middot; '
+        +'Email: '+(s.last_email||'n/a')+' &middot; WhatsApp: '+(s.last_whatsapp||'n/a')+'</div>';
+    })
+    .catch(function(){ el.innerHTML=''; });
+}
 function renderDash(){
   renderAlarmBanner();
+  loadLastAlert();
   var gOk=0,gW=0,gU=0,gD=0,lOk=0,lW=0,lU=0,lD=0;
   S.gens.forEach(function(g){ var s=gStatus(g); if(s==='ok') gOk++; else if(s==='warn') gW++; else if(s==='urgent') gU++; else gD++; });
   S.lpos.forEach(function(l){ var s=lStatus(l); if(s==='ok') lOk++; else if(s==='warn') lW++; else if(s==='urgent') lU++; else lD++; });
