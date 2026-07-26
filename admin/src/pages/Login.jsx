@@ -26,6 +26,20 @@ export default function Login() {
     }
   };
 
+  const tryDemo = async () => {
+    setError('');
+    setEmail('demo@deluxego.app');
+    setPassword('DeluxeDemo2026');
+    setLoading(true);
+    try {
+      await signIn('demo@deluxego.app', 'DeluxeDemo2026');
+    } catch (err) {
+      setError(prettyError(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
@@ -62,6 +76,15 @@ export default function Login() {
 
         <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
           {loading ? 'Signing in…' : 'Sign in'}
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-block mt-2"
+          onClick={tryDemo}
+          disabled={loading}
+        >
+          Explore the demo (sample data)
         </button>
 
         <p className="muted small mt-3" style={{ textAlign: 'center' }}>

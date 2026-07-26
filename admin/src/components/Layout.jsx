@@ -9,9 +9,17 @@ const NAV = [
 ];
 
 export default function Layout() {
-  const { staff, user, logout } = useAuth();
+  const { staff, user, logout, isDemo } = useAuth();
   return (
     <div className="layout">
+      {isDemo ? (
+        <div style={{
+          gridColumn: '1 / -1', background: '#8F661C', color: '#fff', textAlign: 'center',
+          fontSize: 13, fontWeight: 600, padding: '7px 14px',
+        }}>
+          Demo mode — sample data. Real customer requests appear once your account is added as staff in Firebase.
+        </div>
+      ) : null}
       <aside className="sidebar">
         <div className="logo">
           <div className="logo-mark">D</div>

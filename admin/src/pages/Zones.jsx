@@ -3,9 +3,13 @@ import {
   collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useAuth } from '../auth/AuthContext';
+import { useDemoStore, updateDemo } from '../demo/demoStore';
 import { money } from '../lib/catalogue';
 
 export default function Zones() {
+  const { isDemo } = useAuth();
+  const demo = useDemoStore();
   const [zones, setZones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
@@ -13,6 +17,11 @@ export default function Zones() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (isDemo) {
+      setZones([...demo.zones].sort((a, b) => (a.name || '').localeCompare(b.name || '')));
+      setLoading(false);
+      return undefined;
+    }
     const unsub = onSnapshot(
       collection(db, 'zones'),
       (snap) => {
@@ -24,11 +33,16 @@ export default function Zones() {
       () => setLoading(false)
     );
     return unsub;
-  }, []);
+  }, [isDemo, demo]);
 
   const addZone = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
+    if (isDemo) {
+      updateDemo((s) => s.zones.push({ id: 'z' + Date.now(), name: name.trim(), inspectionFee: Number(fee) || 0 }));
+      setName(''); setFee('');
+      return;
+    }
     setSaving(true);
     try {
       await addDoc(collection(db, 'zones'), {
@@ -46,13 +60,16 @@ export default function Zones() {
   };
 
   const saveFee = async (id, value) => {
+    if (isDemo) return updateDemo((s) => { const z = s.zones.find((x) => x.id === id); if (z) z.inspectionFee = Number(value) || 0; });
     await updateDoc(doc(db, 'zones', id), { inspectionFee: Number(value) || 0 });
   };
   const rename = async (id, value) => {
+    if (isDemo) return updateDemo((s) => { const z = s.zones.find((x) => x.id === id); if (z) z.name = value; });
     await updateDoc(doc(db, 'zones', id), { name: value });
   };
   const remove = async (id, zoneName) => {
     if (!window.confirm(`Delete zone "${zoneName}"?`)) return;
+    if (isDemo) return updateDemo((s) => { s.zones = s.zones.filter((x) => x.id !== id); });
     await deleteDoc(doc(db, 'zones', id));
   };
 

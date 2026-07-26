@@ -5,6 +5,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../auth/AuthContext';
+import { useDemoStore, updateDemo } from '../demo/demoStore';
 import StatusBadge from '../components/StatusBadge';
 import {
   serviceName, formatDate, shortId, money, computeQuoteTotals, VAT_RATE, STATUS_ALL,
@@ -15,7 +16,8 @@ const blankItem = () => ({ description: '', qty: 1, unitPrice: 0 });
 export default function RequestDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { staff } = useAuth();
+  const { staff, isDemo } = useAuth();
+  const demo = useDemoStore();
 
   const [req, setReq] = useState(null);
   const [notFound, setNotFound] = useState(false);
@@ -29,19 +31,33 @@ export default function RequestDetail() {
   const [letterhead, setLetterhead] = useState('heavy');
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, 'serviceRequests', id), (snap) => {
-      if (!snap.exists()) { setNotFound(true); return; }
-      const data = { id: snap.id, ...snap.data() };
+    const apply = (data) => {
       setReq(data);
       setStatus(data.status || 'New');
       if (data.quote?.items?.length) setItems(data.quote.items.map((i) => ({ ...i })));
       if (data.inspection?.zoneId) setZoneId(data.inspection.zoneId);
       if (data.letterhead) setLetterhead(data.letterhead);
+    };
+    if (isDemo) {
+      const data = demo.requests.find((x) => x.id === id);
+      if (!data) { setNotFound(true); return undefined; }
+      apply(data);
+      return undefined;
+    }
+    const unsub = onSnapshot(doc(db, 'serviceRequests', id), (snap) => {
+      if (!snap.exists()) { setNotFound(true); return; }
+      apply({ id: snap.id, ...snap.data() });
     });
     return unsub;
-  }, [id]);
+  }, [id, isDemo, demo]);
 
   useEffect(() => {
+    if (isDemo) {
+      const list = [...demo.zones].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      setZones(list);
+      setZoneId((z) => z || (list[0] ? list[0].id : ''));
+      return undefined;
+    }
     const unsub = onSnapshot(collection(db, 'zones'), (snap) => {
       const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
@@ -49,7 +65,7 @@ export default function RequestDetail() {
       setZoneId((z) => z || (list[0] ? list[0].id : ''));
     });
     return unsub;
-  }, []);
+  }, [isDemo, demo]);
 
   const totals = useMemo(() => computeQuoteTotals(items), [items]);
   const selectedZone = zones.find((z) => z.id === zoneId);
@@ -67,6 +83,15 @@ export default function RequestDetail() {
   const by = staff?.name || staff?.id || 'staff';
 
   async function patch(fields, label) {
+    if (isDemo) {
+      // drop the arrayUnion FieldValue (statusHistory) in sample-data mode
+      const { statusHistory, ...rest } = fields;
+      updateDemo((s) => {
+        const r = s.requests.find((x) => x.id === id);
+        if (r) Object.assign(r, rest, { updatedAt: { seconds: Math.floor(Date.now() / 1000) }, updatedBy: by });
+      });
+      return;
+    }
     setBusy(label);
     try {
       await updateDoc(doc(db, 'serviceRequests', id), {

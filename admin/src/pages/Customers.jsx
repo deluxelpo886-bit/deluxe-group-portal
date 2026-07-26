@@ -2,16 +2,25 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../auth/AuthContext';
+import { useDemoStore, updateDemo } from '../demo/demoStore';
 import { formatDate } from '../lib/catalogue';
 
 export default function Customers() {
-  const { staff } = useAuth();
+  const { staff, isDemo } = useAuth();
+  const demo = useDemoStore();
   const [requests, setRequests] = useState([]);
   const [profiles, setProfiles] = useState({}); // uid -> customers doc
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState(null);
 
   useEffect(() => {
+    if (isDemo) {
+      setRequests(demo.requests);
+      const map = {};
+      demo.customers.forEach((c) => { map[c.id] = c; });
+      setProfiles(map);
+      return undefined;
+    }
     const u1 = onSnapshot(collection(db, 'serviceRequests'), (snap) =>
       setRequests(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
     );
@@ -21,7 +30,7 @@ export default function Customers() {
       setProfiles(map);
     });
     return () => { u1(); u2(); };
-  }, []);
+  }, [isDemo, demo]);
 
   // Merge: one row per customer (keyed by uid), aggregating their requests and
   // overlaying any saved profile (company details + verification).
@@ -134,6 +143,7 @@ export default function Customers() {
         <CustomerModal
           customer={editing}
           staff={staff}
+          isDemo={isDemo}
           onClose={() => setEditing(null)}
         />
       ) : null}
@@ -141,7 +151,7 @@ export default function Customers() {
   );
 }
 
-function CustomerModal({ customer, staff, onClose }) {
+function CustomerModal({ customer, staff, isDemo, onClose }) {
   const p = customer.profile || {};
   const [type, setType] = useState(p.type || 'individual');
   const [companyName, setCompanyName] = useState(p.companyName || '');
@@ -168,6 +178,15 @@ function CustomerModal({ customer, staff, onClose }) {
       if (type === 'company' && verified && !p.verified) {
         data.verifiedAt = serverTimestamp();
         data.verifiedBy = by;
+      }
+      if (isDemo) {
+        updateDemo((s) => {
+          const existing = s.customers.find((c) => c.id === customer.uid);
+          if (existing) Object.assign(existing, data);
+          else s.customers.push({ id: customer.uid, ...data });
+        });
+        onClose();
+        return;
       }
       await setDoc(doc(db, 'customers', customer.uid), data, { merge: true });
       onClose();

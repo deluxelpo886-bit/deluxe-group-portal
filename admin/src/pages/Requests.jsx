@@ -2,17 +2,27 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useAuth } from '../auth/AuthContext';
+import { useDemoStore } from '../demo/demoStore';
 import StatusBadge from '../components/StatusBadge';
 import { serviceName, formatDate, shortId, money, STATUS_ALL } from '../lib/catalogue';
 
 export default function Requests() {
   const navigate = useNavigate();
+  const { isDemo } = useAuth();
+  const demo = useDemoStore();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
+    if (isDemo) {
+      const list = [...demo.requests].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      setRows(list);
+      setLoading(false);
+      return undefined;
+    }
     const unsub = onSnapshot(
       collection(db, 'serviceRequests'),
       (snap) => {
@@ -24,7 +34,7 @@ export default function Requests() {
       () => setLoading(false)
     );
     return unsub;
-  }, []);
+  }, [isDemo, demo]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
