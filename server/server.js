@@ -44,7 +44,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-Cph7f+ii9laSpNHXynVzWvYJQPig+UNpNnXNJu0bltY='";
+const INLINE_SCRIPT_HASH = "'sha256-l9YpWStwxKkI4uAyh7L+NWEp6ggJ5X0F5mf9FusZHog='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
