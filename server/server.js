@@ -13,6 +13,7 @@ const { extractFields } = require('./extract');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
+const createOpsRouter = require('./ops');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -366,11 +367,21 @@ app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, re
   }
 });
 
+// ---------- Deluxe Ops (generator operations tracking) ----------
+// Role-based app (admin / ops head / technician) mounted under /api/ops. It
+// shares this server's JWT auth and SQLite database. See server/ops.js and OPS.md.
+app.use('/api/ops', createOpsRouter({ authRequired }));
+
 // ---------- Health check ----------
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
-// ---------- Serve the frontend ----------
+// ---------- Serve the frontends ----------
 app.use(express.static(path.join(__dirname, '..', 'public')));
+// The Deluxe Ops single-page app lives at /ops (and any /ops/* sub-path).
+app.get(['/ops', '/ops/*'], (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'ops.html'));
+});
+// Everything else falls back to the original LPO/invoice portal.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
