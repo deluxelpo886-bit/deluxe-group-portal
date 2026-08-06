@@ -225,5 +225,53 @@ module.exports = function createOpsRouter({ authRequired }) {
     res.json({ ok: true });
   });
 
+  // =========================================================================
+  // Per-technician alerts. Admin / ops_head raise an alert for a specific
+  // technician; it shows as a ringing banner in that technician's app until
+  // they acknowledge it.
+  // =========================================================================
+  router.get('/tech-alerts', (req, res) => {
+    if (req.opsRole === 'technician') return res.json(ops.listTechAlerts(req.opsUser.username));
+    if (req.opsRole === 'admin' || req.opsRole === 'ops_head') {
+      if (req.query.tech) return res.json(ops.listTechAlerts(req.query.tech));
+      return res.json(ops.listAllTechAlerts());
+    }
+    return res.status(403).json({ error: 'No operations access' });
+  });
+
+  // Unacknowledged counts per technician (admin roster badges).
+  router.get('/tech-alerts/counts', requireRole('admin', 'ops_head'), (req, res) => {
+    res.json(ops.unackAlertCounts());
+  });
+
+  router.post('/tech-alerts', requireRole('admin', 'ops_head'), (req, res) => {
+    const { tech, message, level } = req.body || {};
+    if (!tech || ops.roleOf(tech) !== 'technician') return res.status(400).json({ error: 'tech must be a technician username' });
+    const msg = (message || '').trim();
+    if (!msg) return res.status(400).json({ error: 'Alert message is required' });
+    if (msg.length > 500) return res.status(400).json({ error: 'Alert message is too long (max 500 chars)' });
+    if (level && !ops.ALERT_LEVELS.includes(level)) return res.status(400).json({ error: 'level must be info or urgent' });
+    res.json(ops.createTechAlert(tech, msg, level || 'info', req.opsUser.username));
+  });
+
+  // Acknowledge: a technician may clear their own; admin/ops_head may clear any.
+  router.post('/tech-alerts/:id/ack', (req, res) => {
+    const id = Number(req.params.id);
+    const alert = ops.getTechAlert(id);
+    if (!alert) return res.status(404).json({ error: 'Alert not found' });
+    if (req.opsRole === 'technician' && alert.tech_username !== req.opsUser.username) {
+      return res.status(403).json({ error: 'That alert is not yours' });
+    }
+    if (!req.opsRole) return res.status(403).json({ error: 'No operations access' });
+    res.json(ops.acknowledgeTechAlert(id));
+  });
+
+  router.delete('/tech-alerts/:id', requireRole('admin', 'ops_head'), (req, res) => {
+    const id = Number(req.params.id);
+    if (!ops.getTechAlert(id)) return res.status(404).json({ error: 'Alert not found' });
+    ops.deleteTechAlert(id);
+    res.json({ ok: true });
+  });
+
   return router;
 };

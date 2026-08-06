@@ -44,8 +44,28 @@ recorded in a per-job history log.
 morning from Netsonic's *Machinery Service Due* report (**Service Due** tab).
 Technicians then see those as countdown rings on the matching job.
 
+## Per-technician alerts
+
+Admin and Ops Head can send an alert to a **specific technician** from the
+**Technicians** tab (🔔 *Alert* button on each technician's row). Choose a level:
+
+- **Info** (📢) — a calm notice banner.
+- **Urgent** (🔔) — a ringing red banner, same treatment as a breakdown.
+
+The alert appears at the very top of that technician's app until they tap
+**Got it** to acknowledge it. The Technicians tab shows a badge with each
+technician's unacknowledged alert count, and the alert modal lists every alert
+sent to them with its status (waiting / acknowledged) so office staff can
+review or remove them.
+
+API: `POST /api/ops/tech-alerts` (admin/ops_head), `GET /api/ops/tech-alerts`
+(technicians get their own; admin/ops_head get all or filter by `?tech=`),
+`GET /api/ops/tech-alerts/counts`, `POST /api/ops/tech-alerts/:id/ack`,
+`DELETE /api/ops/tech-alerts/:id`.
+
 ## Technician "alarm-clock" view
 
+- **Admin alerts** ring at the very top (see above).
 - **Breakdowns** appear as a large ringing red alarm at the top of the screen.
 - **Routine service** shows as a countdown ring per job:
   green (> 7 days) → gold (4–7) → red (≤ 3), and **red + pulsing** when due

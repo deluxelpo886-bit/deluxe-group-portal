@@ -193,6 +193,24 @@ tr:last-child td { border-bottom: none; }
 .breakdown-alarm h3 { margin: 0 0 .2rem; font-size: 1.15rem; letter-spacing: .5px; }
 .breakdown-alarm .ba-sub { color: #ffd0d0; font-size: .85rem; }
 
+/* Admin-set alert banners in the technician app */
+.tech-alert {
+  display: flex; align-items: center; gap: 1rem; padding: 1rem 1.15rem; border-radius: 16px; margin-bottom: 1rem;
+}
+.tech-alert .ta-icon { font-size: 1.7rem; }
+.tech-alert .ta-body { flex: 1; }
+.tech-alert .ta-msg { font-weight: 600; }
+.tech-alert .ta-meta { font-size: .75rem; opacity: .8; margin-top: .2rem; }
+.tech-alert.info {
+  background: linear-gradient(135deg, #172a4d 0%, #1e3a68 100%);
+  border: 1px solid var(--gold-600); color: var(--text);
+}
+.tech-alert.urgent {
+  background: linear-gradient(135deg, #5a1620 0%, #7c1d2b 100%);
+  border: 2px solid var(--red); color: #fff; animation: alarmPulse 1.1s ease-in-out infinite;
+}
+.tech-alert .ta-ack { flex-shrink: 0; }
+
 /* Countdown rings */
 .ring-wrap { display: flex; align-items: center; gap: 1rem; }
 .ring { width: 92px; height: 92px; flex-shrink: 0; position: relative; }

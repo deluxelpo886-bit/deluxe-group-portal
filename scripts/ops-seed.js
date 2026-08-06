@@ -93,6 +93,10 @@ function seed(opts) {
     ops.upsertServiceDue(dg, DEMO_SERVICE_DUE[dg], gen && gen.company, 'sara');
   });
 
+  // A couple of admin-set alerts so the technician app shows them on first open.
+  ops.createTechAlert('rahul', 'Bring the 500 KVA service kit — DG-114 filters are due.', 'info', 'opsadmin');
+  ops.createTechAlert('rahul', 'Head to Musaffah first: DG-220 breakdown is a priority.', 'urgent', 'sara');
+
   console.log('\nDeluxe Ops demo data seeded:');
   console.log('  ' + DEMO_GENERATORS.length + ' generators, ' + DEMO_JOBS.length + ' jobs, ' +
     Object.keys(DEMO_SERVICE_DUE).length + ' service-due entries.');
