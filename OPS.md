@@ -5,8 +5,16 @@ Heavy Equipment Rental** and **Deluxe Energy Solutions** (Abu Dhabi). It runs
 inside the existing Deluxe Group Portal server — same Node/Express process, same
 SQLite database, same JWT login — and is served at **`/ops`**.
 
-- Original LPO/invoice portal: `/`
-- Generator operations app: **`/ops`**
+It ships as **two installable apps** that share one codebase and login:
+
+- **Office console** — **`/ops`** — for Admin and Ops Head (fleet, job board,
+  technicians, service feed).
+- **Technician app** — **`/ops/tech`** — for field technicians (their jobs,
+  breakdowns, service countdowns, alerts).
+
+Both authenticate the same way and enforce the same server-side roles. If
+someone opens the app that isn't meant for their role, they're pointed to the
+right one (they can still continue). Original LPO/invoice portal remains at `/`.
 
 ## Roles
 
@@ -73,21 +81,21 @@ API: `POST /api/ops/tech-alerts` (admin/ops_head), `GET /api/ops/tech-alerts`
 - Each job card shows its pipeline and a one-tap button to advance to the next
   stage.
 
-## Install on a phone (mobile app)
+## Install on a phone (two apps)
 
-Deluxe Ops is an installable web app (PWA) — no app store needed. On a
-technician's phone:
+Both apps are installable web apps (PWAs) — no app store needed. Each installs
+as its own home-screen icon:
 
-- **Android / Chrome:** open the ops URL (e.g. `https://…onrender.com/ops`),
-  tap the **⋮** menu → **Add to Home screen** (or accept the "Install app"
-  prompt).
-- **iPhone / Safari:** open the ops URL, tap **Share** → **Add to Home Screen**.
+- **Technicians** install the **Technician app**: open **`…/ops/tech`** →
+  Android/Chrome **⋮** → *Add to Home screen*; iPhone/Safari **Share** →
+  *Add to Home Screen*. Icon: **Ops Tech**. Opens straight to their jobs.
+- **Office staff** (admin / ops head) install the **Office console**: open
+  **`…/ops`** → same *Add to Home Screen* step. Icon: **Ops Office**.
 
-It installs as a **Deluxe Ops** icon that opens straight to the app in
-full-screen (no browser bars), starting on the technician's job list. The app
-shell is cached by a service worker (`/ops-sw.js`, scoped to `/ops`) so it opens
-instantly and survives a flaky connection; job data is always fetched live from
-the server (never cached) so everyone stays in sync.
+Each app opens full-screen (no browser bars) and caches its own shell via a
+scoped service worker (`/ops-tech-sw.js` for `/ops/tech`, `/ops-sw.js` for
+`/ops`) so it loads instantly and tolerates a flaky connection. Job data is
+always fetched live (never cached) so everyone stays in sync.
 
 ## Branding
 

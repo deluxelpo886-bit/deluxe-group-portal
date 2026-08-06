@@ -377,7 +377,13 @@ app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISO
 
 // ---------- Serve the frontends ----------
 app.use(express.static(path.join(__dirname, '..', 'public')));
-// The Deluxe Ops single-page app lives at /ops (and any /ops/* sub-path).
+// Deluxe Ops ships as two installable apps sharing one codebase:
+//   /ops/tech  -> the field Technician app (ops-tech.html)
+//   /ops       -> the Office console for admin/ops-head (ops.html)
+// The technician route must be registered first so it isn't swallowed by /ops/*.
+app.get(['/ops/tech', '/ops/tech/*'], (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'ops-tech.html'));
+});
 app.get(['/ops', '/ops/*'], (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'ops.html'));
 });
