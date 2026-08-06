@@ -87,10 +87,24 @@ db.exec(`
     updated_at TEXT DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS ops_tech_alerts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tech_username TEXT NOT NULL,
+    message TEXT NOT NULL,
+    level TEXT NOT NULL DEFAULT 'info',
+    created_by TEXT,
+    acknowledged INTEGER NOT NULL DEFAULT 0,
+    acknowledged_at TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+
   CREATE INDEX IF NOT EXISTS idx_ops_jobs_tech ON ops_jobs(assigned_tech);
   CREATE INDEX IF NOT EXISTS idx_ops_jobs_state ON ops_jobs(state);
   CREATE INDEX IF NOT EXISTS idx_ops_job_events_job ON ops_job_events(job_id);
+  CREATE INDEX IF NOT EXISTS idx_ops_tech_alerts_tech ON ops_tech_alerts(tech_username);
 `);
+
+const ALERT_LEVELS = ['info', 'urgent'];
 
 // Migration: give the shared users table an ops `role` and technician
 // `display_name`. Existing accounts (the LPO portal admin) become ops admins so
@@ -305,12 +319,56 @@ function deleteServiceDue(dgNumber) {
   db.prepare('DELETE FROM ops_service_due WHERE dg_number = ?').run(dgNumber);
 }
 
+// ---- Per-technician alerts (admin/ops-head -> technician's app) ----
+function createTechAlert(tech, message, level, createdBy) {
+  const lvl = ALERT_LEVELS.includes(level) ? level : 'info';
+  const info = db.prepare(
+    'INSERT INTO ops_tech_alerts (tech_username, message, level, created_by) VALUES (?, ?, ?, ?)'
+  ).run(tech, message, lvl, createdBy || null);
+  return getTechAlert(info.lastInsertRowid);
+}
+function getTechAlert(id) {
+  return db.prepare('SELECT * FROM ops_tech_alerts WHERE id = ?').get(id);
+}
+// All alerts for one technician, newest first (unacknowledged first).
+function listTechAlerts(tech) {
+  return db.prepare(
+    'SELECT * FROM ops_tech_alerts WHERE tech_username = ? ORDER BY acknowledged ASC, id DESC'
+  ).all(tech);
+}
+// Every alert (admin view), enriched with the technician's display name.
+function listAllTechAlerts() {
+  return db.prepare(
+    `SELECT a.*, u.display_name AS tech_name
+     FROM ops_tech_alerts a LEFT JOIN users u ON u.username = a.tech_username
+     ORDER BY a.acknowledged ASC, a.id DESC`
+  ).all();
+}
+// Count of unacknowledged alerts per technician, e.g. { rahul: 2 }.
+function unackAlertCounts() {
+  const rows = db.prepare(
+    'SELECT tech_username, COUNT(*) AS n FROM ops_tech_alerts WHERE acknowledged = 0 GROUP BY tech_username'
+  ).all();
+  const map = {};
+  rows.forEach((r) => { map[r.tech_username] = r.n; });
+  return map;
+}
+function acknowledgeTechAlert(id) {
+  db.prepare("UPDATE ops_tech_alerts SET acknowledged = 1, acknowledged_at = datetime('now') WHERE id = ?").run(id);
+  return getTechAlert(id);
+}
+function deleteTechAlert(id) {
+  db.prepare('DELETE FROM ops_tech_alerts WHERE id = ?').run(id);
+}
+
 module.exports = {
-  COMPANIES, COMPANY_LABELS, COMPANY_COLORS, GENERATOR_STATUSES, ROLES,
+  COMPANIES, COMPANY_LABELS, COMPANY_COLORS, GENERATOR_STATUSES, ROLES, ALERT_LEVELS,
   JOB_PIPELINES, JOB_TYPES, JOB_TYPE_LABELS,
   effectiveRole, roleOf,
   listGenerators, getGenerator, getGeneratorByDg, createGenerator, updateGenerator, deleteGenerator,
   listTechnicians, listOpsUsers, createOpsUser, setUserRole,
   listJobs, getJob, createJob, assignJob, setJobStage, deleteJob, getJobEvents,
-  listServiceDue, serviceDueMap, upsertServiceDue, deleteServiceDue
+  listServiceDue, serviceDueMap, upsertServiceDue, deleteServiceDue,
+  createTechAlert, getTechAlert, listTechAlerts, listAllTechAlerts, unackAlertCounts,
+  acknowledgeTechAlert, deleteTechAlert
 };

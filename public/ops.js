@@ -458,8 +458,11 @@
   async function viewTechs(content) {
     clear(content);
     content.appendChild(h('div', { class: 'muted' }, 'Loading team…'));
-    var users;
-    try { users = await api('/api/ops/users'); } catch (e) { clear(content); content.appendChild(errBox(e)); return; }
+    var users, counts = {};
+    try {
+      users = await api('/api/ops/users');
+      counts = await api('/api/ops/tech-alerts/counts');
+    } catch (e) { clear(content); content.appendChild(errBox(e)); return; }
     clear(content);
     content.appendChild(h('div', { class: 'section-head' },
       h('h2', null, 'Team & Technicians'),
@@ -467,10 +470,14 @@
       h('button', { class: 'btn btn-gold', onclick: function () { openUserModal(); } }, '+ Add Member')
     ));
     var rows = users.map(function (u) {
+      var isTech = u.role === 'technician';
+      var unack = counts[u.username] || 0;
       return h('tr', null,
         h('td', null, h('b', null, u.displayName), u.username !== u.displayName ? h('div', { class: 'muted' }, '@' + u.username) : null),
-        h('td', null, h('span', { class: 'chip chip-type' }, u.role)),
+        h('td', null, h('span', { class: 'chip chip-type' }, u.role),
+          isTech && unack ? h('span', { class: 'chip chip-urgent', style: { marginLeft: '.35rem' } }, unack + ' alert' + (unack > 1 ? 's' : '')) : null),
         h('td', null, h('div', { class: 'row' },
+          isTech ? h('button', { class: 'btn btn-gold btn-sm', onclick: function () { openAlertModal(u); } }, '🔔 Alert') : null,
           h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { openRoleModal(u); } }, 'Change role'),
           h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { openPwModal(u); } }, 'Reset password')
         ))
@@ -482,6 +489,50 @@
         h('tbody', null, rows)
       )
     ));
+  }
+
+  // Send / review a specific technician's alerts.
+  async function openAlertModal(u) {
+    var msgIn = h('textarea', { placeholder: 'e.g. Collect spare filters from stores before your first job', maxlength: '500' });
+    var levelSel = h('select', null, opt('info', 'Info (📢 notice)'), opt('urgent', 'Urgent (🔔 ringing)'));
+    var err = h('div', { class: 'err' });
+    var listWrap = h('div', { class: 'stack', style: { marginTop: '1rem' } }, h('div', { class: 'muted' }, 'Loading current alerts…'));
+
+    async function refreshList() {
+      try {
+        var existing = await api('/api/ops/tech-alerts?tech=' + encodeURIComponent(u.username));
+        clear(listWrap);
+        if (!existing.length) { listWrap.appendChild(h('div', { class: 'muted' }, 'No alerts sent yet.')); return; }
+        listWrap.appendChild(h('div', { class: 'muted' }, 'Sent alerts:'));
+        existing.forEach(function (a) {
+          listWrap.appendChild(h('div', { class: 'between', style: { padding: '.4rem 0', borderBottom: '1px solid var(--line)' } },
+            h('div', null,
+              h('div', null, (a.level === 'urgent' ? '🔔 ' : '📢 ') + a.message),
+              h('div', { class: 'muted' }, (a.acknowledged ? '✓ acknowledged' : 'waiting') + ' · ' + a.created_at)),
+            h('button', { class: 'btn btn-danger btn-sm', onclick: async function () {
+              try { await api('/api/ops/tech-alerts/' + a.id, { method: 'DELETE' }); refreshList(); } catch (e) { toast(e.message, true); }
+            } }, 'Remove')
+          ));
+        });
+      } catch (e) { clear(listWrap); listWrap.appendChild(h('div', { class: 'err' }, e.message)); }
+    }
+
+    async function send() {
+      err.textContent = '';
+      if (!msgIn.value.trim()) { err.textContent = 'Enter an alert message'; return; }
+      try {
+        await api('/api/ops/tech-alerts', { method: 'POST', body: { tech: u.username, message: msgIn.value.trim(), level: levelSel.value } });
+        msgIn.value = ''; toast('Alert sent to ' + u.displayName); refreshList();
+      } catch (e) { err.textContent = e.message; }
+    }
+
+    openModal('Alert · ' + u.displayName, [
+      h('label', null, 'Message'), msgIn,
+      h('label', null, 'Level'), levelSel,
+      err,
+      listWrap
+    ], send, 'Send alert');
+    refreshList();
   }
 
   function roleSelect(current) {
@@ -608,11 +659,12 @@
       });
       content.appendChild(h('div', { class: 'muted' }, 'Loading your jobs…'));
 
-      var jobs, dueMap = {};
+      var jobs, dueMap = {}, alerts = [];
       try {
         jobs = await api('/api/ops/jobs');
         var due = await api('/api/ops/service-due');
         due.forEach(function (d) { dueMap[d.dg_number] = d; });
+        alerts = await api('/api/ops/tech-alerts');
       } catch (e) { clear(content); content.appendChild(errBox(e)); return; }
 
       clear(content);
@@ -620,6 +672,11 @@
         h('h2', null, 'Hi ' + (state.me.displayName || state.me.username)),
         h('div', { class: 'muted' }, greeting(jobs))
       ));
+
+      // 0) Admin-set alerts (unacknowledged) ring at the very top
+      alerts.filter(function (a) { return !a.acknowledged; }).forEach(function (a) {
+        content.appendChild(techAlertBanner(a));
+      });
 
       var openJobs = jobs.filter(function (j) { return j.state === 'open'; });
       var breakdowns = openJobs.filter(function (j) { return j.type === 'breakdown'; });
@@ -652,6 +709,23 @@
     if (bd) return bd + ' urgent breakdown(s) need you now · ' + open + ' open job(s)';
     if (open) return open + ' open job(s) today';
     return 'All caught up — no open jobs';
+  }
+
+  // An admin-set alert shown at the top of the technician's app.
+  function techAlertBanner(a) {
+    var urgent = a.level === 'urgent';
+    return h('div', { class: 'tech-alert ' + (urgent ? 'urgent' : 'info') },
+      h('div', { class: 'ta-icon' }, urgent ? '🔔' : '📢'),
+      h('div', { class: 'ta-body' },
+        h('div', { class: 'ta-msg' }, a.message),
+        h('div', { class: 'ta-meta' }, 'From ' + (a.created_by || 'office') + ' · ' + a.created_at)
+      ),
+      h('button', { class: 'btn ' + (urgent ? 'btn-ghost' : 'btn-gold') + ' btn-sm ta-ack', onclick: function () { ackAlert(a.id); } }, 'Got it')
+    );
+  }
+  async function ackAlert(id) {
+    try { await api('/api/ops/tech-alerts/' + id + '/ack', { method: 'POST' }); toast('Alert acknowledged'); state.rerender(); }
+    catch (e) { toast(e.message, true); }
   }
 
   function techJobCard(j, due) {

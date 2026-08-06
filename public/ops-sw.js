@@ -2,7 +2,7 @@
 // Caches the app shell so it opens instantly and survives a flaky connection,
 // but NEVER caches /api/* - operations data must always come from the live
 // server so technicians, ops heads and admins stay in sync.
-var CACHE_NAME = 'deluxe-ops-shell-v1';
+var CACHE_NAME = 'deluxe-ops-shell-v2';
 var SHELL_FILES = [
   '/ops',
   '/ops.js',
