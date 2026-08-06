@@ -90,6 +90,18 @@ are needed — the existing Render deployment serves `/ops` automatically. Set a
 stable `JWT_SECRET` in the environment so sessions survive restarts (see the
 main README/BACKUPS/ALERTS docs).
 
+### Live prototype / demo data
+
+Set `ENABLE_OPS_DEMO=true` in the environment and the app auto-populates demo
+generators, jobs, technicians and a service feed the first time it boots with an
+empty fleet — ideal for a live prototype on Render. It never touches real data:
+if any generator already exists it does nothing. (You can also seed manually any
+time with `npm run ops-seed`, or wipe & reseed with `npm run ops-seed -- --reset`.)
+
+Demo logins: `opsadmin` / `Deluxe@123` (admin), `sara` / `demo1234` (ops head),
+`rahul` · `imran` · `joseph` / `demo1234` (technicians). **Remove these demo
+accounts before real use.**
+
 ### First run
 
 1. Sign in at `/ops` as `deluxelpoadmin` (change the password after first login).

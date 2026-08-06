@@ -386,6 +386,19 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
+// ---------- Optional: seed Deluxe Ops demo data on boot ----------
+// Set ENABLE_OPS_DEMO=true to auto-populate the operations app with sample
+// generators, jobs, technicians and a service feed the first time it boots with
+// an empty fleet (handy for a live prototype). It never overwrites real data -
+// if the fleet already has generators it does nothing. See scripts/ops-seed.js.
+if (process.env.ENABLE_OPS_DEMO === 'true') {
+  try {
+    require('../scripts/ops-seed').seed();
+  } catch (e) {
+    console.error('Ops demo seed failed:', e && e.message);
+  }
+}
+
 // ---------- Optional in-process daily backups ----------
 // On Render, a separate cron-job container cannot see the web service's
 // persistent disk, so the most reliable way to back up the SQLite file is from

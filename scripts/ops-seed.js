@@ -13,8 +13,6 @@
 const { db, findUser } = require('../server/db');
 const ops = require('../server/ops-db');
 
-const RESET = process.argv.includes('--reset');
-
 const DEMO_USERS = [
   { username: 'opsadmin', password: 'Deluxe@123', role: 'admin', displayName: 'Operations Admin' },
   { username: 'sara', password: 'demo1234', role: 'ops_head', displayName: 'Sara (Ops Head)' },
@@ -59,13 +57,15 @@ function reset() {
   console.log('Demo data reset.');
 }
 
-function main() {
+function seed(opts) {
+  opts = opts || {};
+  const RESET = !!opts.reset;
   if (RESET) reset();
 
   const already = ops.listGenerators().length;
   if (already && !RESET) {
     console.log('Fleet already has ' + already + ' generator(s); nothing seeded. Use `npm run ops-seed -- --reset` to reseed.');
-    return;
+    return { seeded: false, generators: already };
   }
 
   DEMO_USERS.forEach((u) => {
@@ -99,6 +99,12 @@ function main() {
   console.log('\nDemo logins (open /ops):');
   DEMO_USERS.forEach((u) => console.log('  ' + u.role.padEnd(10) + u.username + ' / ' + u.password + '   (' + u.displayName + ')'));
   console.log('\nTip: sign in as "rahul" to see the technician alarm-clock view with a ringing breakdown and a due-tomorrow countdown.');
+  return { seeded: true };
 }
 
-main();
+module.exports = { seed };
+
+// Run directly from the CLI (`npm run ops-seed [-- --reset]`).
+if (require.main === module) {
+  seed({ reset: process.argv.includes('--reset') });
+}
