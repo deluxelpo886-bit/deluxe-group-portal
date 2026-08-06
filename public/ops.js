@@ -166,11 +166,42 @@
       state.me = me;
       state.meta = me.meta;
       if (!me.role) return renderNoAccess();
+      // Each install is meant for one audience. If someone opens the wrong app
+      // for their role, point them at the right one instead of showing a
+      // mismatched UI.
+      if (IS_TECH_APP && me.role !== 'technician') {
+        return renderWrongApp('This is the Technician app.', 'Open the Office console', '/ops');
+      }
+      if (!IS_TECH_APP && me.role === 'technician') {
+        return renderWrongApp('This is the Office console.', 'Open the Technician app', '/ops/tech');
+      }
       if (me.role === 'technician') return renderTechnician();
       return renderStaff(); // admin or ops_head
     } catch (e) {
       if (e.message !== 'unauthorized') renderLogin(e.message);
     }
+  }
+
+  // Shown when a user opens the install that isn't meant for their role.
+  function renderWrongApp(msg, ctaLabel, href) {
+    mount(h('div', { class: 'login-wrap' },
+      h('div', { class: 'login-card' },
+        h('div', { class: 'brand' },
+          h('div', { class: 'brand-badge' }, 'DO'),
+          h('div', null, h('h1', null, 'Deluxe Ops'), h('p', null, 'Signed in as ' + (state.me.displayName || state.me.username) + ' · ' + state.me.role))
+        ),
+        h('p', { class: 'muted' }, msg + ' You can continue here, or open the app built for your role.'),
+        h('a', { class: 'btn btn-gold btn-full', href: href }, ctaLabel),
+        h('button', { class: 'btn btn-ghost btn-full', onclick: function () { IS_TECH_APP ? renderTechnicianOverride() : renderStaff(); } }, 'Continue here anyway'),
+        h('button', { class: 'btn btn-ghost btn-full', onclick: logout }, 'Sign out')
+      )
+    ));
+  }
+  // "Continue anyway" in the tech app for a non-technician just shows the staff
+  // console; in the office app for a technician, show the technician view.
+  function renderTechnicianOverride() {
+    if (state.me.role === 'technician') return renderTechnician();
+    return renderStaff();
   }
 
   function renderNoAccess() {
@@ -818,11 +849,15 @@
   }
   function errBox(e) { return h('div', { class: 'empty' }, 'Could not load: ' + (e.message || e)); }
 
-  // Register the installable-app service worker (scope /ops). Best-effort:
-  // if it fails the app still works fully online.
+  // Which of the two installable apps are we running as?
+  var IS_TECH_APP = location.pathname.indexOf('/ops/tech') === 0;
+
+  // Register the matching installable-app service worker. Best-effort: if it
+  // fails the app still works fully online.
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/ops-sw.js', { scope: '/ops' }).catch(function () { /* online-only is fine */ });
+      var sw = IS_TECH_APP ? { url: '/ops-tech-sw.js', scope: '/ops/tech' } : { url: '/ops-sw.js', scope: '/ops' };
+      navigator.serviceWorker.register(sw.url, { scope: sw.scope }).catch(function () { /* online-only is fine */ });
     });
   }
 
