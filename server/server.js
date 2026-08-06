@@ -13,6 +13,7 @@ const { extractFields } = require('./extract');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
+const createOpsRouter = require('./ops');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -366,14 +367,37 @@ app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, re
   }
 });
 
+// ---------- Deluxe Ops (generator operations tracking) ----------
+// Role-based app (admin / ops head / technician) mounted under /api/ops. It
+// shares this server's JWT auth and SQLite database. See server/ops.js and OPS.md.
+app.use('/api/ops', createOpsRouter({ authRequired }));
+
 // ---------- Health check ----------
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
-// ---------- Serve the frontend ----------
+// ---------- Serve the frontends ----------
 app.use(express.static(path.join(__dirname, '..', 'public')));
+// The Deluxe Ops single-page app lives at /ops (and any /ops/* sub-path).
+app.get(['/ops', '/ops/*'], (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'ops.html'));
+});
+// Everything else falls back to the original LPO/invoice portal.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
+
+// ---------- Optional: seed Deluxe Ops demo data on boot ----------
+// Set ENABLE_OPS_DEMO=true to auto-populate the operations app with sample
+// generators, jobs, technicians and a service feed the first time it boots with
+// an empty fleet (handy for a live prototype). It never overwrites real data -
+// if the fleet already has generators it does nothing. See scripts/ops-seed.js.
+if (process.env.ENABLE_OPS_DEMO === 'true') {
+  try {
+    require('../scripts/ops-seed').seed();
+  } catch (e) {
+    console.error('Ops demo seed failed:', e && e.message);
+  }
+}
 
 // ---------- Optional in-process daily backups ----------
 // On Render, a separate cron-job container cannot see the web service's
