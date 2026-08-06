@@ -53,6 +53,22 @@ Technicians then see those as countdown rings on the matching job.
 - Each job card shows its pipeline and a one-tap button to advance to the next
   stage.
 
+## Install on a phone (mobile app)
+
+Deluxe Ops is an installable web app (PWA) — no app store needed. On a
+technician's phone:
+
+- **Android / Chrome:** open the ops URL (e.g. `https://…onrender.com/ops`),
+  tap the **⋮** menu → **Add to Home screen** (or accept the "Install app"
+  prompt).
+- **iPhone / Safari:** open the ops URL, tap **Share** → **Add to Home Screen**.
+
+It installs as a **Deluxe Ops** icon that opens straight to the app in
+full-screen (no browser bars), starting on the technician's job list. The app
+shell is cached by a service worker (`/ops-sw.js`, scoped to `/ops`) so it opens
+instantly and survives a flaky connection; job data is always fetched live from
+the server (never cached) so everyone stays in sync.
+
 ## Branding
 
 Every generator and job is tagged by company colour: **navy `#152B54`** for

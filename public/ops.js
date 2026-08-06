@@ -744,6 +744,14 @@
   }
   function errBox(e) { return h('div', { class: 'empty' }, 'Could not load: ' + (e.message || e)); }
 
+  // Register the installable-app service worker (scope /ops). Best-effort:
+  // if it fails the app still works fully online.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/ops-sw.js', { scope: '/ops' }).catch(function () { /* online-only is fine */ });
+    });
+  }
+
   // go
   boot();
 })();
