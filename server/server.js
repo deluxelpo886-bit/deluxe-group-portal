@@ -384,6 +384,10 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.get(['/ops/tech', '/ops/tech/*'], (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'ops-tech.html'));
 });
+// Self-contained demo (no login, no backend; runs on sample data) at /ops/demo.
+app.get(['/ops/demo', '/ops/demo/*'], (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'ops-demo.html'));
+});
 app.get(['/ops', '/ops/*'], (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'ops.html'));
 });
