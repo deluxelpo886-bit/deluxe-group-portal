@@ -5,6 +5,11 @@ Heavy Equipment Rental** and **Deluxe Energy Solutions** (Abu Dhabi). It runs
 inside the existing Deluxe Group Portal server — same Node/Express process, same
 SQLite database, same JWT login — and is served at **`/ops`**.
 
+There's also a **self-contained demo** at **`/ops/demo`** — no login, no server
+backend; it runs on sample data stored in the browser and works fully offline
+once installed. Use it to show the app to people or to package a try-it build
+(e.g. with PWABuilder). It never touches the real database.
+
 It ships as **two installable apps** that share one codebase and login:
 
 - **Office console** — **`/ops`** — for Admin and Ops Head (fleet, job board,
