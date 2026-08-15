@@ -1353,6 +1353,27 @@ refreshAll();
   map.on('zoomend', updateLabelVisibility);
   updateLabelVisibility();
 
+  // ---- Full-screen map (phone-friendly, works on iOS too) ----
+  (function(){ var st=document.createElement('style'); st.textContent='#mapEl.fs-map{position:fixed;inset:0;width:100vw;height:100vh !important;z-index:5500;border-radius:0;}'; document.head.appendChild(st); })();
+  var mapElRef=document.getElementById('mapEl');
+  var fsBtn=document.createElement('button');
+  fsBtn.type='button'; fsBtn.textContent='⛶ Full screen';
+  fsBtn.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;';
+  if(typeof searchBar!=='undefined' && searchBar){ searchBar.appendChild(fsBtn); }
+  var fsExitBtn=document.createElement('button');
+  fsExitBtn.type='button'; fsExitBtn.textContent='✕ Exit full screen';
+  fsExitBtn.style.cssText='position:fixed;top:12px;right:12px;z-index:5600;background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:none;box-shadow:0 2px 10px rgba(0,0,0,0.5);';
+  document.body.appendChild(fsExitBtn);
+  function setFullscreen(on){
+    if(!mapElRef) return;
+    mapElRef.classList.toggle('fs-map', on);
+    fsExitBtn.style.display = on ? 'block' : 'none';
+    document.body.style.overflow = on ? 'hidden' : '';
+    setTimeout(function(){ if(map && map.invalidateSize) map.invalidateSize(); }, 150);
+  }
+  fsBtn.addEventListener('click', function(){ setFullscreen(true); });
+  fsExitBtn.addEventListener('click', function(){ setFullscreen(false); });
+
   if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
 })();
 
