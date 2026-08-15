@@ -1,0 +1,16 @@
+{
+  "name": "Deluxe Fleet Live",
+  "short_name": "Deluxe Fleet",
+  "description": "Live vehicle tracking for Deluxe Heavy Equipment & Deluxe Energy",
+  "start_url": "/fleet",
+  "scope": "/fleet",
+  "id": "/fleet",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#14181c",
+  "theme_color": "#14181c",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
