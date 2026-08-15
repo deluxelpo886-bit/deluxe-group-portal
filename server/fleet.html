@@ -1040,6 +1040,8 @@ refreshAll();
   let TOKEN = localStorage.getItem(LS_KEY) || '';
   let polling = false;
   let lastUpdated = null;
+  var FLEET_SETTINGS = {};
+  try { FLEET_SETTINGS = JSON.parse(localStorage.getItem('deluxeFleetSettings')||'{}') || {}; } catch(e){ FLEET_SETTINGS = {}; }
 
   /* ---------- login overlay (built here, matches the dark theme) ---------- */
   const ov = document.createElement('div');
@@ -1094,8 +1096,8 @@ refreshAll();
   document.body.appendChild(signOutBtn);
 
   // ---- Trails + speeding flags ----
-  var SPEED_LIMIT = 90; // km/h - anything faster is flagged
-  var STALE_MS = 5*60*1000; // no GPS fix in 5 min => treat vehicle as offline
+  var SPEED_LIMIT = (FLEET_SETTINGS.speedLimit>0) ? FLEET_SETTINGS.speedLimit : 90; // km/h - anything faster is flagged
+  var STALE_MS = ((FLEET_SETTINGS.offlineMin>0) ? FLEET_SETTINGS.offlineMin : 5)*60*1000; // no GPS fix => offline
 
   // Live fleet summary bar (moving / idle / offline), shown above the map.
   var summaryBar = document.createElement('div');
@@ -1158,7 +1160,7 @@ refreshAll();
   };
   // Optional exact device-name -> company overrides. Fill these in once you know
   // how each vehicle is named in Total Secure, e.g. { 'MOTOR-01':'Energy' }.
-  var DEVICE_COMPANY = {};
+  var DEVICE_COMPANY = FLEET_SETTINGS.deviceCompany || {};
   function companyOf(name){
     if(DEVICE_COMPANY[name]) return DEVICE_COMPANY[name];
     var n=(name||'').toLowerCase();
@@ -1298,7 +1300,7 @@ refreshAll();
   /* ---------- boot: auto-show tracking if already signed in ---------- */
   // ---- Find a truck by name (flies to it and opens its popup) ----
   var searchBar = document.createElement('div');
-  searchBar.style.cssText='display:flex;gap:6px;margin:0 0 8px;';
+  searchBar.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px;';
   searchBar.innerHTML='<input id="truckSearch" type="text" placeholder="Find a truck by name… e.g. IMRAN" style="flex:1;min-width:0;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:8px 11px;border-radius:8px;font-size:13px;outline:none;"><button id="truckSearchBtn" style="background:#e8a13a;color:#1a1300;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">Find</button>';
   if(typeof summaryBar!=='undefined' && summaryBar && summaryBar.parentNode){ summaryBar.parentNode.insertBefore(searchBar, summaryBar); }
   function findTruck(){
@@ -1391,6 +1393,62 @@ refreshAll();
     arrivalBanner.style.display='flex';
     var b=document.getElementById('arrivalDismiss'); if(b) b.addEventListener('click', function(){ arrivalBanner.style.display='none'; });
     try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); }catch(_){}
+  }
+
+  // ---- Settings panel (speed limit, offline threshold, truck colours) ----
+  var settingsBtn=document.createElement('button');
+  settingsBtn.type='button'; settingsBtn.textContent='⚙ Settings';
+  settingsBtn.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;';
+  if(typeof searchBar!=='undefined' && searchBar){ searchBar.appendChild(settingsBtn); }
+  var settingsModal=document.createElement('div');
+  settingsModal.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:16px;';
+  settingsModal.addEventListener('click', function(e){ if(e.target===settingsModal) settingsModal.style.display='none'; });
+  document.body.appendChild(settingsModal);
+  settingsBtn.addEventListener('click', openSettings);
+  function openSettings(){
+    var live=VEHICLES.filter(function(v){ return String(v.id).indexOf('T')===0; });
+    var trucksHtml=live.map(function(v){
+      var cur=DEVICE_COMPANY[v.name]||'';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #2c333a;">'
+        +'<span style="font-family:monospace;font-size:13px;overflow:hidden;text-overflow:ellipsis;">'+(v.name||v.id)+'</span>'
+        +'<select data-truck="'+encodeURIComponent(v.name||'')+'" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:5px 8px;font-size:12px;">'
+        +'<option value="">Auto</option>'
+        +'<option value="Heavy"'+(cur==='Heavy'?' selected':'')+'>Deluxe Heavy (navy)</option>'
+        +'<option value="Energy"'+(cur==='Energy'?' selected':'')+'>Deluxe Energy (gold)</option>'
+        +'</select></div>';
+    }).join('');
+    settingsModal.innerHTML='<div style="background:#1c2126;border:1px solid #2c333a;border-radius:14px;max-width:520px;width:100%;max-height:85vh;overflow:auto;padding:20px;font-family:Inter,-apple-system,Segoe UI,sans-serif;color:#e8ecef;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><h2 style="margin:0;font-size:18px;">Settings</h2><button id="setClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">Close</button></div>'
+      +'<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;margin-bottom:5px;">Speed limit (km/h)</label>'
+      +'<input id="setSpeed" type="number" min="10" value="'+SPEED_LIMIT+'" style="width:100%;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:8px 11px;font-size:13px;margin-bottom:12px;">'
+      +'<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;margin-bottom:5px;">Mark offline after (minutes)</label>'
+      +'<input id="setOffline" type="number" min="1" value="'+Math.round(STALE_MS/60000)+'" style="width:100%;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:8px 11px;font-size:13px;margin-bottom:16px;">'
+      +'<div style="font-size:11px;color:#8b95a1;text-transform:uppercase;margin-bottom:6px;">Truck company (map colour)</div>'
+      +'<div>'+(trucksHtml||'<div style="color:#8b95a1;font-size:13px;">No live trucks yet.</div>')+'</div>'
+      +'<button id="setSave" style="width:100%;margin-top:16px;background:#e8a13a;color:#1a1300;border:none;padding:11px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;">Save</button>'
+      +'<p style="margin:12px 0 0;color:#8b95a1;font-size:11.5px;">Settings are saved on this device.</p></div>';
+    settingsModal.style.display='flex';
+    document.getElementById('setClose').addEventListener('click', function(){ settingsModal.style.display='none'; });
+    document.getElementById('setSave').addEventListener('click', saveSettings);
+  }
+  function saveSettings(){
+    var sp=parseInt(document.getElementById('setSpeed').value,10); if(sp>0) SPEED_LIMIT=sp;
+    var off=parseInt(document.getElementById('setOffline').value,10); if(off>0) STALE_MS=off*60000;
+    var dc={};
+    settingsModal.querySelectorAll('select[data-truck]').forEach(function(sel){
+      var name=decodeURIComponent(sel.getAttribute('data-truck')); var val=sel.value;
+      if(name && val) dc[name]=val;
+    });
+    DEVICE_COMPANY=dc;
+    FLEET_SETTINGS={speedLimit:SPEED_LIMIT, offlineMin:Math.round(STALE_MS/60000), deviceCompany:dc};
+    try{ localStorage.setItem('deluxeFleetSettings', JSON.stringify(FLEET_SETTINGS)); }catch(e){}
+    VEHICLES.forEach(function(v){
+      if(String(v.id).indexOf('T')!==0) return;
+      var m=vehMarkers[v.id]; if(!m) return;
+      var kmh=(v.speed!=null)?Math.round(v.speed*1.852):0;
+      m.setIcon(truckIcon(v.course, TRUCK_COLORS[companyOf(v.name)], kmh>SPEED_LIMIT));
+    });
+    settingsModal.style.display='none';
   }
 
   if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
