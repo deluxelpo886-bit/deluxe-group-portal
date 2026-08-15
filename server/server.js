@@ -417,6 +417,44 @@ app.get('/api/positions', fleetProtect, (req, res) => {
   res.json(positions.getSnapshot());
 });
 
+// ---------- Map tile proxy (same-origin tiles for the fleet map) ----------
+// Some mobile networks block third-party tile CDNs (OpenStreetMap etc.), which
+// leaves the fleet map with a blank grey background. Relaying tiles through our
+// own origin - which the client can always reach - keeps the map reliable, and
+// same-origin tiles get cached by the browser and service worker for next time.
+// Tiles are cached in memory to stay light on the upstream provider.
+const tileCache = new Map(); // "z/x/y" -> { buf, type, ts }
+const TILE_TTL = 7 * 24 * 3600 * 1000; // 7 days
+const TILE_CACHE_MAX = 3000;
+app.get('/tiles/:z/:x/:y.png', async (req, res) => {
+  const { z, x, y } = req.params;
+  if (!/^\d{1,2}$/.test(z) || !/^\d{1,7}$/.test(x) || !/^\d{1,7}$/.test(y)) {
+    return res.status(400).end();
+  }
+  const key = z + '/' + x + '/' + y;
+  const hit = tileCache.get(key);
+  if (hit && (Date.now() - hit.ts) < TILE_TTL) {
+    res.set('Content-Type', hit.type);
+    res.set('Cache-Control', 'public, max-age=604800');
+    return res.end(hit.buf);
+  }
+  try {
+    const sub = ['a', 'b', 'c'][(Number(x) + Number(y)) % 3];
+    const url = 'https://' + sub + '.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
+    const r = await fetch(url, { headers: { 'User-Agent': 'DeluxeFleet/1.0 (deluxe-group-portal)' } });
+    if (!r.ok) return res.status(502).end();
+    const buf = Buffer.from(await r.arrayBuffer());
+    const type = r.headers.get('content-type') || 'image/png';
+    if (tileCache.size > TILE_CACHE_MAX) tileCache.clear();
+    tileCache.set(key, { buf, type, ts: Date.now() });
+    res.set('Content-Type', type);
+    res.set('Cache-Control', 'public, max-age=604800');
+    return res.end(buf);
+  } catch (e) {
+    return res.status(502).end();
+  }
+});
+
 // ---------- Serve the frontends ----------
 app.use(express.static(path.join(__dirname, '..', 'public')));
 // Deluxe Ops ships as two installable apps sharing one codebase:
