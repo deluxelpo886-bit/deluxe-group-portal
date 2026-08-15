@@ -535,6 +535,22 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
 // server - the last good positions stay on the map and the badge shows status.
 positions.startPolling();
 
+// ---------- Keep-alive (stop the free instance sleeping) ----------
+// A free Render web service sleeps after ~15 min without inbound traffic, which
+// pauses live GPS polling and makes the map look frozen. Ping our own public URL
+// every 10 minutes so the service stays awake 24/7 on its own - no external
+// uptime monitor required. Render provides RENDER_EXTERNAL_URL automatically;
+// override with KEEPALIVE_URL, or set KEEPALIVE_URL=off to disable.
+const KEEPALIVE_URL = process.env.KEEPALIVE_URL || process.env.RENDER_EXTERNAL_URL || '';
+if (KEEPALIVE_URL && KEEPALIVE_URL.toLowerCase() !== 'off') {
+  const pingUrl = KEEPALIVE_URL.replace(/\/+$/, '') + '/api/health';
+  const ping = () => {
+    fetch(pingUrl).catch((e) => console.warn('[keepalive] ping failed:', e && e.message));
+  };
+  setInterval(ping, 10 * 60 * 1000); // every 10 minutes, comfortably under the ~15 min sleep timer
+  console.log('[keepalive] self-ping enabled -> ' + pingUrl + ' (every 10 min)');
+}
+
 app.listen(PORT, () => {
   console.log('Deluxe Group Portal server running on port ' + PORT);
   console.log('Open http://localhost:' + PORT + ' in your browser');
