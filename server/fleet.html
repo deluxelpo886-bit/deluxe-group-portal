@@ -1091,7 +1091,22 @@ refreshAll();
   function liveCount(){ return VEHICLES.filter(function(v){ return String(v.id).indexOf('T')===0; }).length; }
 
   // A clean top-down pickup-truck marker that rotates to the GPS heading.
-  function truckIcon(course){
+  // Company colour palettes for the truck marker.
+  var TRUCK_COLORS = {
+    Heavy:  { body:'#3a5c99', cab:'#274377', bed:'#152B54', stroke:'#0a1b3a', glass:'#d3e4ff', beacon:'#ffd34d' },
+    Energy: { body:'#e8a93a', cab:'#c88a26', bed:'#a2701a', stroke:'#5e4110', glass:'#fff0cf', beacon:'#ffe08a' }
+  };
+  // Optional exact device-name -> company overrides. Fill these in once you know
+  // how each vehicle is named in Total Secure, e.g. { 'MOTOR-01':'Energy' }.
+  var DEVICE_COMPANY = {};
+  function companyOf(name){
+    if(DEVICE_COMPANY[name]) return DEVICE_COMPANY[name];
+    var n=(name||'').toLowerCase();
+    if(n.indexOf('energy')!==-1 || n.indexOf('motor')!==-1) return 'Energy';
+    return 'Heavy';
+  }
+  function truckIcon(course, pal){
+    pal = pal || TRUCK_COLORS.Heavy;
     const deg = (typeof course==='number' && !isNaN(course)) ? course : 0;
     const svg = '<svg width="32" height="44" viewBox="0 0 40 54" xmlns="http://www.w3.org/2000/svg">'
       + '<ellipse cx="20" cy="49" rx="12" ry="3.2" fill="rgba(0,0,0,0.30)"/>'
@@ -1099,11 +1114,11 @@ refreshAll();
       + '<rect x="28" y="12" width="6" height="11" rx="2.5" fill="#0c0c0c"/>'
       + '<rect x="6" y="31" width="6" height="11" rx="2.5" fill="#0c0c0c"/>'
       + '<rect x="28" y="31" width="6" height="11" rx="2.5" fill="#0c0c0c"/>'
-      + '<rect x="9" y="4" width="22" height="44" rx="6" fill="#2b7fe0" stroke="#0b2d55" stroke-width="1.6"/>'
-      + '<rect x="12" y="7" width="16" height="8" rx="3" fill="#d3ebff"/>'
-      + '<rect x="12" y="17" width="16" height="10" rx="2" fill="#1a63b8"/>'
-      + '<rect x="12" y="29" width="16" height="16" rx="2" fill="#12468a"/>'
-      + '<circle cx="20" cy="21" r="2.1" fill="#ffd34d"/>'
+      + '<rect x="9" y="4" width="22" height="44" rx="6" fill="'+pal.body+'" stroke="'+pal.stroke+'" stroke-width="1.6"/>'
+      + '<rect x="12" y="7" width="16" height="8" rx="3" fill="'+pal.glass+'"/>'
+      + '<rect x="12" y="17" width="16" height="10" rx="2" fill="'+pal.cab+'"/>'
+      + '<rect x="12" y="29" width="16" height="16" rx="2" fill="'+pal.bed+'"/>'
+      + '<circle cx="20" cy="21" r="2.1" fill="'+pal.beacon+'"/>'
       + '</svg>';
     return L.divIcon({
       className:'',
@@ -1123,10 +1138,17 @@ refreshAll();
       + 'GPS '+(d.lat!=null?d.lat.toFixed(5):'?')+', '+(d.lon!=null?d.lon.toFixed(5):'?')
       + (d.lastUpdate?('<br>last fix: '+new Date(d.lastUpdate).toLocaleString()):'')
       + '</small>';
-    const icon=truckIcon(d.course);
+    const company=companyOf(v.name);
+    const icon=truckIcon(d.course, TRUCK_COLORS[company]);
     let m=vehMarkers[key];
-    if(!m){ m=L.marker([d.lat,d.lon],{icon:icon}).addTo(map); vehMarkers[key]=m; }
-    else  { m.setLatLng([d.lat,d.lon]); m.setIcon(icon); }
+    if(!m){
+      m=L.marker([d.lat,d.lon],{icon:icon}).addTo(map);
+      m.bindTooltip(v.name, {permanent:true, direction:'top', offset:[0,-20], className:'dg-label'});
+      vehMarkers[key]=m;
+    } else {
+      m.setLatLng([d.lat,d.lon]); m.setIcon(icon);
+      if(m.getTooltip()) m.setTooltipContent(v.name);
+    }
     m.bindPopup(popup);
   }
   function removeStale(active){
