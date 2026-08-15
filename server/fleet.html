@@ -1042,8 +1042,8 @@ refreshAll();
   document.body.appendChild(ov);
   const $ = function(id){ return document.getElementById(id); };
 
-  function showLogin(msg){ ov.style.display='flex'; if(msg) $('loginErr').textContent=msg; }
-  function hideLogin(){ ov.style.display='none'; if(typeof map!=='undefined' && map.invalidateSize) setTimeout(function(){ map.invalidateSize(); },120); }
+  function showLogin(msg){ ov.style.display='flex'; if(typeof signOutBtn!=='undefined' && signOutBtn) signOutBtn.style.display='none'; if(msg) $('loginErr').textContent=msg; }
+  function hideLogin(){ ov.style.display='none'; if(typeof signOutBtn!=='undefined' && signOutBtn) signOutBtn.style.display='inline-block'; if(typeof map!=='undefined' && map.invalidateSize) setTimeout(function(){ map.invalidateSize(); },120); }
 
   async function doLogin(){
     const email = $('loginEmail').value.trim();
@@ -1065,7 +1065,15 @@ refreshAll();
   ov.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
 
   function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; showLogin('Signed out.'); }
-  if(badge){ badge.style.cursor='pointer'; badge.title='Click to sign out'; badge.addEventListener('click', function(){ if(confirm('Sign out of fleet tracking?')) logout(); }); }
+  // Visible "Sign out" button, fixed at the top-right. Hidden while the login screen is showing.
+  var signOutBtn = document.createElement('button');
+  signOutBtn.id='fleetSignOut';
+  signOutBtn.textContent='Sign out';
+  signOutBtn.style.cssText='position:fixed;top:14px;right:16px;z-index:4000;background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 15px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;box-shadow:0 2px 8px rgba(0,0,0,0.45);';
+  signOutBtn.addEventListener('mouseenter', function(){ signOutBtn.style.borderColor='#e0644a'; signOutBtn.style.color='#e0644a'; });
+  signOutBtn.addEventListener('mouseleave', function(){ signOutBtn.style.borderColor='#2c333a'; signOutBtn.style.color='#e8ecef'; });
+  signOutBtn.addEventListener('click', function(){ if(confirm('Sign out of fleet tracking?')) logout(); });
+  document.body.appendChild(signOutBtn);
 
   /* ---------- live tracking (authenticated) ---------- */
   function setBadge(text, kind){
