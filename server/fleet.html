@@ -1081,7 +1081,7 @@ refreshAll();
   ov.addEventListener('click', function(e){ if(e.target && e.target.id==='loginBtn') doLogin(); });
   ov.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
 
-  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='none'; showLogin('Signed out.'); }
+  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='none'; if(typeof reportBtn!=='undefined' && reportBtn) reportBtn.style.display='none'; showLogin('Signed out.'); }
   // Visible "Sign out" button, fixed at the top-right. Hidden while the login screen is showing.
   var signOutBtn = document.createElement('button');
   signOutBtn.id='fleetSignOut';
@@ -1276,6 +1276,7 @@ refreshAll();
   function startPolling(){
     polling=true;
     if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='inline-block';
+    if(typeof reportBtn!=='undefined' && reportBtn) reportBtn.style.display='inline-block';
     setBadge('connecting to Total Secure…','wait');
     poll();
     if(!pollTimer) pollTimer=setInterval(poll,30000);
@@ -1304,6 +1305,46 @@ refreshAll();
   }
   document.getElementById('truckSearchBtn').addEventListener('click', findTruck);
   document.getElementById('truckSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') findTruck(); });
+
+  // ---- Fleet report (per-truck session summary) ----
+  var reportBtn = document.createElement('button');
+  reportBtn.textContent='Report';
+  reportBtn.style.cssText='position:fixed;top:14px;right:196px;z-index:4000;background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 12px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;box-shadow:0 2px 8px rgba(0,0,0,0.45);';
+  document.body.appendChild(reportBtn);
+  var reportModal=document.createElement('div');
+  reportModal.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:16px;';
+  reportModal.addEventListener('click', function(e){ if(e.target===reportModal) reportModal.style.display='none'; });
+  document.body.appendChild(reportModal);
+  function trailDistanceKm(key){
+    var pts=TRAILS[key]||[]; var d=0;
+    for(var i=1;i<pts.length;i++){ d+=haversine(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]); }
+    return d;
+  }
+  function openReport(){
+    var live=VEHICLES.filter(function(v){ return String(v.id).indexOf('T')===0; });
+    var rows=live.map(function(v){
+      var kmh=(v.speed!=null)?Math.round(v.speed*1.852):0;
+      var age=v.lastUpdate?(Date.now()-new Date(v.lastUpdate).getTime()):null;
+      var status=(age!=null&&age>STALE_MS)?'<span style="color:#e0644a">offline</span>':(kmh>3?'<span style="color:#5b9bd5">moving</span>':'<span style="color:#e8c168">idle</span>');
+      return '<tr style="border-bottom:1px solid #2c333a;">'
+        +'<td style="padding:8px 10px;font-family:monospace;">'+(v.name||v.id)+'</td>'
+        +'<td style="padding:8px 10px;">'+companyOf(v.name)+'</td>'
+        +'<td style="padding:8px 10px;">'+status+'</td>'
+        +'<td style="padding:8px 10px;text-align:right;font-family:monospace;">'+kmh+' km/h</td>'
+        +'<td style="padding:8px 10px;text-align:right;font-family:monospace;">'+trailDistanceKm(v.id).toFixed(1)+' km</td>'
+        +'<td style="padding:8px 10px;color:#8b95a1;font-size:12px;">'+(v.lastUpdate?new Date(v.lastUpdate).toLocaleTimeString():'-')+'</td>'
+        +'</tr>';
+    }).join('');
+    reportModal.innerHTML='<div style="background:#1c2126;border:1px solid #2c333a;border-radius:14px;max-width:720px;width:100%;max-height:85vh;overflow:auto;padding:20px;font-family:Inter,-apple-system,Segoe UI,sans-serif;color:#e8ecef;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><h2 style="margin:0;font-size:18px;">Fleet report</h2><button id="reportClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">Close</button></div>'
+      +'<p style="margin:0 0 14px;color:#8b95a1;font-size:12.5px;">Distance is measured since you opened this page (live session).</p>'
+      +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="text-align:left;color:#8b95a1;font-size:11px;text-transform:uppercase;">'
+      +'<th style="padding:8px 10px;">Truck</th><th style="padding:8px 10px;">Company</th><th style="padding:8px 10px;">Status</th><th style="padding:8px 10px;text-align:right;">Speed</th><th style="padding:8px 10px;text-align:right;">Distance (session)</th><th style="padding:8px 10px;">Last fix</th>'
+      +'</tr></thead><tbody>'+(rows||'<tr><td colspan="6" style="padding:14px;color:#8b95a1;">No live vehicles yet.</td></tr>')+'</tbody></table></div></div>';
+    reportModal.style.display='flex';
+    document.getElementById('reportClose').addEventListener('click', function(){ reportModal.style.display='none'; });
+  }
+  reportBtn.addEventListener('click', openReport);
 
   // ---- Declutter map labels: only show the name tags when zoomed in ----
   var LABEL_MIN_ZOOM = 13;
