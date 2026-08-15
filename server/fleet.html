@@ -648,6 +648,7 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
   routeLayer.clearLayers();
 
   const vdist = VEHICLES.map(v=>({...v, d:haversine(gen.lat,gen.lon,v.lat,v.lon)})).sort((a,b)=>a.d-b.d);
+  if(vdist[0]){ window.__fleetWatch = { dg: gen.dg, lat: gen.lat, lon: gen.lon, truckId: vdist[0].id, truckName: vdist[0].name, arrived:false }; }
   const officeD = haversine(gen.lat,gen.lon,OFFICE.lat,OFFICE.lon);
   let html = `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Nearest vehicle to <b style="color:var(--text)">${gen.dg}</b> (${gen.location}) — office is ${officeD.toFixed(1)}km straight-line away:</div>`;
   html += `<div id="routeStatus" style="font-size:12px;color:var(--amber);margin-bottom:8px;">⏳ Calculating real driving route...</div>`;
@@ -1257,6 +1258,13 @@ refreshAll();
       });
       removeStale(active);
       updateSummary(list.length, moving, idle, offline);
+      var w = window.__fleetWatch;
+      if(w && !w.arrived){
+        var tv = VEHICLES.find(function(x){ return x.id===w.truckId; });
+        if(tv && tv.lat!=null && haversine(tv.lat, tv.lon, w.lat, w.lon) <= 0.2){
+          w.arrived = true; showArrival(w.truckName, w.dg);
+        }
+      }
       if(list.length){
         lastUpdated = data.updatedAt ? new Date(data.updatedAt).getTime() : Date.now();
         setBadge('live · '+list.length+' vehicle'+(list.length>1?'s':'')+' · '+ago(),'live');
@@ -1373,6 +1381,17 @@ refreshAll();
   }
   fsBtn.addEventListener('click', function(){ setFullscreen(true); });
   fsExitBtn.addEventListener('click', function(){ setFullscreen(false); });
+
+  // ---- Auto "arrived on site" banner (after a breakdown dispatch) ----
+  var arrivalBanner=document.createElement('div');
+  arrivalBanner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:6500;background:#1a2e24;color:#4caf7d;border-bottom:1px solid #2a5c40;padding:12px 16px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-weight:700;font-size:14px;display:none;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.4);';
+  document.body.appendChild(arrivalBanner);
+  function showArrival(truckName, dg){
+    arrivalBanner.innerHTML='<span>✅ '+truckName+' has ARRIVED at '+dg+'</span><button id="arrivalDismiss" style="background:transparent;border:1px solid #2a5c40;color:#4caf7d;border-radius:6px;padding:4px 10px;cursor:pointer;font-weight:700;white-space:nowrap;">Dismiss</button>';
+    arrivalBanner.style.display='flex';
+    var b=document.getElementById('arrivalDismiss'); if(b) b.addEventListener('click', function(){ arrivalBanner.style.display='none'; });
+    try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); }catch(_){}
+  }
 
   if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
 })();
