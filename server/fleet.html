@@ -1202,7 +1202,11 @@ refreshAll();
       + (d.lastUpdate?('<br>last fix: '+new Date(d.lastUpdate).toLocaleString()):'')
       + (speeding?('<br><b style="color:#ff5c4d">⚠ Speeding '+kmh+' km/h</b>'):'')
       + (stale?('<br><span style="color:#e0644a">offline '+Math.round(age/60000)+'m</span>'):'')
-      + '</small>';
+      + '</small>'
+      + '<div style="margin-top:8px;display:flex;gap:6px;">'
+      +   '<a href="https://www.google.com/maps/dir/?api=1&destination='+d.lat+','+d.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
+      +   '<a href="https://wa.me/?text='+encodeURIComponent('Vehicle '+v.name+' location: https://maps.google.com/?q='+d.lat+','+d.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
+      + '</div>';
     const company=companyOf(v.name);
     const icon=truckIcon(d.course, TRUCK_COLORS[company], speeding);
     let m=vehMarkers[key];
