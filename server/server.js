@@ -14,6 +14,7 @@ const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
+const positions = require('./positions');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -375,6 +376,47 @@ app.use('/api/ops', createOpsRouter({ authRequired }));
 // ---------- Health check ----------
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
+// ---------- Live fleet: login + vehicle positions (Total Secure / Traccar) ----
+// The /fleet map link is protected by a dedicated "Deluxe Operations" login.
+// The Total Secure login itself lives only in env vars (see FLEET.md), is polled
+// server-side by server/positions.js, and never reaches the browser. The live
+// coordinates are served only to a signed-in user, so vehicle locations aren't
+// public.
+//
+// The fleet login is overridable via env; the defaults match what was requested
+// so the link works out of the box. Set FLEET_LOGIN_PASSWORD in the environment
+// to change it for real use.
+const FLEET_EMAIL = (process.env.FLEET_LOGIN_EMAIL || 'deluxeoperationhead').trim().toLowerCase();
+const FLEET_PASSWORD = process.env.FLEET_LOGIN_PASSWORD || 'Deluxe123';
+const FLEET_SECRET = process.env.JWT_SECRET || 'deluxe-fleet-dev-secret-change-me';
+
+app.post('/api/fleet/login', loginLimiter, (req, res) => {
+  const email = String((req.body && req.body.email) || '').trim().toLowerCase();
+  const password = String((req.body && req.body.password) || '');
+  if (email === FLEET_EMAIL && password === FLEET_PASSWORD) {
+    const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+    return res.json({ token });
+  }
+  return res.status(401).json({ error: 'Wrong email or password' });
+});
+
+// Require a valid fleet login token (sent as "Authorization: Bearer <token>").
+function fleetProtect(req, res, next) {
+  const auth = req.get('authorization') || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || '');
+  try {
+    jwt.verify(token, FLEET_SECRET);
+    return next();
+  } catch (_) {
+    return res.status(401).json({ error: 'login required' });
+  }
+}
+
+app.get('/api/positions', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(positions.getSnapshot());
+});
+
 // ---------- Serve the frontends ----------
 app.use(express.static(path.join(__dirname, '..', 'public')));
 // Deluxe Ops ships as two installable apps sharing one codebase:
@@ -391,6 +433,23 @@ app.get(['/ops/demo', '/ops/demo/*'], (req, res) => {
 app.get(['/ops', '/ops/*'], (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'ops.html'));
 });
+// Live Fleet Master & Dispatch map - a shareable link showing live vehicle
+// positions from Total Secure. Served with a page-scoped Content-Security-Policy
+// that permits exactly what this map page needs (Leaflet from unpkg, Esri map
+// tiles, OSRM routing). The strict global CSP still applies to every other page.
+app.get('/fleet', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; "
+      + "script-src 'self' 'unsafe-inline' https://unpkg.com; "
+      + "style-src 'self' 'unsafe-inline' https://unpkg.com; "
+      + "img-src 'self' data: https:; "
+      + "connect-src 'self' https://router.project-osrm.org; "
+      + "font-src 'self' data:;"
+  );
+  res.sendFile(path.join(__dirname, 'fleet.html'));
+});
+
 // Everything else falls back to the original LPO/invoice portal.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
@@ -468,6 +527,11 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
   setInterval(check, CHECK_MS);
   console.log('Daily automated alerts enabled (' + ALERT_TZ + '; per-company hour, default 07:00)');
 }
+
+// Start polling Total Secure for live vehicle positions (no-op unless the
+// TRACCAR_* env vars are set). Runs in the background; failures never crash the
+// server - the last good positions stay on the map and the badge shows status.
+positions.startPolling();
 
 app.listen(PORT, () => {
   console.log('Deluxe Group Portal server running on port ' + PORT);
