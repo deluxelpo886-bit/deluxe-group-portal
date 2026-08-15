@@ -579,14 +579,20 @@ positions.startPolling();
 // every 10 minutes so the service stays awake 24/7 on its own - no external
 // uptime monitor required. Render provides RENDER_EXTERNAL_URL automatically;
 // override with KEEPALIVE_URL, or set KEEPALIVE_URL=off to disable.
-const KEEPALIVE_URL = process.env.KEEPALIVE_URL || process.env.RENDER_EXTERNAL_URL || '';
+// Fallback chain: explicit KEEPALIVE_URL, then Render's auto-provided external
+// URL, then the known production URL - so the keep-alive works even if
+// RENDER_EXTERNAL_URL isn't present. Set KEEPALIVE_URL=off to disable.
+const KEEPALIVE_URL = process.env.KEEPALIVE_URL
+  || process.env.RENDER_EXTERNAL_URL
+  || 'https://deluxe-group-portal.onrender.com';
 if (KEEPALIVE_URL && KEEPALIVE_URL.toLowerCase() !== 'off') {
   const pingUrl = KEEPALIVE_URL.replace(/\/+$/, '') + '/api/health';
   const ping = () => {
     fetch(pingUrl).catch((e) => console.warn('[keepalive] ping failed:', e && e.message));
   };
-  setInterval(ping, 10 * 60 * 1000); // every 10 minutes, comfortably under the ~15 min sleep timer
-  console.log('[keepalive] self-ping enabled -> ' + pingUrl + ' (every 10 min)');
+  setInterval(ping, 5 * 60 * 1000); // every 5 minutes, well under the ~15 min sleep timer
+  setTimeout(ping, 30 * 1000);       // first ping shortly after startup
+  console.log('[keepalive] self-ping enabled -> ' + pingUrl + ' (every 5 min)');
 }
 
 app.listen(PORT, () => {
