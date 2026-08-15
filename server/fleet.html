@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Deluxe Fleet Master &amp; Live Dispatch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="/manifest-fleet.json">
+<meta name="theme-color" content="#14181c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deluxe Fleet">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -1203,6 +1211,14 @@ refreshAll();
   /* ---------- boot: auto-show tracking if already signed in ---------- */
   if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
 })();
+
+
+/* Register the service worker so this map is installable on phones. */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/fleet-sw.js').catch(function(){});
+  });
+}
 
 </script>
 </body>

@@ -445,7 +445,9 @@ app.get('/fleet', (req, res) => {
       + "style-src 'self' 'unsafe-inline' https://unpkg.com; "
       + "img-src 'self' data: https:; "
       + "connect-src 'self' https://router.project-osrm.org; "
-      + "font-src 'self' data:;"
+      + "font-src 'self' data:; "
+      + "manifest-src 'self'; "
+      + "worker-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'fleet.html'));
 });
