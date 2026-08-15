@@ -1287,6 +1287,24 @@ refreshAll();
   },5000);
 
   /* ---------- boot: auto-show tracking if already signed in ---------- */
+  // ---- Find a truck by name (flies to it and opens its popup) ----
+  var searchBar = document.createElement('div');
+  searchBar.style.cssText='display:flex;gap:6px;margin:0 0 8px;';
+  searchBar.innerHTML='<input id="truckSearch" type="text" placeholder="Find a truck by name… e.g. IMRAN" style="flex:1;min-width:0;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:8px 11px;border-radius:8px;font-size:13px;outline:none;"><button id="truckSearchBtn" style="background:#e8a13a;color:#1a1300;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">Find</button>';
+  if(typeof summaryBar!=='undefined' && summaryBar && summaryBar.parentNode){ summaryBar.parentNode.insertBefore(searchBar, summaryBar); }
+  function findTruck(){
+    var input=document.getElementById('truckSearch');
+    var q=(input.value||'').trim().toLowerCase();
+    if(!q) return;
+    var v=VEHICLES.find(function(x){ return String(x.id).indexOf('T')===0 && (x.name||'').toLowerCase().indexOf(q)!==-1; });
+    if(!v || v.lat==null){ input.style.borderColor='#e0644a'; setTimeout(function(){ input.style.borderColor='#2c333a'; },1200); return; }
+    map.flyTo([v.lat, v.lon], 15, {duration:0.6});
+    var m=vehMarkers[v.id];
+    if(m){ setTimeout(function(){ m.openPopup(); }, 650); }
+  }
+  document.getElementById('truckSearchBtn').addEventListener('click', findTruck);
+  document.getElementById('truckSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') findTruck(); });
+
   if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
 })();
 
