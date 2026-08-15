@@ -1072,7 +1072,7 @@ refreshAll();
   ov.addEventListener('click', function(e){ if(e.target && e.target.id==='loginBtn') doLogin(); });
   ov.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
 
-  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; showLogin('Signed out.'); }
+  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='none'; showLogin('Signed out.'); }
   // Visible "Sign out" button, fixed at the top-right. Hidden while the login screen is showing.
   var signOutBtn = document.createElement('button');
   signOutBtn.id='fleetSignOut';
@@ -1082,6 +1082,37 @@ refreshAll();
   signOutBtn.addEventListener('mouseleave', function(){ signOutBtn.style.borderColor='#2c333a'; signOutBtn.style.color='#e8ecef'; });
   signOutBtn.addEventListener('click', function(){ if(confirm('Sign out of fleet tracking?')) logout(); });
   document.body.appendChild(signOutBtn);
+
+  // ---- Trails + speeding flags ----
+  var SPEED_LIMIT = 90; // km/h - anything faster is flagged
+  var trailLayer = L.layerGroup().addTo(map);
+  var TRAILS = {};        // key -> [[lat,lon], ...] collected while the page is open
+  var trailLines = {};    // key -> L.polyline
+  var trailsOn = false;
+  var trailsBtn = document.createElement('button');
+  trailsBtn.id='fleetTrails'; trailsBtn.textContent='Trails: off';
+  trailsBtn.title='Show/hide where each truck has driven while this page is open';
+  trailsBtn.style.cssText='position:fixed;top:14px;right:104px;z-index:4000;background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 12px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;box-shadow:0 2px 8px rgba(0,0,0,0.45);';
+  trailsBtn.addEventListener('click', function(){ setTrails(!trailsOn); });
+  document.body.appendChild(trailsBtn);
+  function trailColor(company){ return company==='Energy' ? '#e8a93a' : '#5b9bd5'; }
+  function drawTrail(key){
+    if(!trailsOn) return;
+    var pts=TRAILS[key]||[];
+    if(pts.length<2) return;
+    var v=VEHICLES.find(function(x){ return x.id===key; })||{};
+    var col=trailColor(companyOf(v.name));
+    if(trailLines[key]){ trailLines[key].setLatLngs(pts); }
+    else { trailLines[key]=L.polyline(pts,{color:col,weight:3,opacity:0.55,dashArray:'4 6'}); trailLayer.addLayer(trailLines[key]); }
+  }
+  function setTrails(on){
+    trailsOn=on;
+    if(!on){ trailLayer.clearLayers(); for(var k in trailLines){ delete trailLines[k]; } }
+    else { Object.keys(TRAILS).forEach(function(key){ drawTrail(key); }); }
+    trailsBtn.textContent='Trails: '+(on?'on':'off');
+    trailsBtn.style.color = on ? '#4caf7d' : '#e8ecef';
+    trailsBtn.style.borderColor = on ? '#2a5c40' : '#2c333a';
+  }
 
   /* ---------- live tracking (authenticated) ---------- */
   function setBadge(text, kind){
@@ -1113,11 +1144,12 @@ refreshAll();
     if(n.indexOf('energy')!==-1 || n.indexOf('motor')!==-1) return 'Energy';
     return 'Heavy';
   }
-  function truckIcon(course, pal){
+  function truckIcon(course, pal, speeding){
     pal = pal || TRUCK_COLORS.Heavy;
     const deg = (typeof course==='number' && !isNaN(course)) ? course : 0;
     const svg = '<svg width="32" height="44" viewBox="0 0 40 54" xmlns="http://www.w3.org/2000/svg">'
       + '<ellipse cx="20" cy="49" rx="12" ry="3.2" fill="rgba(0,0,0,0.30)"/>'
+      + (speeding ? '<circle cx="20" cy="26" r="18" fill="none" stroke="#ff3b30" stroke-width="3"/>' : '')
       + '<rect x="6" y="12" width="6" height="11" rx="2.5" fill="#0c0c0c"/>'
       + '<rect x="28" y="12" width="6" height="11" rx="2.5" fill="#0c0c0c"/>'
       + '<rect x="6" y="31" width="6" height="11" rx="2.5" fill="#0c0c0c"/>'
@@ -1141,13 +1173,15 @@ refreshAll();
     v.name=d.name||v.name||('Device '+d.id);
     v.lat=d.lat; v.lon=d.lon; v.speed=d.speed; v.course=d.course; v.lastUpdate=d.lastUpdate;
     const kmh=(d.speed!=null)?Math.round(d.speed*1.852):null; // Traccar speed is in knots
+    const speeding=(kmh!=null && kmh>SPEED_LIMIT);
     const popup='<b>'+v.name+'</b><br><small>'
       + (kmh!=null?(kmh+' km/h &middot; '):'')
       + 'GPS '+(d.lat!=null?d.lat.toFixed(5):'?')+', '+(d.lon!=null?d.lon.toFixed(5):'?')
       + (d.lastUpdate?('<br>last fix: '+new Date(d.lastUpdate).toLocaleString()):'')
+      + (speeding?('<br><b style="color:#ff5c4d">⚠ Speeding '+kmh+' km/h</b>'):'')
       + '</small>';
     const company=companyOf(v.name);
-    const icon=truckIcon(d.course, TRUCK_COLORS[company]);
+    const icon=truckIcon(d.course, TRUCK_COLORS[company], speeding);
     let m=vehMarkers[key];
     if(!m){
       m=L.marker([d.lat,d.lon],{icon:icon}).addTo(map);
@@ -1158,11 +1192,17 @@ refreshAll();
       if(m.getTooltip()) m.setTooltipContent(v.name);
     }
     m.bindPopup(popup);
+
+    if(!TRAILS[key]) TRAILS[key]=[];
+    var lastPt=TRAILS[key][TRAILS[key].length-1];
+    if(!lastPt || lastPt[0]!==d.lat || lastPt[1]!==d.lon){ TRAILS[key].push([d.lat,d.lon]); if(TRAILS[key].length>150) TRAILS[key].shift(); }
+    drawTrail(key);
   }
   function removeStale(active){
     Object.keys(vehMarkers).forEach(function(key){
       if(key[0]==='T' && !active.has(key)){
         map.removeLayer(vehMarkers[key]); delete vehMarkers[key];
+        if(trailLines[key]){ trailLayer.removeLayer(trailLines[key]); delete trailLines[key]; } delete TRAILS[key];
         const i=VEHICLES.findIndex(function(x){ return x.id===key; }); if(i>=0) VEHICLES.splice(i,1);
       }
     });
@@ -1198,6 +1238,7 @@ refreshAll();
   let pollTimer=null;
   function startPolling(){
     polling=true;
+    if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='inline-block';
     setBadge('connecting to Total Secure…','wait');
     poll();
     if(!pollTimer) pollTimer=setInterval(poll,30000);
