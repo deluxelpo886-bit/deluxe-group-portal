@@ -471,17 +471,17 @@ function getFiltered(){
 
 /* ---------- MAP SETUP (once) ---------- */
 const map = L.map('mapEl', {scrollWheelZoom:true}).setView([24.42,54.55], 9);
-// Base map tiles: OpenStreetMap (key-free, widely reliable). If those fail to
-// load (blocked/slow network), automatically fall back to CARTO's tiles so the
-// street background still appears.
-const baseTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// Base map tiles are served from our OWN server (/tiles/...), which the browser
+// can always reach even when third-party tile CDNs are blocked by the network.
+// If the proxy ever fails, fall back to loading OpenStreetMap directly.
+const baseTiles = L.tileLayer('/tiles/{z}/{x}/{y}.png', {
   attribution:'&copy; OpenStreetMap contributors', maxZoom:19
 }).addTo(map);
 let triedTileFallback = false;
 baseTiles.on('tileerror', function(){
   if(triedTileFallback) return;
   triedTileFallback = true;
-  baseTiles.setUrl('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png');
+  baseTiles.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 });
 
 const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:16px;height:16px;border-radius:50%;border:2px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:10px;">🏠</div>', iconSize:[16,16], iconAnchor:[8,8]});
