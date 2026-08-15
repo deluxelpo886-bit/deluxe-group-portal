@@ -5,7 +5,7 @@
  * the live data or login endpoints - those always go straight to the network so
  * vehicle positions are always fresh.
  */
-const CACHE = 'deluxe-fleet-v2';
+const CACHE = 'deluxe-fleet-v3';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
