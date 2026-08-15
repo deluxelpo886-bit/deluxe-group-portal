@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe Fleet Master &amp; Live Dispatch</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a;
+    --text:#e8ecef; --muted:#8b95a1; --amber:#e8a13a; --amber-dim:#8a6420;
+    --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --red-bg:#2e1c1a; --blue:#5b9bd5; --blue-bg:#16233a;
+    --purple:#a78bda;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--text); font-family:var(--sans); margin:0; padding:28px 24px 80px;}
+  .wrap{max-width:1360px; margin:0 auto;}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); margin-bottom:8px;}
+  h1{font-size:25px; margin:0 0 6px; font-weight:700;}
+  .sub{color:var(--muted); font-size:13.5px; margin:0 0 6px;}
+  .warn{background:#2e2410; border:1px solid #6b5010; color:#e8c168; padding:10px 14px; border-radius:8px; font-size:12.5px; margin:14px 0 4px;}
+  h2{font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:30px 0 12px; font-weight:700; display:flex; align-items:center; gap:10px;}
+
+  .topbar{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:16px 0;}
+  .topbar select{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:9px 12px; border-radius:8px; font-family:var(--sans); font-size:13px;}
+  .btn{background:var(--amber); color:#1a1300; border:none; padding:9px 16px; border-radius:8px;
+    font-weight:700; font-size:13px; cursor:pointer;}
+  .btn:hover{filter:brightness(1.08);}
+  .btn.secondary{background:var(--panel2); color:var(--text); border:1px solid var(--line);}
+  .btn.danger{background:var(--red-bg); color:var(--red); border:1px solid #5a2a22;}
+  .btn.small{padding:5px 10px; font-size:11.5px;}
+
+  .stats{display:grid; grid-template-columns:repeat(6,1fr); gap:1px; background:var(--line);
+    border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:16px 0;}
+  .stat{background:var(--panel); padding:14px 16px;}
+  .stat .n{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--amber);}
+  .stat .l{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-top:4px;}
+
+  .kva-checker{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:22px;}
+  .kva-row{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+  .kva-row input[type=number]{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:11px 14px; border-radius:8px; font-family:var(--mono); font-size:18px; width:140px; outline:none;}
+  .kva-row .unit{color:var(--muted); font-family:var(--mono); font-size:14px;}
+  #kvaResult{margin-top:16px;}
+  .result-line{padding:10px 14px; border-radius:8px; margin-bottom:8px; font-size:14px; display:flex; justify-content:space-between; align-items:center;}
+  .result-line.avail{background:var(--green-bg); border:1px solid #2a5c40;}
+  .result-line.hire{background:var(--panel2); border:1px solid var(--line);}
+  .result-line .dg{font-family:var(--mono); font-weight:700;}
+  .result-line .meta{color:var(--muted); font-size:12.5px;}
+  .verdict{font-size:15px; font-weight:600; margin-bottom:12px; padding:10px 0;}
+  .verdict.yes{color:var(--green);} .verdict.no{color:var(--red);}
+
+  .grid{display:grid; grid-template-columns:340px 1fr; gap:18px; align-items:start;}
+  @media(max-width:980px){.grid{grid-template-columns:1fr;}}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px;}
+  .field{margin-bottom:14px;}
+  label{display:block; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;}
+  select, input[type=text], input[type=number], input[type=date]{
+    width:100%; background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:9px 11px; border-radius:8px; font-family:var(--sans); font-size:13.5px; outline:none;}
+  select:focus, input:focus{border-color:var(--amber);}
+  #mapEl{height:560px; border-radius:12px; border:1px solid var(--line); z-index:1;}
+  .dg-label{
+    background:rgba(11,13,15,0.88); border:1px solid rgba(232,161,58,0.5); color:#e8ecef;
+    font-family:'JetBrains Mono','SF Mono',Consolas,monospace; font-size:10px; font-weight:600;
+    padding:1px 5px; border-radius:4px; box-shadow:none;
+  }
+  .dg-label::before{display:none;}
+  .hbar-wrap{width:120px;}
+  .hbar-track{background:#2c333a; border-radius:4px; height:6px; overflow:hidden;}
+  .hbar-fill{background:var(--green); height:100%; transition:width .3s;}
+  .hbar-fill.warn{background:var(--amber);}
+  .hbar-fill.over{background:var(--red);}
+  .hbar-label{font-size:10.5px; color:var(--muted); margin-top:3px; font-family:var(--mono);}
+  .badge.rp-under{background:#2e2410; color:#e8c168;}
+  .badge.rp-repairing{background:var(--blue-bg); color:var(--blue);}
+  .badge.rp-parts{background:#3a1414; color:#ff8a75;}
+  .badge.rp-done{background:var(--green-bg); color:var(--green);}
+  .repair-card{background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:10px;}
+  .repair-card-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .repair-card .dgname{font-family:var(--mono); font-weight:700; font-size:15px;}
+  .repair-card .meta{font-size:12px; color:var(--muted); line-height:1.7;}
+  .repair-card .actions{display:flex; gap:8px; margin-top:10px;}
+  .empty-note{color:var(--muted); font-size:13px;}
+  .dispatch-result{margin-top:16px;}
+  .veh-line{display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-radius:8px; margin-bottom:8px; font-size:13px;}
+  .veh-line.best{background:var(--green-bg); border:1px solid #2a5c40;}
+  .veh-line.other{background:var(--panel2); border:1px solid var(--line);}
+  .veh-line b{font-family:var(--mono);}
+  .veh-line .dist{color:var(--amber); font-family:var(--mono); font-size:13px;}
+  .near-list{margin-top:10px; max-height:220px; overflow-y:auto;}
+  .near-item{display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid var(--line); font-size:12.5px;}
+  .near-item:last-child{border-bottom:none;}
+  .near-item .d{color:var(--muted); font-family:var(--mono);}
+
+  .badge{display:inline-block; padding:2px 8px; border-radius:20px; font-size:10.5px; font-weight:700;}
+  .badge.hire{background:var(--green-bg); color:var(--green);}
+  .badge.idle{background:var(--red-bg); color:var(--red);}
+  .badge.service{background:#2e2410; color:#e8c168;}
+  .badge.breakdown{background:#3a1414; color:#ff6b5c;}
+  .badge.offfleet{background:#2a2a2a; color:#888;}
+  .badge.veh{background:var(--blue-bg); color:var(--blue);}
+  .badge.heavy{background:#2e2410; color:var(--amber);}
+  .badge.energy{background:var(--blue-bg); color:var(--blue);}
+
+  .legend{display:flex; gap:16px; margin-top:10px; font-size:11.5px; color:var(--muted); flex-wrap:wrap;}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
+  .dot.h{background:#4caf7d;} .dot.i{background:#e0644a;} .dot.v{background:#5b9bd5;} .dot.o{background:#a78bda;}
+  .dot.sv{background:#e8c168;} .dot.bd{background:#ff6b5c;}
+
+  .controls{display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center;}
+  .controls input[type=text]{width:240px;}
+  .controls select{width:auto;}
+  .count{font-size:12.5px; color:var(--muted); margin-left:auto; font-family:var(--mono);}
+  table{width:100%; border-collapse:collapse; background:var(--panel); border-radius:10px; overflow:hidden; border:1px solid var(--line);}
+  thead th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);
+    padding:11px 12px; border-bottom:1px solid var(--line); cursor:pointer; user-select:none; white-space:nowrap; background:var(--panel2);}
+  thead th:hover{color:var(--amber);}
+  thead th.sorted::after{content:" ▾"; color:var(--amber);}
+  thead th.sorted.asc::after{content:" ▴";}
+  tbody td{padding:9px 12px; border-bottom:1px solid var(--line); font-size:13px; white-space:nowrap;}
+  tbody tr:hover{background:var(--panel2);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.offfleet-row{opacity:0.45;}
+  .dg{font-family:var(--mono); font-weight:600; color:var(--text);}
+  .kva{font-family:var(--mono); color:var(--amber);}
+  .rate{font-family:var(--mono); text-align:right;}
+  .na{color:var(--muted); font-style:italic;}
+  .svc-soon{color:var(--red); font-weight:600;}
+  .loc{color:var(--muted);}
+  .rowbtns{display:flex; gap:6px;}
+
+  /* MODAL */
+  #modalOverlay, #repairModalOverlay{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:1000;}
+  #repairModal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:26px; width:440px; max-height:88vh; overflow-y:auto;}
+  #repairModal h3{margin:0 0 18px; font-size:16px;}
+  #modal{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:26px; width:440px; max-height:88vh; overflow-y:auto;}
+  #modal h3{margin:0 0 18px; font-size:16px;}
+  .modal-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .modal-actions{display:flex; gap:10px; margin-top:18px;}
+  .modal-actions .btn{flex:1;}
+
+  footer{margin-top:24px; font-size:12px; color:var(--muted); line-height:1.6;}
+  footer b{color:var(--text);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy — Machinery Operations</div>
+  <h1>Fleet Master &amp; Live Dispatch <span id="liveBadge" style="font-size:11px; padding:4px 10px; border-radius:20px; background:#2e2410; color:#e8c168; vertical-align:middle;">● vehicle GPS not connected yet</span></h1>
+  <p class="sub">143 generators from asset register · brand, technician, division &amp; 18 with exact GPS via Google Maps links</p>
+  <div class="warn">
+    ⚠ Source: your Asset List (Feb-26). KVA/status/technician/customer are real. <b>Company split confirmed:</b>
+    Division = "MOTOR" → Deluxe Energy (23 units), Division = "HEAVY"/"WORKSHOP" → Deluxe Heavy (120 units).
+    Only 18 generators have an exact GPS pin (📍 in the GPS column) — the rest are area-center approximations.
+  </div>
+
+  <div class="topbar">
+    <select id="companyFilter">
+      <option value="">All companies</option>
+      <option value="Heavy">🟠 Deluxe Heavy</option>
+      <option value="Energy">🔵 Deluxe Energy</option>
+    </select>
+    <button class="btn" id="addBtn">+ Add generator</button>
+    <button class="btn secondary" id="importBtn">⬆ Import data (JSON)</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;">
+    <button class="btn secondary" id="exportBtn">⬇ Export all data (JSON)</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <h2>Check availability by KVA</h2>
+  <div class="kva-checker">
+    <div class="kva-row">
+      <input type="number" id="kvaInput" placeholder="e.g. 100" min="0">
+      <span class="unit">KVA</span>
+      <span class="unit" style="margin-left:8px;">— checks within the company filter selected above</span>
+    </div>
+    <div id="kvaResult"></div>
+  </div>
+
+  <h2>🚨 Breakdown dispatch — nearest vehicle, real driving route &amp; nearby units</h2>
+  <div class="grid">
+    <div class="panel">
+      <div class="field">
+        <label>Broken-down / affected generator</label>
+        <select id="bdSelect"></select>
+      </div>
+      <button class="btn" id="bdBtn" style="width:100%;">Find nearest vehicle &amp; nearby units</button>
+      <div class="dispatch-result" id="dispatchResult"></div>
+
+      <h2>Vehicles / technician teams</h2>
+      <div id="vehList" style="font-size:12.5px; color:var(--muted); line-height:1.9;"></div>
+
+      <h2>Home base</h2>
+      <div style="font-size:12.5px; color:var(--muted); line-height:1.7;">
+        <b style="color:var(--text)">Deluxe Heavy Equipment Rental LLC</b><br>
+        Mussafah 37, Mussafah Industrial Area, Abu Dhabi, UAE<br>
+        ☎ +971 2 554 5718 (landline)<br>
+        📱 +971 55 440 4169 · +971 50 335 6515<br>
+        <span style="color:var(--muted)">Coordinates confirmed from company site — this pin is accurate.</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="topbar" style="margin:0 0 12px;">
+        <input type="text" id="locateInput" list="dgList" placeholder="Type a DG number to locate on map... e.g. DG-539" style="flex:1; min-width:220px; background:var(--panel2); border:1px solid var(--line); color:var(--text); padding:9px 12px; border-radius:8px; font-family:var(--sans); font-size:13.5px;">
+        <datalist id="dgList"></datalist>
+        <button class="btn" id="locateBtn">📍 Locate on map</button>
+      </div>
+      <div id="locateMsg" style="font-size:12.5px; color:var(--red); margin:-6px 0 10px; display:none;"></div>
+      <div id="mapEl"></div>
+      <div class="legend">
+        <span>🟠 Heavy logo = Deluxe Heavy generator</span>
+        <span>🔵 Energy logo = Deluxe Energy generator</span>
+        <span>Ring colour = status: <span class="dot h"></span> On Hire <span class="dot i"></span> Available <span class="dot sv"></span> Service <span class="dot bd"></span> Breakdown</span>
+        <span><span class="dot v"></span> Vehicle base</span>
+        <span><span class="dot o"></span> Office / home base</span>
+        <span>━ <span style="color:var(--amber)">Orange line</span> = real driving route (after clicking dispatch)</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>🔧 Workshop — Repair Tracking</h2>
+  <div class="stats" id="workshopStats"></div>
+  <div class="topbar">
+    <button class="btn" id="addRepairBtn">+ Send generator to workshop</button>
+  </div>
+  <div class="panel">
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; font-weight:700;">Active repairs</div>
+    <div id="activeRepairs"></div>
+  </div>
+  <div class="panel" style="margin-top:14px;">
+    <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; font-weight:700; cursor:pointer;" id="historyToggle">▸ Repair history (completed) — click to expand</div>
+    <div id="repairHistory" style="display:none;"></div>
+  </div>
+
+  <h2>Full fleet table</h2>
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search DG, customer, location...">
+    <select id="statusFilter">
+      <option value="">All statuses</option>
+      <option value="On Hire">On Hire</option>
+      <option value="Available">Available / Idle</option>
+      <option value="Under Service">Under Service</option>
+      <option value="Breakdown">Breakdown</option>
+      <option value="Off-Fleet">Off-Fleet</option>
+    </select>
+    <span class="count" id="count"></span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th data-key="dg">Generator</th>
+        <th data-key="kva">KVA</th>
+        <th data-key="brand">Brand</th>
+        <th data-key="division">Division</th>
+        <th data-key="company">Company</th>
+        <th data-key="status">Status</th>
+        <th data-key="customer">Customer</th>
+        <th data-key="location">Location</th>
+        <th data-key="technician">Technician</th>
+        <th data-key="rate_type">Rate Type</th>
+        <th data-key="rate">Rate (AED)</th>
+        <th data-key="next_service_sort">Next Service</th>
+        <th data-key="hours_pct">Hours Run (350h cycle)</th>
+        <th>GPS</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <footer>
+    Source: Hire Contract Register + Machinery Service Due lists + Delivery Note log, cross-checked.
+    Office coordinates and phone numbers pulled directly from deluxehe.com.
+    <b>This is a working draft</b> — company (Heavy/Energy) tagging, exact GPS per generator, and vehicle base
+    locations all need your confirmation/correction via Edit or Import. Map distance = straight-line, not
+    driving route. Vehicle GPS integration pending Total Secure API/export details.
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div id="modalOverlay">
+  <div id="modal">
+    <h3 id="modalTitle">Add generator</h3>
+    <div class="modal-grid">
+      <div class="field" style="grid-column:1/3;">
+        <label>DG Number</label>
+        <input type="text" id="f_dg" placeholder="DG-XXX">
+      </div>
+      <div class="field">
+        <label>KVA</label>
+        <input type="number" id="f_kva" placeholder="e.g. 100">
+      </div>
+      <div class="field">
+        <label>Brand</label>
+        <input type="text" id="f_brand" placeholder="e.g. CUMMINS">
+      </div>
+      <div class="field">
+        <label>Division (Heavy/Motor/Workshop tag)</label>
+        <input type="text" id="f_division" placeholder="HEAVY / MOTOR / WORKSHOP">
+      </div>
+      <div class="field">
+        <label>Company</label>
+        <select id="f_company">
+          <option value="Heavy">Deluxe Heavy</option>
+          <option value="Energy">Deluxe Energy</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Status</label>
+        <select id="f_status">
+          <option value="On Hire">On Hire</option>
+          <option value="Available">Available / Idle</option>
+          <option value="Under Service">Under Service</option>
+          <option value="Breakdown">Breakdown</option>
+          <option value="Off-Fleet">Off-Fleet</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Customer (if on hire)</label>
+        <input type="text" id="f_customer" placeholder="-">
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Location</label>
+        <input type="text" id="f_location" placeholder="e.g. Mussafah">
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Technician(s)</label>
+        <input type="text" id="f_technician" placeholder="e.g. Satnam & Husain">
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Google Maps link (exact location, optional)</label>
+        <input type="text" id="f_maps_link" placeholder="https://maps.app.goo.gl/...">
+      </div>
+      <div class="field">
+        <label>Rate Type</label>
+        <select id="f_rate_type">
+          <option value="Per Month">Per Month</option>
+          <option value="Per Day">Per Day</option>
+          <option value="Per Week">Per Week</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Rate (AED)</label>
+        <input type="number" id="f_rate" placeholder="0">
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Next Service Date</label>
+        <input type="date" id="f_next_service">
+      </div>
+      <div class="field">
+        <label>Latitude</label>
+        <input type="number" step="0.0001" id="f_lat">
+      </div>
+      <div class="field">
+        <label>Longitude</label>
+        <input type="number" step="0.0001" id="f_lon">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="modalCancel">Cancel</button>
+      <button class="btn danger" id="modalDelete" style="display:none;">Delete</button>
+      <button class="btn" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="repairModalOverlay">
+  <div id="repairModal">
+    <h3 id="repairModalTitle">Send generator to workshop</h3>
+    <div class="field">
+      <label>Generator (DG)</label>
+      <select id="r_dg"></select>
+    </div>
+    <div class="field">
+      <label>Issue / Complaint</label>
+      <input type="text" id="r_issue" placeholder="e.g. Overheating, fuel pump fault">
+    </div>
+    <div class="modal-grid">
+      <div class="field">
+        <label>Assigned Technician</label>
+        <input type="text" id="r_technician" placeholder="Name">
+      </div>
+      <div class="field">
+        <label>Date In</label>
+        <input type="date" id="r_date_in">
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Repair Status</label>
+        <select id="r_status">
+          <option value="Under Repair">Under Repair (queued / diagnosis)</option>
+          <option value="Repairing">Repairing (technician actively working)</option>
+          <option value="Awaiting Parts">Awaiting Parts</option>
+          <option value="Repair Completed">Repair Completed — ready for hire</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/3;">
+        <label>Notes</label>
+        <input type="text" id="r_notes" placeholder="Optional">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="repairModalCancel">Cancel</button>
+      <button class="btn danger" id="repairModalDelete" style="display:none;">Delete</button>
+      <button class="btn" id="repairModalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let DATA = [{"dg": "DG-35", "kva": 45.0, "brand": "JET", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "AGRITEK", "location": "AL BAHIA", "technician": "SATNAM&HUSAIN", "serial": "DK51278*U261062V*", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1890.0, "next_service": "05/09/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "10/08/2026", "last_service_hours": 8858, "next_service_hours": 9208, "daily_hours_rate": 11.151515151515152}, {"dg": "DG-36", "kva": 45.0, "brand": "JET", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "VELU&IMRAN", "serial": "DK51278*U261117V", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1500.0, "next_service": "28/08/2026", "maps_link": "https://maps.app.goo.gl/6wmG1o9ri8QrxkiBA", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "27/07/2026", "last_service_hours": 4266, "next_service_hours": 4616, "daily_hours_rate": 20}, {"dg": "DG-37", "kva": 60.0, "brand": "JET", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "YAS ISLAND", "technician": "VELU&BAKHTAMAL", "serial": "DK51280*264495V", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "10/08/2026", "maps_link": null, "lat": 24.4667, "lon": 54.6039, "last_service_date": "18/07/2026", "last_service_hours": 9623, "next_service_hours": 9973, "daily_hours_rate": 14.548387096774194}, {"dg": "DG-38", "kva": 100.0, "brand": "JET", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "MIRFAQ", "location": "RUWAISH", "technician": "SATNAM", "serial": "RJ51175-U52740", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3675.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3, "lon": 54.55, "last_service_date": "13/08/2026", "last_service_hours": 8812, "next_service_hours": 9162, "daily_hours_rate": 12}, {"dg": "DG-375", "kva": 400.0, "brand": "CATERPILLER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL REEM", "technician": "VELU&IMRAN", "serial": "1DZ06046", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 93600.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.4986, "lon": 54.4066, "last_service_date": "27/07/2026", "last_service_hours": 30395, "next_service_hours": 30745, "daily_hours_rate": 11.282051282051283}, {"dg": "DG-404", "kva": 60.0, "brand": "JET", "division": "WORKSHOP", "company": "Heavy", "status": "Off-Fleet", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP&IMRAN", "serial": "DK51436*U323953W", "issue_detail": "FOR SALE", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "09/01/2026", "last_service_hours": 4779, "next_service_hours": 5129, "daily_hours_rate": 0.7135922330097088}, {"dg": "DG-418", "kva": 18.0, "brand": "FG WILSON", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP&IMRAN", "serial": "-", "issue_detail": "READY", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "02/10/2025", "last_service_hours": 4274, "next_service_hours": 4624, "daily_hours_rate": 10.96551724137931}, {"dg": "DG-430", "kva": 150.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&ROLAND", "serial": "-", "issue_detail": "UNDER OVERHULL ", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "12/09/2025", "last_service_hours": 35480, "next_service_hours": 35830, "daily_hours_rate": 3.752688172043011}, {"dg": "DG-448", "kva": 60.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "MAWAAD", "location": "KIZAD", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1700.0, "next_service": "01/09/2026", "maps_link": "https://maps.app.goo.gl/rb7jB7bePSXC6rN97", "lat": 24.45, "lon": 54.63, "last_service_date": "06/08/2026", "last_service_hours": 7574, "next_service_hours": 7924, "daily_hours_rate": 16.714285714285715}, {"dg": "DG-450", "kva": 200.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL BAHIA", "technician": "VELU&IMRAN", "serial": "F6.9575/1520006", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "25/07/2026", "last_service_hours": 35655, "next_service_hours": 36005, "daily_hours_rate": 10.657142857142857}, {"dg": "DG-452", "kva": 30.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&HUSSAIN", "serial": "3H.908511320085", "issue_detail": "MOTOR SIDE ISSUE ", "rate_type": "Per Month", "rate": 1900.0, "next_service": "28/08/2026", "maps_link": "https://maps.app.goo.gl/4628EvLyC4bCb46m7", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "27/12/2025", "last_service_hours": 3846, "next_service_hours": 4196, "daily_hours_rate": 8.897435897435898}, {"dg": "DG-453", "kva": 30.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "VELU&IMRAN", "serial": "3H9085/1220205", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1500.0, "next_service": "10/09/2026", "maps_link": "https://maps.app.goo.gl/t1oPDRt8PFnAawmJ6", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "27/06/2026", "last_service_hours": 35796, "next_service_hours": 36146, "daily_hours_rate": 9.787234042553191}, {"dg": "DG-455", "kva": 15.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&ROLAND", "serial": "02.9086/1420001", "issue_detail": "READY", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "05/09/2024", "last_service_hours": 2254, "next_service_hours": 2604, "daily_hours_rate": 5.157894736842105}, {"dg": "DG-456", "kva": 62.5, "brand": "CUMMINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "MUSSAFAH", "location": "MUSSAFAH", "technician": "GAGAN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2300.0, "next_service": "08/09/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "08/08/2026", "last_service_hours": 3195, "next_service_hours": 3545, "daily_hours_rate": 4.741379310344827}, {"dg": "DG-457", "kva": 62.5, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "BAKHTAMAL&HUSAIN", "serial": "4H.6481/1600009", "issue_detail": "UNDER REPAIR", "rate_type": "Per Month", "rate": 2100.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "26/01/2026", "last_service_hours": 3204, "next_service_hours": 3554, "daily_hours_rate": 11.846153846153847}, {"dg": "DG-459", "kva": 62.5, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "COVER GENERAL", "location": "ICAD", "technician": "ROLAND&BAKHTAMAL", "serial": "4H.9476/1620009", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2520.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.3285, "lon": 54.4927, "last_service_date": "24/07/2026", "last_service_hours": 573, "next_service_hours": 923, "daily_hours_rate": 10.448275862068966}, {"dg": "DG-466", "kva": 160.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "DUBAI", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 18000.0, "next_service": "25/08/2026", "maps_link": null, "lat": 25.2048, "lon": 55.2708, "last_service_date": "27/07/2026", "last_service_hours": 31799, "next_service_hours": 32149, "daily_hours_rate": 2.5612903225806454}, {"dg": "DG-467", "kva": 100.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "DAFOOS FIRE", "location": "MUSSAFAH", "technician": "SATNAM", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2782.5, "next_service": "25/07/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "24/06/2026", "last_service_hours": 29182, "next_service_hours": 29532, "daily_hours_rate": 7.462962962962963}, {"dg": "DG-470", "kva": 220.0, "brand": "IVECO", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "HUSAIN&GAGAN", "serial": "F101-00436432*", "issue_detail": "READY", "rate_type": "Per Month", "rate": 7350.0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "10/05/2026", "last_service_hours": " ", "next_service_hours": "#VALUE!", "daily_hours_rate": "#VALUE!"}, {"dg": "DG-471", "kva": 220.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TROJAN", "location": "BANIYAS", "technician": "VELU&IMRAN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 23362.0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.3266, "lon": 54.6355, "last_service_date": "20/07/2026", "last_service_hours": 31113, "next_service_hours": 31463, "daily_hours_rate": 15.65}, {"dg": "DG-473", "kva": 100.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SABIR&BAKHTAMAL", "serial": "RJ51175*4632042", "issue_detail": "FUEL PUMP UNDER REPAIR", "rate_type": "Per Month", "rate": 5880.0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "18/06/2026", "last_service_hours": 9654, "next_service_hours": 10004, "daily_hours_rate": 11.153846153846153}, {"dg": "DG-476", "kva": 150.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "IMRAN&VELU", "serial": "PR82148*4056418B", "issue_detail": " ENGINE OVER HEAT  UNDER REPAIR ", "rate_type": "Per Month", "rate": 5407.5, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "23/02/2026", "last_service_hours": 3864, "next_service_hours": 4214, "daily_hours_rate": 1.7818181818181817}, {"dg": "DG-477", "kva": 100.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "OSAI", "location": "KIZAD", "technician": "ROLAND&BAKHTAMAL", "serial": "4H.9776/1720050", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 4095.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "31/07/2026", "last_service_hours": 27698, "next_service_hours": 28048, "daily_hours_rate": 9.854166666666666}, {"dg": "DG-478", "kva": 250.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "FAHAD&MAAZ", "serial": "-", "issue_detail": "ENGINE OIL LEAK FROM HEAD SIDE AND BACK COMPRESSOR ", "rate_type": "Per Month", "rate": 4725.0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "16/06/2026", "last_service_hours": 27137, "next_service_hours": 27487, "daily_hours_rate": 2.0428571428571427}, {"dg": "DG-479", "kva": 250.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "AL FALAH", "technician": "IMRAN&JAIRAZ", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 5300.0, "next_service": "05/09/2026", "maps_link": null, "lat": 24.35, "lon": 54.7, "last_service_date": "12/08/2026", "last_service_hours": 468, "next_service_hours": 818, "daily_hours_rate": 9.485714285714286}, {"dg": "DG-480", "kva": 250.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "NOV", "location": "MUSSAFAH", "technician": "BAKHTAMAL&ROLAND", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "09/05/2026", "last_service_hours": 10920, "next_service_hours": 11270, "daily_hours_rate": 1.5502958579881656}, {"dg": "DG-481", "kva": 100.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SIX SIGMA", "location": "ABU DHABI", "technician": "IMRAN&JAIRAZ", "serial": "RJ51175*U648556C*", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3465.0, "next_service": "05/09/2026", "maps_link": "https://maps.app.goo.gl/8fVKdBRFZ4sv9a5F8", "lat": 24.4667, "lon": 54.3667, "last_service_date": "13/08/2026", "last_service_hours": 23309, "next_service_hours": 23659, "daily_hours_rate": 13}, {"dg": "DG-482", "kva": 160.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL BAHIA", "technician": "VELU&IMRAN", "serial": "F6.9275/1620018", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "25/07/2026", "last_service_hours": 25444, "next_service_hours": 25794, "daily_hours_rate": 8.942857142857143}, {"dg": "DG-483", "kva": 60.0, "brand": "WEBER", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "READY LOAD TAKING ONLY 43 APMS", "rate_type": "Per Month", "rate": 4935.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "13/03/2026", "last_service_hours": 14266, "next_service_hours": 14616, "daily_hours_rate": 4.267241379310345}, {"dg": "DG-484", "kva": 160.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "AL SAFAKH", "location": "AL AIN", "technician": "SATNAM&HUSSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 4300.0, "next_service": "05/08/2026", "maps_link": null, "lat": 24.2075, "lon": 55.7447, "last_service_date": "06/11/2025", "last_service_hours": 4849, "next_service_hours": 5199, "daily_hours_rate": 12.75}, {"dg": "DG-485", "kva": 60.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&HUSAIN", "serial": "DK32000*4487147C", "issue_detail": "READY BUT LOAD TAKING ONLY 40 AMPS", "rate_type": "Per Month", "rate": 2100.0, "next_service": "28/08/2026", "maps_link": "https://maps.app.goo.gl/DPx6RxznmNPxF4GS6", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "09/07/2026", "last_service_hours": 3938, "next_service_hours": 4288, "daily_hours_rate": 17.82608695652174}, {"dg": "DG-488", "kva": 40.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "VELU&IMRAN", "serial": "E411TDJL248113G", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1500.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "27/07/2026", "last_service_hours": 5448, "next_service_hours": 5798, "daily_hours_rate": 10.233333333333333}, {"dg": "DG-489", "kva": 25.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SIX SIGMA", "location": "DUBAI", "technician": "ROLAND&BAKHTAMAL", "serial": "F.SY.8.19016", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2572.5, "next_service": "25/08/2026", "maps_link": null, "lat": 25.2048, "lon": 55.2708, "last_service_date": "27/07/2026", "last_service_hours": 6253, "next_service_hours": 6603, "daily_hours_rate": 9.176470588235293}, {"dg": "DG-490", "kva": 83.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "KON", "location": "HABSAN", "technician": "IMRAN&VELU", "serial": "4H.9575/1320017", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3675.0, "next_service": "28/07/2026", "maps_link": null, "lat": 23.15, "lon": 53.75, "last_service_date": "03/06/2026", "last_service_hours": 9015, "next_service_hours": 9365, "daily_hours_rate": 8.742857142857142}, {"dg": "DG-491", "kva": 83.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "AL BAHIA", "technician": "VELU&IMRAN", "serial": "4H.4581/1100001", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 10080.0, "next_service": "25/08/2026", "maps_link": "https://maps.app.goo.gl/gofjj7Jn4GsYri8S6", "lat": 24.5585, "lon": 54.6425, "last_service_date": "14/07/2026", "last_service_hours": 9610, "next_service_hours": 9960, "daily_hours_rate": 9.666666666666666}, {"dg": "DG-492", "kva": 82.0, "brand": "TATA", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "EMDAD", "location": "KIZAD", "technician": "IMRAN&HUSAIN", "serial": "607TC51/IND14F0036", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2100.0, "next_service": "25/08/2026", "maps_link": "https://maps.app.goo.gl/XnCmTCp1GaTXBuoA7", "lat": 24.45, "lon": 54.63, "last_service_date": "31/07/2026", "last_service_hours": 6531, "next_service_hours": 6881, "daily_hours_rate": 13.571428571428571}, {"dg": "DG-494", "kva": 160.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "KAT", "location": "DUBAI", "technician": "SABIR&RAMESH", "serial": "6H.9275/1920004", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3650.0, "next_service": "20/08/2026", "maps_link": null, "lat": 25.2048, "lon": 55.2708, "last_service_date": "18/07/2026", "last_service_hours": 6269, "next_service_hours": 6619, "daily_hours_rate": 8.428571428571429}, {"dg": "DG-496", "kva": 15.0, "brand": "TATA", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": " ", "rate_type": "Per Month", "rate": 1575.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "18/02/2026", "last_service_hours": 8297, "next_service_hours": 8647, "daily_hours_rate": 20.9375}, {"dg": "DG-500", "kva": 50.0, "brand": "TATA", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "MAWAAD", "location": "AL FAYA", "technician": "IMRAN&SABIR", "serial": "CTY820166", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1785.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.2808, "lon": 54.9544, "last_service_date": "07/08/2026", "last_service_hours": 2639, "next_service_hours": 2989, "daily_hours_rate": 16.37037037037037}, {"dg": "DG-501", "kva": 50.0, "brand": "TATA", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "HYDRO POWER", "location": "AL BAHIA", "technician": "SATNAM&HUSAIN", "serial": "CTY811715", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 6930.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "30/07/2026", "last_service_hours": 20631, "next_service_hours": 20981, "daily_hours_rate": 10.766666666666667}, {"dg": "DG-502", "kva": 50.0, "brand": "PERKINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "MUSSAFAH", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 18480.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "23/07/2026", "last_service_hours": 15471, "next_service_hours": 15821, "daily_hours_rate": 5.092105263157895}, {"dg": "DG-503", "kva": 50.0, "brand": "TATA", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "MUSSAFAH", "technician": "ROLAND&BAKHTAMAL", "serial": "G41828553", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 18480.0, "next_service": "20/08/2026", "maps_link": "https://maps.app.goo.gl/YcTKpK9oDYMza6aJ9", "lat": 24.3676, "lon": 54.4914, "last_service_date": "23/07/2026", "last_service_hours": 5866, "next_service_hours": 6216, "daily_hours_rate": 3.3529411764705883}, {"dg": "DG-505", "kva": 40.0, "brand": "TATA", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL REEM", "technician": "BAKHTAMAL&SABIR", "serial": "G4P 5 27581", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.4986, "lon": 54.4066, "last_service_date": "28/07/2026", "last_service_hours": 17290, "next_service_hours": 17640, "daily_hours_rate": 5.290909090909091}, {"dg": "DG-506", "kva": 40.0, "brand": "TATA", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SONU&HUSSAIN", "serial": "CTY811706", "issue_detail": "MOTOR SIDE ISSUE", "rate_type": "Per Month", "rate": 4935.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "14/02/2026", "last_service_hours": 17195, "next_service_hours": 17545, "daily_hours_rate": 10.428571428571429}, {"dg": "DG-507", "kva": 30.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&SATNAM", "serial": "2H.9275/2020027", "issue_detail": "READY ", "rate_type": "Per Month", "rate": 1837.5, "next_service": "28/08/2026", "maps_link": "https://maps.app.goo.gl/NVx7HE7aSPVstJFL9", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "16/06/2026", "last_service_hours": 20835, "next_service_hours": 21185, "daily_hours_rate": 2.5}, {"dg": "DG-508", "kva": 250.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL BAHIA", "technician": "VELU&IMRAN", "serial": "F6.95702.1320011", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "25/07/2026", "last_service_hours": 32595, "next_service_hours": 32945, "daily_hours_rate": 10.285714285714286}, {"dg": "DG-515", "kva": 250.0, "brand": "PERKINS", "division": "WORKSHOP", "company": "Heavy", "status": "Off-Fleet", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&BAKHTAMAL", "serial": "7081261C1", "issue_detail": "FOR SALE", "rate_type": "Per Month", "rate": 14000.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "02/04/2026", "last_service_hours": 6876, "next_service_hours": 7226, "daily_hours_rate": 10.818181818181818}, {"dg": "DG-518", "kva": 30.0, "brand": "PERKINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TOTAL", "location": "MUSSAFAH", "technician": "IMRAN&VELU", "serial": "DJ32003*U503395C", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1900.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "21/07/2026", "last_service_hours": 5765, "next_service_hours": 6115, "daily_hours_rate": 5.393939393939394}, {"dg": "DG-520", "kva": 200.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL BAHIA", "technician": "ROLAND&BAKHTAMAL", "serial": "f6.2504/0700005", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 18000.0, "next_service": "10/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "11/07/2026", "last_service_hours": 11568, "next_service_hours": 11918, "daily_hours_rate": 7.82051282051282}, {"dg": "DG-529", "kva": 82.5, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TROJAN", "location": "MAFRAQ", "technician": "SABIR&ADIL", "serial": "4H.9575/1220008", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 62400.0, "next_service": "30/08/2026", "maps_link": null, "lat": 24.286, "lon": 54.5902, "last_service_date": "11/08/2026", "last_service_hours": 28895, "next_service_hours": 29245, "daily_hours_rate": 20.31578947368421}, {"dg": "DG-531", "kva": 100.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "RAMAH", "location": "WATHBA", "technician": "SABIR&BAKHTAMAL", "serial": "6H.9475/130005", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 4620.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.2263, "lon": 54.6199, "last_service_date": "30/05/2026", "last_service_hours": 14124, "next_service_hours": 14474, "daily_hours_rate": 9.71875}, {"dg": "DG-532", "kva": 350.0, "brand": "CATERPILLER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "VELU&IMRAN", "serial": "2RJ04303", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "16/07/2026", "last_service_hours": 42270, "next_service_hours": 42620, "daily_hours_rate": 9.108108108108109}, {"dg": "DG-535", "kva": 165.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "AL BAHIA", "technician": "SATNAM&HUSAIN", "serial": "4H.9776/1820046", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3150.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "30/07/2026", "last_service_hours": 34173, "next_service_hours": 34523, "daily_hours_rate": 5.280701754385965}, {"dg": "DG-536", "kva": 40.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP&IMRAN", "serial": "4H.9075/1420083", "issue_detail": "FOLLOW UP FOR MOTOR", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "31/07/2025", "last_service_hours": 6820, "next_service_hours": 7170, "daily_hours_rate": 7.982758620689655}, {"dg": "DG-537", "kva": 40.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "PATHAN", "location": "ICAD", "technician": "VELU&IMRAN", "serial": "4H.9075/1420064", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2000.0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.3285, "lon": 54.4927, "last_service_date": "19/07/2026", "last_service_hours": 7981, "next_service_hours": 8331, "daily_hours_rate": 13.923076923076923}, {"dg": "DG-538", "kva": 160.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "ASWAR", "location": "MUSSAFAH", "technician": "IMRAN&VELU", "serial": "F6.9275/1000002", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "23/07/2026", "last_service_hours": 3352, "next_service_hours": 3702, "daily_hours_rate": 3.694736842105263}, {"dg": "DG-539", "kva": 45.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "SABIR&IMRAN", "serial": "4H.2189/0800001", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "14/07/2026", "last_service_hours": 31514, "next_service_hours": 31864, "daily_hours_rate": 11.676470588235293}, {"dg": "DG-540", "kva": 60.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "AL HASHIM", "location": "SAKHBUTH CITY", "technician": "ROLAND&BAKHTAMAL", "serial": "4H.9475/1120010", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2467.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.2721, "lon": 54.6122, "last_service_date": "28/07/2026", "last_service_hours": 14342, "next_service_hours": 14692, "daily_hours_rate": 13.256410256410257}, {"dg": "DG-541", "kva": 500.0, "brand": "FG WILSON", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "NOOR AL SHAHRA", "location": "AL FAYA", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.2808, "lon": 54.9544, "last_service_date": "25/07/2026", "last_service_hours": 2701, "next_service_hours": 3051, "daily_hours_rate": 18.333333333333332}, {"dg": "DG-542", "kva": 100.0, "brand": "PERKINS", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "YAS ISLAND", "technician": "SABIR&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.4667, "lon": 54.6039, "last_service_date": "04/08/2026", "last_service_hours": 1679, "next_service_hours": 2029, "daily_hours_rate": 3.896103896103896}, {"dg": "DG-543", "kva": 165.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&HUSAIN", "serial": "F6.2226/0700001", "issue_detail": "ENGINE SOUND UBNORMAL", "rate_type": "Per Month", "rate": 20265.0, "next_service": "20/08/2026", "maps_link": "https://maps.app.goo.gl/6wmG1o9ri8QrxkiBA", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "29/06/2026", "last_service_hours": 7045, "next_service_hours": 7395, "daily_hours_rate": 18.32}, {"dg": "DG-545", "kva": 150.0, "brand": "CUMMINS", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&RHUSAIN", "serial": 1151408750, "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3150.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "14/07/2026", "last_service_hours": 12842, "next_service_hours": 13192, "daily_hours_rate": 4.038709677419355}, {"dg": "DG-547", "kva": 60.0, "brand": "WEBER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP&MAAZ", "serial": "DK83403S0563424", "issue_detail": "ENGINE OVERHAULING", "rate_type": "Per Month", "rate": 8400.0, "next_service": "30/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "12/01/2026", "last_service_hours": 2640, "next_service_hours": 2990, "daily_hours_rate": 8.307692307692308}, {"dg": "DG-548", "kva": 100.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SIX SIGMA", "location": "JUBAIL ISLAND", "technician": "VELU&IMRAN", "serial": "4B18218", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2500.0, "next_service": "19/08/2026", "maps_link": null, "lat": 24.5215, "lon": 54.4889, "last_service_date": "21/07/2026", "last_service_hours": 4459, "next_service_hours": 4809, "daily_hours_rate": 10.524137931034483}, {"dg": "DG-549", "kva": 100.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SIX SIGMA", "location": "KIZAD", "technician": "ROLAND&BAKHTAMAL", "serial": "4B21157", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3307.5, "next_service": "20/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "30/07/2026", "last_service_hours": 5563, "next_service_hours": 5913, "daily_hours_rate": 16.954545454545453}, {"dg": "DG-552", "kva": 100.0, "brand": "WEICHAI", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP&IMRAN", "serial": "B609134198", "issue_detail": "ENGINE OVERHAULING", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "19/06/2025", "last_service_hours": 2861, "next_service_hours": 3211, "daily_hours_rate": 11.928571428571429}, {"dg": "DG-553", "kva": 100.0, "brand": "WEICHAI", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SMART HOME", "location": "AL AIN", "technician": "SABIR&BAKHTAMAL", "serial": "B609134202", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "05/08/2026", "maps_link": null, "lat": 24.2075, "lon": 55.7447, "last_service_date": "09/07/2026", "last_service_hours": 3548, "next_service_hours": 3898, "daily_hours_rate": 7.631578947368421}, {"dg": "DG-554", "kva": 40.0, "brand": "WEBER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "ASWAR", "location": "MAFRAQ", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 5200.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.286, "lon": 54.5902, "last_service_date": "06/07/2026", "last_service_hours": 4564, "next_service_hours": 4914, "daily_hours_rate": 11.814814814814815}, {"dg": "DG-555", "kva": 500.0, "brand": "CUMMINS", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&MAAZ", "serial": "-", "issue_detail": "ENGINE OVERHAULING", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "28/11/2025", "last_service_hours": 914, "next_service_hours": 1264, "daily_hours_rate": 8.018181818181818}, {"dg": "DG-556", "kva": 360.0, "brand": "CUMMINS", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "CITY CONST", "location": "RUWAISH", "technician": "SATNAM&HUSAIN", "serial": 25310876, "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 19950.0, "next_service": "08/08/2026", "maps_link": null, "lat": 24.3, "lon": 54.55, "last_service_date": "13/07/2026", "last_service_hours": 2755, "next_service_hours": 3105, "daily_hours_rate": 16.428571428571427}, {"dg": "DG-557", "kva": 360.0, "brand": "CUMMINS", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 19950.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "29/07/2026", "last_service_hours": 1545, "next_service_hours": 1895, "daily_hours_rate": 18.625}, {"dg": "DG-558", "kva": 200.0, "brand": "CUMMINS", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL BAHIA", "technician": "SATNAM&HUSAIN", "serial": 21712667, "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "05/09/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "08/08/2026", "last_service_hours": 7945, "next_service_hours": 8295, "daily_hours_rate": 8.894736842105264}, {"dg": "DG-559", "kva": 30.0, "brand": "PERKINS", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SAFI", "serial": "DK51278-U135353P", "issue_detail": "NEED TO BE ENGINE OVERHULL", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "29/11/2025", "last_service_hours": 29339, "next_service_hours": 29689, "daily_hours_rate": 0.637943031093716}, {"dg": "DG-560", "kva": 125.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "X DOM", "location": "YAS ISLAND", "technician": "KIRLOSKER", "serial": "-", "issue_detail": "-", "rate_type": "Per Month", "rate": 5670.0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.4667, "lon": 54.6039, "last_service_date": "10/08/2026", "last_service_hours": 0, "next_service_hours": 350, "daily_hours_rate": 0}, {"dg": "DG-800", "kva": 300.0, "brand": "CATERPILLER", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "BAKHTAMAL&ROLAND", "serial": "2WB04850", "issue_detail": "OVER USE GENERATOR", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "06/11/2025", "last_service_hours": 12529, "next_service_hours": 12879, "daily_hours_rate": 16.9}, {"dg": "DG-801", "kva": 250.0, "brand": "FG WILSON", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "MAWAAD", "location": "AL FAYA", "technician": "SATNAM&HUSAIN", "serial": "WS5546N1609884", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.2808, "lon": 54.9544, "last_service_date": "11/07/2026", "last_service_hours": 11190, "next_service_hours": 11540, "daily_hours_rate": 1.5454545454545454}, {"dg": "DG-802", "kva": 250.0, "brand": "FG WILSON", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "BRIGHT ACCORD", "location": "JUBAIL ISLAND", "technician": "IMRAN&JAIRAZ", "serial": "FGWNAV02CF0B10845", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2700.0, "next_service": "30/08/2026", "maps_link": null, "lat": 24.5215, "lon": 54.4889, "last_service_date": "12/08/2026", "last_service_hours": 22838, "next_service_hours": 23188, "daily_hours_rate": 4.172972972972973}, {"dg": "DG-803", "kva": 160.0, "brand": "FG WILSON", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "BRIGHT ACCORD", "location": "JUBAIL ISLAND", "technician": "IMRAN&JAIRAZ", "serial": "PR82602R006551A", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 58800.0, "next_service": "30/08/2026", "maps_link": null, "lat": 24.5215, "lon": 54.4889, "last_service_date": "12/08/2026", "last_service_hours": 11235, "next_service_hours": 11585, "daily_hours_rate": 15.25}, {"dg": "DG-804", "kva": 160.0, "brand": "FG WILSON", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "ICAD", "technician": "SABIR&IMRAN", "serial": "PR82602R007037A", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "05/09/2026", "maps_link": null, "lat": 24.3285, "lon": 54.4927, "last_service_date": "08/08/2026", "last_service_hours": 11901, "next_service_hours": 12251, "daily_hours_rate": 13.208333333333334}, {"dg": "DG-805", "kva": 160.0, "brand": "FG WILSON", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ENEGINE OVER HEAT AFTER 100 AMPS", "rate_type": "-", "rate": 42000.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "30/04/2026", "last_service_hours": 6058, "next_service_hours": 6408, "daily_hours_rate": 15.346153846153847}, {"dg": "DG-806", "kva": 500.0, "brand": "FG WILSON", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "MIA KHAN", "serial": "MGAF7138U17985W", "issue_detail": "ENGINE OVERHAULING", "rate_type": "Per Month", "rate": 9975.0, "next_service": "10/09/2026", "maps_link": "https://maps.app.goo.gl/rb7jB7bePSXC6rN97", "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "10/02/2026", "last_service_hours": 14863, "next_service_hours": 15213, "daily_hours_rate": 1.303370786516854}, {"dg": "DG-809", "kva": 63.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "YAS ISLAND", "technician": "VELU&BAKHTAMAL", "serial": "4H.6481/1600009", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "05/08/2026", "maps_link": null, "lat": 24.4667, "lon": 54.6039, "last_service_date": "18/07/2026", "last_service_hours": 14288, "next_service_hours": 14638, "daily_hours_rate": 19.310344827586206}, {"dg": "DG-811", "kva": 30.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "KON", "location": "KIZAD", "technician": "SATNAM&HUSAIN", "serial": "3H.9085/1220144", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2047.5, "next_service": "01/09/2026", "maps_link": "https://maps.app.goo.gl/6wmG1o9ri8QrxkiBA", "lat": 24.45, "lon": 54.63, "last_service_date": "04/08/2026", "last_service_hours": 9364, "next_service_hours": 9714, "daily_hours_rate": 1.6524390243902438}, {"dg": "DG-812", "kva": 30.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "MOTOR WAY", "location": "ICAD", "technician": "SABIR&IMRAN", "serial": "3H.9085/1220167", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3285, "lon": 54.4927, "last_service_date": "08/08/2026", "last_service_hours": 9801, "next_service_hours": 10151, "daily_hours_rate": 20.941176470588236}, {"dg": "DG-814", "kva": 30.0, "brand": "PERKINS", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "IMRAN&SABIR", "serial": "DJ81828-U415185Y", "issue_detail": "ENGINE OIL ISSUE ", "rate_type": "Per Month", "rate": 1500.0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "08/04/2026", "last_service_hours": 27415, "next_service_hours": 27765, "daily_hours_rate": 5.803571428571429}, {"dg": "DG-815", "kva": 30.0, "brand": "PERKINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "OSAI", "location": "KIZAD", "technician": "IMRAN&JAIRAZ", "serial": "DJ81828-U424327Y", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2625.0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "01/08/2026", "last_service_hours": 36945, "next_service_hours": 37295, "daily_hours_rate": 11.891304347826088}, {"dg": "DG-816", "kva": 40.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "OSAI", "location": "KIZAD", "technician": "SATNAM&HUSAIN", "serial": "4H.9575/1320010", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3045.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "28/07/2026", "last_service_hours": 8439, "next_service_hours": 8789, "daily_hours_rate": 2.780952380952381}, {"dg": "DG-817", "kva": 40.0, "brand": "KIRLOSKER", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL REEM", "technician": "IMRAN&VELU", "serial": "4H.9075/1320014", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.4986, "lon": 54.4066, "last_service_date": "28/07/2026", "last_service_hours": 9623, "next_service_hours": 9973, "daily_hours_rate": 18.22222222222222}, {"dg": "DG-818", "kva": 20.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "GULF CONTRACTING", "location": "MASDER CITY", "technician": "IMRAN&VELU", "serial": "2H.9085/1220117", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1785.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.4372, "lon": 54.6142, "last_service_date": "04/08/2026", "last_service_hours": 7531, "next_service_hours": 7881, "daily_hours_rate": 2.007434944237918}, {"dg": "DG-819", "kva": 45.0, "brand": "PERKINS", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL REEM", "technician": "IMRAN&JAIRAZ", "serial": "DK51326-U173110S", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "02/09/2026", "maps_link": null, "lat": 24.4986, "lon": 54.4066, "last_service_date": "11/08/2026", "last_service_hours": 22035, "next_service_hours": 22385, "daily_hours_rate": 16.708333333333332}, {"dg": "DG-820", "kva": 45.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "HYDRO POWER", "location": "MAFRAQ", "technician": "SATNAM&HUSAIN", "serial": "4H.3403/0400555", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1995.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.286, "lon": 54.5902, "last_service_date": "25/07/2026", "last_service_hours": 1008, "next_service_hours": 1358, "daily_hours_rate": 10.25}, {"dg": "DG-821", "kva": 45.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "AL REEF", "location": "RUWAISH", "technician": "SATNAM&HUSAIN", "serial": "4H.3004/0400450", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 2600.0, "next_service": "20/08/2026", "maps_link": "https://maps.app.goo.gl/5hX5zEPdAprvJjBq7", "lat": 24.3, "lon": 54.55, "last_service_date": "23/07/2026", "last_service_hours": 4408, "next_service_hours": 4758, "daily_hours_rate": 5.102941176470588}, {"dg": "DG-822", "kva": 380.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "CITY CONST", "location": "AL FAYA", "technician": "IMRAN&FAYAZ", "serial": "2RJ05495", "issue_detail": "READY", "rate_type": "Per Month", "rate": 19950.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.2808, "lon": 54.9544, "last_service_date": "29/04/2026", "last_service_hours": 5823, "next_service_hours": 6173, "daily_hours_rate": 23.15}, {"dg": "DG-823", "kva": 320.0, "brand": "CATERPILLER", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "NOOR AL SHAHRA", "location": "DUBAI", "technician": "SATNAM&GAGAN", "serial": "2WB03921", "issue_detail": "READY", "rate_type": "Per Month", "rate": 2100.0, "next_service": "01/09/2026", "maps_link": null, "lat": 25.2048, "lon": 55.2708, "last_service_date": "09/11/2025", "last_service_hours": 5314, "next_service_hours": 5664, "daily_hours_rate": 8.53191489361702}, {"dg": "DG-824", "kva": 300.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "GULF CONTRACTING", "location": "DUBAI", "technician": "ROLAND&BAKHTAMAL", "serial": "2W802778", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "20/08/2026", "maps_link": null, "lat": 25.2048, "lon": 55.2708, "last_service_date": "22/07/2026", "last_service_hours": 7662, "next_service_hours": 8012, "daily_hours_rate": 14.217391304347826}, {"dg": "DG-825", "kva": 380.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "FAYAZ&BAKHTAMAL", "serial": "2WB02778", "issue_detail": "UNDER REPAIR", "rate_type": "Per Month", "rate": 37800.0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "18/03/2026", "last_service_hours": 7735, "next_service_hours": 8085, "daily_hours_rate": 11.529411764705882}, {"dg": "DG-826", "kva": 725.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "EMDAD", "location": "KIZAD", "technician": "BAKHTAMAL&ROLAND", "serial": "IEZ06035", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 7875.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "02/07/2026", "last_service_hours": 412, "next_service_hours": 762, "daily_hours_rate": 12.88888888888889}, {"dg": "DG-827", "kva": 725.0, "brand": "CATERPILLER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SATNAM&SABIR", "serial": "-", "issue_detail": "UNDER REPAIR , TURBO ISSSUE ALTINATOR SIDE ,WATER PUMP, FUEL PUMPSIDE ENGINE OIL LEAK, UBNORMAL SOUND COMING", "rate_type": "Per Month", "rate": 37747.5, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "29/01/2026", "last_service_hours": 3434, "next_service_hours": 3784, "daily_hours_rate": 17.166666666666668}, {"dg": "DG-828", "kva": 800.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "EMDAD", "location": "KIZAD", "technician": "IMRAN&JAIRAZ", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 17850.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "31/07/2026", "last_service_hours": 4524, "next_service_hours": 4874, "daily_hours_rate": 11.214285714285714}, {"dg": "DG-829", "kva": 320.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "AL REEF", "location": "SILA", "technician": "VELU&IMRAN", "serial": "10Z04578*", "issue_detail": "WATER PUMP LEAK", "rate_type": "N/A", "rate": 0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.1167, "lon": 52.7333, "last_service_date": "09/06/2026", "last_service_hours": 5579, "next_service_hours": 5929, "daily_hours_rate": 8.384615384615385}, {"dg": "DG-830", "kva": 320.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "M-37", "location": "MUSSAFAH", "technician": "BAKHTAMAL&ROLAND", "serial": "10Z04516*", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "28/07/2026", "last_service_hours": 3260, "next_service_hours": 3610, "daily_hours_rate": 3.1074380165289255}, {"dg": "DG-831", "kva": 810.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "NOOR AL SHAHRA", "location": "AL FAYA", "technician": "SABIR&ADIL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.2808, "lon": 54.9544, "last_service_date": "13/08/2026", "last_service_hours": 3963, "next_service_hours": 4313, "daily_hours_rate": 11.807692307692308}, {"dg": "DG-832", "kva": 45.0, "brand": "KUBOTA", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "CITY CONST", "location": "BANIYAS", "technician": "BAKHTAMAL&ROLAND", "serial": "2RJ9278", "issue_detail": "READY", "rate_type": "Per Month", "rate": 1890.0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.3266, "lon": 54.6355, "last_service_date": "06/06/2026", "last_service_hours": 10500, "next_service_hours": 10850, "daily_hours_rate": 5.882352941176471}, {"dg": "DG-833", "kva": 45.0, "brand": "KUBOTA", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "HASIM ", "location": "SAKHBUTH CITY", "technician": "IMRAN&VELU", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.2721, "lon": 54.6122, "last_service_date": "04/08/2026", "last_service_hours": 2173, "next_service_hours": 2523, "daily_hours_rate": -24.884615384615383}, {"dg": "DG-834", "kva": 320.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "GRAND FALCON", "location": "MUSSAFAH", "technician": "BAKHTAMAL&ROLAND", "serial": "6TB23478", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 5000.0, "next_service": "20/08/2026", "maps_link": "https://maps.app.goo.gl/zGGPXxYryi7ZLkCT8", "lat": 24.3676, "lon": 54.4914, "last_service_date": "28/07/2026", "last_service_hours": 5460, "next_service_hours": 5810, "daily_hours_rate": 11.037735849056604}, {"dg": "DG-835", "kva": 500.0, "brand": "CUMMINS", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "AL REEM", "technician": "IMRAN&JAIRAZ", "serial": 79164878, "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "02/09/2026", "maps_link": null, "lat": 24.4986, "lon": 54.4066, "last_service_date": "11/08/2026", "last_service_hours": 30460, "next_service_hours": 30810, "daily_hours_rate": 15.863636363636363}, {"dg": "DG-836", "kva": 500.0, "brand": "CUMMINS", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SAFI", "serial": "-", "issue_detail": "UNDER REPAIR", "rate_type": "Per Month", "rate": 74970.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "19/07/2026", "last_service_hours": 1957, "next_service_hours": 2307, "daily_hours_rate": 5.366515837104072}, {"dg": "DG-837", "kva": 80.0, "brand": "PERKINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "CITY CONST", "location": "BANIYAS", "technician": "VELU&IMRAN", "serial": "DEEP SEA CHANGE DG-22", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3360.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.3266, "lon": 54.6355, "last_service_date": "04/08/2026", "last_service_hours": 9247, "next_service_hours": 9597, "daily_hours_rate": 10.121212121212121}, {"dg": "DG-838", "kva": 340.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "SABIR&IMRAN", "serial": "2H200722", "issue_detail": "MAINE ALTINATOR ISSUE", "rate_type": "Per Month", "rate": 4800.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "19/03/2026", "last_service_hours": 19020, "next_service_hours": 19370, "daily_hours_rate": 11.28}, {"dg": "DG-839", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TROJAN", "location": "HUDRIYAT", "technician": "ROLAND&BAKHTAMAL", "serial": "F6.4581/1100025", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 3800.0, "next_service": "18/08/2026", "maps_link": null, "lat": 24.4622, "lon": 54.4358, "last_service_date": "21/07/2026", "last_service_hours": 2204, "next_service_hours": 2554, "daily_hours_rate": 12.365853658536585}, {"dg": "DG-840", "kva": 250.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "BAKTHAMAL&HUSSAIN", "serial": "F6.9775/1100032", "issue_detail": "ENGINE OVERHAULING", "rate_type": "N/A", "rate": 0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "26/10/2025", "last_service_hours": 1299, "next_service_hours": 1649, "daily_hours_rate": 7.9411764705882355}, {"dg": "DG-841", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TROJAN", "location": "BANIYAS", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 4500.0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.3266, "lon": 54.6355, "last_service_date": "20/07/2026", "last_service_hours": 12567, "next_service_hours": 12917, "daily_hours_rate": 10.782608695652174}, {"dg": "DG-842", "kva": 200.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "BASUNDHARA", "location": "MUSSAFAH", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 4000.0, "next_service": "05/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "10/07/2026", "last_service_hours": 3570, "next_service_hours": 3920, "daily_hours_rate": 2.3714285714285714}, {"dg": "DG-843", "kva": 125.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&BAKHTAMAL", "serial": "6H.9575/1500012", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 29400.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "15/07/2026", "last_service_hours": 24334, "next_service_hours": 24684, "daily_hours_rate": 13.947368421052632}, {"dg": "DG-844", "kva": 125.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "WORK SHOP", "location": "YARD", "technician": "ROLAND&BAKHTAMAL", "serial": "6H.9575/1400020", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 14700.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "15/07/2026", "last_service_hours": 30467, "next_service_hours": 30817, "daily_hours_rate": 13.476190476190476}, {"dg": "DG-845", "kva": 320.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "ROYAL TECH", "location": "MUSSAFAH", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "24/07/2026", "last_service_hours": 2003, "next_service_hours": 2353, "daily_hours_rate": 4.365591397849462}, {"dg": "DG-846", "kva": 375.0, "brand": "WEICHAI", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "AL FARJHAN", "location": "YAS ISLAND", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 6509.0, "next_service": "10/08/2026", "maps_link": "https://maps.app.goo.gl/xvXTeFeTGyhzbqcN9", "lat": 24.4667, "lon": 54.6039, "last_service_date": "15/07/2026", "last_service_hours": 5355, "next_service_hours": 5705, "daily_hours_rate": 11.5}, {"dg": "DG-847", "kva": 375.0, "brand": "WEICHAI", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "FANTASTIC", "location": "MUSSAFAH", "technician": "VELU&MAAZ", "serial": 31186022950, "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 4800.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.3676, "lon": 54.4914, "last_service_date": "11/05/2026", "last_service_hours": 4810, "next_service_hours": 5160, "daily_hours_rate": 6.641304347826087}, {"dg": "DG-848", "kva": 125.0, "brand": "WEICHAI", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SIX SIGMA", "location": "JUBAIL ISLAND", "technician": "IMRAN&ADIL", "serial": "4P19D002416", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 5600.0, "next_service": "05/09/2026", "maps_link": null, "lat": 24.5215, "lon": 54.4889, "last_service_date": "11/08/2026", "last_service_hours": 13111, "next_service_hours": 13461, "daily_hours_rate": 12.620689655172415}, {"dg": "DG-849", "kva": 125.0, "brand": "WEICHAI", "division": "MOTOR", "company": "Energy", "status": "On Hire", "customer": "TROJAN", "location": "YAS ISLAND", "technician": "BAKHTAMAL&VELU", "serial": "DHP04D0056*01", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "15/08/2026", "maps_link": null, "lat": 24.4667, "lon": 54.6039, "last_service_date": "18/07/2026", "last_service_hours": 8434, "next_service_hours": 8784, "daily_hours_rate": 14.935483870967742}, {"dg": "DG-850", "kva": 440.0, "brand": "CUMMINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "AL MASRIYA", "location": "KIZAD", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "12/08/2026", "last_service_hours": 1895, "next_service_hours": 2245, "daily_hours_rate": 18.63157894736842}, {"dg": "DG-851", "kva": 40.0, "brand": "KUBOTA", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "AL HASHIM", "location": "SAKHBUTH CITY", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 1837.5, "next_service": "25/08/2026", "maps_link": null, "lat": 24.2721, "lon": 54.6122, "last_service_date": "06/07/2026", "last_service_hours": 2334, "next_service_hours": 2684, "daily_hours_rate": 12.25925925925926}, {"dg": "DG-852", "kva": 40.0, "brand": "KUBOTA", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "SIX SIGMA", "location": "DUBAI", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": "https://maps.app.goo.gl/tqDaqJaoE14T37Xk6", "lat": 25.2048, "lon": 55.2708, "last_service_date": "27/07/2026", "last_service_hours": 2371, "next_service_hours": 2721, "daily_hours_rate": 9.588235294117647}, {"dg": "DG-853", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TROJAN", "location": "AL BAHIA", "technician": "VELU&IMRAN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 18000.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "24/07/2026", "last_service_hours": 16989, "next_service_hours": 17339, "daily_hours_rate": 9.318181818181818}, {"dg": "DG-854", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "BRIGHT ACCORD", "location": "JUBAIL ISLAND", "technician": "IMRAN&JAIRAZ", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 37800.0, "next_service": "30/08/2026", "maps_link": null, "lat": 24.5215, "lon": 54.4889, "last_service_date": "12/08/2026", "last_service_hours": 28047, "next_service_hours": 28397, "daily_hours_rate": 15.05}, {"dg": "DG-855", "kva": 250.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "-", "serial": "-", "issue_detail": "BLOCK DAMMAGE", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": null, "last_service_hours": null, "next_service_hours": 350, "daily_hours_rate": "#DIV/0!"}, {"dg": "DG-856", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "TROJAN", "location": "HUDRIYAT", "technician": "VELU&IMRAN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 34200.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.4622, "lon": 54.4358, "last_service_date": "25/07/2026", "last_service_hours": 21329, "next_service_hours": 21679, "daily_hours_rate": 14.333333333333334}, {"dg": "DG-857", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "HOTEL", "location": "BHUWASA", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 69300.0, "next_service": "10/09/2026", "maps_link": null, "lat": 24.3, "lon": 54.55, "last_service_date": "11/08/2026", "last_service_hours": 965, "next_service_hours": 1315, "daily_hours_rate": 13.105263157894736}, {"dg": "DG-858", "kva": 250.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "On Hire", "customer": "RAMAH", "location": "RAZEEM -AL FAYA", "technician": "IMRAN&SABIR", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 5460.0, "next_service": "01/09/2026", "maps_link": null, "lat": 24.2808, "lon": 54.9544, "last_service_date": "06/08/2026", "last_service_hours": 15859, "next_service_hours": 16209, "daily_hours_rate": 15.2}, {"dg": "DG-859", "kva": 250.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "TROJAN", "location": "AL BAHIA", "technician": "VELU&IMRAN", "serial": "-", "issue_detail": "READY", "rate_type": "Per Month", "rate": 5000.0, "next_service": "20/08/2026", "maps_link": null, "lat": 24.5585, "lon": 54.6425, "last_service_date": "16/06/2026", "last_service_hours": 3080, "next_service_hours": 3430, "daily_hours_rate": 10.542857142857143}, {"dg": "DG-860", "kva": 400.0, "brand": "KIRLOSKER", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "CITY CONST", "location": "RUWAISH", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "NEED TO BE ENGINE OVERHULL", "rate_type": "Per Month", "rate": 9975.0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.3, "lon": 54.55, "last_service_date": "13/08/2026", "last_service_hours": 17691, "next_service_hours": 18041, "daily_hours_rate": 19.8}, {"dg": "DG-861", "kva": 160.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "GREEN STON ", "location": "AL AIN", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 63682.0, "next_service": "05/09/2026", "maps_link": "https://maps.app.goo.gl/T6Za2Qj2i7ruC9nF8", "lat": 24.2075, "lon": 55.7447, "last_service_date": "11/08/2026", "last_service_hours": 3735, "next_service_hours": 4085, "daily_hours_rate": 14.461538461538462}, {"dg": "DG-862", "kva": 60.0, "brand": "CUMMINS", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "WORKSHOP SERVICE", "serial": "-", "issue_detail": "ENGINE OVERHAULING", "rate_type": "N/A", "rate": 0, "next_service": "28/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": null, "last_service_hours": null, "next_service_hours": null, "daily_hours_rate": "#DIV/0!"}, {"dg": "DG-863", "kva": 20.0, "brand": "PERKINS", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "WORKSHOP SERVICE", "serial": "-", "issue_detail": "READY", "rate_type": "N/A", "rate": 0, "next_service": "20/07/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "25/06/2026", "last_service_hours": 11307, "next_service_hours": null, "daily_hours_rate": 0.24475085501536864}, {"dg": "DG-864", "kva": 125.0, "brand": "KIRLOSKER", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "GULF CONTRACTING", "location": "AL AIN", "technician": "SATNAM&HUSAIN", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 27300.0, "next_service": "05/09/2026", "maps_link": null, "lat": 24.2075, "lon": 55.7447, "last_service_date": "11/08/2026", "last_service_hours": 1411, "next_service_hours": 1761, "daily_hours_rate": 9}, {"dg": "DG-865", "kva": 350.0, "brand": "CUMMINS", "division": "HEAVY", "company": "Heavy", "status": "On Hire", "customer": "GULF CONTRACTING", "location": "DUBAI", "technician": "ROLAND&BAKHTAMAL", "serial": "-", "issue_detail": "ON HIRE", "rate_type": "Per Month", "rate": 31042.0, "next_service": "20/08/2026", "maps_link": null, "lat": 25.2048, "lon": 55.2708, "last_service_date": "22/07/2026", "last_service_hours": 2677, "next_service_hours": 3027, "daily_hours_rate": 10.020408163265307}, {"dg": "DC-803", "kva": 375.0, "brand": "DOOSAN", "division": "HEAVY", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP", "serial": "-", "issue_detail": "-", "rate_type": "N/A", "rate": 0, "next_service": "10/07/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "08/10/2025", "last_service_hours": 3165, "next_service_hours": 3515, "daily_hours_rate": 0.375}, {"dg": "DC-804", "kva": 375.0, "brand": "DOOSAN", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "HMS", "location": "RUWAISH", "technician": "MIA KHAN", "serial": 73925560, "issue_detail": "-", "rate_type": "N/A", "rate": 0, "next_service": "20/07/2026", "maps_link": null, "lat": 24.3, "lon": 54.55, "last_service_date": "03/01/2026", "last_service_hours": 1122, "next_service_hours": 1472, "daily_hours_rate": -1.5343137254901962}, {"dg": "DC-805 (406)", "kva": 375.0, "brand": "DOOSAN", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "PARDEEP&MIA KHAN", "serial": 73927616, "issue_detail": "-", "rate_type": "N/A", "rate": 0, "next_service": "20/07/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "03/01/2026", "last_service_hours": 2551, "next_service_hours": 2901, "daily_hours_rate": 0.29846153846153844}, {"dg": "DTL-801", "kva": 0, "brand": "YANMAR", "division": "WORKSHOP", "company": "Heavy", "status": "Breakdown", "customer": "WORK SHOP", "location": "YARD", "technician": "MAAZ&RAMESH", "serial": "-", "issue_detail": "discuss with bhakthammal", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "01/11/2025", "last_service_hours": 4087, "next_service_hours": 4437, "daily_hours_rate": 0.6407766990291263}, {"dg": "CH-01", "kva": 0, "brand": "YANMAR", "division": "WORKSHOP", "company": "Heavy", "status": "Available", "customer": "WORK SHOP", "location": "YARD", "technician": "IMRAN&ANSARI", "serial": "-", "issue_detail": "-", "rate_type": "N/A", "rate": 0, "next_service": "25/08/2026", "maps_link": null, "lat": 24.3462062, "lon": 54.4998379, "last_service_date": "16/12/2025", "last_service_hours": 2161, "next_service_hours": 2511, "daily_hours_rate": 3.6693548387096775}, {"dg": "G-54", "kva": 100.0, "brand": "KIRLOSKER", "division": "-", "company": "Heavy", "status": "Available", "customer": "OSAI", "location": "KIZAD", "technician": "IMRAN&SABIR", "serial": "-", "issue_detail": "-", "rate_type": "N/A", "rate": 0, "next_service": "10/07/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "06/05/2026", "last_service_hours": 7192, "next_service_hours": 7542, "daily_hours_rate": 16.59375}, {"dg": "DG-826", "kva": 725.0, "brand": "CATERPILLER", "division": "HEAVY", "company": "Heavy", "status": "Breakdown", "customer": "EMDAD", "location": "KIZAD", "technician": "SATNAM&ROLAND", "serial": "IEZ06035", "issue_detail": " UNDER REPAIR / FUEL LINE REPAIR", "rate_type": "Per Month", "rate": 7875.0, "next_service": "10/07/2026", "maps_link": null, "lat": 24.45, "lon": 54.63, "last_service_date": "02/07/2026", "last_service_hours": 412, "next_service_hours": 762, "daily_hours_rate": 12.88888888888889}];
+let editingIndex = null; // null = adding new
+
+const OFFICE = {lat:24.3462062, lon:54.4998379, name:"Deluxe Heavy Equipment Rental LLC — Head Office / Workshop"};
+// Live vehicles are supplied by the server's /api/positions feed (Total Secure /
+// Traccar). This starts empty and is filled/updated by the live tracker at the
+// bottom of this script. If the feed is unavailable the map shows no vehicles.
+let VEHICLES = [];
+
+function parseDMY(s){
+  if(!s) return null;
+  const parts = s.split('/');
+  if(parts.length!==3) return null;
+  const [d,m,y]=parts.map(Number);
+  return new Date(y,m-1,d);
+}
+function toDMY(dateStr){ // from <input type=date> value YYYY-MM-DD
+  if(!dateStr) return '';
+  const [y,m,d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+function toISO(dmy){ // for <input type=date> value
+  const dt = parseDMY(dmy);
+  if(!dt) return '';
+  return dt.toISOString().slice(0,10);
+}
+const TODAY = new Date(2026,7,13);
+function recalcDates(){
+  DATA.forEach(r=>{
+    const dt = parseDMY(r.next_service);
+    r.next_service_sort = dt ? dt.getTime() : Infinity;
+    r.days_until = dt ? Math.round((dt-TODAY)/86400000) : null;
+  });
+}
+recalcDates();
+
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371, toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function getFiltered(){
+  const cf = document.getElementById('companyFilter').value;
+  return cf ? DATA.filter(r=>r.company===cf) : DATA;
+}
+
+/* ---------- MAP SETUP (once) ---------- */
+const map = L.map('mapEl', {scrollWheelZoom:true}).setView([24.42,54.55], 9);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  attribution:'Tiles &copy; Esri', maxZoom:19
+}).addTo(map);
+
+const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:16px;height:16px;border-radius:50%;border:2px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:10px;">🏠</div>', iconSize:[16,16], iconAnchor:[8,8]});
+L.marker([OFFICE.lat, OFFICE.lon], {icon:officeIcon}).addTo(map)
+  .bindPopup(`<b>${OFFICE.name}</b><br>Mussafah 37, Mussafah Industrial Area, Abu Dhabi<br>☎ +971 2 554 5718<br>📱 +971 55 440 4169`);
+
+const vehIcon = L.divIcon({className:'', html:'<div style="background:#5b9bd5;width:14px;height:14px;border-radius:3px;border:2px solid #0b0d0f;transform:rotate(45deg);"></div>', iconSize:[14,14], iconAnchor:[7,7]});
+const vehMarkers = {};
+VEHICLES.forEach(v=>{
+  const m = L.marker([v.lat,v.lon], {icon:vehIcon, draggable:true}).addTo(map);
+  m.bindPopup(`<b>${v.name}</b><br><small>drag to set real base location</small>`);
+  m.on('drag', (e)=>{ const p=e.target.getLatLng(); v.lat=p.lat; v.lon=p.lng; });
+  vehMarkers[v.id]=m;
+});
+
+let genLayer = L.layerGroup().addTo(map);
+let routeLayer = L.layerGroup().addTo(map);
+const genMarkers = {};
+function statusColor(status){
+  return {'On Hire':'#4caf7d','Available':'#e0644a','Under Service':'#e8c168','Breakdown':'#ff4d3d','Off-Fleet':'#555'}[status] || '#888';
+}
+const HEAVY_LOGO = 'data:image/png;base64,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';
+const ENERGY_LOGO = 'data:image/png;base64,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';
+function genIcon(r){
+  const logo = r.company==='Energy' ? ENERGY_LOGO : HEAVY_LOGO;
+  const ring = statusColor(r.status);
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:30px;height:30px;border-radius:50%;background:url('${logo}') center/cover no-repeat;border:2.5px solid ${ring};box-shadow:0 1px 4px rgba(0,0,0,0.5);"></div>`,
+    iconSize: [30,30],
+    iconAnchor: [15,15],
+  });
+}
+function hoursInfo(r){
+  if(r.last_service_hours==null || r.daily_hours_rate==null) return null;
+  const lastDate = parseDMY(r.last_service_date);
+  if(!lastDate) return null;
+  const daysSince = Math.max(0, (new Date() - lastDate)/86400000);
+  const estRun = Math.round(daysSince * r.daily_hours_rate);
+  const pct = Math.min(100, Math.round(estRun/350*100));
+  const remaining = 350 - estRun;
+  return { estRun, pct, remaining, overdue: remaining<0 };
+}
+function rebuildMap(){
+  genLayer.clearLayers();
+  for(const k in genMarkers) delete genMarkers[k];
+  getFiltered().filter(r=>r.status!=='Off-Fleet').forEach(r=>{
+    if(r.lat==null || r.lon==null) return;
+    const m = L.marker([r.lat, r.lon], { icon: genIcon(r), draggable: true });
+    const hi = hoursInfo(r);
+    const hoursLine = hi ? `<br><small>${hi.overdue ? '⚠ overdue by '+Math.abs(hi.remaining)+'h' : '~'+hi.estRun+'h run / 350h ('+hi.pct+'%)'}</small>` : '';
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}`);
+    m.bindTooltip(r.dg, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
+    m.on('drag', (e)=>{ const pos=e.target.getLatLng(); r.lat=pos.lat; r.lon=pos.lng; });
+    m.addTo(genLayer);
+    genMarkers[r.dg] = { circle: m, drag: m };
+  });
+}
+
+/* ---------- STATS ---------- */
+function renderStats(){
+  const rows = getFiltered().filter(r=>r.status!=='Off-Fleet');
+  const total=rows.length;
+  const onHire=rows.filter(r=>r.status==='On Hire').length;
+  const idle=rows.filter(r=>r.status==='Available').length;
+  const svc=rows.filter(r=>r.status==='Under Service').length;
+  const bd=rows.filter(r=>r.status==='Breakdown').length;
+  const totalKva=rows.reduce((a,r)=>a+(r.kva||0),0);
+  const stats=[[total,'Active Generators'],[onHire,'On Hire'],[idle,'Available'],
+    [svc,'Under Service'],[bd,'Breakdown'],[totalKva.toLocaleString()+' KVA','Total Capacity']];
+  document.getElementById('stats').innerHTML = stats.map(([n,l])=>
+    `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+}
+
+/* ---------- KVA CHECKER ---------- */
+const kvaInput = document.getElementById('kvaInput');
+function renderKva(){
+  const v = parseFloat(kvaInput.value);
+  const kvaResult = document.getElementById('kvaResult');
+  if(isNaN(v) || kvaInput.value===''){ kvaResult.innerHTML=''; return; }
+  const pool = getFiltered().filter(r=>r.status!=='Off-Fleet');
+  const exact = pool.filter(r=>r.kva===v);
+  const exactAvail = exact.filter(r=>r.status==='Available');
+  let html = '';
+  if(exactAvail.length){
+    html += `<div class="verdict yes">✓ YES — ${exactAvail.length} unit(s) at ${v} KVA available right now</div>`;
+    exactAvail.forEach(r=>{ html += `<div class="result-line avail"><span><span class="dg">${r.dg}</span> — ${r.kva} KVA — <span class="badge ${r.company==='Heavy'?'heavy':'energy'}">${r.company}</span></span><span class="meta">${r.location}</span></div>`; });
+  } else if(exact.length){
+    html += `<div class="verdict no">✗ NO ${v} KVA units free — all ${exact.length} unit(s) are busy/unavailable</div>`;
+    exact.forEach(r=>{ html += `<div class="result-line hire"><span><span class="dg">${r.dg}</span> — ${r.kva} KVA — <b>${r.status}</b>${r.customer&&r.customer!=='-'?' — '+r.customer:''}</span><span class="meta">${r.location}</span></div>`; });
+  } else {
+    html += `<div class="verdict no">✗ No ${v} KVA units in this selection</div>`;
+  }
+  const availAll = pool.filter(r=>r.status==='Available').sort((a,b)=>a.kva-b.kva);
+  if(!exactAvail.length && availAll.length){
+    const below = availAll.filter(r=>r.kva<v).pop();
+    const above = availAll.find(r=>r.kva>v);
+    html += `<div style="margin-top:10px; font-size:13px; color:var(--muted);">Nearest available alternatives:</div>`;
+    if(below) html += `<div class="result-line avail"><span>⬇ <span class="dg">${below.dg}</span> — ${below.kva} KVA</span><span class="meta">${below.location}</span></div>`;
+    if(above) html += `<div class="result-line avail"><span>⬆ <span class="dg">${above.dg}</span> — ${above.kva} KVA</span><span class="meta">${above.location}</span></div>`;
+  }
+  kvaResult.innerHTML = html;
+}
+kvaInput.addEventListener('input', renderKva);
+
+/* ---------- BREAKDOWN DISPATCH ---------- */
+function renderBdSelect(){
+  const bdSelect = document.getElementById('bdSelect');
+  const pool = getFiltered().filter(r=>r.status!=='Off-Fleet' && r.lat!=null);
+  bdSelect.innerHTML = pool.map(r=>`<option value="${r.dg}">${r.dg} — ${r.kva}KVA — ${r.status} (${r.location})</option>`).join('');
+}
+
+/* ---------- LOCATE A GENERATOR ON THE MAP ---------- */
+function renderDgList(){
+  document.getElementById('dgList').innerHTML = DATA.filter(r=>r.status!=='Off-Fleet').map(r=>`<option value="${r.dg}">`).join('');
+}
+function locateGenerator(){
+  const msg = document.getElementById('locateMsg');
+  msg.style.display = 'none';
+  const q = document.getElementById('locateInput').value.trim().toUpperCase();
+  if(!q){ return; }
+  let gen = DATA.find(r=>r.dg.toUpperCase()===q);
+  if(!gen){
+    // fallback: partial match, e.g. typing "539" or "dg539"
+    const digits = q.replace(/[^0-9]/g,'');
+    gen = DATA.find(r=>r.dg.toUpperCase().includes(q)) || (digits ? DATA.find(r=>r.dg.replace(/[^0-9]/g,'')===digits) : null);
+  }
+  if(!gen){
+    msg.textContent = `No generator found matching "${document.getElementById('locateInput').value}".`;
+    msg.style.display = 'block';
+    return;
+  }
+  if(gen.lat==null || gen.lon==null){
+    msg.textContent = `${gen.dg} has no location on file yet.`;
+    msg.style.display = 'block';
+    return;
+  }
+  if(gen.status==='Off-Fleet'){
+    msg.textContent = `${gen.dg} is marked Off-Fleet and isn't shown on the map. Change its status to view it.`;
+    msg.style.display = 'block';
+    return;
+  }
+  map.flyTo([gen.lat, gen.lon], 15, {duration:0.7});
+  const mk = genMarkers[gen.dg];
+  if(mk){
+    setTimeout(()=>mk.circle.openPopup(), 700);
+  }
+}
+document.getElementById('locateBtn').addEventListener('click', locateGenerator);
+document.getElementById('locateInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') locateGenerator(); });
+
+function renderVehList(){
+  document.getElementById('vehList').innerHTML = VEHICLES.map(v=>
+    `<div><span class="badge veh">${v.id}</span> ${v.name} — <span style="font-family:var(--mono)">${v.lat.toFixed(4)}, ${v.lon.toFixed(4)}</span></div>`
+  ).join('');
+}
+renderVehList();
+setInterval(renderVehList, 900);
+
+document.getElementById('bdBtn').addEventListener('click', async ()=>{
+  const dg = document.getElementById('bdSelect').value;
+  const gen = DATA.find(r=>r.dg===dg);
+  if(!gen) return;
+  routeLayer.clearLayers();
+
+  const vdist = VEHICLES.map(v=>({...v, d:haversine(gen.lat,gen.lon,v.lat,v.lon)})).sort((a,b)=>a.d-b.d);
+  const officeD = haversine(gen.lat,gen.lon,OFFICE.lat,OFFICE.lon);
+  let html = `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Nearest vehicle to <b style="color:var(--text)">${gen.dg}</b> (${gen.location}) — office is ${officeD.toFixed(1)}km straight-line away:</div>`;
+  html += `<div id="routeStatus" style="font-size:12px;color:var(--amber);margin-bottom:8px;">⏳ Calculating real driving route...</div>`;
+  vdist.forEach((v,i)=>{
+    const eta = Math.round(v.d/45*60);
+    html += `<div class="veh-line ${i===0?'best':'other'}" id="vehline-${v.id}"><span>${i===0?'★ ':''}<b>${v.name}</b></span><span class="dist">${v.d.toFixed(1)} km straight-line · ~${eta} min est.</span></div>`;
+  });
+  const nearby = getFiltered().filter(r=>r.dg!==dg && r.status!=='Off-Fleet' && r.lat!=null)
+    .map(r=>({...r, d:haversine(gen.lat,gen.lon,r.lat,r.lon)})).filter(r=>r.d<=15).sort((a,b)=>a.d-b.d).slice(0,10);
+  html += `<div style="font-size:13px;color:var(--muted);margin:14px 0 4px;">Nearby generators (within 15km):</div>`;
+  html += nearby.length ? '<div class="near-list">' + nearby.map(r=>
+      `<div class="near-item"><span><b style="font-family:var(--mono)">${r.dg}</b> ${r.kva}KVA <span class="badge ${r.status==='On Hire'?'hire':(r.status==='Available'?'idle':(r.status==='Breakdown'?'breakdown':'service'))}">${r.status}</span></span><span class="d">${r.d.toFixed(1)} km</span></div>`).join('') + '</div>'
+    : `<div style="font-size:12.5px;color:var(--muted);">No other generators within 15km.</div>`;
+  document.getElementById('dispatchResult').innerHTML = html;
+  map.flyTo([gen.lat, gen.lon], 12, {duration:0.6});
+  if(genMarkers[dg]) genMarkers[dg].circle.openPopup();
+
+  // Real driving route via OSRM (free public routing server) for the nearest vehicle
+  const nearest = vdist[0];
+  try{
+    const url = `https://router.project-osrm.org/route/v1/driving/${nearest.lon},${nearest.lat};${gen.lon},${gen.lat}?overview=full&geometries=geojson`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const statusEl = document.getElementById('routeStatus');
+    if(data.code==='Ok' && data.routes && data.routes[0]){
+      const route = data.routes[0];
+      const km = (route.distance/1000).toFixed(1);
+      const mins = Math.round(route.duration/60);
+      if(statusEl) statusEl.innerHTML = `✓ Real driving route: <b style="color:var(--text)">${km} km, ~${mins} min</b> (via road network)`;
+      const line = L.geoJSON(route.geometry, {style:{color:'#e8a13a', weight:4, opacity:0.85}});
+      line.addTo(routeLayer);
+      const vehLineEl = document.getElementById('vehline-'+nearest.id);
+      if(vehLineEl) vehLineEl.querySelector('.dist').innerHTML = `${km} km road route · ~${mins} min <span style="color:var(--green)">✓ real route</span>`;
+      map.fitBounds(line.getBounds(), {padding:[40,40]});
+    } else {
+      if(statusEl) statusEl.textContent = '⚠ Could not calculate road route (routing service unavailable) — using straight-line estimate above.';
+    }
+  } catch(e){
+    const statusEl = document.getElementById('routeStatus');
+    if(statusEl) statusEl.textContent = '⚠ Route service unreachable (offline / no internet) — using straight-line estimate above.';
+  }
+});
+
+/* ---------- TABLE ---------- */
+let sortKey='next_service_sort', sortAsc=true;
+function renderTable(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const sf=document.getElementById('statusFilter').value;
+  let rows = getFiltered().filter(r=>{
+    const mq = !q || (r.dg+ (r.customer||'') +r.location).toLowerCase().includes(q);
+    const ms = !sf || r.status===sf;
+    return mq&&ms;
+  });
+  rows.sort((a,b)=>{
+    let va=a[sortKey], vb=b[sortKey];
+    if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase();}
+    if(va<vb) return sortAsc?-1:1;
+    if(va>vb) return sortAsc?1:-1;
+    return 0;
+  });
+  document.getElementById('count').textContent = rows.length+' of '+DATA.length+' shown';
+  document.getElementById('tbody').innerHTML = rows.map(r=>{
+    const statusCls = {'On Hire':'hire','Available':'idle','Under Service':'service','Breakdown':'breakdown','Off-Fleet':'offfleet'}[r.status]||'idle';
+    const rateDisp = (!r.rate_type || r.rate_type==='N/A') ? '<span class="na">no data</span>' :
+      (r.rate>0 ? Number(r.rate).toLocaleString(undefined,{minimumFractionDigits:2}) : '<span class="na">0.00</span>');
+    const svcCls = (r.days_until!==null && r.days_until<=7) ? 'svc-soon' : '';
+    const idx = DATA.indexOf(r);
+    const hi = hoursInfo(r);
+    const hoursCell = hi
+      ? `<div class="hbar-wrap" title="${hi.overdue?'Overdue by '+Math.abs(hi.remaining)+'h':(350-hi.estRun)+'h remaining'}">
+           <div class="hbar-track"><div class="hbar-fill ${hi.overdue?'over':(hi.pct>=85?'warn':'')}" style="width:${Math.min(100,hi.pct)}%;"></div></div>
+           <div class="hbar-label">${hi.overdue?'⚠ +'+Math.abs(hi.remaining)+'h over':hi.estRun+'h / 350h ('+hi.pct+'%)'}</div>
+         </div>`
+      : '<span class="na">no data</span>';
+    return `<tr class="${r.status==='Off-Fleet'?'offfleet-row':''}">
+      <td class="dg">${r.dg}</td><td class="kva">${r.kva||'—'}</td>
+      <td>${r.brand||'-'}</td>
+      <td><span class="badge" style="background:#232a31;color:#a8b4c0;">${r.division||'-'}</span></td>
+      <td><span class="badge ${r.company==='Energy'?'energy':'heavy'}">${r.company}</span></td>
+      <td><span class="badge ${statusCls}">${r.status}</span></td>
+      <td>${r.customer||'-'}</td><td class="loc">${r.location||'-'}</td>
+      <td class="loc">${r.technician||'-'}</td>
+      <td>${(!r.rate_type||r.rate_type==='N/A')?'<span class="na">—</span>':r.rate_type}</td>
+      <td class="rate">${rateDisp}</td>
+      <td class="${svcCls}">${r.next_service||'—'}${(r.days_until!==null && r.days_until<=7)?' ('+r.days_until+'d)':''}</td>
+      <td>${hoursCell}</td>
+      <td>${r.maps_link?`<a href="${r.maps_link}" target="_blank" style="color:var(--blue);">📍 exact</a>`:'<span class="na">approx</span>'}</td>
+      <td class="rowbtns"><button class="btn small secondary" onclick="openEdit(${idx})">Edit</button></td>
+    </tr>`;
+  }).join('');
+}
+document.querySelectorAll('thead th[data-key]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const key=th.dataset.key;
+    if(sortKey===key){sortAsc=!sortAsc;} else {sortKey=key;sortAsc=true;}
+    document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted','asc'));
+    th.classList.add('sorted'); if(sortAsc) th.classList.add('asc');
+    renderTable();
+  });
+});
+
+/* ---------- MODAL (Add/Edit) ---------- */
+const overlay = document.getElementById('modalOverlay');
+function openAdd(){
+  editingIndex = null;
+  document.getElementById('modalTitle').textContent = 'Add generator';
+  document.getElementById('modalDelete').style.display='none';
+  ['f_dg','f_customer','f_location','f_lat','f_lon','f_brand','f_division','f_technician','f_maps_link'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_kva').value='';
+  document.getElementById('f_company').value='Heavy';
+  document.getElementById('f_status').value='Available';
+  document.getElementById('f_rate_type').value='Per Month';
+  document.getElementById('f_rate').value='';
+  document.getElementById('f_next_service').value='';
+  overlay.style.display='flex';
+}
+window.openEdit = function(idx){
+  editingIndex = idx;
+  const r = DATA[idx];
+  document.getElementById('modalTitle').textContent = 'Edit '+r.dg;
+  document.getElementById('modalDelete').style.display='block';
+  document.getElementById('f_dg').value=r.dg;
+  document.getElementById('f_kva').value=r.kva||'';
+  document.getElementById('f_company').value=r.company||'Heavy';
+  document.getElementById('f_status').value=r.status||'Available';
+  document.getElementById('f_customer').value=r.customer||'';
+  document.getElementById('f_location').value=r.location||'';
+  document.getElementById('f_brand').value=r.brand||'';
+  document.getElementById('f_division').value=r.division||'';
+  document.getElementById('f_technician').value=r.technician||'';
+  document.getElementById('f_maps_link').value=r.maps_link||'';
+  document.getElementById('f_rate_type').value=r.rate_type||'Per Month';
+  document.getElementById('f_rate').value=r.rate||'';
+  document.getElementById('f_next_service').value=toISO(r.next_service);
+  document.getElementById('f_lat').value=r.lat!=null?r.lat:'';
+  document.getElementById('f_lon').value=r.lon!=null?r.lon:'';
+  overlay.style.display='flex';
+}
+document.getElementById('addBtn').addEventListener('click', openAdd);
+document.getElementById('modalCancel').addEventListener('click', ()=>overlay.style.display='none');
+document.getElementById('modalDelete').addEventListener('click', ()=>{
+  if(editingIndex!==null && confirm('Delete this generator record?')){
+    DATA.splice(editingIndex,1);
+    overlay.style.display='none';
+    refreshAll();
+  }
+});
+document.getElementById('modalSave').addEventListener('click', ()=>{
+  const dg = document.getElementById('f_dg').value.trim();
+  if(!dg){ alert('DG number is required.'); return; }
+  const rec = {
+    dg,
+    kva: parseFloat(document.getElementById('f_kva').value)||0,
+    brand: document.getElementById('f_brand').value.trim() || '-',
+    division: document.getElementById('f_division').value.trim() || '-',
+    company: document.getElementById('f_company').value,
+    status: document.getElementById('f_status').value,
+    customer: document.getElementById('f_customer').value.trim() || '-',
+    location: document.getElementById('f_location').value.trim() || '-',
+    technician: document.getElementById('f_technician').value.trim() || '-',
+    maps_link: document.getElementById('f_maps_link').value.trim() || null,
+    rate_type: document.getElementById('f_rate_type').value,
+    rate: parseFloat(document.getElementById('f_rate').value)||0,
+    next_service: toDMY(document.getElementById('f_next_service').value),
+    lat: document.getElementById('f_lat').value!=='' ? parseFloat(document.getElementById('f_lat').value) : OFFICE.lat,
+    lon: document.getElementById('f_lon').value!=='' ? parseFloat(document.getElementById('f_lon').value) : OFFICE.lon,
+  };
+  if(editingIndex!==null){ DATA[editingIndex] = rec; }
+  else { DATA.push(rec); }
+  overlay.style.display='none';
+  refreshAll();
+});
+
+/* ---------- IMPORT / EXPORT ---------- */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const out = { generators: DATA, vehicles: VEHICLES, exported_at: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(out,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='deluxe_fleet_data.json'; a.click();
+});
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const parsed = JSON.parse(ev.target.result);
+      const gens = parsed.generators || parsed;
+      if(!Array.isArray(gens)) throw new Error('bad format');
+      if(confirm(`Import ${gens.length} generator records? This will REPLACE current data.`)){
+        DATA = gens;
+        recalcDates();
+        refreshAll();
+      }
+    } catch(err){ alert('Could not read that file: '+err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+});
+
+/* ---------- MASTER REFRESH ---------- */
+/* ---------- WORKSHOP / REPAIR TRACKING ---------- */
+let REPAIRS = [];
+let editingRepairIndex = null;
+
+function nextRepairNumber(){
+  let max = 0;
+  REPAIRS.forEach(r=>{
+    const m = /^RPR1-(\d+)$/.exec(r.repair_id||'');
+    if(m) max = Math.max(max, parseInt(m[1],10));
+  });
+  return 'RPR1-' + String(max+1).padStart(6,'0');
+}
+function statusForRepair(repairStatus){
+  return repairStatus==='Repair Completed' ? 'Available' : 'Under Service';
+}
+function applyRepairToGenerator(rep){
+  const gen = DATA.find(g=>g.dg===rep.dg);
+  if(!gen) return;
+  gen.status = statusForRepair(rep.repair_status);
+}
+function renderWorkshopStats(){
+  const active = REPAIRS.filter(r=>r.repair_status!=='Repair Completed');
+  const underRepair = active.filter(r=>r.repair_status==='Under Repair').length;
+  const repairing = active.filter(r=>r.repair_status==='Repairing').length;
+  const awaitingParts = active.filter(r=>r.repair_status==='Awaiting Parts').length;
+  const completedTotal = REPAIRS.filter(r=>r.repair_status==='Repair Completed').length;
+  const stats = [
+    [active.length, 'Currently In Workshop'],
+    [underRepair, 'Under Repair (queued)'],
+    [repairing, 'Repairing Now'],
+    [awaitingParts, 'Awaiting Parts'],
+    [completedTotal, 'Completed (all time)'],
+  ];
+  document.getElementById('workshopStats').innerHTML = stats.map(([n,l])=>
+    `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+}
+function repairBadgeCls(s){
+  return {'Under Repair':'rp-under','Repairing':'rp-repairing','Awaiting Parts':'rp-parts','Repair Completed':'rp-done'}[s]||'rp-under';
+}
+function daysSince(dmy){
+  const dt = parseDMY(dmy);
+  if(!dt) return null;
+  return Math.max(0, Math.round((new Date()-dt)/86400000));
+}
+function renderActiveRepairs(){
+  const rows = REPAIRS.filter(r=>r.repair_status!=='Repair Completed').sort((a,b)=>(parseDMY(a.date_in)||0)-(parseDMY(b.date_in)||0));
+  const el = document.getElementById('activeRepairs');
+  if(!rows.length){ el.innerHTML = '<div class="empty-note">Nothing in the workshop right now.</div>'; return; }
+  el.innerHTML = rows.map(r=>{
+    const idx = REPAIRS.indexOf(r);
+    const days = daysSince(r.date_in);
+    return `<div class="repair-card">
+      <div class="repair-card-top">
+        <span class="dgname">${r.dg}</span>
+        <span class="badge ${repairBadgeCls(r.repair_status)}">${r.repair_status}</span>
+      </div>
+      <div class="meta">
+        Issue: ${r.issue||'-'}<br>
+        Technician: ${r.technician||'-'} · In workshop ${days!==null?days+' day(s)':'—'} (since ${r.date_in||'—'})
+        ${r.notes?'<br>Notes: '+r.notes:''}
+      </div>
+      <div class="actions">
+        <button class="btn small secondary" onclick="openEditRepair(${idx})">Update status</button>
+        <button class="btn small" onclick="markRepairComplete(${idx})">✓ Mark Repair Completed</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderRepairHistory(){
+  const rows = REPAIRS.filter(r=>r.repair_status==='Repair Completed').sort((a,b)=>(parseDMY(b.date_completed)||0)-(parseDMY(a.date_completed)||0));
+  const el = document.getElementById('repairHistory');
+  if(!rows.length){ el.innerHTML = '<div class="empty-note">No completed repairs logged yet.</div>'; return; }
+  let html = `<table style="border:none;"><thead><tr><th>Repair ID</th><th>DG</th><th>Issue</th><th>Technician</th><th>Date In</th><th>Date Completed</th><th>Actions</th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const idx = REPAIRS.indexOf(r);
+    html += `<tr><td class="dg">${r.repair_id}</td><td class="dg">${r.dg}</td><td>${r.issue||'-'}</td><td>${r.technician||'-'}</td><td>${r.date_in||'—'}</td><td>${r.date_completed||'—'}</td><td><button class="btn small secondary" onclick="openEditRepair(${idx})">Edit</button></td></tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
+document.getElementById('historyToggle').addEventListener('click', ()=>{
+  const el = document.getElementById('repairHistory');
+  const showing = el.style.display!=='none';
+  el.style.display = showing ? 'none' : 'block';
+  document.getElementById('historyToggle').textContent = (showing?'▸':'▾')+' Repair history (completed) — click to expand';
+});
+
+const repairOverlay = document.getElementById('repairModalOverlay');
+function populateRepairDgSelect(current){
+  const sel = document.getElementById('r_dg');
+  sel.innerHTML = DATA.filter(g=>g.status!=='Off-Fleet').map(g=>`<option value="${g.dg}">${g.dg} — ${g.kva||'?'}KVA — ${g.company} (${g.status})</option>`).join('');
+  if(current) sel.value = current;
+}
+function openAddRepair(){
+  editingRepairIndex = null;
+  document.getElementById('repairModalTitle').textContent = 'Send generator to workshop';
+  document.getElementById('repairModalDelete').style.display='none';
+  populateRepairDgSelect(null);
+  document.getElementById('r_issue').value='';
+  document.getElementById('r_technician').value='';
+  document.getElementById('r_date_in').value=new Date().toISOString().slice(0,10);
+  document.getElementById('r_status').value='Under Repair';
+  document.getElementById('r_notes').value='';
+  repairOverlay.style.display='flex';
+}
+window.openEditRepair = function(idx){
+  editingRepairIndex = idx;
+  const r = REPAIRS[idx];
+  document.getElementById('repairModalTitle').textContent = 'Edit — '+r.repair_id+' ('+r.dg+')';
+  document.getElementById('repairModalDelete').style.display='block';
+  populateRepairDgSelect(r.dg);
+  document.getElementById('r_issue').value=r.issue||'';
+  document.getElementById('r_technician').value=r.technician||'';
+  document.getElementById('r_date_in').value=toISO(r.date_in);
+  document.getElementById('r_status').value=r.repair_status;
+  document.getElementById('r_notes').value=r.notes||'';
+  repairOverlay.style.display='flex';
+}
+window.markRepairComplete = function(idx){
+  const r = REPAIRS[idx];
+  if(!confirm(`Mark ${r.dg} as Repair Completed? It will automatically become Available for hire.`)) return;
+  r.repair_status = 'Repair Completed';
+  r.date_completed = new Date().toLocaleDateString('en-GB').split('/').join('/');
+  applyRepairToGenerator(r);
+  refreshAll();
+}
+document.getElementById('addRepairBtn').addEventListener('click', openAddRepair);
+document.getElementById('repairModalCancel').addEventListener('click', ()=>repairOverlay.style.display='none');
+document.getElementById('repairModalDelete').addEventListener('click', ()=>{
+  if(editingRepairIndex!==null && confirm('Delete this repair record? (Generator status will not change automatically.)')){
+    REPAIRS.splice(editingRepairIndex,1);
+    repairOverlay.style.display='none';
+    refreshAll();
+  }
+});
+document.getElementById('repairModalSave').addEventListener('click', ()=>{
+  const dg = document.getElementById('r_dg').value;
+  if(!dg){ alert('Select a generator.'); return; }
+  const newStatus = document.getElementById('r_status').value;
+  const wasCompleted = editingRepairIndex!==null && REPAIRS[editingRepairIndex].repair_status==='Repair Completed';
+  const rec = {
+    repair_id: editingRepairIndex!==null ? REPAIRS[editingRepairIndex].repair_id : nextRepairNumber(),
+    dg,
+    issue: document.getElementById('r_issue').value.trim() || '-',
+    technician: document.getElementById('r_technician').value.trim() || '-',
+    date_in: toDMY(document.getElementById('r_date_in').value),
+    repair_status: newStatus,
+    notes: document.getElementById('r_notes').value.trim() || '',
+    date_completed: (newStatus==='Repair Completed')
+      ? (editingRepairIndex!==null && REPAIRS[editingRepairIndex].date_completed ? REPAIRS[editingRepairIndex].date_completed : toDMY(new Date().toISOString().slice(0,10)))
+      : null,
+  };
+  if(editingRepairIndex!==null){ REPAIRS[editingRepairIndex]=rec; } else { REPAIRS.push(rec); }
+  applyRepairToGenerator(rec);
+  repairOverlay.style.display='none';
+  refreshAll();
+});
+
+function refreshAll(){
+  recalcDates();
+  renderStats();
+  renderKva();
+  renderBdSelect();
+  renderDgList();
+  renderTable();
+  rebuildMap();
+  renderWorkshopStats();
+  renderActiveRepairs();
+  renderRepairHistory();
+}
+document.getElementById('companyFilter').addEventListener('change', refreshAll);
+document.getElementById('search').addEventListener('input', renderTable);
+document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+refreshAll();
+
+/* ============================================================================
+   LIVE VEHICLE TRACKING  ->  Total Secure (Traccar), via this server
+   ----------------------------------------------------------------------------
+   The page NEVER holds the Total Secure login. The server logs in privately and
+   publishes only coordinates at /api/positions; we poll that here and move the
+   vehicle markers. Because there is no password in this page, the link is safe
+   to share with anyone.
+   ========================================================================== */
+(function(){
+  const badge = document.getElementById('liveBadge');
+  // If the server is locked with a FLEET_TOKEN, the page URL carries ?key=... ;
+  // forward it to the positions API so the shared link keeps working.
+  const KEY = new URLSearchParams(location.search).get('key') || '';
+  const API = '/api/positions' + (KEY ? ('?key=' + encodeURIComponent(KEY)) : '');
+  const POLL_MS = 30000;
+  let lastUpdated = null;
+
+  function setBadge(text, kind){
+    if(!badge) return;
+    const c = kind==='live'  ? {bg:'#1a2e24', fg:'#4caf7d'} :
+              kind==='error' ? {bg:'#2e1c1a', fg:'#e0644a'} :
+                               {bg:'#2e2410', fg:'#e8c168'};
+    badge.style.background = c.bg; badge.style.color = c.fg;
+    badge.textContent = '● ' + text;
+  }
+  function ago(){
+    if(!lastUpdated) return '';
+    const s = Math.round((Date.now()-lastUpdated)/1000);
+    if(s < 60) return s + 's ago';
+    return Math.round(s/60) + 'm ago';
+  }
+  function liveCount(){ return VEHICLES.filter(v=>String(v.id).startsWith('T')).length; }
+
+  function upsert(d){
+    const key = 'T' + d.id;
+    let v = VEHICLES.find(x=>x.id===key);
+    if(!v){ v = {id:key}; VEHICLES.push(v); }
+    v.name = d.name || v.name || ('Device ' + d.id);
+    v.lat = d.lat; v.lon = d.lon; v.speed = d.speed; v.course = d.course; v.lastUpdate = d.lastUpdate;
+
+    const kmh = (d.speed!=null) ? Math.round(d.speed*1.852) : null; // Traccar speed is in knots
+    const popup = '<b>' + v.name + '</b><br><small>'
+      + (kmh!=null ? (kmh + ' km/h &middot; ') : '')
+      + 'GPS ' + (d.lat!=null? d.lat.toFixed(5):'?') + ', ' + (d.lon!=null? d.lon.toFixed(5):'?')
+      + (d.lastUpdate ? ('<br>last fix: ' + new Date(d.lastUpdate).toLocaleString()) : '')
+      + '</small>';
+
+    let m = vehMarkers[key];
+    if(!m){ m = L.marker([d.lat, d.lon], {icon:vehIcon}).addTo(map); vehMarkers[key] = m; }
+    else  { m.setLatLng([d.lat, d.lon]); }
+    m.bindPopup(popup);
+  }
+
+  function removeStale(active){
+    Object.keys(vehMarkers).forEach(key=>{
+      if(key[0]==='T' && !active.has(key)){
+        map.removeLayer(vehMarkers[key]); delete vehMarkers[key];
+        const i = VEHICLES.findIndex(x=>x.id===key); if(i>=0) VEHICLES.splice(i,1);
+      }
+    });
+  }
+
+  let firstFit = true;
+  async function poll(){
+    try{
+      const r = await fetch(API, {cache:'no-store'});
+      if(!r.ok) throw new Error('server ' + r.status);
+      const data = await r.json();
+      const list = (data.vehicles || data.positions || []).filter(d=>d.lat!=null && d.lon!=null);
+      const active = new Set();
+      list.forEach(d=>{ upsert(d); active.add('T'+d.id); });
+      removeStale(active);
+
+      if(list.length){
+        lastUpdated = data.updatedAt ? new Date(data.updatedAt).getTime() : Date.now();
+        setBadge('live · ' + list.length + ' vehicle' + (list.length>1?'s':'') + ' · ' + ago(), 'live');
+        if(firstFit){
+          firstFit = false;
+          try{
+            const b = L.latLngBounds(list.map(d=>[d.lat,d.lon]));
+            if(b.isValid()) map.fitBounds(b.pad(0.25), {maxZoom:13});
+          }catch(_){}
+        }
+      } else if(data.error){
+        setBadge('GPS error: ' + data.error, 'error');
+      } else {
+        setBadge('connected · waiting for first GPS fix', 'wait');
+      }
+      renderVehList();
+    }catch(e){
+      setBadge('GPS offline (' + (e.message||'no server') + ') · retrying', 'error');
+    }
+  }
+
+  setBadge('connecting to Total Secure…', 'wait');
+  poll();
+  setInterval(poll, POLL_MS);
+  // Keep the "Ns ago" label ticking between polls.
+  setInterval(function(){
+    if(lastUpdated && badge && badge.textContent.indexOf('live') !== -1)
+      setBadge('live · ' + liveCount() + ' vehicle' + (liveCount()>1?'s':'') + ' · ' + ago(), 'live');
+  }, 5000);
+})();
+
+</script>
+</body>
+</html>
