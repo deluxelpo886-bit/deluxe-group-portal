@@ -376,19 +376,43 @@ app.use('/api/ops', createOpsRouter({ authRequired }));
 // ---------- Health check ----------
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
-// ---------- Live vehicle positions (Total Secure / Traccar) ----------
-// The Total Secure login lives only in env vars (see FLEET.md); it is polled
-// server-side by server/positions.js and never reaches the browser. This
-// endpoint serves just the latest coordinates, so the /fleet link is safe to
-// share. If FLEET_TOKEN is set, the link/API require ?key=<token>.
-const FLEET_TOKEN = process.env.FLEET_TOKEN || '';
-function fleetAuth(req, res, next) {
-  if (!FLEET_TOKEN) return next(); // open when no token is configured
-  const key = req.query.key || req.get('x-fleet-key');
-  if (key === FLEET_TOKEN) return next();
-  return res.status(401).json({ error: 'invalid or missing key' });
+// ---------- Live fleet: login + vehicle positions (Total Secure / Traccar) ----
+// The /fleet map link is protected by a dedicated "Deluxe Operations" login.
+// The Total Secure login itself lives only in env vars (see FLEET.md), is polled
+// server-side by server/positions.js, and never reaches the browser. The live
+// coordinates are served only to a signed-in user, so vehicle locations aren't
+// public.
+//
+// The fleet login is overridable via env; the defaults match what was requested
+// so the link works out of the box. Set FLEET_LOGIN_PASSWORD in the environment
+// to change it for real use.
+const FLEET_EMAIL = (process.env.FLEET_LOGIN_EMAIL || 'deluxeoperationhead').trim().toLowerCase();
+const FLEET_PASSWORD = process.env.FLEET_LOGIN_PASSWORD || 'Deluxe123';
+const FLEET_SECRET = process.env.JWT_SECRET || 'deluxe-fleet-dev-secret-change-me';
+
+app.post('/api/fleet/login', loginLimiter, (req, res) => {
+  const email = String((req.body && req.body.email) || '').trim().toLowerCase();
+  const password = String((req.body && req.body.password) || '');
+  if (email === FLEET_EMAIL && password === FLEET_PASSWORD) {
+    const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+    return res.json({ token });
+  }
+  return res.status(401).json({ error: 'Wrong email or password' });
+});
+
+// Require a valid fleet login token (sent as "Authorization: Bearer <token>").
+function fleetProtect(req, res, next) {
+  const auth = req.get('authorization') || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || '');
+  try {
+    jwt.verify(token, FLEET_SECRET);
+    return next();
+  } catch (_) {
+    return res.status(401).json({ error: 'login required' });
+  }
 }
-app.get('/api/positions', fleetAuth, (req, res) => {
+
+app.get('/api/positions', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json(positions.getSnapshot());
 });
@@ -413,7 +437,7 @@ app.get(['/ops', '/ops/*'], (req, res) => {
 // positions from Total Secure. Served with a page-scoped Content-Security-Policy
 // that permits exactly what this map page needs (Leaflet from unpkg, Esri map
 // tiles, OSRM routing). The strict global CSP still applies to every other page.
-app.get('/fleet', fleetAuth, (req, res) => {
+app.get('/fleet', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; "

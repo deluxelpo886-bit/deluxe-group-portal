@@ -419,8 +419,8 @@ let editingIndex = null; // null = adding new
 
 const OFFICE = {lat:24.3462062, lon:54.4998379, name:"Deluxe Heavy Equipment Rental LLC — Head Office / Workshop"};
 // Live vehicles are supplied by the server's /api/positions feed (Total Secure /
-// Traccar). This starts empty and is filled/updated by the live tracker at the
-// bottom of this script. If the feed is unavailable the map shows no vehicles.
+// Traccar), which requires a fleet login. Starts empty; filled/updated by the
+// live tracker at the bottom of this script once the user is signed in.
 let VEHICLES = [];
 
 function parseDMY(s){
@@ -1008,107 +1008,148 @@ document.getElementById('statusFilter').addEventListener('change', renderTable);
 refreshAll();
 
 /* ============================================================================
-   LIVE VEHICLE TRACKING  ->  Total Secure (Traccar), via this server
+   DELUXE OPERATIONS LOGIN  +  LIVE VEHICLE TRACKING (Total Secure / Traccar)
    ----------------------------------------------------------------------------
-   The page NEVER holds the Total Secure login. The server logs in privately and
-   publishes only coordinates at /api/positions; we poll that here and move the
-   vehicle markers. Because there is no password in this page, the link is safe
-   to share with anyone.
+   A plain HTML file cannot pull real GPS on its own. This page signs in to the
+   Deluxe Operations server, which privately logs in to Total Secure and returns
+   only coordinates from /api/positions. The Total Secure password is never in
+   this page. The login below gates the live data; once signed in, the token is
+   remembered so the map auto-loads every time the link is opened.
    ========================================================================== */
 (function(){
+  const LS_KEY = 'deluxeFleetToken';
   const badge = document.getElementById('liveBadge');
-  // If the server is locked with a FLEET_TOKEN, the page URL carries ?key=... ;
-  // forward it to the positions API so the shared link keeps working.
-  const KEY = new URLSearchParams(location.search).get('key') || '';
-  const API = '/api/positions' + (KEY ? ('?key=' + encodeURIComponent(KEY)) : '');
-  const POLL_MS = 30000;
+  let TOKEN = localStorage.getItem(LS_KEY) || '';
+  let polling = false;
   let lastUpdated = null;
 
+  /* ---------- login overlay (built here, matches the dark theme) ---------- */
+  const ov = document.createElement('div');
+  ov.id = 'loginOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:5000;background:#14181c;display:none;align-items:center;justify-content:center;padding:20px;';
+  ov.innerHTML = ''
+    + '<div style="width:360px;max-width:100%;background:#1c2126;border:1px solid #2c333a;border-radius:14px;padding:28px;font-family:Inter,-apple-system,Segoe UI,sans-serif;color:#e8ecef;">'
+    +   '<div style="font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#e8a13a;margin-bottom:8px;">Deluxe Operations</div>'
+    +   '<h2 style="margin:0 0 4px;font-size:20px;">Fleet Live Tracking</h2>'
+    +   '<p style="margin:0 0 20px;color:#8b95a1;font-size:13px;">Sign in to view live vehicle positions.</p>'
+    +   '<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Email</label>'
+    +   '<input id="loginEmail" type="text" autocomplete="username" placeholder="deluxeoperationhead" style="width:100%;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:11px 13px;border-radius:8px;font-size:14px;margin-bottom:14px;outline:none;">'
+    +   '<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Password</label>'
+    +   '<input id="loginPass" type="password" autocomplete="current-password" placeholder="Password" style="width:100%;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:11px 13px;border-radius:8px;font-size:14px;margin-bottom:8px;outline:none;">'
+    +   '<div id="loginErr" style="color:#e0644a;font-size:12.5px;min-height:18px;margin-bottom:10px;"></div>'
+    +   '<button id="loginBtn" style="width:100%;background:#e8a13a;color:#1a1300;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;">Sign in</button>'
+    + '</div>';
+  document.body.appendChild(ov);
+  const $ = function(id){ return document.getElementById(id); };
+
+  function showLogin(msg){ ov.style.display='flex'; if(msg) $('loginErr').textContent=msg; }
+  function hideLogin(){ ov.style.display='none'; if(typeof map!=='undefined' && map.invalidateSize) setTimeout(function(){ map.invalidateSize(); },120); }
+
+  async function doLogin(){
+    const email = $('loginEmail').value.trim();
+    const password = $('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      const r = await fetch('/api/fleet/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:email, password:password})});
+      const d = await r.json().catch(function(){ return {}; });
+      if(!r.ok || !d.token) throw new Error(d.error || 'Login failed');
+      TOKEN = d.token; localStorage.setItem(LS_KEY, TOKEN);
+      hideLogin(); startPolling();
+    }catch(e){
+      $('loginErr').textContent = e.message || 'Login failed';
+    }finally{
+      $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false;
+    }
+  }
+  ov.addEventListener('click', function(e){ if(e.target && e.target.id==='loginBtn') doLogin(); });
+  ov.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; showLogin('Signed out.'); }
+  if(badge){ badge.style.cursor='pointer'; badge.title='Click to sign out'; badge.addEventListener('click', function(){ if(confirm('Sign out of fleet tracking?')) logout(); }); }
+
+  /* ---------- live tracking (authenticated) ---------- */
   function setBadge(text, kind){
     if(!badge) return;
     const c = kind==='live'  ? {bg:'#1a2e24', fg:'#4caf7d'} :
               kind==='error' ? {bg:'#2e1c1a', fg:'#e0644a'} :
                                {bg:'#2e2410', fg:'#e8c168'};
-    badge.style.background = c.bg; badge.style.color = c.fg;
-    badge.textContent = '● ' + text;
+    badge.style.background=c.bg; badge.style.color=c.fg; badge.textContent='● '+text;
   }
   function ago(){
     if(!lastUpdated) return '';
     const s = Math.round((Date.now()-lastUpdated)/1000);
-    if(s < 60) return s + 's ago';
-    return Math.round(s/60) + 'm ago';
+    return s<60 ? (s+'s ago') : (Math.round(s/60)+'m ago');
   }
-  function liveCount(){ return VEHICLES.filter(v=>String(v.id).startsWith('T')).length; }
+  function liveCount(){ return VEHICLES.filter(function(v){ return String(v.id).indexOf('T')===0; }).length; }
 
   function upsert(d){
-    const key = 'T' + d.id;
-    let v = VEHICLES.find(x=>x.id===key);
-    if(!v){ v = {id:key}; VEHICLES.push(v); }
-    v.name = d.name || v.name || ('Device ' + d.id);
-    v.lat = d.lat; v.lon = d.lon; v.speed = d.speed; v.course = d.course; v.lastUpdate = d.lastUpdate;
-
-    const kmh = (d.speed!=null) ? Math.round(d.speed*1.852) : null; // Traccar speed is in knots
-    const popup = '<b>' + v.name + '</b><br><small>'
-      + (kmh!=null ? (kmh + ' km/h &middot; ') : '')
-      + 'GPS ' + (d.lat!=null? d.lat.toFixed(5):'?') + ', ' + (d.lon!=null? d.lon.toFixed(5):'?')
-      + (d.lastUpdate ? ('<br>last fix: ' + new Date(d.lastUpdate).toLocaleString()) : '')
+    const key='T'+d.id;
+    let v=VEHICLES.find(function(x){ return x.id===key; });
+    if(!v){ v={id:key}; VEHICLES.push(v); }
+    v.name=d.name||v.name||('Device '+d.id);
+    v.lat=d.lat; v.lon=d.lon; v.speed=d.speed; v.course=d.course; v.lastUpdate=d.lastUpdate;
+    const kmh=(d.speed!=null)?Math.round(d.speed*1.852):null; // Traccar speed is in knots
+    const popup='<b>'+v.name+'</b><br><small>'
+      + (kmh!=null?(kmh+' km/h &middot; '):'')
+      + 'GPS '+(d.lat!=null?d.lat.toFixed(5):'?')+', '+(d.lon!=null?d.lon.toFixed(5):'?')
+      + (d.lastUpdate?('<br>last fix: '+new Date(d.lastUpdate).toLocaleString()):'')
       + '</small>';
-
-    let m = vehMarkers[key];
-    if(!m){ m = L.marker([d.lat, d.lon], {icon:vehIcon}).addTo(map); vehMarkers[key] = m; }
-    else  { m.setLatLng([d.lat, d.lon]); }
+    let m=vehMarkers[key];
+    if(!m){ m=L.marker([d.lat,d.lon],{icon:vehIcon}).addTo(map); vehMarkers[key]=m; }
+    else  { m.setLatLng([d.lat,d.lon]); }
     m.bindPopup(popup);
   }
-
   function removeStale(active){
-    Object.keys(vehMarkers).forEach(key=>{
+    Object.keys(vehMarkers).forEach(function(key){
       if(key[0]==='T' && !active.has(key)){
         map.removeLayer(vehMarkers[key]); delete vehMarkers[key];
-        const i = VEHICLES.findIndex(x=>x.id===key); if(i>=0) VEHICLES.splice(i,1);
+        const i=VEHICLES.findIndex(function(x){ return x.id===key; }); if(i>=0) VEHICLES.splice(i,1);
       }
     });
   }
 
-  let firstFit = true;
+  let firstFit=true;
   async function poll(){
+    if(!polling) return;
     try{
-      const r = await fetch(API, {cache:'no-store'});
-      if(!r.ok) throw new Error('server ' + r.status);
-      const data = await r.json();
-      const list = (data.vehicles || data.positions || []).filter(d=>d.lat!=null && d.lon!=null);
-      const active = new Set();
-      list.forEach(d=>{ upsert(d); active.add('T'+d.id); });
+      const r=await fetch('/api/positions',{cache:'no-store', headers:{Authorization:'Bearer '+TOKEN}});
+      if(r.status===401){ logout(); return; }
+      if(!r.ok) throw new Error('server '+r.status);
+      const data=await r.json();
+      const list=(data.vehicles||data.positions||[]).filter(function(d){ return d.lat!=null && d.lon!=null; });
+      const active=new Set();
+      list.forEach(function(d){ upsert(d); active.add('T'+d.id); });
       removeStale(active);
-
       if(list.length){
         lastUpdated = data.updatedAt ? new Date(data.updatedAt).getTime() : Date.now();
-        setBadge('live · ' + list.length + ' vehicle' + (list.length>1?'s':'') + ' · ' + ago(), 'live');
-        if(firstFit){
-          firstFit = false;
-          try{
-            const b = L.latLngBounds(list.map(d=>[d.lat,d.lon]));
-            if(b.isValid()) map.fitBounds(b.pad(0.25), {maxZoom:13});
-          }catch(_){}
-        }
+        setBadge('live · '+list.length+' vehicle'+(list.length>1?'s':'')+' · '+ago(),'live');
+        if(firstFit){ firstFit=false; try{ const b=L.latLngBounds(list.map(function(d){ return [d.lat,d.lon]; })); if(b.isValid()) map.fitBounds(b.pad(0.25),{maxZoom:13}); }catch(_){} }
       } else if(data.error){
-        setBadge('GPS error: ' + data.error, 'error');
+        setBadge('GPS error: '+data.error,'error');
       } else {
-        setBadge('connected · waiting for first GPS fix', 'wait');
+        setBadge('connected · waiting for first GPS fix','wait');
       }
       renderVehList();
     }catch(e){
-      setBadge('GPS offline (' + (e.message||'no server') + ') · retrying', 'error');
+      setBadge('GPS offline ('+(e.message||'no server')+') · retrying','error');
     }
   }
 
-  setBadge('connecting to Total Secure…', 'wait');
-  poll();
-  setInterval(poll, POLL_MS);
-  // Keep the "Ns ago" label ticking between polls.
+  let pollTimer=null;
+  function startPolling(){
+    polling=true;
+    setBadge('connecting to Total Secure…','wait');
+    poll();
+    if(!pollTimer) pollTimer=setInterval(poll,30000);
+  }
+  // keep the "Ns ago" label ticking between polls
   setInterval(function(){
-    if(lastUpdated && badge && badge.textContent.indexOf('live') !== -1)
-      setBadge('live · ' + liveCount() + ' vehicle' + (liveCount()>1?'s':'') + ' · ' + ago(), 'live');
-  }, 5000);
+    if(polling && lastUpdated && badge && badge.textContent.indexOf('live')!==-1)
+      setBadge('live · '+liveCount()+' vehicle'+(liveCount()>1?'s':'')+' · '+ago(),'live');
+  },5000);
+
+  /* ---------- boot: auto-show tracking if already signed in ---------- */
+  if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
 })();
 
 </script>

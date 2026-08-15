@@ -47,10 +47,26 @@ tracking is simply off and the rest of the portal runs normally.
    | Key | Value |
    | --- | --- |
    | `TRACCAR_POLL_MS` | how often to refresh, in milliseconds (default `30000` = 30s) |
-   | `FLEET_TOKEN` | if set, the link needs `?key=<token>` — see *Locking it down* |
+   | `FLEET_LOGIN_EMAIL` | the fleet login email (default `deluxeoperationhead`) |
+   | `FLEET_LOGIN_PASSWORD` | the fleet login password (default `Deluxe123`) |
 
-3. Save (Render restarts the service). Open **`https://<your-portal>/fleet`** —
-   within ~30s the badge turns green and the vehicles appear.
+3. Save (Render restarts the service). Open **`https://<your-portal>/fleet`**,
+   sign in with the fleet login, and within ~30s the badge turns green and the
+   vehicles appear.
+
+## The fleet login
+
+The `/fleet` page opens to a **Deluxe Operations** sign-in screen. The default
+login (change it via the env vars above for real use) is:
+
+- **Email:** `deluxeoperationhead`
+- **Password:** `Deluxe123`
+
+Once you sign in, the login is **remembered on that device for 30 days**, so
+every time you (or anyone you've given the login to) open the link, the live map
+loads automatically — no signing in again. Click the status badge (top-right,
+next to the title) to sign out. The live vehicle data is served **only** to a
+signed-in user, so vehicle locations are never public.
 
 > Type the password directly into Render. Don't put it in the code or send it in
 > chat/email. And please **change your Total Secure password** if it's weak or has
@@ -72,15 +88,13 @@ The poller only runs while the portal service is awake.
 
 ## Sharing the link
 
-Send anyone **`https://<your-portal>/fleet`**. It's a live web page — it keeps
-updating on their screen, no login, no app install, and no password inside it.
+Send people two things: the link **`https://<your-portal>/fleet`** and the fleet
+login (`deluxeoperationhead` / `Deluxe123`). They sign in once and the live map
+loads for them — and keeps loading automatically on future visits. It's a live
+web page: no app install, and your Total Secure password is never inside it.
 
-## Locking it down (optional)
-
-If you don't want the link to be fully public, set a `FLEET_TOKEN` (any hard-to-
-guess word) in Render. Then only `https://<your-portal>/fleet?key=<token>` works,
-and the same `?key=` is passed through to the data feed automatically. Share the
-full link *with* the `?key=` part to the people who should see it.
+To revoke access for everyone, change `FLEET_LOGIN_PASSWORD` in Render (and share
+the new one only with the people who should still have it).
 
 ## Matching vehicles to generators
 
