@@ -1305,6 +1305,13 @@ refreshAll();
   document.getElementById('truckSearchBtn').addEventListener('click', findTruck);
   document.getElementById('truckSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') findTruck(); });
 
+  // ---- Declutter map labels: only show the name tags when zoomed in ----
+  var LABEL_MIN_ZOOM = 13;
+  (function(){ var st=document.createElement('style'); st.textContent='.hide-map-labels .dg-label{display:none !important;}'; document.head.appendChild(st); })();
+  function updateLabelVisibility(){ if(map && map.getContainer) map.getContainer().classList.toggle('hide-map-labels', map.getZoom() < LABEL_MIN_ZOOM); }
+  map.on('zoomend', updateLabelVisibility);
+  updateLabelVisibility();
+
   if(TOKEN){ hideLogin(); startPolling(); } else { showLogin(); }
 })();
 
