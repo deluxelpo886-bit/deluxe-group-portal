@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe Operations — Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --blue:#5b9bd5; --purple:#a78bda; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:34px 18px 60px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+  h1{font-size:26px;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 26px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;}}
+  a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:20px;color:var(--text);transition:border-color .15s, transform .06s;}
+  a.card:hover{border-color:var(--amber);transform:translateY(-1px);}
+  a.card:active{transform:translateY(0);}
+  .ico{font-size:30px;line-height:1;margin-bottom:12px;}
+  .title{font-size:17px;font-weight:700;margin-bottom:4px;}
+  .desc{color:var(--muted);font-size:12.8px;line-height:1.5;}
+  .bar{height:3px;border-radius:3px;margin-top:14px;}
+  .login{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:13px;color:var(--muted);}
+  .login b{color:var(--text);font-family:var(--mono);}
+  footer{margin-top:22px;color:var(--muted);font-size:12px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy Solutions</div>
+  <h1>Operations Menu</h1>
+  <p class="sub">Tap a tool to open it. Sign in once with the operations login below — it's remembered on your device.</p>
+
+  <div class="grid">
+    <a class="card" href="/fleet">
+      <div class="ico">🗺️</div>
+      <div class="title">Live Fleet Map</div>
+      <div class="desc">Real-time vehicle tracking, breakdown dispatch, and generator service alerts on the map.</div>
+      <div class="bar" style="background:var(--blue);"></div>
+    </a>
+    <a class="card" href="/service">
+      <div class="ico">🔧</div>
+      <div class="title">Service Log</div>
+      <div class="desc">Technicians enter running hours after a service — next service is worked out automatically.</div>
+      <div class="bar" style="background:var(--green);"></div>
+    </a>
+    <a class="card" href="/schedule">
+      <div class="ico">📅</div>
+      <div class="title">Daily Schedule</div>
+      <div class="desc">Plan each day's servicing across Team 1 and Team 2, and tick jobs off as done.</div>
+      <div class="bar" style="background:var(--gold);"></div>
+    </a>
+    <a class="card" href="/spares">
+      <div class="ico">🧰</div>
+      <div class="title">Spare Parts</div>
+      <div class="desc">Log the parts a generator needs and track Needed → Ordered → Received → Fitted.</div>
+      <div class="bar" style="background:var(--purple);"></div>
+    </a>
+  </div>
+
+  <div class="login">
+    🔑 <b>Login for all tools</b> — email <b>deluxeoperationhead</b> · password <b>Deluxe123</b>
+  </div>
+
+  <footer>
+    Tip: add this page to your phone's home screen for one-tap access. All tools share the same sign-in.
+  </footer>
+</div>
+</body>
+</html>
