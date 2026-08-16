@@ -540,6 +540,16 @@ app.get('/spares', (req, res) => {
   res.sendFile(path.join(__dirname, 'spares.html'));
 });
 
+// Operations menu (a simple home page linking to all the tools).
+app.get(['/menu', '/home'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'menu.html'));
+});
+
 // ---------- Serve the frontends ----------
 app.use(express.static(path.join(__dirname, '..', 'public')));
 // Deluxe Ops ships as two installable apps sharing one codebase:
