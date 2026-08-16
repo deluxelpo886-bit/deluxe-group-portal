@@ -111,8 +111,19 @@
       </div>
     </div>
     <div class="field">
-      <label>Notes (optional)</label>
-      <textarea id="notes" rows="2" placeholder="Anything worth noting"></textarea>
+      <label>Notes (optional) <button type="button" id="micNotes" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:2px 9px;font-size:11px;cursor:pointer;text-transform:none;margin-left:8px;">🎤 Voice</button></label>
+      <textarea id="notes" rows="2" placeholder="Type, or tap Voice to speak"></textarea>
+    </div>
+    <div class="field">
+      <label>Photo of controller / service card (optional)</label>
+      <input type="file" id="photo" accept="image/*" capture="environment" style="padding:8px;">
+      <div id="photoWrap" style="display:none;margin-top:10px;">
+        <img id="photoPreview" alt="preview" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--line);display:block;">
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button type="button" class="btn sec" id="ocrBtn" style="width:auto;padding:8px 12px;font-size:13px;">🔍 Auto-read hours</button>
+          <span id="ocrMsg" class="muted" style="font-size:12.5px;"></span>
+        </div>
+      </div>
     </div>
     <button class="btn" id="submit">Save service &amp; show next service</button>
     <div class="err" id="err"></div>
@@ -152,6 +163,73 @@
   var LS='deluxeFleetToken';
   var TOKEN=localStorage.getItem(LS)||'';
   var $=function(id){return document.getElementById(id);};
+  var photoData=null;
+  var photoInput=$('photo');
+  if(photoInput){ photoInput.addEventListener('change',function(){
+    var f=photoInput.files && photoInput.files[0]; if(!f) return;
+    var img=new Image();
+    img.onload=function(){
+      var max=1000, w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>max){ w=Math.round(w*max/h); h=max; }
+      var c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      photoData=c.toDataURL('image/jpeg',0.6);
+      $('photoPreview').src=photoData; $('photoWrap').style.display='block'; $('ocrMsg').textContent='';
+    };
+    img.src=URL.createObjectURL(f);
+  }); }
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  (function(){ var btn=$('micNotes'); if(!btn) return; if(!SR){ btn.style.display='none'; return; }
+    btn.addEventListener('click',function(){
+      var rec=new SR(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=1;
+      btn.textContent='\U0001f3a4 Listening…'; btn.disabled=true;
+      rec.onresult=function(ev){ var t=ev.results[0][0].transcript; var el=$('notes'); el.value=el.value?(el.value+' '+t):t; };
+      rec.onerror=function(){};
+      rec.onend=function(){ btn.textContent='\U0001f3a4 Voice'; btn.disabled=false; };
+      try{ rec.start(); }catch(e){ btn.textContent='\U0001f3a4 Voice'; btn.disabled=false; }
+    });
+  })();
+  var tessLoading=null;
+  function loadTesseract(){
+    if(window.Tesseract) return Promise.resolve(window.Tesseract);
+    if(tessLoading) return tessLoading;
+    tessLoading=new Promise(function(resolve,reject){
+      var sc=document.createElement('script');
+      sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      sc.onload=function(){ resolve(window.Tesseract); };
+      sc.onerror=function(){ reject(new Error('load failed')); };
+      document.head.appendChild(sc);
+    });
+    return tessLoading;
+  }
+  (function(){ var ocrBtn=$('ocrBtn'); if(!ocrBtn) return;
+    ocrBtn.addEventListener('click',async function(){
+      if(!photoData){ $('ocrMsg').textContent='Take a photo first.'; return; }
+      $('ocrMsg').textContent='Reading photo… (first time downloads the reader)'; ocrBtn.disabled=true;
+      try{
+        var T=await loadTesseract();
+        var res=await T.recognize(photoData,'eng');
+        var text=(res && res.data && res.data.text)||'';
+        var nums=(text.match(/\d{3,7}/g)||[]).sort(function(a,b){ return b.length-a.length; });
+        if(nums.length){ $('hours').value=nums[0]; $('ocrMsg').textContent='Read '+nums[0]+' — please check it matches the screen.'; }
+        else { $('ocrMsg').textContent='Could not read a number — please type the hours.'; }
+      }catch(e){ $('ocrMsg').textContent='Auto-read unavailable here — please type the hours.'; }
+      finally{ ocrBtn.disabled=false; }
+    });
+  })();
+  var photoModal=document.createElement('div');
+  photoModal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:60;';
+  photoModal.addEventListener('click',function(){ photoModal.style.display='none'; });
+  photoModal.innerHTML='<img id="photoModalImg" alt="service photo" style="max-width:100%;max-height:90vh;border-radius:8px;">';
+  document.body.appendChild(photoModal);
+  async function viewPhoto(dg){
+    try{
+      var r=await fetch('/api/service/photo?dg='+encodeURIComponent(dg),{headers:{'Authorization':'Bearer '+TOKEN}});
+      if(!r.ok) return;
+      var d=await r.json();
+      document.getElementById('photoModalImg').src=d.photo; photoModal.style.display='flex';
+    }catch(e){}
+  }
   function show(el,on){ el.style.display=on?'':'none'; }
 
   // date default = today
@@ -186,7 +264,8 @@
     var body={
       dg:$('dg').value, hours:$('hours').value, interval:$('interval').value, date:$('date').value,
       dailyHours:$('dailyHours').value, technician:$('technician').value, notes:$('notes').value,
-      oil:$('oil').checked, oilFilter:$('oilFilter').checked, fuelFilter:$('fuelFilter').checked, airFilter:$('airFilter').checked
+      oil:$('oil').checked, oilFilter:$('oilFilter').checked, fuelFilter:$('fuelFilter').checked, airFilter:$('airFilter').checked,
+      photo:photoData
     };
     $('submit').disabled=true; $('submit').textContent='Saving…';
     try{
@@ -203,6 +282,7 @@
         +'<br><span class="muted" style="font-size:13px;">Est. date <b style="color:var(--gold);">'+(e.nextServiceDate||'-')+'</b> &middot; usage ~'+rate+' h/day '+how+' &middot; every '+e.daysToService+' days</span>';
       $('result').style.display='block';
       $('hours').value=''; $('notes').value=''; $('oil').checked=$('oilFilter').checked=$('fuelFilter').checked=$('airFilter').checked=false;
+      photoData=null; if($('photoWrap'))$('photoWrap').style.display='none'; if($('photo'))$('photo').value=''; if($('ocrMsg'))$('ocrMsg').textContent='';
     }catch(e){ $('err').textContent=e.message||'Could not save'; }
     finally{ $('submit').disabled=false; $('submit').textContent='Save service & show next service'; }
   });
@@ -215,8 +295,9 @@
       var d=await r.json();
       var gens=d.generators||[];
       $('statusBody').innerHTML = gens.length ? gens.map(function(g){
-        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.nextServiceDate||'-')+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+'</td></tr>';
+        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.nextServiceDate||'-')+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td></tr>';
       }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
+      $('statusBody').querySelectorAll('a.photo-link').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); viewPhoto(a.getAttribute('data-dg')); }); });
     }catch(e){ $('statusBody').innerHTML='<tr><td colspan="5" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
   $('refresh').addEventListener('click',function(e){ e.preventDefault(); loadStatus(); });

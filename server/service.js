@@ -81,6 +81,9 @@ function logService(rec) {
     },
     technician: String((rec.technician) || '').trim(),
     notes: String((rec.notes) || '').trim(),
+    // Optional photo of the controller / service card, already resized to a small
+    // JPEG data URL on the client. Rejected if not an image or unreasonably large.
+    photo: (typeof rec.photo === 'string' && rec.photo.slice(0, 11) === 'data:image/' && rec.photo.length < 3000000) ? rec.photo : null,
     updatedAt: new Date().toISOString(),
   };
 
@@ -98,11 +101,23 @@ function logService(rec) {
   return entry;
 }
 
-// All generators with a service record, most-recently-updated first.
+// All generators with a service record, most-recently-updated first. The photo
+// is stripped from the list (fetched separately via getPhoto) to keep it light;
+// a hasPhoto flag tells the UI whether one exists.
 function getAll() {
   return Object.keys(store)
-    .map((k) => store[k])
+    .map((k) => {
+      const copy = Object.assign({}, store[k]);
+      copy.hasPhoto = !!copy.photo;
+      delete copy.photo;
+      return copy;
+    })
     .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
 }
 
-module.exports = { logService, getAll, DEFAULT_INTERVAL };
+function getPhoto(dg) {
+  const e = store[String(dg || '').trim().toUpperCase()];
+  return e && e.photo ? e.photo : null;
+}
+
+module.exports = { logService, getAll, getPhoto, DEFAULT_INTERVAL };
