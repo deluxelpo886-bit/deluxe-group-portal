@@ -538,7 +538,9 @@ function rebuildMap(){
       +'<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
       +'<a href="https://wa.me/?text='+encodeURIComponent(r.dg+' ('+(r.location||'')+') location: https://maps.google.com/?q='+r.lat+','+r.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
       +'</div>';
-    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${genShare}`);
+    const svc = (window.SERVICE_BY_DG||{})[r.dg];
+    const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b></span>` : '';
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}`);
     m.bindTooltip(r.dg, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
     // generator pins are fixed (drag disabled)
     m.addTo(genLayer);
@@ -1288,13 +1290,27 @@ refreshAll();
   }
 
   let pollTimer=null;
+  var svcTimer=null;
+  async function loadServiceInfo(){
+    try{
+      var r=await fetch('/api/service/status',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}});
+      if(!r.ok) return;
+      var d=await r.json();
+      var map={};
+      (d.generators||[]).forEach(function(g){ map[g.dg]=g; });
+      window.SERVICE_BY_DG=map;
+      if(typeof rebuildMap==='function') rebuildMap();
+    }catch(e){}
+  }
   function startPolling(){
     polling=true;
     if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='inline-block';
     if(typeof reportBtn!=='undefined' && reportBtn) reportBtn.style.display='inline-block';
     setBadge('connecting to Total Secure…','wait');
     poll();
+    loadServiceInfo();
     if(!pollTimer) pollTimer=setInterval(poll,30000);
+    if(!svcTimer) svcTimer=setInterval(loadServiceInfo, 5*60*1000);
   }
   // keep the "Ns ago" label ticking between polls
   setInterval(function(){
