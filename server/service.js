@@ -38,18 +38,41 @@ function logService(rec) {
 
   const interval = Number(rec.interval) > 0 ? Number(rec.interval) : DEFAULT_INTERVAL;
   const nextService = hours + interval;
-  const dailyHours = Number(rec.dailyHours) > 0 ? Number(rec.dailyHours) : null;
-  // Estimated calendar days until the next service, if a daily run rate is given.
-  const daysToService = dailyHours ? Math.round(interval / dailyHours) : null;
+  const date = (rec.date && String(rec.date).slice(0, 10)) || new Date().toISOString().slice(0, 10);
+  const prev = store[dg];
+
+  // Work out the real running rate (hours/day). Priority:
+  //   1. an explicit value the technician entered,
+  //   2. observed automatically from the gap between this reading and the last,
+  //   3. the default 12h/day contract.
+  // A 24h customer therefore reaches the next service (+interval hours) in about
+  // half the days a 12h customer does - and the next-service DATE reflects that.
+  const CONTRACT_DAILY_HOURS = 12;
+  let observedDailyHours = null;
+  if (prev && isFinite(prev.hours) && prev.date) {
+    const days = (new Date(date + 'T00:00:00') - new Date(prev.date + 'T00:00:00')) / 86400000;
+    const dh = hours - prev.hours;
+    if (days > 0 && dh > 0) observedDailyHours = dh / days;
+  }
+  const explicitDaily = Number(rec.dailyHours) > 0 ? Number(rec.dailyHours) : null;
+  const effectiveDailyHours = explicitDaily || observedDailyHours || CONTRACT_DAILY_HOURS;
+  const daysToService = Math.max(1, Math.round(interval / effectiveDailyHours));
+  const nsd = new Date(date + 'T00:00:00');
+  nsd.setDate(nsd.getDate() + daysToService);
+  const nextServiceDate = nsd.toISOString().slice(0, 10);
+  const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
 
   const entry = {
     dg,
     hours,
     interval,
     nextService,
-    dailyHours,
+    nextServiceDate,
+    dailyHours: explicitDaily,
+    observedDailyHours: round1(observedDailyHours),
+    effectiveDailyHours: round1(effectiveDailyHours),
     daysToService,
-    date: (rec.date && String(rec.date).slice(0, 10)) || new Date().toISOString().slice(0, 10),
+    date,
     checks: {
       oil: !!rec.oil,
       oilFilter: !!rec.oilFilter,
@@ -61,7 +84,6 @@ function logService(rec) {
     updatedAt: new Date().toISOString(),
   };
 
-  const prev = store[dg];
   const history = (prev && Array.isArray(prev.history) ? prev.history : []).concat([{
     date: entry.date,
     hours: entry.hours,
