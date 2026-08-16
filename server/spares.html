@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Spare Parts</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:860px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text],input[type=number],textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  input:focus,textarea:focus,select:focus{border-color:var(--amber);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:120px;}
+  .field{margin-bottom:12px;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:11px 14px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  .dg{font-family:var(--mono);font-weight:600;}
+  .muted{color:var(--muted);}
+  select.status{padding:5px 8px;font-size:12px;border-radius:6px;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;}
+  .b-Needed{background:#3a1414;color:#ff8a75;}
+  .b-Ordered{background:#2e2410;color:var(--gold);}
+  .b-Received{background:#16233a;color:var(--blue);}
+  .b-Fitted{background:var(--green-bg);color:var(--green);}
+  .x{color:var(--red);cursor:pointer;border:none;background:transparent;font-size:15px;padding:2px 6px;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>Spare Parts</h1>
+    </div>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+  <p class="sub">Log parts a generator needs and track them from Needed → Ordered → Received → Fitted. See also the <a href="/service" class="link">service log</a>, <a href="/schedule" class="link">schedule</a> and <a href="/fleet" class="link">live map</a>.</p>
+
+  <div class="panel">
+    <div class="row">
+      <div class="field"><label>Generator (DG)</label><input type="text" id="dg" placeholder="e.g. DG-537" autocomplete="off"></div>
+      <div class="field" style="flex:2;"><label>Part needed</label><input type="text" id="part" placeholder="e.g. Air filter" autocomplete="off"></div>
+      <div class="field" style="max-width:90px;"><label>Qty</label><input type="number" id="qty" min="1" value="1"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Requested by</label><input type="text" id="requestedBy" placeholder="e.g. TK" autocomplete="off"></div>
+      <div class="field" style="flex:2;"><label>Notes (optional)</label><input type="text" id="notes" placeholder="Anything worth noting"></div>
+    </div>
+    <button class="btn" id="add">+ Add spare part request</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="panel">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Generator</th><th>Part</th><th>Qty</th><th>Status</th><th>Requested</th><th></th></tr></thead>
+        <tbody id="body"><tr><td colspan="6" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Spare Parts — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to log and track spare parts.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var STATUSES=['Needed','Ordered','Received','Fitted'];
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  function render(items){
+    $('body').innerHTML = items.length ? items.map(function(it){
+      var opts=STATUSES.map(function(s){ return '<option value="'+s+'"'+(s===it.status?' selected':'')+'>'+s+'</option>'; }).join('');
+      return '<tr>'
+        +'<td class="dg">'+esc(it.dg)+'</td>'
+        +'<td>'+esc(it.part)+(it.notes?'<div class="muted" style="font-size:12px;">'+esc(it.notes)+'</div>':'')+'</td>'
+        +'<td>'+it.qty+'</td>'
+        +'<td><span class="badge b-'+esc(it.status)+'" style="margin-right:6px;">'+esc(it.status)+'</span><select class="status" data-id="'+esc(it.id)+'">'+opts+'</select></td>'
+        +'<td class="muted">'+esc(it.date)+(it.requestedBy?'<br>'+esc(it.requestedBy):'')+'</td>'
+        +'<td><button class="x" data-rm="'+esc(it.id)+'" title="Remove">✕</button></td>'
+        +'</tr>';
+    }).join('') : '<tr><td colspan="6" class="muted" style="padding:14px;">No spare-part requests yet.</td></tr>';
+    $('body').querySelectorAll('select.status').forEach(function(sel){
+      sel.addEventListener('change',function(){ post('/api/spares/update',{id:sel.getAttribute('data-id'),status:sel.value}); });
+    });
+    $('body').querySelectorAll('button[data-rm]').forEach(function(b){
+      b.addEventListener('click',function(){ post('/api/spares/remove',{id:b.getAttribute('data-rm')}); });
+    });
+  }
+
+  async function post(url,body){
+    try{
+      var r=await fetch(url,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)});
+      if(r.status===401){ showLogin('Please sign in again.'); return null; }
+      return await r.json().catch(function(){return{};});
+    }catch(e){ return null; }
+  }
+  async function load(){
+    try{
+      var r=await fetch('/api/spares',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json(); render(d.items||[]);
+    }catch(e){ $('body').innerHTML='<tr><td colspan="6" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+
+  $('add').addEventListener('click',async function(){
+    $('err').textContent='';
+    if(!$('dg').value.trim()){ $('err').textContent='Generator (DG) number is required'; return; }
+    if(!$('part').value.trim()){ $('err').textContent='Part name is required'; return; }
+    $('add').disabled=true;
+    var d=await post('/api/spares/add',{dg:$('dg').value,part:$('part').value,qty:$('qty').value,requestedBy:$('requestedBy').value,notes:$('notes').value});
+    $('add').disabled=false;
+    if(d && d.error){ $('err').textContent=d.error; return; }
+    if(d && d.ok){ $('part').value=''; $('notes').value=''; $('qty').value='1'; load(); }
+  });
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>

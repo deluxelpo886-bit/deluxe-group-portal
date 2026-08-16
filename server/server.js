@@ -17,6 +17,7 @@ const createOpsRouter = require('./ops');
 const positions = require('./positions');
 const serviceLog = require('./service');
 const schedule = require('./schedule');
+const spares = require('./spares');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -510,6 +511,33 @@ app.get('/schedule', (req, res) => {
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'schedule.html'));
+});
+
+// ---------- Spare-parts issue tracking ----------
+app.get('/api/spares', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ items: spares.getAll(), statuses: spares.STATUSES });
+});
+app.post('/api/spares/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: spares.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/spares/update', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  try { res.json({ ok: true, item: spares.update(b.id, b.status) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/spares/remove', fleetProtect, (req, res) => {
+  spares.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+app.get('/spares', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'spares.html'));
 });
 
 // ---------- Serve the frontends ----------
