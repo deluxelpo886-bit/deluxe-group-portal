@@ -77,6 +77,13 @@
     padding:1px 5px; border-radius:4px; box-shadow:none;
   }
   .dg-label::before{display:none;}
+  /* Home base / workshop label - always visible, not hidden by the zoom declutter */
+  .home-label{
+    background:#a78bda; border:1px solid #0b0d0f; color:#14181c;
+    font-family:'JetBrains Mono','SF Mono',Consolas,monospace; font-size:10px; font-weight:800;
+    letter-spacing:.03em; padding:2px 7px; border-radius:5px; box-shadow:0 1px 4px rgba(0,0,0,0.5);
+  }
+  .home-label::before{display:none;}
   .hbar-wrap{width:120px;}
   .hbar-track{background:#2c333a; border-radius:4px; height:6px; overflow:hidden;}
   .hbar-fill{background:var(--green); height:100%; transition:width .3s;}
@@ -486,7 +493,7 @@ baseTiles.on('tileerror', function(){
 
 const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:34px;height:34px;border-radius:9px;border:2.5px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 1px 5px rgba(0,0,0,0.55);">🏭</div>', iconSize:[34,34], iconAnchor:[17,17]});
 L.marker([OFFICE.lat, OFFICE.lon], {icon:officeIcon}).addTo(map)
-  .bindTooltip('HOME BASE · WORKSHOP', {permanent:true, direction:'top', offset:[0,-18], className:'dg-label'})
+  .bindTooltip('🏭 HOME BASE · WORKSHOP', {permanent:true, direction:'top', offset:[0,-20], className:'home-label'})
   .bindPopup(`<b>${OFFICE.name}</b><br>Mussafah 37, Mussafah Industrial Area, Abu Dhabi<br>☎ +971 2 554 5718<br>📱 +971 55 440 4169`);
 
 const vehIcon = L.divIcon({className:'', html:'<div style="background:#5b9bd5;width:14px;height:14px;border-radius:3px;border:2px solid #0b0d0f;transform:rotate(45deg);"></div>', iconSize:[14,14], iconAnchor:[7,7]});
