@@ -16,6 +16,7 @@ const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
 const positions = require('./positions');
 const serviceLog = require('./service');
+const schedule = require('./schedule');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -480,6 +481,35 @@ app.get('/service', (req, res) => {
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'service.html'));
+});
+
+// ---------- Daily servicing schedule (two teams) ----------
+app.get('/api/schedule', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(schedule.get(req.query.date));
+});
+app.post('/api/schedule/add', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  try { res.json(schedule.add(b.date, b.team, b.dg, b.note)); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/schedule/update', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  try { res.json(schedule.update(b.date, b.team, b.dg, b.done)); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/schedule/remove', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  try { res.json(schedule.remove(b.date, b.team, b.dg)); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.get('/schedule', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'schedule.html'));
 });
 
 // ---------- Serve the frontends ----------
