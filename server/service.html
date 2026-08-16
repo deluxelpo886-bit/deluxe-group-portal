@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Generator Service Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8a93a;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text],input[type=number],input[type=date],textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);
+    color:var(--text);padding:10px 12px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  input:focus,textarea:focus,select:focus{border-color:var(--amber);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:130px;}
+  .field{margin-bottom:13px;}
+  .checks{display:flex;gap:14px;flex-wrap:wrap;margin:4px 0 2px;}
+  .checks label{display:flex;align-items:center;gap:7px;text-transform:none;font-size:14px;color:var(--text);cursor:pointer;}
+  .checks input{width:18px;height:18px;}
+  .btn{width:100%;background:var(--amber);color:#1a1300;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;}
+  .btn:hover{filter:brightness(1.07);}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .result{margin-top:14px;padding:14px;border-radius:10px;background:var(--green-bg);border:1px solid #2a5c40;display:none;}
+  .result b{color:var(--green);font-size:17px;font-family:var(--mono);}
+  .err{color:var(--red);font-size:13px;min-height:18px;margin-top:6px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:9px 10px;border-bottom:1px solid var(--line);}
+  tbody tr:last-child td{border-bottom:none;}
+  .dg{font-family:var(--mono);font-weight:600;}
+  .n{font-family:var(--mono);text-align:right;}
+  .muted{color:var(--muted);}
+  .tabs{display:flex;gap:8px;margin-bottom:14px;}
+  .tab{flex:1;text-align:center;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px;font-weight:600;font-size:13px;cursor:pointer;color:var(--muted);}
+  .tab.active{background:var(--amber);color:#1a1300;border-color:var(--amber);}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>Generator Service Log</h1>
+    </div>
+    <button class="btn sec" id="signOut" style="width:auto;display:none;padding:8px 12px;font-size:13px;">Sign out</button>
+  </div>
+  <p class="sub">Every generator is serviced every <b id="intvlLabel">350</b> running hours. Enter the current hours after a service — the next service is worked out for you.</p>
+
+  <div class="tabs">
+    <div class="tab active" id="tabLog">➕ Log a service</div>
+    <div class="tab" id="tabStatus">📋 All generators</div>
+  </div>
+
+  <!-- LOG FORM -->
+  <div class="panel" id="logPanel">
+    <div class="field">
+      <label>Generator (DG) number</label>
+      <input type="text" id="dg" placeholder="e.g. DG-537" autocomplete="off">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Current hours (from controller)</label>
+        <input type="number" id="hours" min="0" placeholder="e.g. 8391">
+      </div>
+      <div class="field">
+        <label>Service every (hours)</label>
+        <input type="number" id="interval" min="1" value="350">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Service date</label>
+        <input type="date" id="date">
+      </div>
+      <div class="field">
+        <label>Runs per day (hours) — optional</label>
+        <select id="dailyHours">
+          <option value="">—</option>
+          <option value="12">12 hours/day</option>
+          <option value="24">24 hours/day</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Items done</label>
+      <div class="checks">
+        <label><input type="checkbox" id="oil"> Oil</label>
+        <label><input type="checkbox" id="oilFilter"> Oil filter</label>
+        <label><input type="checkbox" id="fuelFilter"> Fuel filter</label>
+        <label><input type="checkbox" id="airFilter"> Air filter</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Technician</label>
+        <input type="text" id="technician" placeholder="e.g. TK" autocomplete="off">
+      </div>
+    </div>
+    <div class="field">
+      <label>Notes (optional)</label>
+      <textarea id="notes" rows="2" placeholder="Anything worth noting"></textarea>
+    </div>
+    <button class="btn" id="submit">Save service &amp; show next service</button>
+    <div class="err" id="err"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- STATUS TABLE -->
+  <div class="panel" id="statusPanel" style="display:none;">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr>
+          <th>Generator</th><th class="n">Last hours</th><th class="n">Next service</th>
+          <th>Serviced on</th><th>By</th>
+        </tr></thead>
+        <tbody id="statusBody"><tr><td colspan="5" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;"><a href="#" class="link" id="refresh">↻ Refresh</a></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Service Log — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to record generator services.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function show(el,on){ el.style.display=on?'':'none'; }
+
+  // date default = today
+  $('date').value=new Date().toISOString().slice(0,10);
+  $('interval').addEventListener('input',function(){ var v=parseInt($('interval').value,10); if(v>0) $('intvlLabel').textContent=v; });
+
+  /* ---- auth ---- */
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; loadStatus(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  /* ---- tabs ---- */
+  $('tabLog').addEventListener('click',function(){ $('tabLog').classList.add('active'); $('tabStatus').classList.remove('active'); show($('logPanel'),true); show($('statusPanel'),false); });
+  $('tabStatus').addEventListener('click',function(){ $('tabStatus').classList.add('active'); $('tabLog').classList.remove('active'); show($('statusPanel'),true); show($('logPanel'),false); loadStatus(); });
+
+  /* ---- submit ---- */
+  $('submit').addEventListener('click',async function(){
+    $('err').textContent=''; $('result').style.display='none';
+    var body={
+      dg:$('dg').value, hours:$('hours').value, interval:$('interval').value, date:$('date').value,
+      dailyHours:$('dailyHours').value, technician:$('technician').value, notes:$('notes').value,
+      oil:$('oil').checked, oilFilter:$('oilFilter').checked, fuelFilter:$('fuelFilter').checked, airFilter:$('airFilter').checked
+    };
+    $('submit').disabled=true; $('submit').textContent='Saving…';
+    try{
+      var r=await fetch('/api/service/log',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify(body)});
+      if(r.status===401){ showLogin('Please sign in again.'); return; }
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok) throw new Error(d.error||'Could not save');
+      var e=d.entry;
+      var extra = e.daysToService ? (' &middot; about every '+e.daysToService+' days at '+e.dailyHours+'h/day') : '';
+      $('result').innerHTML='✅ Saved for <b style="font-size:15px;">'+e.dg+'</b><br><span class="muted" style="font-size:13px;">Serviced at '+e.hours+' h.</span><br>Next service due at <b>'+e.nextService+' h</b><span class="muted" style="font-size:12.5px;">'+extra+'</span>';
+      $('result').style.display='block';
+      $('hours').value=''; $('notes').value=''; $('oil').checked=$('oilFilter').checked=$('fuelFilter').checked=$('airFilter').checked=false;
+    }catch(e){ $('err').textContent=e.message||'Could not save'; }
+    finally{ $('submit').disabled=false; $('submit').textContent='Save service & show next service'; }
+  });
+
+  /* ---- status table ---- */
+  async function loadStatus(){
+    try{
+      var r=await fetch('/api/service/status',{cache:'no-store',headers:{'Authorization':'Bearer '+TOKEN}});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json();
+      var gens=d.generators||[];
+      $('statusBody').innerHTML = gens.length ? gens.map(function(g){
+        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+'</td></tr>';
+      }).join('') : '<tr><td colspan="5" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
+    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="5" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+  $('refresh').addEventListener('click',function(e){ e.preventDefault(); loadStatus(); });
+
+  /* ---- boot ---- */
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
