@@ -86,10 +86,10 @@
         <input type="date" id="date">
       </div>
       <div class="field">
-        <label>Runs per day (hours) — optional</label>
+        <label>Runs per day — leave on Auto to detect</label>
         <select id="dailyHours">
-          <option value="">—</option>
-          <option value="12">12 hours/day</option>
+          <option value="">Auto (detect from usage)</option>
+          <option value="12">12 hours/day (contract)</option>
           <option value="24">24 hours/day</option>
         </select>
       </div>
@@ -123,10 +123,10 @@
     <div style="overflow-x:auto;">
       <table>
         <thead><tr>
-          <th>Generator</th><th class="n">Last hours</th><th class="n">Next service</th>
-          <th>Serviced on</th><th>By</th>
+          <th>Generator</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
+          <th>Est. date</th><th class="n">Usage</th><th>Serviced</th><th>By</th>
         </tr></thead>
-        <tbody id="statusBody"><tr><td colspan="5" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+        <tbody id="statusBody"><tr><td colspan="7" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
       </table>
     </div>
     <div style="margin-top:10px;"><a href="#" class="link" id="refresh">↻ Refresh</a></div>
@@ -194,8 +194,12 @@
       var d=await r.json().catch(function(){return{};});
       if(!r.ok) throw new Error(d.error||'Could not save');
       var e=d.entry;
-      var extra = e.daysToService ? (' &middot; about every '+e.daysToService+' days at '+e.dailyHours+'h/day') : '';
-      $('result').innerHTML='✅ Saved for <b style="font-size:15px;">'+e.dg+'</b><br><span class="muted" style="font-size:13px;">Serviced at '+e.hours+' h.</span><br>Next service due at <b>'+e.nextService+' h</b><span class="muted" style="font-size:12.5px;">'+extra+'</span>';
+      var rate=e.effectiveDailyHours||12;
+      var how=e.dailyHours ? '(entered)' : (e.observedDailyHours ? '(auto-detected from usage)' : '(12h contract default)');
+      $('result').innerHTML='✅ Saved for <b style="font-size:15px;">'+e.dg+'</b>'
+        +'<br><span class="muted" style="font-size:13px;">Serviced at '+e.hours+' h on '+e.date+'.</span>'
+        +'<br>Next service at <b>'+e.nextService+' h</b>'
+        +'<br><span class="muted" style="font-size:13px;">Est. date <b style="color:var(--gold);">'+(e.nextServiceDate||'-')+'</b> &middot; usage ~'+rate+' h/day '+how+' &middot; every '+e.daysToService+' days</span>';
       $('result').style.display='block';
       $('hours').value=''; $('notes').value=''; $('oil').checked=$('oilFilter').checked=$('fuelFilter').checked=$('airFilter').checked=false;
     }catch(e){ $('err').textContent=e.message||'Could not save'; }
@@ -210,8 +214,8 @@
       var d=await r.json();
       var gens=d.generators||[];
       $('statusBody').innerHTML = gens.length ? gens.map(function(g){
-        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+'</td></tr>';
-      }).join('') : '<tr><td colspan="5" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
+        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.nextServiceDate||'-')+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+'</td></tr>';
+      }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
     }catch(e){ $('statusBody').innerHTML='<tr><td colspan="5" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
   $('refresh').addEventListener('click',function(e){ e.preventDefault(); loadStatus(); });
