@@ -484,8 +484,9 @@ baseTiles.on('tileerror', function(){
   baseTiles.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 });
 
-const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:16px;height:16px;border-radius:50%;border:2px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:10px;">🏠</div>', iconSize:[16,16], iconAnchor:[8,8]});
+const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:34px;height:34px;border-radius:9px;border:2.5px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 1px 5px rgba(0,0,0,0.55);">🏭</div>', iconSize:[34,34], iconAnchor:[17,17]});
 L.marker([OFFICE.lat, OFFICE.lon], {icon:officeIcon}).addTo(map)
+  .bindTooltip('HOME BASE · WORKSHOP', {permanent:true, direction:'top', offset:[0,-18], className:'dg-label'})
   .bindPopup(`<b>${OFFICE.name}</b><br>Mussafah 37, Mussafah Industrial Area, Abu Dhabi<br>☎ +971 2 554 5718<br>📱 +971 55 440 4169`);
 
 const vehIcon = L.divIcon({className:'', html:'<div style="background:#5b9bd5;width:14px;height:14px;border-radius:3px;border:2px solid #0b0d0f;transform:rotate(45deg);"></div>', iconSize:[14,14], iconAnchor:[7,7]});
@@ -530,12 +531,16 @@ function rebuildMap(){
   for(const k in genMarkers) delete genMarkers[k];
   getFiltered().filter(r=>r.status!=='Off-Fleet').forEach(r=>{
     if(r.lat==null || r.lon==null) return;
-    const m = L.marker([r.lat, r.lon], { icon: genIcon(r), draggable: true });
+    const m = L.marker([r.lat, r.lon], { icon: genIcon(r), draggable: false }); // fixed pin
     const hi = hoursInfo(r);
     const hoursLine = hi ? `<br><small>${hi.overdue ? '⚠ overdue by '+Math.abs(hi.remaining)+'h' : '~'+hi.estRun+'h run / 350h ('+hi.pct+'%)'}</small>` : '';
-    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}`);
+    const genShare = '<div style="margin-top:8px;display:flex;gap:6px;">'
+      +'<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
+      +'<a href="https://wa.me/?text='+encodeURIComponent(r.dg+' ('+(r.location||'')+') location: https://maps.google.com/?q='+r.lat+','+r.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
+      +'</div>';
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${genShare}`);
     m.bindTooltip(r.dg, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
-    m.on('drag', (e)=>{ const pos=e.target.getLatLng(); r.lat=pos.lat; r.lon=pos.lng; });
+    // generator pins are fixed (drag disabled)
     m.addTo(genLayer);
     genMarkers[r.dg] = { circle: m, drag: m };
   });
