@@ -15,6 +15,7 @@ const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
 const positions = require('./positions');
+const serviceLog = require('./service');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -453,6 +454,32 @@ app.get('/tiles/:z/:x/:y.png', async (req, res) => {
   } catch (e) {
     return res.status(502).end();
   }
+});
+
+// ---------- Generator service log (hours-based servicing) ----------
+// Technicians submit a generator's current running hours; the server computes
+// the next service due (hours + interval, default 350) and stores it. Reuses the
+// same fleet login as /fleet. See server/service.js.
+app.post('/api/service/log', fleetProtect, (req, res) => {
+  try {
+    const entry = serviceLog.logService(req.body || {});
+    res.json({ ok: true, entry });
+  } catch (err) {
+    res.status(400).json({ error: (err && err.message) || 'Invalid submission' });
+  }
+});
+app.get('/api/service/status', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ generators: serviceLog.getAll() });
+});
+// The technician-facing service page (shareable link).
+app.get('/service', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'service.html'));
 });
 
 // ---------- Serve the frontends ----------
