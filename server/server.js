@@ -474,12 +474,24 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({ generators: serviceLog.getAll() });
 });
-// The technician-facing service page (shareable link).
+app.get('/api/service/photo', fleetProtect, (req, res) => {
+  const photo = serviceLog.getPhoto(req.query.dg);
+  if (!photo) return res.status(404).json({ error: 'No photo' });
+  res.set('Cache-Control', 'no-store');
+  res.json({ photo });
+});
+// The technician-facing service page (shareable link). Its CSP additionally
+// permits the Tesseract OCR library (loaded on demand from jsDelivr) for the
+// optional "auto-read hours from photo" feature; everything else is same-origin.
 app.get('/service', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
-      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+    "default-src 'self'; "
+      + "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net blob:; "
+      + "style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data: blob:; "
+      + "connect-src 'self' https://cdn.jsdelivr.net; "
+      + "worker-src 'self' blob:; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'service.html'));
 });
