@@ -120,4 +120,10 @@ function getPhoto(dg) {
   return e && e.photo ? e.photo : null;
 }
 
-module.exports = { logService, getAll, getPhoto, DEFAULT_INTERVAL };
+function remove(dg) {
+  const key = String(dg || '').trim().toUpperCase();
+  if (store[key]) { delete store[key]; persist(); return true; }
+  return false;
+}
+
+module.exports = { logService, getAll, getPhoto, remove, DEFAULT_INTERVAL };

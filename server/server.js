@@ -480,6 +480,10 @@ app.get('/api/service/photo', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({ photo });
 });
+app.post('/api/service/remove', fleetProtect, (req, res) => {
+  serviceLog.remove((req.body || {}).dg);
+  res.json({ ok: true });
+});
 // The technician-facing service page (shareable link). Its CSP additionally
 // permits the Tesseract OCR library (loaded on demand from jsDelivr) for the
 // optional "auto-read hours from photo" feature; everything else is same-origin.
