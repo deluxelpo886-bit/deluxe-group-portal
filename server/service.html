@@ -60,6 +60,7 @@
   </div>
   <p class="sub">Every generator is serviced every <b id="intvlLabel">350</b> running hours. Enter the current hours after a service — the next service is worked out for you. See the <a href="/schedule" class="link">schedule</a>, <a href="/spares" class="link">spares</a>, <a href="/fleet" class="link">map</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
 
+  <div id="dueAlarm" style="margin:0 0 16px;display:none;"></div>
   <div class="tabs">
     <div class="tab active" id="tabLog">➕ Log a service</div>
     <div class="tab" id="tabStatus">📋 All generators</div>
@@ -136,9 +137,9 @@
       <table>
         <thead><tr>
           <th>Generator</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
-          <th>Est. date</th><th class="n">Usage</th><th>Serviced</th><th>By</th>
+          <th>Est. date</th><th class="n">Usage</th><th>Serviced</th><th>By</th><th></th>
         </tr></thead>
-        <tbody id="statusBody"><tr><td colspan="7" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+        <tbody id="statusBody"><tr><td colspan="8" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
       </table>
     </div>
     <div style="margin-top:10px;"><a href="#" class="link" id="refresh">↻ Refresh</a></div>
@@ -283,6 +284,7 @@
       $('result').style.display='block';
       $('hours').value=''; $('notes').value=''; $('oil').checked=$('oilFilter').checked=$('fuelFilter').checked=$('airFilter').checked=false;
       photoData=null; if($('photoWrap'))$('photoWrap').style.display='none'; if($('photo'))$('photo').value=''; if($('ocrMsg'))$('ocrMsg').textContent='';
+      loadStatus();
     }catch(e){ $('err').textContent=e.message||'Could not save'; }
     finally{ $('submit').disabled=false; $('submit').textContent='Save service & show next service'; }
   });
@@ -294,11 +296,59 @@
       if(r.status===401){ showLogin(); return; }
       var d=await r.json();
       var gens=d.generators||[];
+      lastGens=gens;
+      renderAlarm(gens);
       $('statusBody').innerHTML = gens.length ? gens.map(function(g){
-        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.nextServiceDate||'-')+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td></tr>';
-      }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
+        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.nextServiceDate||'-')+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
+          +'<td style="white-space:nowrap;"><button data-edit="'+g.dg+'" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;">Edit</button> <button data-del="'+g.dg+'" style="background:transparent;color:#e0644a;border:1px solid #5a2a22;border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;">Delete</button></td></tr>';
+      }).join('') : '<tr><td colspan="8" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
       $('statusBody').querySelectorAll('a.photo-link').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); viewPhoto(a.getAttribute('data-dg')); }); });
-    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="5" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+      $('statusBody').querySelectorAll('button[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ editEntry(b.getAttribute('data-edit')); }); });
+      $('statusBody').querySelectorAll('button[data-del]').forEach(function(b){ b.addEventListener('click',function(){ deleteEntry(b.getAttribute('data-del')); }); });
+    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="8" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+
+  var lastGens=[];
+  function renderAlarm(gens){
+    var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
+    var due=gens.map(function(g){
+      if(!g.nextServiceDate) return null;
+      var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
+      return (days<=7) ? {g:g, days:days} : null;
+    }).filter(Boolean).sort(function(a,b){ return a.days-b.days; });
+    var box=$('dueAlarm');
+    if(!due.length){ box.innerHTML=''; box.style.display='none'; return; }
+    box.style.display='block';
+    var overdueCount=due.filter(function(x){ return x.days<0; }).length;
+    var rows=due.map(function(x){
+      var overdue=x.days<0, col=overdue?'#e0644a':'#e8c168';
+      var when=overdue?('OVERDUE by '+Math.abs(x.days)+'d'):(x.days===0?'DUE TODAY':('in '+x.days+'d'));
+      return '<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid rgba(255,255,255,0.07);">'
+        +'<span><b class="dg">'+esc(x.g.dg)+'</b> <span class="muted" style="font-size:12px;">next @ '+x.g.nextService+'h &middot; '+(x.g.nextServiceDate||'')+'</span></span>'
+        +'<b style="color:'+col+';font-size:12.5px;white-space:nowrap;">'+when+'</b></div>';
+    }).join('');
+    box.innerHTML='<div style="background:#2e1c1a;border:1px solid #5a2a22;border-radius:12px;padding:14px 16px;">'
+      +'<div style="font-weight:800;color:#e0644a;margin-bottom:2px;">🔔 Service reminder — '+due.length+' due soon'+(overdueCount?(' ('+overdueCount+' overdue)'):'')+'</div>'+rows+'</div>';
+  }
+
+  function editEntry(dg){
+    var g=lastGens.find(function(x){ return x.dg===dg; });
+    if(!g) return;
+    $('dg').value=g.dg; $('hours').value=g.hours; $('interval').value=g.interval||350;
+    $('date').value=g.date||new Date().toISOString().slice(0,10);
+    $('dailyHours').value=g.dailyHours?String(g.dailyHours):'';
+    $('technician').value=g.technician||''; $('notes').value=g.notes||'';
+    var c=g.checks||{}; $('oil').checked=!!c.oil; $('oilFilter').checked=!!c.oilFilter; $('fuelFilter').checked=!!c.fuelFilter; $('airFilter').checked=!!c.airFilter;
+    $('tabLog').click();
+    window.scrollTo(0,0);
+  }
+  async function deleteEntry(dg){
+    if(!window.confirm('Delete the service record for '+dg+'?')) return;
+    try{
+      var r=await fetch('/api/service/remove',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({dg:dg})});
+      if(r.status===401){ showLogin(); return; }
+      loadStatus();
+    }catch(e){}
   }
   $('refresh').addEventListener('click',function(e){ e.preventDefault(); loadStatus(); });
 
