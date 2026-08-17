@@ -755,6 +755,19 @@ function renderTable(){
            <div class="hbar-label">${hi.overdue?'⚠ +'+Math.abs(hi.remaining)+'h over':hi.estRun+'h / 350h ('+hi.pct+'%)'}</div>
          </div>`
       : '<span class="na">no data</span>';
+    // Prefer the technician's service-log entry (next-service date + hours) over
+    // the old static "next_service" value; fall back to the static one.
+    const _svc = (window.SERVICE_BY_DG||{})[r.dg];
+    let nextCls, nextCell;
+    if(_svc){
+      const _u = (typeof serviceUrgency==='function') ? serviceUrgency(r.dg) : null;
+      nextCls = (_u && (_u.level==='overdue'||_u.level==='soon')) ? 'svc-soon' : '';
+      const _dleft = _u ? (_u.days<0 ? ' (overdue '+Math.abs(_u.days)+'d)' : ' ('+_u.days+'d)') : '';
+      nextCell = (_svc.nextServiceDate||'—')+' · '+_svc.nextService+'h'+_dleft;
+    } else {
+      nextCls = (r.days_until!==null && r.days_until<=7) ? 'svc-soon' : '';
+      nextCell = (r.next_service||'—')+((r.days_until!==null && r.days_until<=7)?' ('+r.days_until+'d)':'');
+    }
     return `<tr class="${r.status==='Off-Fleet'?'offfleet-row':''}">
       <td class="dg">${r.dg}</td><td class="kva">${r.kva||'—'}</td>
       <td>${r.brand||'-'}</td>
@@ -765,7 +778,7 @@ function renderTable(){
       <td class="loc">${r.technician||'-'}</td>
       <td>${(!r.rate_type||r.rate_type==='N/A')?'<span class="na">—</span>':r.rate_type}</td>
       <td class="rate">${rateDisp}</td>
-      <td class="${svcCls}">${r.next_service||'—'}${(r.days_until!==null && r.days_until<=7)?' ('+r.days_until+'d)':''}</td>
+      <td class="${nextCls}">${nextCell}</td>
       <td>${hoursCell}</td>
       <td>${r.maps_link?`<a href="${r.maps_link}" target="_blank" style="color:var(--blue);">📍 exact</a>`:'<span class="na">approx</span>'}</td>
       <td class="rowbtns"><button class="btn small secondary" onclick="openEdit(${idx})">Edit</button></td>
@@ -1325,6 +1338,7 @@ refreshAll();
       (d.generators||[]).forEach(function(g){ map[g.dg]=g; });
       window.SERVICE_BY_DG=map;
       if(typeof rebuildMap==='function') rebuildMap();
+      if(typeof renderTable==='function') renderTable();
       updateServiceAlert(d.generators||[]);
     }catch(e){}
   }
