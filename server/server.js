@@ -26,6 +26,18 @@ const DATA_DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 
 const ATTACH_DIR = path.join(DATA_DIR, 'attachments');
 try { fs.mkdirSync(ATTACH_DIR, { recursive: true }); } catch (e) { /* created on first write */ }
 
+// One-time import of historical generator services from the Energy service
+// report. Runs at most once per persistent disk (guarded by a marker file in
+// service.js), so it's safe to leave wired in across deploys and restarts.
+try {
+  const seedPath = path.join(__dirname, 'seed', 'energy-service.json');
+  if (fs.existsSync(seedPath)) {
+    const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+    const r = serviceLog.applySeed(seed, 'energy-report-2026-08');
+    if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
+  }
+} catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 // JWT signing secret. It MUST come from the environment - the old hardcoded

@@ -128,4 +128,31 @@ function remove(dg) {
   return false;
 }
 
-module.exports = { logService, getAll, getPhoto, remove, DEFAULT_INTERVAL };
+// One-time bulk import of historical service records (e.g. from an existing
+// service report). Records are replayed in the order given through logService,
+// so running-rate detection, next-service hours and next-service dates are all
+// computed exactly as if a technician had entered each one by hand. Guarded by a
+// marker file on the persistent disk keyed by `version`, so it imports at most
+// once and is safe to leave wired into startup across deploys and restarts.
+function applySeed(records, version) {
+  if (!Array.isArray(records) || !version) return { skipped: true };
+  const marker = path.join(DIR, 'service-seed.json');
+  let applied = {};
+  try {
+    if (fs.existsSync(marker)) applied = JSON.parse(fs.readFileSync(marker, 'utf8')) || {};
+  } catch (_) { applied = {}; }
+  if (applied[version]) return { skipped: true, version };
+
+  let n = 0;
+  for (const r of records) {
+    try { logService(r); n += 1; } catch (_) { /* skip an unparseable row */ }
+  }
+  applied[version] = { at: new Date().toISOString(), count: n };
+  try {
+    if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
+    fs.writeFileSync(marker, JSON.stringify(applied, null, 2));
+  } catch (_) { /* best-effort */ }
+  return { applied: n, version };
+}
+
+module.exports = { logService, getAll, getPhoto, remove, applySeed, DEFAULT_INTERVAL };
