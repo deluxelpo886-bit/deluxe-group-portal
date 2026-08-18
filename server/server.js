@@ -18,6 +18,7 @@ const positions = require('./positions');
 const serviceLog = require('./service');
 const schedule = require('./schedule');
 const spares = require('./spares');
+const sites = require('./sites');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -566,6 +567,40 @@ app.get('/spares', (req, res) => {
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'spares.html'));
+});
+
+// ---------- Customer site profiles ----------
+// Where each customer site is (map pin), how harsh it is (dust -> normal vs
+// premium rate), gate-pass access notes, generators deployed, and a
+// post-delivery review. Reuses the same fleet login. See server/sites.js.
+app.get('/api/sites', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ sites: sites.getAll(), dustLevels: sites.DUST_LEVELS, rates: sites.RATES });
+});
+app.post('/api/sites/save', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, site: sites.save(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/sites/remove', fleetProtect, (req, res) => {
+  sites.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+app.get('/api/sites/photo', fleetProtect, (req, res) => {
+  const photo = sites.getPhoto(req.query.id);
+  if (!photo) return res.status(404).json({ error: 'No photo' });
+  res.set('Cache-Control', 'no-store');
+  res.json({ photo });
+});
+// The site-profiles page. It embeds the same local Leaflet map (vendored,
+// same-origin) with our tile proxy so the office can drop/see a site pin.
+app.get('/sites', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; "
+      + "worker-src 'self' blob:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'sites.html'));
 });
 
 // Operations menu (a simple home page linking to all the tools).

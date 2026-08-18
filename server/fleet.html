@@ -165,7 +165,7 @@
 </head>
 <body>
 <div class="wrap">
-  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a></nav>
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a></nav>
   <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
     <div class="eyebrow">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy — Machinery Operations</div>
   <h1>Fleet Master &amp; Live Dispatch <span id="liveBadge" style="font-size:11px; padding:4px 10px; border-radius:20px; background:#2e2410; color:#e8c168; vertical-align:middle;">● vehicle GPS not connected yet</span></h1>
@@ -1330,6 +1330,7 @@ refreshAll();
 
   let pollTimer=null;
   var svcTimer=null;
+  var siteTimer=null;
   async function loadServiceInfo(){
     try{
       var r=await fetch('/api/service/status',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}});
@@ -1341,6 +1342,38 @@ refreshAll();
       if(typeof rebuildMap==='function') rebuildMap();
       if(typeof renderTable==='function') renderTable();
       updateServiceAlert(d.generators||[]);
+    }catch(e){}
+  }
+  // ---- Customer site pins (from /api/sites) ----
+  var siteLayer=null;
+  function siteIcon(s){
+    var color = s.dust==='High' ? '#e0644a' : (s.dust==='Medium' ? '#e8c168' : '#4caf7d');
+    var lock = s.gatePass ? '<div style="position:absolute;top:-9px;right:-9px;font-size:12px;">🔒</div>' : '';
+    return L.divIcon({className:'', iconSize:[26,26], iconAnchor:[13,13], html:
+      '<div style="position:relative;width:26px;height:26px;">'
+      +'<div style="width:26px;height:26px;border-radius:50%;background:'+color+';border:2px solid #14181c;box-shadow:0 0 0 2px '+color+'66;display:flex;align-items:center;justify-content:center;font-size:13px;">🏭</div>'
+      +lock+'</div>'});
+  }
+  async function loadSites(){
+    try{
+      var r=await fetch('/api/sites',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}});
+      if(!r.ok) return;
+      var d=await r.json();
+      if(!siteLayer) siteLayer=L.layerGroup().addTo(map);
+      siteLayer.clearLayers();
+      var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+      (d.sites||[]).forEach(function(s){
+        if(s.lat==null||s.lng==null) return;
+        var pop='<div style="font-family:Inter,-apple-system,Segoe UI,sans-serif;min-width:180px;">'
+          +'<div style="font-weight:700;margin-bottom:4px;">🏭 '+esc(s.company)+'</div>'
+          +'<div style="font-size:12px;margin-bottom:3px;">'+esc(s.dust)+' dust &middot; '+esc(s.rate)+' rate'+(s.gatePass?' &middot; 🔒 gate pass':'')+'</div>'
+          +(s.generators?'<div style="font-size:12px;color:#8b95a1;">Gensets: '+esc(s.generators)+'</div>':'')
+          +(s.gatePassNotes?'<div style="font-size:12px;color:#8b95a1;margin-top:3px;">🔒 '+esc(s.gatePassNotes)+'</div>':'')
+          +(s.phone?'<div style="font-size:12px;margin-top:3px;">📞 <a href="tel:'+esc(s.phone)+'">'+esc(s.phone)+'</a></div>':'')
+          +'<div style="margin-top:6px;"><a href="https://www.google.com/maps?q='+s.lat+','+s.lng+'" target="_blank" rel="noopener" style="color:#5b9bd5;">Navigate ▸</a> &middot; <a href="/sites" style="color:#5b9bd5;">Edit</a></div>'
+          +'</div>';
+        L.marker([s.lat,s.lng],{icon:siteIcon(s)}).addTo(siteLayer).bindPopup(pop);
+      });
     }catch(e){}
   }
   var svcAlertBar=null;
@@ -1368,8 +1401,10 @@ refreshAll();
     setBadge('connecting to Total Secure…','wait');
     poll();
     loadServiceInfo();
+    loadSites();
     if(!pollTimer) pollTimer=setInterval(poll,30000);
     if(!svcTimer) svcTimer=setInterval(loadServiceInfo, 5*60*1000);
+    if(!siteTimer) siteTimer=setInterval(loadSites, 5*60*1000);
   }
   // keep the "Ns ago" label ticking between polls
   setInterval(function(){
