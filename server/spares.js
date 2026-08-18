@@ -10,7 +10,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const DIR = path.join(__dirname, '..', 'data');
+// Store next to the database so the data lives on the same persistent disk
+// (a plain app-folder path is wiped on every Render deploy).
+const DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 'data', 'deluxe.db'));
 const FILE = path.join(DIR, 'spares.json');
 const STATUSES = ['Needed', 'Ordered', 'Received', 'Fitted'];
 
