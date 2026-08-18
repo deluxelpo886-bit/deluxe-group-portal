@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Customer Sites</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<link rel="stylesheet" href="/vendor/leaflet.css">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168; --purple:#a78bda;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text],input[type=tel],input[type=number],textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  textarea{min-height:56px;resize:vertical;}
+  input:focus,textarea:focus,select:focus{border-color:var(--amber);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:130px;}
+  .field{margin-bottom:12px;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:11px 16px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);padding:8px 12px;font-size:13px;}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  .ok{color:var(--green);font-size:13px;min-height:18px;}
+  #map{height:230px;border-radius:10px;border:1px solid var(--line);margin-top:6px;}
+  .check{display:flex;align-items:center;gap:9px;cursor:pointer;}
+  .check input{width:19px;height:19px;}
+  .check label{margin:0;text-transform:none;letter-spacing:0;font-size:13.5px;color:var(--text);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  .muted{color:var(--muted);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+  .d-Low{background:var(--green-bg);color:var(--green);}
+  .d-Medium{background:#2e2410;color:var(--gold);}
+  .d-High{background:#3a1414;color:#ff8a75;}
+  .r-Normal{background:#16233a;color:var(--blue);}
+  .r-Premium{background:#2b2140;color:var(--purple);}
+  .gate{background:#3a1414;color:#ff8a75;}
+  .link{color:var(--blue);text-decoration:none;}
+  .stars{color:var(--gold);letter-spacing:1px;}
+  .acts{display:flex;gap:6px;}
+  .acts button{border:none;background:transparent;cursor:pointer;font-size:14px;padding:3px 6px;border-radius:6px;}
+  .acts .edit{color:var(--blue);}
+  .acts .del{color:var(--red);}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:4px;}
+  #photoView{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;z-index:1100;}
+  #photoView img{max-width:100%;max-height:90vh;border-radius:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">📋 Sites</a></nav>
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>Customer Sites</h1>
+    </div>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+  <p class="sub">Record what each customer site is like — where it is, how dusty/harsh it is (which sets normal vs premium rate), gate-pass access, generators on site, and a review after delivery. See also the <a href="/fleet" class="link">live map</a>, <a href="/service" class="link">service log</a>, or the <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong id="formTitle" style="font-size:15px;">Add a site</strong>
+      <button class="btn ghost" id="cancelEdit" style="display:none;">Cancel edit</button>
+    </div>
+    <input type="hidden" id="id">
+    <div class="row">
+      <div class="field" style="flex:2;"><label>Company / site name *</label><input type="text" id="company" placeholder="e.g. Six Sigma — Musaffah yard" autocomplete="off"></div>
+      <div class="field"><label>Contact person</label><input type="text" id="contact" placeholder="e.g. Mr. Rashid" autocomplete="off"></div>
+      <div class="field"><label>Phone</label><input type="tel" id="phone" placeholder="05x xxx xxxx" autocomplete="off"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Dust / harshness</label><select id="dust"><option>Low</option><option>Medium</option><option>High</option></select></div>
+      <div class="field"><label>Rate</label><select id="rate"><option>Normal</option><option>Premium</option></select></div>
+      <div class="field" style="flex:2;"><label>Generators on site (DG numbers)</label><input type="text" id="generators" placeholder="e.g. DG-537, DG-819" autocomplete="off"></div>
+    </div>
+    <div class="field">
+      <div class="check"><input type="checkbox" id="gatePass"><label for="gatePass">🔒 Gate pass required to enter</label></div>
+    </div>
+    <div class="field" id="gatePassWrap" style="display:none;"><label>Gate-pass details (who to call, documents, validity)</label><textarea id="gatePassNotes" placeholder="e.g. Call security 02-xxxx a day before. Need Emirates ID copy + vehicle plate. Pass valid 1 day."></textarea></div>
+    <div class="field"><label>Site / access notes</label><textarea id="access" placeholder="e.g. Rough sandy road, last 2km off-road. Genset sits behind main warehouse."></textarea></div>
+
+    <div class="field">
+      <label>Location — tap the map to drop a pin, or paste a Google Maps link / GPS below</label>
+      <div class="row" style="margin-bottom:8px;">
+        <div style="flex:3;"><input type="text" id="pasteLoc" placeholder="Paste Google Maps link or  24.4539, 54.3773"></div>
+        <div style="flex:0;"><button class="btn sec" id="applyLoc" type="button">Set</button></div>
+        <div style="flex:0;"><button class="btn ghost" id="clearLoc" type="button">Clear pin</button></div>
+      </div>
+      <div id="map"></div>
+      <div class="hint" id="coords">No location set yet.</div>
+    </div>
+
+    <div class="row">
+      <div class="field"><label>Review after delivery</label>
+        <select id="rating">
+          <option value="0">Not reviewed yet</option>
+          <option value="5">★★★★★ Excellent site</option>
+          <option value="4">★★★★ Good</option>
+          <option value="3">★★★ OK</option>
+          <option value="2">★★ Difficult</option>
+          <option value="1">★ Avoid / very hard</option>
+        </select>
+      </div>
+      <div class="field" style="flex:2;"><label>Review notes</label><input type="text" id="reviewNotes" placeholder="e.g. Paid on time, easy access, would serve again"></div>
+    </div>
+    <div class="field">
+      <label>Site photo (optional)</label>
+      <input type="file" id="photo" accept="image/*" capture="environment">
+      <div class="hint" id="photoHint"></div>
+    </div>
+
+    <button class="btn" id="save">Save site</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="panel">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Company / site</th><th>Condition</th><th>Access</th><th>Generators</th><th>Review</th><th></th></tr></thead>
+        <tbody id="body"><tr><td colspan="6" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Sites — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to view and edit customer sites.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<div id="photoView"><img id="photoViewImg" src="" alt="Site photo"></div>
+
+<script src="/vendor/leaflet.js"></script>
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  var map=null, marker=null, curLat=null, curLng=null, curPhoto=null, photoTouched=false;
+  var AUH=[24.4539,54.3773]; // Abu Dhabi
+
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; ensureMap(); load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  // ---- Map ----
+  function ensureMap(){
+    if(map) { setTimeout(function(){ map.invalidateSize(); },50); return; }
+    map=L.map('map',{zoomControl:true}).setView(AUH,10);
+    L.tileLayer('/tiles/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    map.on('click',function(e){ setPin(e.latlng.lat,e.latlng.lng,true); });
+    setTimeout(function(){ map.invalidateSize(); },80);
+  }
+  function setPin(lat,lng,pan){
+    curLat=lat; curLng=lng;
+    if(!marker){ marker=L.marker([lat,lng],{draggable:true}).addTo(map);
+      marker.on('dragend',function(){ var p=marker.getLatLng(); curLat=p.lat; curLng=p.lng; showCoords(); }); }
+    else marker.setLatLng([lat,lng]);
+    if(pan) map.setView([lat,lng], Math.max(map.getZoom(),13));
+    showCoords();
+  }
+  function clearPin(){ curLat=null; curLng=null; if(marker){ map.removeLayer(marker); marker=null; } showCoords(); }
+  function showCoords(){
+    if(curLat==null){ $('coords').textContent='No location set yet.'; return; }
+    $('coords').innerHTML='📍 '+curLat.toFixed(5)+', '+curLng.toFixed(5)
+      +' &nbsp;·&nbsp; <a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+curLat+','+curLng+'">Open in Google Maps</a>';
+  }
+  // Pull lat,lng out of a Google Maps link or a plain "lat, lng" string.
+  function parseLoc(s){
+    s=String(s||'').trim(); if(!s) return null;
+    var m=s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);              // .../@24.45,54.37,...
+    if(!m) m=s.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);      // ...?q=24.45,54.37
+    if(!m) m=s.match(/[?&](?:ll|destination)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(!m) m=s.match(/^\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)\s*$/); // plain "lat, lng"
+    if(!m) return null;
+    return [parseFloat(m[1]),parseFloat(m[2])];
+  }
+  $('applyLoc').addEventListener('click',function(){
+    var ll=parseLoc($('pasteLoc').value);
+    if(!ll){ $('err').textContent='Could not read a location from that. Paste a Google Maps link or "lat, lng".'; return; }
+    $('err').textContent=''; ensureMap(); setPin(ll[0],ll[1],true); $('pasteLoc').value='';
+  });
+  $('clearLoc').addEventListener('click',function(){ ensureMap(); clearPin(); });
+  $('gatePass').addEventListener('change',function(){ $('gatePassWrap').style.display=this.checked?'':'none'; });
+
+  // ---- Photo (resize to small JPEG) ----
+  $('photo').addEventListener('change',function(){
+    var f=this.files&&this.files[0]; if(!f){ return; }
+    photoTouched=true;
+    var img=new Image(), url=URL.createObjectURL(f);
+    img.onload=function(){
+      var max=1000, w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>max){ w=Math.round(w*max/h); h=max; }
+      var c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      curPhoto=c.toDataURL('image/jpeg',0.7); URL.revokeObjectURL(url);
+      $('photoHint').textContent='Photo ready ('+Math.round(curPhoto.length/1024)+' KB).';
+    };
+    img.onerror=function(){ $('photoHint').textContent='Could not read that image.'; };
+    img.src=url;
+  });
+
+  // ---- Form <-> data ----
+  function resetForm(){
+    $('id').value=''; $('company').value=''; $('contact').value=''; $('phone').value='';
+    $('dust').value='Low'; $('rate').value='Normal'; $('generators').value='';
+    $('gatePass').checked=false; $('gatePassWrap').style.display='none'; $('gatePassNotes').value='';
+    $('access').value=''; $('rating').value='0'; $('reviewNotes').value='';
+    $('photo').value=''; $('photoHint').textContent=''; curPhoto=null; photoTouched=false;
+    $('formTitle').textContent='Add a site'; $('cancelEdit').style.display='none';
+    ensureMap(); clearPin();
+  }
+  $('cancelEdit').addEventListener('click',resetForm);
+
+  function editSite(s){
+    $('id').value=s.id; $('company').value=s.company||''; $('contact').value=s.contact||''; $('phone').value=s.phone||'';
+    $('dust').value=s.dust||'Low'; $('rate').value=s.rate||'Normal'; $('generators').value=s.generators||'';
+    $('gatePass').checked=!!s.gatePass; $('gatePassWrap').style.display=s.gatePass?'':'none'; $('gatePassNotes').value=s.gatePassNotes||'';
+    $('access').value=s.access||''; $('rating').value=String(s.rating||0); $('reviewNotes').value=s.reviewNotes||'';
+    $('photo').value=''; curPhoto=null; photoTouched=false;
+    $('photoHint').textContent=s.hasPhoto?'A photo is saved. Choose a new one only if you want to replace it.':'';
+    $('formTitle').textContent='Edit site'; $('cancelEdit').style.display='';
+    ensureMap();
+    if(s.lat!=null && s.lng!=null) setPin(s.lat,s.lng,true); else clearPin();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  async function viewPhoto(id){
+    var r=await fetch('/api/sites/photo?id='+encodeURIComponent(id),{headers:authHeaders()});
+    if(!r.ok) return;
+    var d=await r.json(); $('photoViewImg').src=d.photo; $('photoView').style.display='flex';
+  }
+  $('photoView').addEventListener('click',function(){ this.style.display='none'; $('photoViewImg').src=''; });
+
+  function stars(n){ n=n||0; return n? '<span class="stars">'+'★'.repeat(n)+'</span>' : '<span class="muted">—</span>'; }
+
+  function render(list){
+    $('body').innerHTML = list.length ? list.map(function(s){
+      var loc = (s.lat!=null&&s.lng!=null)
+        ? '<a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+s.lat+','+s.lng+'">📍 Map</a>'
+        : '<span class="muted">No pin</span>';
+      var gate = s.gatePass ? '<span class="badge gate">🔒 Gate pass</span>' : '<span class="muted">Open access</span>';
+      var photo = s.hasPhoto ? ' · <a class="link" href="#" data-photo="'+esc(s.id)+'">📷</a>' : '';
+      var phone = s.phone ? '<div class="muted" style="font-size:12px;">'+esc(s.contact?esc(s.contact)+' · ':'')+'<a class="link" href="tel:'+esc(s.phone)+'">'+esc(s.phone)+'</a></div>' : (s.contact?'<div class="muted" style="font-size:12px;">'+esc(s.contact)+'</div>':'');
+      return '<tr>'
+        +'<td><strong>'+esc(s.company)+'</strong>'+phone+'<div style="margin-top:3px;">'+loc+photo+'</div></td>'
+        +'<td><span class="badge d-'+esc(s.dust)+'">'+esc(s.dust)+' dust</span><br><span class="badge r-'+esc(s.rate)+'" style="margin-top:4px;">'+esc(s.rate)+' rate</span></td>'
+        +'<td>'+gate+(s.gatePassNotes?'<div class="muted" style="font-size:12px;margin-top:3px;">'+esc(s.gatePassNotes)+'</div>':'')+(s.access?'<div class="muted" style="font-size:12px;margin-top:3px;">'+esc(s.access)+'</div>':'')+'</td>'
+        +'<td class="muted">'+(s.generators?esc(s.generators):'—')+'</td>'
+        +'<td>'+stars(s.rating)+(s.reviewNotes?'<div class="muted" style="font-size:12px;">'+esc(s.reviewNotes)+'</div>':'')+'</td>'
+        +'<td><div class="acts"><button class="edit" data-edit="'+esc(s.id)+'" title="Edit">✎</button><button class="del" data-del="'+esc(s.id)+'" title="Delete">✕</button></div></td>'
+        +'</tr>';
+    }).join('') : '<tr><td colspan="6" class="muted" style="padding:14px;">No sites yet. Add your first one above.</td></tr>';
+
+    window.__SITES={}; list.forEach(function(s){ window.__SITES[s.id]=s; });
+    $('body').querySelectorAll('[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ editSite(window.__SITES[b.getAttribute('data-edit')]); }); });
+    $('body').querySelectorAll('[data-del]').forEach(function(b){ b.addEventListener('click',function(){
+      if(confirm('Delete this site?')) post('/api/sites/remove',{id:b.getAttribute('data-del')}).then(load); }); });
+    $('body').querySelectorAll('[data-photo]').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); viewPhoto(a.getAttribute('data-photo')); }); });
+  }
+
+  async function post(url,body){
+    try{
+      var r=await fetch(url,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)});
+      if(r.status===401){ showLogin('Please sign in again.'); return null; }
+      return await r.json().catch(function(){return{};});
+    }catch(e){ return null; }
+  }
+  async function load(){
+    try{
+      var r=await fetch('/api/sites',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json(); render(d.sites||[]);
+    }catch(e){ $('body').innerHTML='<tr><td colspan="6" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+
+  $('save').addEventListener('click',async function(){
+    $('err').textContent='';
+    if(!$('company').value.trim()){ $('err').textContent='Company / site name is required'; return; }
+    var payload={
+      id:$('id').value||undefined,
+      company:$('company').value, contact:$('contact').value, phone:$('phone').value,
+      dust:$('dust').value, rate:$('rate').value, generators:$('generators').value,
+      gatePass:$('gatePass').checked, gatePassNotes:$('gatePassNotes').value, access:$('access').value,
+      rating:$('rating').value, reviewNotes:$('reviewNotes').value,
+      lat:curLat, lng:curLng
+    };
+    if(photoTouched && curPhoto) payload.photo=curPhoto;
+    $('save').disabled=true;
+    var d=await post('/api/sites/save',payload);
+    $('save').disabled=false;
+    if(d && d.error){ $('err').textContent=d.error; return; }
+    if(d && d.ok){ resetForm(); load(); }
+  });
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
