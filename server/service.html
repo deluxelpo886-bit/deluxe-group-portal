@@ -137,10 +137,10 @@
     <div style="overflow-x:auto;">
       <table>
         <thead><tr>
-          <th>Generator</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
+          <th>Generator</th><th>Status</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
           <th>Est. date</th><th class="n">Usage</th><th>Serviced</th><th>By</th><th></th>
         </tr></thead>
-        <tbody id="statusBody"><tr><td colspan="8" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+        <tbody id="statusBody"><tr><td colspan="9" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
       </table>
     </div>
     <div style="margin-top:10px;"><a href="#" class="link" id="refresh">↻ Refresh</a></div>
@@ -300,19 +300,37 @@
       lastGens=gens;
       renderAlarm(gens);
       $('statusBody').innerHTML = gens.length ? gens.map(function(g){
-        return '<tr><td class="dg">'+g.dg+'</td><td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(g.nextServiceDate||'-')+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
+        var off=!!g.offHire;
+        var statusCell = off
+          ? '<span style="display:inline-block;background:#2b2f33;color:#b4bcc4;border:1px solid #3a4148;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;">⚪ OFF-HIRE</span>'
+          : '<span style="display:inline-block;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;">🟢 ON HIRE</span>';
+        var toggleLbl = off ? 'Set On-hire' : 'Set Off-hire';
+        var rowStyle = off ? ' style="opacity:.55;"' : '';
+        return '<tr'+rowStyle+'><td class="dg">'+g.dg+'</td>'
+          +'<td style="white-space:nowrap;">'+statusCell+'<br><button data-hire="'+g.dg+'" data-off="'+(off?'0':'1')+'" style="margin-top:5px;background:transparent;color:#8b95a1;border:1px solid #2c333a;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">'+toggleLbl+'</button></td>'
+          +'<td class="n">'+g.hours+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(off?'—':(g.nextServiceDate||'-'))+'</td><td class="n">'+(g.effectiveDailyHours||'-')+' h/d</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
           +'<td style="white-space:nowrap;"><button data-edit="'+g.dg+'" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;">Edit</button> <button data-del="'+g.dg+'" style="background:transparent;color:#e0644a;border:1px solid #5a2a22;border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;">Delete</button></td></tr>';
-      }).join('') : '<tr><td colspan="8" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
+      }).join('') : '<tr><td colspan="9" class="muted" style="padding:14px;">No services logged yet.</td></tr>';
       $('statusBody').querySelectorAll('a.photo-link').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); viewPhoto(a.getAttribute('data-dg')); }); });
       $('statusBody').querySelectorAll('button[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ editEntry(b.getAttribute('data-edit')); }); });
       $('statusBody').querySelectorAll('button[data-del]').forEach(function(b){ b.addEventListener('click',function(){ deleteEntry(b.getAttribute('data-del')); }); });
-    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="8" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+      $('statusBody').querySelectorAll('button[data-hire]').forEach(function(b){ b.addEventListener('click',function(){ setHire(b.getAttribute('data-hire'), b.getAttribute('data-off')==='1'); }); });
+    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="9" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+
+  async function setHire(dg, off){
+    try{
+      var r=await fetch('/api/hire/set',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({dg:dg,offHire:off})});
+      if(r.status===401){ showLogin(); return; }
+      loadStatus();
+    }catch(e){}
   }
 
   var lastGens=[];
   function renderAlarm(gens){
     var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
     var due=gens.map(function(g){
+      if(g.offHire) return null;           // off-hire units don't raise service alarms
       if(!g.nextServiceDate) return null;
       var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
       return (days<=7) ? {g:g, days:days} : null;

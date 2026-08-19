@@ -19,6 +19,7 @@ const serviceLog = require('./service');
 const schedule = require('./schedule');
 const spares = require('./spares');
 const sites = require('./sites');
+const hire = require('./hire');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -485,7 +486,24 @@ app.post('/api/service/log', fleetProtect, (req, res) => {
 });
 app.get('/api/service/status', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
-  res.json({ generators: serviceLog.getAll() });
+  // Merge each generator's on-hire/off-hire status so the service list and the
+  // live map can mute off-hire units and drop them from the service alarms.
+  const hm = hire.getMap();
+  const generators = serviceLog.getAll().map((g) => {
+    const h = hm[g.dg];
+    if (h) { g.offHire = !!h.offHire; g.hireSince = h.since; g.hireNote = h.note; }
+    return g;
+  });
+  res.json({ generators, hire: hire.getAll() });
+});
+// On-hire / off-hire status for a generator.
+app.post('/api/hire/set', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, entry: hire.setStatus(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.get('/api/hire', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ hire: hire.getAll() });
 });
 app.get('/api/service/photo', fleetProtect, (req, res) => {
   const photo = serviceLog.getPhoto(req.query.dg);

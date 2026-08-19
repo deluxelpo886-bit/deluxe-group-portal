@@ -519,6 +519,7 @@ const ENERGY_LOGO = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAA
 // date: overdue (date passed), soon (within 5 days), or ok.
 function serviceUrgency(dg){
   var svc=(window.SERVICE_BY_DG||{})[dg];
+  if(svc && svc.offHire) return null;   // off-hire units don't raise service urgency
   if(!svc || !svc.nextServiceDate) return null;
   var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
   var days=Math.round((new Date(svc.nextServiceDate+'T00:00:00')-today)/86400000);
@@ -528,14 +529,18 @@ function serviceUrgency(dg){
 }
 function genIcon(r){
   const logo = r.company==='Energy' ? ENERGY_LOGO : HEAVY_LOGO;
-  const ring = statusColor(r.status);
+  const svc0 = (window.SERVICE_BY_DG||{})[r.dg];
+  const isOff = !!(svc0 && svc0.offHire);
+  const ring = isOff ? '#6b7280' : statusColor(r.status);
   const u = serviceUrgency(r.dg);
-  const glow = (u && u.level==='overdue') ? '0 0 0 3px #ff3b30, 0 1px 4px rgba(0,0,0,0.5)'
+  const glow = isOff ? '0 1px 4px rgba(0,0,0,0.5)'
+             : (u && u.level==='overdue') ? '0 0 0 3px #ff3b30, 0 1px 4px rgba(0,0,0,0.5)'
              : (u && u.level==='soon') ? '0 0 0 3px #e8c168, 0 1px 4px rgba(0,0,0,0.5)'
              : '0 1px 4px rgba(0,0,0,0.5)';
+  const dim = isOff ? 'filter:grayscale(0.85);opacity:0.55;' : '';
   return L.divIcon({
     className: '',
-    html: `<div style="width:30px;height:30px;border-radius:50%;background:url('${logo}') center/cover no-repeat;border:2.5px solid ${ring};box-shadow:${glow};"></div>`,
+    html: `<div style="width:30px;height:30px;border-radius:50%;background:url('${logo}') center/cover no-repeat;border:2.5px solid ${ring};box-shadow:${glow};${dim}"></div>`,
     iconSize: [30,30],
     iconAnchor: [15,15],
   });
@@ -564,8 +569,10 @@ function rebuildMap(){
       +'</div>';
     const svc = (window.SERVICE_BY_DG||{})[r.dg];
     const su = serviceUrgency(r.dg);
-    const suNote = (su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : '');
-    const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${svc.nextServiceDate?(' (est '+svc.nextServiceDate+')'):''}</span>${suNote}` : '';
+    const isOff = !!(svc && svc.offHire);
+    const offNote = isOff ? `<br><b style="color:#b4bcc4;">⚪ OFF-HIRE${svc.hireSince?(' since '+svc.hireSince):''} — in yard</b>` : '';
+    const suNote = isOff ? '' : ((su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : ''));
+    const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${svc.nextServiceDate?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
     m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}`);
     m.bindTooltip(r.dg, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
     // generator pins are fixed (drag disabled)
@@ -760,7 +767,10 @@ function renderTable(){
     // the old static "next_service" value; fall back to the static one.
     const _svc = (window.SERVICE_BY_DG||{})[r.dg];
     let nextCls, nextCell;
-    if(_svc){
+    if(_svc && _svc.offHire){
+      nextCls = '';
+      nextCell = '<span style="color:#b4bcc4;">⚪ OFF-HIRE</span>';
+    } else if(_svc){
       const _u = (typeof serviceUrgency==='function') ? serviceUrgency(r.dg) : null;
       nextCls = (_u && (_u.level==='overdue'||_u.level==='soon')) ? 'svc-soon' : '';
       const _dleft = _u ? (_u.days<0 ? ' (overdue '+Math.abs(_u.days)+'d)' : ' ('+_u.days+'d)') : '';
@@ -1381,6 +1391,7 @@ refreshAll();
     var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
     var overdue=0, soon=0;
     gens.forEach(function(g){
+      if(g.offHire) return;   // off-hire units are idle in the yard - no service alarm
       if(!g.nextServiceDate) return;
       var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
       if(days<0) overdue++; else if(days<=5) soon++;
