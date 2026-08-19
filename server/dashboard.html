@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Operations Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168; --purple:#a78bda;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:23px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:10px 15px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .link{color:var(--blue);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr);}}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;text-decoration:none;color:var(--text);display:block;transition:border-color .15s, transform .06s;}
+  a.tile:hover{border-color:var(--amber);transform:translateY(-1px);}
+  .tile .big{font-size:30px;font-weight:800;font-family:var(--mono);line-height:1;}
+  .tile .lbl{font-size:12px;color:var(--muted);margin-top:7px;text-transform:uppercase;letter-spacing:.04em;}
+  .tile .sm{font-size:12px;color:var(--muted);margin-top:6px;}
+  .tile.alert{border-color:#5a2a22;background:#241a19;}
+  .tile.alert .big{color:var(--red);}
+  .tile.warn .big{color:var(--gold);}
+  .tile.good .big{color:var(--green);}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:760px){.split{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .panel h2{font-size:14px;margin:0 0 12px;display:flex;justify-content:space-between;align-items:center;}
+  .panel h2 .link{font-size:12px;font-weight:400;}
+  .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .row:last-child{border-bottom:none;}
+  .dg{font-family:var(--mono);font-weight:700;}
+  .muted{color:var(--muted);font-size:12.5px;}
+  .pill{margin-left:auto;font-size:11.5px;font-weight:700;white-space:nowrap;padding:2px 9px;border-radius:20px;}
+  .p-over{background:#3a1414;color:#ff8a75;}
+  .p-soon{background:#2e2410;color:var(--gold);}
+  .empty{color:var(--muted);font-size:13px;padding:8px 0;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  #overlay input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;}
+  .field{margin-bottom:13px;}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a></nav>
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>Operations Dashboard</h1>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <a href="#" class="link" id="refresh">↻ Refresh</a>
+      <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+    </div>
+  </div>
+  <p class="sub" id="asOf">Your whole operation at a glance.</p>
+
+  <div class="grid" id="tiles">
+    <div class="tile"><div class="big">…</div><div class="lbl">Loading</div></div>
+  </div>
+
+  <div class="split">
+    <div class="panel">
+      <h2>🔧 Service due soon <a href="/service" class="link">Open service ▸</a></h2>
+      <div id="dueList"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="panel">
+      <h2>🧰 Spare parts pending <a href="/spares" class="link">Open spares ▸</a></h2>
+      <div id="sparesList"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Dashboard — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to see the operations dashboard.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+  $('refresh').addEventListener('click',function(e){ e.preventDefault(); load(); });
+
+  function daysTo(dateStr){
+    if(!dateStr) return null;
+    var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
+    return Math.round((new Date(dateStr+'T00:00:00')-today)/86400000);
+  }
+
+  function tile(cls,big,lbl,sm,href){
+    var inner='<div class="big">'+big+'</div><div class="lbl">'+lbl+'</div>'+(sm?'<div class="sm">'+sm+'</div>':'');
+    return href ? '<a class="tile '+cls+'" href="'+href+'">'+inner+'</a>' : '<div class="tile '+cls+'">'+inner+'</div>';
+  }
+
+  async function load(){
+    var res=await Promise.all([
+      fetch('/api/service/status',{cache:'no-store',headers:authHeaders()}),
+      fetch('/api/spares',{cache:'no-store',headers:authHeaders()}),
+      fetch('/api/sites',{cache:'no-store',headers:authHeaders()})
+    ]).catch(function(){return null;});
+    if(!res){ return; }
+    if(res.some(function(r){return r.status===401;})){ showLogin(); return; }
+    var svc=await res[0].json().catch(function(){return{};});
+    var spr=await res[1].json().catch(function(){return{};});
+    var sit=await res[2].json().catch(function(){return{};});
+
+    var gens=svc.generators||[];
+    var onHire=gens.filter(function(g){return !g.offHire;});
+    var offHire=gens.filter(function(g){return g.offHire;});
+    var active=onHire;   // service alarms only apply to on-hire units
+
+    var overdue=[], soon=[], month=[];
+    active.forEach(function(g){
+      var d=daysTo(g.nextServiceDate);
+      if(d==null) return;
+      if(d<0) overdue.push({g:g,d:d});
+      else if(d<=7) soon.push({g:g,d:d});
+      else if(d<=30) month.push({g:g,d:d});
+    });
+    var dueSort=function(a,b){return a.d-b.d;};
+    overdue.sort(dueSort); soon.sort(dueSort);
+
+    var items=spr.items||[];
+    var pending=items.filter(function(i){return i.status==='Needed'||i.status==='Ordered';});
+    var sites=sit.sites||[];
+    var gatePass=sites.filter(function(s){return s.gatePass;}).length;
+    var premium=sites.filter(function(s){return s.rate==='Premium';}).length;
+
+    // ---- tiles ----
+    $('tiles').innerHTML=
+       tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', '/service')
+      +tile(overdue.length?'alert':(soon.length?'warn':'good'), overdue.length, 'Service overdue', soon.length+' due within 7 days', '/service')
+      +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', '/schedule')
+      +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', '/spares')
+      +tile('', sites.length, 'Customer sites', gatePass+' 🔒 gate pass · '+premium+' premium', '/sites')
+      +tile('', offHire.length, 'Off-hire (in yard)', 'idle units', '/service')
+      +tile('good', onHire.length, 'On hire', 'generators earning', '/service')
+      +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', '/fleet');
+
+    // ---- due list (overdue then soon) ----
+    var due=overdue.concat(soon).slice(0,8);
+    $('dueList').innerHTML = due.length ? due.map(function(x){
+      var over=x.d<0;
+      var when=over?('OVERDUE '+Math.abs(x.d)+'d'):(x.d===0?'DUE TODAY':('in '+x.d+'d'));
+      return '<div class="row"><span class="dg">'+esc(x.g.dg)+'</span>'
+        +'<span class="muted">next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):'')+'</span>'
+        +'<span class="pill '+(over?'p-over':'p-soon')+'">'+when+'</span></div>';
+    }).join('') : '<div class="empty">Nothing due in the next 7 days. 👍</div>';
+
+    // ---- spares pending ----
+    $('sparesList').innerHTML = pending.length ? pending.slice(0,8).map(function(i){
+      return '<div class="row"><span class="dg">'+esc(i.dg)+'</span>'
+        +'<span class="muted">'+esc(i.part)+(i.qty>1?(' ×'+i.qty):'')+'</span>'
+        +'<span class="pill '+(i.status==='Needed'?'p-over':'p-soon')+'">'+esc(i.status)+'</span></div>';
+    }).join('') : '<div class="empty">No spare parts pending. 👍</div>';
+
+    $('asOf').textContent='Your whole operation at a glance · updated '+new Date().toLocaleString();
+  }
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>

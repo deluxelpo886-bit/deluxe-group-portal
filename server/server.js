@@ -621,6 +621,17 @@ app.get('/sites', (req, res) => {
   res.sendFile(path.join(__dirname, 'sites.html'));
 });
 
+// Operations dashboard: at-a-glance counts (fleet, service due, spares, sites)
+// pulled from the existing APIs. Same fleet login as the other tools.
+app.get('/dashboard', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
 // Operations menu (a simple home page linking to all the tools).
 app.get(['/menu', '/home'], (req, res) => {
   res.setHeader(
