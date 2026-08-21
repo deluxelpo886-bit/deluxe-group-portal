@@ -56,10 +56,12 @@
     </div>
     <div style="display:flex;gap:10px;align-items:flex-end;">
       <div><label>Date</label><input type="date" id="date"></div>
+      <button class="btn" id="autoDue" style="display:none;">🔧 Auto-add due</button>
       <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
     </div>
   </div>
-  <p class="sub">Plan the day's servicing for each team. Technicians tick jobs off as they finish. Also see the <a href="/service" class="link">service log</a>, the <a href="/fleet" class="link">live map</a>, or the <a href="/menu" class="link">☰ menu</a>.</p>
+  <p class="sub">Plan the day's servicing for each team. Technicians tick jobs off as they finish. Tap <b>🔧 Auto-add due</b> to drop every generator due for service (within 7 days) straight onto the two teams. Also see the <a href="/service" class="link">service log</a>, the <a href="/fleet" class="link">live map</a>, or the <a href="/menu" class="link">☰ menu</a>.</p>
+  <div id="autoStatus" style="font-size:13px;color:var(--green);min-height:18px;margin:-4px 0 12px;"></div>
 
   <div class="cols" id="cols"></div>
 </div>
@@ -85,8 +87,8 @@
   $('date').value=new Date().toISOString().slice(0,10);
 
   function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
-  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
-  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; $('autoDue').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; $('autoDue').style.display=''; load(); }
   async function doLogin(){
     var email=$('loginEmail').value.trim(), password=$('loginPass').value;
     $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
@@ -157,6 +159,44 @@
     }catch(e){ $('cols').innerHTML='<div class="empty">Could not load.</div>'; }
   }
   $('date').addEventListener('change',load);
+
+  // ---- Auto-add generators due for service onto the two teams ----
+  async function addSilently(team,dg,note){
+    try{
+      await fetch('/api/schedule/add',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({date:$('date').value,team:team,dg:dg,note:note})});
+    }catch(e){}
+  }
+  async function autoFillDue(){
+    var btn=$('autoDue'); var old=btn.textContent; btn.disabled=true; btn.textContent='Working…'; $('autoStatus').textContent='';
+    try{
+      var sr=await fetch('/api/service/status',{cache:'no-store',headers:authHeaders()});
+      if(sr.status===401){ showLogin(); return; }
+      var sd=await sr.json(); var gens=sd.generators||[];
+      var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
+      var due=gens.map(function(g){
+        if(g.offHire||!g.nextServiceDate) return null;
+        var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
+        return days<=7 ? {g:g,days:days} : null;
+      }).filter(Boolean).sort(function(a,b){ return a.days-b.days; });
+      // Existing DGs already on the schedule for this date (either team).
+      var er=await fetch('/api/schedule?date='+encodeURIComponent($('date').value),{cache:'no-store',headers:authHeaders()});
+      var ed=await er.json(); var existing={};
+      TEAMS.forEach(function(t){ ((ed.teams&&ed.teams[t])||[]).forEach(function(it){ existing[String(it.dg).toUpperCase()]=true; }); });
+      var added=0, i=0;
+      for(var k=0;k<due.length;k++){
+        var x=due[k]; if(existing[String(x.g.dg).toUpperCase()]) continue;
+        var team=TEAMS[i%TEAMS.length]; i++;
+        var note=(x.days<0?('overdue '+Math.abs(x.days)+'d'):(x.days===0?'due today':('due in '+x.days+'d')))+' · next @ '+x.g.nextService+'h';
+        await addSilently(team,x.g.dg,note); added++;
+      }
+      $('autoStatus').textContent = added
+        ? ('Added '+added+' due service'+(added>1?'s':'')+', split across the two teams.')
+        : (due.length ? 'All due services are already on today’s schedule. 👍' : 'No services due within 7 days. 👍');
+      load();
+    }catch(e){ $('autoStatus').style.color='var(--red)'; $('autoStatus').textContent='Could not auto-add. Try again.'; }
+    finally{ btn.disabled=false; btn.textContent=old; }
+  }
+  $('autoDue').addEventListener('click',autoFillDue);
 
   if(TOKEN){ hideLogin(); } else { showLogin(); }
 })();
