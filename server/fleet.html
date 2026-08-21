@@ -1360,17 +1360,20 @@ refreshAll();
   function siteIcon(s){
     var color = s.dust==='High' ? '#e0644a' : (s.dust==='Medium' ? '#e8c168' : '#4caf7d');
     var lock = s.gatePass ? '<div style="position:absolute;top:-9px;right:-9px;font-size:12px;">🔒</div>' : '';
+    var prem = s.rate==='Premium' ? '<div style="position:absolute;top:-9px;left:-9px;font-size:11px;">💲</div>' : '';
     return L.divIcon({className:'', iconSize:[26,26], iconAnchor:[13,13], html:
       '<div style="position:relative;width:26px;height:26px;">'
       +'<div style="width:26px;height:26px;border-radius:50%;background:'+color+';border:2px solid #14181c;box-shadow:0 0 0 2px '+color+'66;display:flex;align-items:center;justify-content:center;font-size:13px;">🏭</div>'
-      +lock+'</div>'});
+      +lock+prem+'</div>'});
   }
+  var sitesVisible=true, siteCount=0;
   async function loadSites(){
     try{
       var r=await fetch('/api/sites',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}});
       if(!r.ok) return;
       var d=await r.json();
-      if(!siteLayer) siteLayer=L.layerGroup().addTo(map);
+      if(!siteLayer) siteLayer=L.layerGroup();
+      if(sitesVisible && !map.hasLayer(siteLayer)) siteLayer.addTo(map);
       siteLayer.clearLayers();
       var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
       (d.sites||[]).forEach(function(s){
@@ -1383,9 +1386,21 @@ refreshAll();
           +(s.phone?'<div style="font-size:12px;margin-top:3px;">📞 <a href="tel:'+esc(s.phone)+'">'+esc(s.phone)+'</a></div>':'')
           +'<div style="margin-top:6px;"><a href="https://www.google.com/maps?q='+s.lat+','+s.lng+'" target="_blank" rel="noopener" style="color:#5b9bd5;">Navigate ▸</a> &middot; <a href="/sites" style="color:#5b9bd5;">Edit</a></div>'
           +'</div>';
-        L.marker([s.lat,s.lng],{icon:siteIcon(s)}).addTo(siteLayer).bindPopup(pop);
+        L.marker([s.lat,s.lng],{icon:siteIcon(s)}).addTo(siteLayer).bindPopup(pop)
+          .bindTooltip(esc(s.company),{permanent:true,direction:'bottom',offset:[0,12],className:'site-label'});
       });
+      siteCount=(d.sites||[]).filter(function(s){return s.lat!=null&&s.lng!=null;}).length;
+      if(typeof sitesBtn!=='undefined' && sitesBtn) sitesBtn.textContent='🏭 Sites: '+(sitesVisible?siteCount:'off');
     }catch(e){}
+  }
+  function setSitesVisible(on){
+    sitesVisible=on;
+    if(siteLayer){ if(on){ if(!map.hasLayer(siteLayer)) siteLayer.addTo(map); } else if(map.hasLayer(siteLayer)) map.removeLayer(siteLayer); }
+    if(typeof sitesBtn!=='undefined' && sitesBtn){
+      sitesBtn.textContent='🏭 Sites: '+(on?siteCount:'off');
+      sitesBtn.style.color = on ? '#4caf7d' : '#e8ecef';
+      sitesBtn.style.borderColor = on ? '#2a5c40' : '#2c333a';
+    }
   }
   var svcAlertBar=null;
   function updateServiceAlert(gens){
@@ -1485,7 +1500,9 @@ refreshAll();
 
   // ---- Declutter map labels: only show the name tags when zoomed in ----
   var LABEL_MIN_ZOOM = 13;
-  (function(){ var st=document.createElement('style'); st.textContent='.hide-map-labels .dg-label{display:none !important;}'; document.head.appendChild(st); })();
+  (function(){ var st=document.createElement('style'); st.textContent='.hide-map-labels .dg-label,.hide-map-labels .site-label{display:none !important;}'
+    +'.site-label{background:#14181c;color:#e8a13a;border:1px solid #3a3320;border-radius:5px;padding:1px 6px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:11px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.5);}'
+    +'.site-label:before{display:none;}'; document.head.appendChild(st); })();
   function updateLabelVisibility(){ if(map && map.getContainer) map.getContainer().classList.toggle('hide-map-labels', map.getZoom() < LABEL_MIN_ZOOM); }
   map.on('zoomend', updateLabelVisibility);
   updateLabelVisibility();
@@ -1497,6 +1514,13 @@ refreshAll();
   fsBtn.type='button'; fsBtn.textContent='⛶ Full screen';
   fsBtn.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;';
   if(typeof searchBar!=='undefined' && searchBar){ searchBar.appendChild(fsBtn); }
+  // ---- Show/hide customer site pins ----
+  var sitesBtn=document.createElement('button');
+  sitesBtn.type='button'; sitesBtn.textContent='🏭 Sites: on';
+  sitesBtn.title='Show or hide your customer site pins';
+  sitesBtn.style.cssText='background:#20262c;color:#4caf7d;border:1px solid #2a5c40;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;';
+  sitesBtn.addEventListener('click', function(){ setSitesVisible(!sitesVisible); });
+  if(typeof searchBar!=='undefined' && searchBar){ searchBar.appendChild(sitesBtn); }
   var fsExitBtn=document.createElement('button');
   fsExitBtn.type='button'; fsExitBtn.textContent='✕ Exit full screen';
   fsExitBtn.style.cssText='position:fixed;top:12px;right:12px;z-index:5600;background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:none;box-shadow:0 2px 10px rgba(0,0,0,0.5);';
