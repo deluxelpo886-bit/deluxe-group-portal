@@ -143,6 +143,12 @@ function applySeed(records, version) {
   } catch (_) { applied = {}; }
   if (applied[version]) return { skipped: true, version };
 
+  // Clean rebuild of exactly the generators in this seed: wipe their existing
+  // records first so re-importing an updated report replaces the data instead of
+  // stacking duplicate history. Generators not in the seed are left untouched.
+  const seededDgs = new Set(records.map((r) => String((r && r.dg) || '').trim().toUpperCase()).filter(Boolean));
+  seededDgs.forEach((dg) => { if (store[dg]) delete store[dg]; });
+
   let n = 0;
   for (const r of records) {
     try { logService(r); n += 1; } catch (_) { /* skip an unparseable row */ }
