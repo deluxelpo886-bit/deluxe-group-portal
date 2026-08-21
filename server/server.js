@@ -36,7 +36,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'energy-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'energy-report-2026-08');
+    const r = serviceLog.applySeed(seed, 'energy-report-2026-08-19');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
