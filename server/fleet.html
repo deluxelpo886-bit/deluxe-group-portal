@@ -541,6 +541,47 @@ var AvailCtl = L.Control.extend({
 });
 map.addControl(new AvailCtl());
 
+// ---- Put a generator on contract straight from its map popup ----
+(function(){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:7000;padding:20px;';
+  ov.innerHTML='<div style="width:340px;max-width:100%;background:#1c2126;border:1px solid #2c333a;border-radius:14px;padding:22px;font-family:Inter,-apple-system,Segoe UI,sans-serif;">'
+    +'<div style="font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#e8a13a;margin-bottom:6px;">Put on contract</div>'
+    +'<div id="ctDg" style="font-weight:800;font-size:18px;color:#e8ecef;margin-bottom:14px;">DG</div>'
+    +'<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;margin:0 0 5px;">Customer</label><input id="ctCust" type="text" placeholder="e.g. Six Sigma" style="width:100%;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:10px;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;">'
+    +'<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;margin:0 0 5px;">Rate (AED / month)</label><input id="ctRate" type="number" min="0" placeholder="e.g. 1890" style="width:100%;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:10px;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;">'
+    +'<label style="display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;margin:0 0 5px;">Hire start date</label><input id="ctStart" type="date" style="width:100%;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:10px;border-radius:8px;font-size:14px;margin-bottom:8px;outline:none;">'
+    +'<div id="ctErr" style="color:#e0644a;font-size:12.5px;min-height:16px;"></div>'
+    +'<div style="display:flex;gap:8px;margin-top:8px;"><button id="ctCancel" style="flex:1;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:11px;font-weight:700;cursor:pointer;">Cancel</button>'
+    +'<button id="ctSave" style="flex:2;background:#e8a13a;color:#1a1300;border:none;border-radius:8px;padding:11px;font-weight:700;cursor:pointer;">Save contract</button></div></div>';
+  document.body.appendChild(ov);
+  var curDg=null;
+  function open(dg){ curDg=dg; document.getElementById('ctDg').textContent=dg; document.getElementById('ctCust').value=''; document.getElementById('ctRate').value=''; document.getElementById('ctStart').value=new Date().toISOString().slice(0,10); document.getElementById('ctErr').textContent=''; ov.style.display='flex'; setTimeout(function(){ document.getElementById('ctCust').focus(); },50); }
+  function close(){ ov.style.display='none'; curDg=null; }
+  document.getElementById('ctCancel').addEventListener('click', close);
+  ov.addEventListener('click', function(e){ if(e.target===ov) close(); });
+  document.getElementById('ctSave').addEventListener('click', async function(){
+    if(!curDg) return;
+    var btn=this; btn.disabled=true; btn.textContent='Saving…';
+    var tok=localStorage.getItem('deluxeFleetToken')||'';
+    var H={'Content-Type':'application/json','Authorization':'Bearer '+tok};
+    try{
+      await fetch('/api/rentals/save',{method:'POST',headers:H,body:JSON.stringify({dg:curDg,customer:document.getElementById('ctCust').value,rate:document.getElementById('ctRate').value,startDate:document.getElementById('ctStart').value})});
+      await fetch('/api/hire/set',{method:'POST',headers:H,body:JSON.stringify({dg:curDg,offHire:false})});
+      // reflect immediately: mark on-hire locally so it leaves the Available view
+      if(window.SERVICE_BY_DG && window.SERVICE_BY_DG[curDg]) window.SERVICE_BY_DG[curDg].offHire=false;
+      close(); if(typeof rebuildMap==='function') rebuildMap();
+      if(typeof setAvailable==='function' && availOn) setAvailable(true);
+    }catch(e){ document.getElementById('ctErr').textContent='Could not save. Try again.'; }
+    finally{ btn.disabled=false; btn.textContent='Save contract'; }
+  });
+  // Delegated: any "Put on contract" button inside a popup opens the dialog.
+  document.addEventListener('click', function(e){
+    var b=e.target && e.target.closest ? e.target.closest('.put-contract') : null;
+    if(b){ e.preventDefault(); open(b.getAttribute('data-dg')); }
+  });
+})();
+
 const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:34px;height:34px;border-radius:9px;border:2.5px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 1px 5px rgba(0,0,0,0.55);">🏭</div>', iconSize:[34,34], iconAnchor:[17,17]});
 L.marker([OFFICE.lat, OFFICE.lon], {icon:officeIcon}).addTo(map)
   .bindTooltip('🏭 HOME BASE · WORKSHOP', {permanent:true, direction:'top', offset:[0,-20], className:'home-label'})
@@ -623,13 +664,14 @@ function rebuildMap(){
       +'<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
       +'<a href="https://wa.me/?text='+encodeURIComponent(r.dg+' ('+(r.location||'')+') location: https://maps.google.com/?q='+r.lat+','+r.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
       +'</div>';
+    const contractBtn = isAvailable(r) ? ('<button class="put-contract" data-dg="'+r.dg+'" data-kva="'+(r.kva||'')+'" style="width:100%;margin-top:8px;background:#e8a13a;color:#1a1300;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">📄 Put on contract</button>') : '';
     const svc = (window.SERVICE_BY_DG||{})[r.dg];
     const su = serviceUrgency(r.dg);
     const isOff = !!(svc && svc.offHire);
     const offNote = isOff ? `<br><b style="color:#b4bcc4;">⚪ OFF-HIRE${svc.hireSince?(' since '+svc.hireSince):''} — in yard</b>` : '';
     const suNote = isOff ? '' : ((su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : ''));
     const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${svc.nextServiceDate?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
-    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}`);
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}`);
     var svcH = (svc && svc.hours!=null) ? svc.hours : (r.last_service_hours!=null ? r.last_service_hours : null);
     var labelTxt = (availOn && svcH!=null) ? (r.dg + ' · ' + svcH + 'h') : r.dg;
     m.bindTooltip(labelTxt, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
