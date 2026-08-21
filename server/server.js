@@ -473,6 +473,44 @@ app.get('/tiles/:z/:x/:y.png', async (req, res) => {
   }
 });
 
+// Driving-route proxy for the breakdown dispatch. The public OSRM routing
+// server is often blocked on the office network (same reason we proxy tiles),
+// so we route server-side and return the road geometry + distance/time. If OSRM
+// is unreachable we fall back to a straight line so the map still shows a route.
+app.get('/api/route', async (req, res) => {
+  const q = req.query || {};
+  const fLat = Number(q.fromLat), fLon = Number(q.fromLon), tLat = Number(q.toLat), tLon = Number(q.toLon);
+  if (![fLat, fLon, tLat, tLon].every(Number.isFinite)) {
+    return res.status(400).json({ error: 'fromLat, fromLon, toLat, toLon are required' });
+  }
+  res.set('Cache-Control', 'no-store');
+  // Straight-line fallback (haversine distance, ~40 km/h for a rough ETA).
+  const R = 6371000, toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(tLat - fLat), dLon = toRad(tLon - fLon);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(fLat)) * Math.cos(toRad(tLat)) * Math.sin(dLon / 2) ** 2;
+  const straight = 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+  const fallback = {
+    ok: true, approx: true, distance: Math.round(straight), duration: Math.round(straight / 11.1),
+    geometry: { type: 'LineString', coordinates: [[fLon, fLat], [tLon, tLat]] },
+  };
+  try {
+    const url = 'https://router.project-osrm.org/route/v1/driving/'
+      + fLon + ',' + fLat + ';' + tLon + ',' + tLat + '?overview=full&geometries=geojson';
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'DeluxeFleet/1.0' } });
+    clearTimeout(timer);
+    const data = await r.json();
+    if (data && data.code === 'Ok' && data.routes && data.routes[0]) {
+      const rt = data.routes[0];
+      return res.json({ ok: true, approx: false, distance: Math.round(rt.distance), duration: Math.round(rt.duration), geometry: rt.geometry });
+    }
+    return res.json(fallback);
+  } catch (e) {
+    return res.json(fallback);
+  }
+});
+
 // ---------- Generator service log (hours-based servicing) ----------
 // Technicians submit a generator's current running hours; the server computes
 // the next service due (hours + interval, default 350) and stores it. Reuses the

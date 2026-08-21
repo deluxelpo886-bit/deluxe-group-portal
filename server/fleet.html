@@ -706,29 +706,30 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
   map.flyTo([gen.lat, gen.lon], 12, {duration:0.6});
   if(genMarkers[dg]) genMarkers[dg].circle.openPopup();
 
-  // Real driving route via OSRM (free public routing server) for the nearest vehicle
+  // Real driving route via our own server (same-origin) so it works even when
+  // the office network blocks the public routing host. Server falls back to a
+  // straight line if road routing is unavailable.
   const nearest = vdist[0];
   try{
-    const url = `https://router.project-osrm.org/route/v1/driving/${nearest.lon},${nearest.lat};${gen.lon},${gen.lat}?overview=full&geometries=geojson`;
-    const resp = await fetch(url);
+    const resp = await fetch(`/api/route?fromLat=${nearest.lat}&fromLon=${nearest.lon}&toLat=${gen.lat}&toLon=${gen.lon}`, {cache:'no-store'});
     const data = await resp.json();
     const statusEl = document.getElementById('routeStatus');
-    if(data.code==='Ok' && data.routes && data.routes[0]){
-      const route = data.routes[0];
-      const km = (route.distance/1000).toFixed(1);
-      const mins = Math.round(route.duration/60);
-      if(statusEl) statusEl.innerHTML = `✓ Real driving route: <b style="color:var(--text)">${km} km, ~${mins} min</b> (via road network)`;
-      const line = L.geoJSON(route.geometry, {style:{color:'#e8a13a', weight:4, opacity:0.85}});
+    if(data && data.ok && data.geometry){
+      const km = (data.distance/1000).toFixed(1);
+      const mins = Math.round(data.duration/60);
+      const via = data.approx ? '(approx — straight line)' : '(via road network)';
+      if(statusEl) statusEl.innerHTML = `✓ Driving route: <b style="color:var(--text)">${km} km, ~${mins} min</b> ${via}`;
+      const line = L.geoJSON(data.geometry, {style:{color:'#e8a13a', weight:4, opacity:0.85, dashArray: data.approx?'8 8':null}});
       line.addTo(routeLayer);
       const vehLineEl = document.getElementById('vehline-'+nearest.id);
-      if(vehLineEl) vehLineEl.querySelector('.dist').innerHTML = `${km} km road route · ~${mins} min <span style="color:var(--green)">✓ real route</span>`;
+      if(vehLineEl) vehLineEl.querySelector('.dist').innerHTML = `${km} km ${data.approx?'straight-line':'road route'} · ~${mins} min <span style="color:var(--green)">✓</span>`;
       map.fitBounds(line.getBounds(), {padding:[40,40]});
     } else {
-      if(statusEl) statusEl.textContent = '⚠ Could not calculate road route (routing service unavailable) — using straight-line estimate above.';
+      if(statusEl) statusEl.textContent = '⚠ Could not calculate a route — using straight-line estimate above.';
     }
   } catch(e){
     const statusEl = document.getElementById('routeStatus');
-    if(statusEl) statusEl.textContent = '⚠ Route service unreachable (offline / no internet) — using straight-line estimate above.';
+    if(statusEl) statusEl.textContent = '⚠ Route service unreachable — using straight-line estimate above.';
   }
 });
 
