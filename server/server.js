@@ -474,6 +474,39 @@ app.get('/tiles/:z/:x/:y.png', async (req, res) => {
   }
 });
 
+// Satellite (aerial) tiles - Esri World Imagery - proxied the same way so the
+// map can offer a Google-Maps-style satellite view on the restricted network.
+// Note Esri's tile order is z/y/x.
+const satCache = new Map();
+app.get('/sat/:z/:x/:y.png', async (req, res) => {
+  const { z, x, y } = req.params;
+  if (!/^\d{1,2}$/.test(z) || !/^\d{1,7}$/.test(x) || !/^\d{1,7}$/.test(y)) {
+    return res.status(400).end();
+  }
+  const key = z + '/' + x + '/' + y;
+  const hit = satCache.get(key);
+  if (hit && (Date.now() - hit.ts) < TILE_TTL) {
+    res.set('Content-Type', hit.type);
+    res.set('Cache-Control', 'public, max-age=604800');
+    return res.end(hit.buf);
+  }
+  try {
+    const url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'
+      + z + '/' + y + '/' + x;
+    const r = await fetch(url, { headers: { 'User-Agent': 'DeluxeFleet/1.0 (deluxe-group-portal)' } });
+    if (!r.ok) return res.status(502).end();
+    const buf = Buffer.from(await r.arrayBuffer());
+    const type = r.headers.get('content-type') || 'image/jpeg';
+    if (satCache.size > TILE_CACHE_MAX) satCache.clear();
+    satCache.set(key, { buf, type, ts: Date.now() });
+    res.set('Content-Type', type);
+    res.set('Cache-Control', 'public, max-age=604800');
+    return res.end(buf);
+  } catch (e) {
+    return res.status(502).end();
+  }
+});
+
 // Driving-route proxy for the breakdown dispatch. The public OSRM routing
 // server is often blocked on the office network (same reason we proxy tiles),
 // so we route server-side and return the road geometry + distance/time. If OSRM
