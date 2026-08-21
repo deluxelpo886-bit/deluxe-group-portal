@@ -82,6 +82,16 @@
       <div id="sparesList"><div class="empty">Loading…</div></div>
     </div>
   </div>
+
+  <div class="panel">
+    <h2>🔔 Morning WhatsApp reminder <span id="waState" class="muted" style="font-weight:400;"></span></h2>
+    <div id="waPreview" class="muted" style="white-space:pre-wrap;font-family:var(--mono);font-size:12px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;max-height:220px;overflow:auto;">Loading…</div>
+    <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn" id="waSend" disabled>Send now (test)</button>
+      <span id="waMsg" class="muted"></span>
+    </div>
+    <div class="muted" id="waHint" style="margin-top:10px;font-size:12px;"></div>
+  </div>
 </div>
 
 <div id="overlay">
@@ -196,7 +206,40 @@
     }).join('') : '<div class="empty">No spare parts pending. 👍</div>';
 
     $('asOf').textContent='Your whole operation at a glance · updated '+new Date().toLocaleString();
+    loadWhatsApp();
   }
+
+  async function loadWhatsApp(){
+    try{
+      var r=await fetch('/api/service/alert/preview',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json();
+      $('waPreview').textContent=(d.digest&&d.digest.text)||'—';
+      var conf=d.configured, hasTo=(d.recipients&&d.recipients.length);
+      if(conf&&hasTo){
+        $('waState').textContent='· sends daily at '+d.hour+':00 to '+d.recipients.join(', ');
+        $('waSend').disabled=false;
+        $('waHint').textContent='';
+      }else{
+        $('waState').textContent='· not set up yet';
+        $('waSend').disabled=true;
+        $('waHint').innerHTML='Not sending yet. To turn it on, add these on Render → Environment: '
+          +'<b>TWILIO_ACCOUNT_SID</b>, <b>TWILIO_AUTH_TOKEN</b>, <b>TWILIO_WHATSAPP_FROM</b>, '
+          +'<b>SERVICE_ALERT_WHATSAPP_TO</b> (your WhatsApp number), and optionally '
+          +'<b>SERVICE_ALERT_HOUR</b> (default 7). The preview above is exactly what will be sent.';
+      }
+    }catch(e){ $('waPreview').textContent='Could not load the reminder preview.'; }
+  }
+  $('waSend').addEventListener('click',async function(){
+    $('waSend').disabled=true; $('waMsg').textContent='Sending…';
+    try{
+      var r=await fetch('/api/service/alert/send',{method:'POST',headers:authHeaders()});
+      var d=await r.json().catch(function(){return{};});
+      if(d.sent){ $('waMsg').style.color='var(--green)'; $('waMsg').textContent='✓ Sent to '+((d.recipients||[]).join(', ')); }
+      else{ $('waMsg').style.color='var(--red)'; $('waMsg').textContent='Not sent ('+(d.reason||'error')+')'; }
+    }catch(e){ $('waMsg').style.color='var(--red)'; $('waMsg').textContent='Send failed'; }
+    finally{ $('waSend').disabled=false; }
+  });
 
   if(TOKEN){ hideLogin(); } else { showLogin(); }
 })();
