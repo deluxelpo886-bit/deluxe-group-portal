@@ -493,6 +493,31 @@ baseTiles.on('tileerror', function(){
   baseTiles.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 });
 
+// Satellite (aerial) view, Google-Maps style, via our own /sat proxy. A button
+// on the map toggles between the street map and the satellite imagery.
+const satTiles = L.tileLayer('/sat/{z}/{x}/{y}.png', { attribution:'Imagery &copy; Esri', maxZoom:19 });
+let satOn = false;
+function setSatellite(on){
+  satOn = on;
+  if(on){ if(map.hasLayer(baseTiles)) map.removeLayer(baseTiles); if(!map.hasLayer(satTiles)) satTiles.addTo(map); }
+  else { if(map.hasLayer(satTiles)) map.removeLayer(satTiles); if(!map.hasLayer(baseTiles)) baseTiles.addTo(map); }
+  var b=document.getElementById('satToggle');
+  if(b){ b.textContent = on ? '🗺️ Street map' : '🛰️ Satellite'; }
+}
+var SatCtl = L.Control.extend({
+  options:{position:'topright'},
+  onAdd:function(){
+    var b=L.DomUtil.create('button','');
+    b.id='satToggle'; b.type='button'; b.textContent='🛰️ Satellite';
+    b.title='Switch between street map and satellite view';
+    b.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:7px 11px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.5);';
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b,'click',function(){ setSatellite(!satOn); });
+    return b;
+  }
+});
+map.addControl(new SatCtl());
+
 const officeIcon = L.divIcon({className:'', html:'<div style="background:#a78bda;width:34px;height:34px;border-radius:9px;border:2.5px solid #0b0d0f;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 1px 5px rgba(0,0,0,0.55);">🏭</div>', iconSize:[34,34], iconAnchor:[17,17]});
 L.marker([OFFICE.lat, OFFICE.lon], {icon:officeIcon}).addTo(map)
   .bindTooltip('🏭 HOME BASE · WORKSHOP', {permanent:true, direction:'top', offset:[0,-20], className:'home-label'})
