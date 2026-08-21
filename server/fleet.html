@@ -691,6 +691,14 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
   if(vdist[0]){ window.__fleetWatch = { dg: gen.dg, lat: gen.lat, lon: gen.lon, truckId: vdist[0].id, truckName: vdist[0].name, arrived:false }; }
   const officeD = haversine(gen.lat,gen.lon,OFFICE.lat,OFFICE.lon);
   let html = `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Nearest vehicle to <b style="color:var(--text)">${gen.dg}</b> (${gen.location}) — office is ${officeD.toFixed(1)}km straight-line away:</div>`;
+  // One-tap: send the breakdown job (location + Google Maps link) to a driver on WhatsApp.
+  const nrst = vdist[0];
+  const waText = '🔧 BREAKDOWN — '+gen.dg+' ('+(gen.kva||'')+'KVA)'
+    + (gen.location&&gen.location!=='-' ? ' at '+gen.location : '')
+    + '\n📍 Location: https://www.google.com/maps?q='+gen.lat+','+gen.lon
+    + (nrst ? '\n🚚 Nearest truck: '+nrst.name+' (~'+nrst.d.toFixed(1)+' km)' : '')
+    + '\nPlease attend as soon as possible.';
+  html += `<a href="https://wa.me/?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin:0 0 10px;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:11px;font-weight:700;text-decoration:none;">📲 Send job to driver on WhatsApp</a>`;
   html += `<div id="routeStatus" style="font-size:12px;color:var(--amber);margin-bottom:8px;">⏳ Calculating real driving route...</div>`;
   vdist.forEach((v,i)=>{
     const eta = Math.round(v.d/45*60);
