@@ -54,7 +54,7 @@
 </head>
 <body>
 <div class="wrap">
-  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a></nav>
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a><a href="/rentals" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">💰 Rentals</a></nav>
   <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
   <div class="toolbar">
     <div>
@@ -147,13 +147,16 @@
     var res=await Promise.all([
       fetch('/api/service/status',{cache:'no-store',headers:authHeaders()}),
       fetch('/api/spares',{cache:'no-store',headers:authHeaders()}),
-      fetch('/api/sites',{cache:'no-store',headers:authHeaders()})
+      fetch('/api/sites',{cache:'no-store',headers:authHeaders()}),
+      fetch('/api/rentals',{cache:'no-store',headers:authHeaders()})
     ]).catch(function(){return null;});
     if(!res){ return; }
     if(res.some(function(r){return r.status===401;})){ showLogin(); return; }
     var svc=await res[0].json().catch(function(){return{};});
     var spr=await res[1].json().catch(function(){return{};});
     var sit=await res[2].json().catch(function(){return{};});
+    var rent=await res[3].json().catch(function(){return{};});
+    var rstats=rent.stats||{};
 
     var gens=svc.generators||[];
     var onHire=gens.filter(function(g){return !g.offHire;});
@@ -178,8 +181,10 @@
     var premium=sites.filter(function(s){return s.rate==='Premium';}).length;
 
     // ---- tiles ----
+    var income=(rstats.totalMonthly||0).toLocaleString('en-US');
     $('tiles').innerHTML=
-       tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', '/service')
+       tile('good', income, 'AED / month income', (rstats.earningCount||0)+' earning'+(rstats.idleCount?' · '+rstats.idleCount+' idle':''), '/rentals')
+      +tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', '/service')
       +tile(overdue.length?'alert':(soon.length?'warn':'good'), overdue.length, 'Service overdue', soon.length+' due within 7 days', '/service')
       +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', '/schedule')
       +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', '/spares')

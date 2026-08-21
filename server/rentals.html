@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Rental Income</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text],input[type=number],input[type=date]{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  input:focus{border-color:var(--amber);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:120px;}
+  .field{margin-bottom:12px;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:11px 14px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .stat .big{font-size:23px;font-weight:800;font-family:var(--mono);line-height:1.05;}
+  .stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
+  .stat.income{border-color:#2a5c40;background:var(--green-bg);}
+  .stat.income .big{color:var(--green);}
+  .stat.idle .big{color:var(--gold);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  .dg{font-family:var(--mono);font-weight:700;}
+  .n{font-family:var(--mono);text-align:right;white-space:nowrap;}
+  .muted{color:var(--muted);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+  .b-on{background:var(--green-bg);color:var(--green);}
+  .b-off{background:#2b2f33;color:#b4bcc4;}
+  .cust{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .cust:last-child{border-bottom:none;}
+  .mini{background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;}
+  .x{color:var(--red);cursor:pointer;border:none;background:transparent;font-size:15px;padding:2px 6px;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a><a href="/rentals" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">💰 Rentals</a></nav>
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>Rental Income</h1>
+    </div>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+  <p class="sub">Record who's renting each generator and the monthly rate — the portal totals your monthly income, shows earning vs idle units, and breaks it down by customer. Off-hire units (set on <a href="/service" class="link">Service</a>) count as idle. See the <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="panel" id="custPanel" style="display:none;">
+    <strong style="font-size:14px;">By customer</strong>
+    <div id="byCustomer" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="field"><label>Generator (DG) *</label><input type="text" id="dg" placeholder="e.g. DG-520" autocomplete="off"></div>
+      <div class="field" style="flex:2;"><label>Customer</label><input type="text" id="customer" placeholder="e.g. Six Sigma" autocomplete="off"></div>
+      <div class="field"><label>Rate (AED / month)</label><input type="number" id="rate" min="0" placeholder="e.g. 1890"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Hire start date</label><input type="date" id="startDate"></div>
+      <div class="field"><label>Expected end (optional)</label><input type="date" id="endDate"></div>
+      <div class="field" style="flex:2;"><label>Notes (optional)</label><input type="text" id="notes" placeholder="e.g. PO-1234, monthly invoice"></div>
+    </div>
+    <button class="btn" id="save">Save rental</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="panel">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Generator</th><th>Customer</th><th class="n">Rate (AED/mo)</th><th>Status</th><th>On hire</th><th></th></tr></thead>
+        <tbody id="body"><tr><td colspan="6" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Rental Income — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to view and edit rentals.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function money(n){ n=Number(n)||0; return n.toLocaleString('en-US'); }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  function renderStats(s){
+    s=s||{};
+    $('stats').innerHTML =
+       '<div class="stat income" style="grid-column:span 2;"><div class="big">AED '+money(s.totalMonthly)+'</div><div class="lbl">Monthly income · '+(s.earningCount||0)+' earning</div></div>'
+      +'<div class="stat idle"><div class="big">'+(s.idleCount||0)+'</div><div class="lbl">Idle (off-hire)</div></div>'
+      +'<div class="stat"><div class="big">'+(s.rentalCount||0)+'</div><div class="lbl">Rentals on file</div></div>'
+      +(s.idlePotential? '<div class="stat idle" style="grid-column:1/-1;"><div class="lbl">💡 Idle units could earn about</div><div class="big" style="font-size:19px;margin-top:4px;">+AED '+money(s.idlePotential)+' / month if deployed</div></div>':'');
+    var bc=s.byCustomer||[];
+    if(bc.length){
+      $('custPanel').style.display='';
+      $('byCustomer').innerHTML=bc.map(function(c){
+        return '<div class="cust"><span><b>'+esc(c.customer)+'</b> <span class="muted">· '+c.count+' unit'+(c.count>1?'s':'')+' · '+esc(c.dgs.join(', '))+'</span></span><span class="dg">AED '+money(c.total)+'/mo</span></div>';
+      }).join('');
+    } else { $('custPanel').style.display='none'; }
+  }
+
+  function render(list){
+    $('body').innerHTML = list.length ? list.map(function(r){
+      var badge = r.offHire ? '<span class="badge b-off">⚪ Off-hire</span>' : '<span class="badge b-on">🟢 On hire</span>';
+      var days = r.days!=null ? (r.days+' d'+(r.startDate?' <span class="muted">(since '+esc(r.startDate)+')</span>':'')) : (r.startDate?esc(r.startDate):'—');
+      return '<tr'+(r.offHire?' style="opacity:.6;"':'')+'>'
+        +'<td class="dg">'+esc(r.dg)+'</td>'
+        +'<td>'+(r.customer?esc(r.customer):'<span class="muted">—</span>')+(r.notes?'<div class="muted" style="font-size:12px;">'+esc(r.notes)+'</div>':'')+'</td>'
+        +'<td class="n">'+(r.rate?money(r.rate):'<span class="muted">—</span>')+'</td>'
+        +'<td>'+badge+'</td>'
+        +'<td class="muted">'+days+'</td>'
+        +'<td style="white-space:nowrap;"><button class="mini" data-edit="'+esc(r.dg)+'">Edit</button> <button class="x" data-rm="'+esc(r.dg)+'" title="Remove">✕</button></td>'
+        +'</tr>';
+    }).join('') : '<tr><td colspan="6" class="muted" style="padding:14px;">No rentals recorded yet. Add one above.</td></tr>';
+    window.__RENT={}; list.forEach(function(r){ window.__RENT[r.dg]=r; });
+    $('body').querySelectorAll('button[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ editRent(window.__RENT[b.getAttribute('data-edit')]); }); });
+    $('body').querySelectorAll('button[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Remove this rental record?')) post('/api/rentals/remove',{dg:b.getAttribute('data-rm')}); }); });
+  }
+
+  function editRent(r){
+    if(!r) return;
+    $('dg').value=r.dg; $('customer').value=r.customer||''; $('rate').value=r.rate||''; $('startDate').value=r.startDate||''; $('endDate').value=r.endDate||''; $('notes').value=r.notes||'';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  async function post(url,body){
+    try{
+      var r=await fetch(url,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)});
+      if(r.status===401){ showLogin('Please sign in again.'); return null; }
+      var d=await r.json().catch(function(){return{};});
+      load();
+      return d;
+    }catch(e){ return null; }
+  }
+  async function load(){
+    try{
+      var r=await fetch('/api/rentals',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json(); renderStats(d.stats); render(d.rentals||[]);
+    }catch(e){ $('body').innerHTML='<tr><td colspan="6" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+
+  $('save').addEventListener('click',async function(){
+    $('err').textContent='';
+    if(!$('dg').value.trim()){ $('err').textContent='Generator (DG) number is required'; return; }
+    $('save').disabled=true;
+    var d=await post('/api/rentals/save',{dg:$('dg').value,customer:$('customer').value,rate:$('rate').value,startDate:$('startDate').value,endDate:$('endDate').value,notes:$('notes').value});
+    $('save').disabled=false;
+    if(d && d.error){ $('err').textContent=d.error; return; }
+    if(d && d.ok){ $('dg').value=''; $('customer').value=''; $('rate').value=''; $('startDate').value=''; $('endDate').value=''; $('notes').value=''; }
+  });
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>

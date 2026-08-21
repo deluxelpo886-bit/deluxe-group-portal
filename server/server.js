@@ -22,6 +22,7 @@ const sites = require('./sites');
 const hire = require('./hire');
 const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
+const rentals = require('./rentals');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -775,6 +776,35 @@ app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
   breakdowns.remove((req.body || {}).id);
   res.json({ ok: true });
 });
+// ---------- Rental income tracker ----------
+// Per-generator rental terms (customer, monthly rate, start date). Combined with
+// the on-hire/off-hire status for total income and earning-vs-idle. Same login.
+app.get('/api/rentals', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const hm = hire.getMap();
+  const list = rentals.getAll().map((r) => Object.assign({}, r, {
+    offHire: !!(hm[r.dg] && hm[r.dg].offHire),
+    days: rentals.daysOnHire(r.startDate),
+  })).sort((a, b) => (b.rate || 0) - (a.rate || 0));
+  res.json({ rentals: list, stats: rentals.stats(hm) });
+});
+app.post('/api/rentals/save', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: rentals.save(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/rentals/remove', fleetProtect, (req, res) => {
+  rentals.remove((req.body || {}).dg);
+  res.json({ ok: true });
+});
+app.get('/rentals', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'rentals.html'));
+});
+
 app.get('/breakdowns', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
