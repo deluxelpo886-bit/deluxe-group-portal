@@ -20,6 +20,7 @@ const schedule = require('./schedule');
 const spares = require('./spares');
 const sites = require('./sites');
 const hire = require('./hire');
+const serviceAlert = require('./service-alert');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -505,6 +506,15 @@ app.get('/api/hire', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({ hire: hire.getAll() });
 });
+// Morning WhatsApp service reminder: preview the digest, or send it now.
+app.get('/api/service/alert/preview', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(serviceAlert.preview());
+});
+app.post('/api/service/alert/send', fleetProtect, async (req, res) => {
+  try { res.json(await serviceAlert.sendDigest({ force: true })); }
+  catch (e) { res.status(500).json({ error: (e && e.message) || 'Send failed' }); }
+});
 app.get('/api/service/photo', fleetProtect, (req, res) => {
   const photo = serviceLog.getPhoto(req.query.dg);
   if (!photo) return res.status(404).json({ error: 'No photo' });
@@ -753,6 +763,43 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
   setTimeout(check, 15000); // first check shortly after startup
   setInterval(check, CHECK_MS);
   console.log('Daily automated alerts enabled (' + ALERT_TZ + '; per-company hour, default 07:00)');
+}
+
+// ---------- Morning WhatsApp service reminder ----------
+// Once a day (SERVICE_ALERT_HOUR, default 07:00 in ALERT_TIMEZONE) send a
+// WhatsApp digest of the generators due for service to SERVICE_ALERT_WHATSAPP_TO.
+// Runs only when Twilio WhatsApp is configured and at least one recipient is
+// set; otherwise it stays dormant (the digest is still previewable in the app).
+{
+  const wa = require('./whatsapp');
+  const recips = String(process.env.SERVICE_ALERT_WHATSAPP_TO || '').trim();
+  if (wa.isConfigured() && recips) {
+    const SA_TZ = process.env.ALERT_TIMEZONE || 'Asia/Dubai';
+    const SA_HOUR = Number(process.env.SERVICE_ALERT_HOUR) >= 0 ? Number(process.env.SERVICE_ALERT_HOUR) : 7;
+    const SA_CHECK_MS = 15 * 60 * 1000;
+    let saLastSent = null; // 'YYYY-MM-DD' in SA_TZ already sent today
+    const saNow = () => {
+      const fmt = new Intl.DateTimeFormat('en-CA', {
+        timeZone: SA_TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false,
+      });
+      const parts = {};
+      fmt.formatToParts(new Date()).forEach((p) => { parts[p.type] = p.value; });
+      return { date: parts.year + '-' + parts.month + '-' + parts.day, hour: parseInt(parts.hour, 10) };
+    };
+    const saCheck = async () => {
+      const now = saNow();
+      if (now.hour !== SA_HOUR) return;
+      if (saLastSent === now.date) return;
+      saLastSent = now.date;
+      try {
+        const out = await serviceAlert.sendDigest({});
+        if (out.sent) console.log('[service-alert] sent ' + out.digest.count + ' due to ' + (out.recipients || []).length + ' recipient(s)');
+      } catch (e) { console.error('[service-alert] failed:', e && e.message); }
+    };
+    setTimeout(saCheck, 20000);
+    setInterval(saCheck, SA_CHECK_MS);
+    console.log('[service-alert] morning WhatsApp reminder enabled (' + SA_TZ + ' ' + SA_HOUR + ':00)');
+  }
 }
 
 // Start polling Total Secure for live vehicle positions (no-op unless the
