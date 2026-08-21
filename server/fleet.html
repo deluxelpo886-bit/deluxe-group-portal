@@ -575,10 +575,25 @@ map.addControl(new AvailCtl());
     }catch(e){ document.getElementById('ctErr').textContent='Could not save. Try again.'; }
     finally{ btn.disabled=false; btn.textContent='Save contract'; }
   });
-  // Delegated: any "Put on contract" button inside a popup opens the dialog.
+  // End a contract: mark the unit off-hire (back to the yard, stops earning).
+  async function endContract(dg){
+    if(!dg) return;
+    if(!confirm('End contract for '+dg+'?\nIt returns to the yard (off-hire) and stops counting as income.')) return;
+    var tok=localStorage.getItem('deluxeFleetToken')||'';
+    try{
+      await fetch('/api/hire/set',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},body:JSON.stringify({dg:dg,offHire:true})});
+      if(window.SERVICE_BY_DG){ window.SERVICE_BY_DG[dg]=window.SERVICE_BY_DG[dg]||{dg:dg}; window.SERVICE_BY_DG[dg].offHire=true; }
+      if(typeof rebuildMap==='function') rebuildMap();
+      if(typeof setAvailable==='function' && availOn) setAvailable(true);
+    }catch(e){}
+  }
+  // Delegated: "Put on contract" opens the dialog; "End contract" returns to yard.
   document.addEventListener('click', function(e){
-    var b=e.target && e.target.closest ? e.target.closest('.put-contract') : null;
-    if(b){ e.preventDefault(); open(b.getAttribute('data-dg')); }
+    if(!e.target || !e.target.closest) return;
+    var pc=e.target.closest('.put-contract');
+    if(pc){ e.preventDefault(); open(pc.getAttribute('data-dg')); return; }
+    var ec=e.target.closest('.end-contract');
+    if(ec){ e.preventDefault(); endContract(ec.getAttribute('data-dg')); }
   });
 })();
 
@@ -665,13 +680,14 @@ function rebuildMap(){
       +'<a href="https://wa.me/?text='+encodeURIComponent(r.dg+' ('+(r.location||'')+') location: https://maps.google.com/?q='+r.lat+','+r.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
       +'</div>';
     const contractBtn = isAvailable(r) ? ('<button class="put-contract" data-dg="'+r.dg+'" data-kva="'+(r.kva||'')+'" style="width:100%;margin-top:8px;background:#e8a13a;color:#1a1300;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">📄 Put on contract</button>') : '';
+    const endBtn = (!isAvailable(r) && r.status!=='Off-Fleet') ? ('<button class="end-contract" data-dg="'+r.dg+'" style="width:100%;margin-top:8px;background:#2b2f33;color:#b4bcc4;border:1px solid #3a4148;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">⚪ End contract (return to yard)</button>') : '';
     const svc = (window.SERVICE_BY_DG||{})[r.dg];
     const su = serviceUrgency(r.dg);
     const isOff = !!(svc && svc.offHire);
     const offNote = isOff ? `<br><b style="color:#b4bcc4;">⚪ OFF-HIRE${svc.hireSince?(' since '+svc.hireSince):''} — in yard</b>` : '';
     const suNote = isOff ? '' : ((su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : ''));
     const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${svc.nextServiceDate?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
-    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}`);
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
     var svcH = (svc && svc.hours!=null) ? svc.hours : (r.last_service_hours!=null ? r.last_service_hours : null);
     var labelTxt = (availOn && svcH!=null) ? (r.dg + ' · ' + svcH + 'h') : r.dg;
     m.bindTooltip(labelTxt, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
