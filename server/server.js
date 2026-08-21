@@ -511,6 +511,50 @@ app.get('/api/route', async (req, res) => {
   }
 });
 
+// Location lookup (geocoding) for customer sites. Typing a company/site name
+// searches OpenStreetMap (Nominatim), scoped to the UAE, and returns matching
+// places with coordinates and address - so the office can locate a new site by
+// name instead of hunting for a pin. Proxied server-side (the office network
+// blocks external hosts) with a day-long cache to respect Nominatim's fair-use.
+const geoCache = new Map();
+app.get('/api/geosearch', fleetProtect, async (req, res) => {
+  const q = String((req.query && req.query.q) || '').trim();
+  res.set('Cache-Control', 'no-store');
+  if (q.length < 2) return res.json({ results: [] });
+  const key = q.toLowerCase();
+  const hit = geoCache.get(key);
+  if (hit && (Date.now() - hit.ts) < 24 * 3600 * 1000) return res.json({ results: hit.results });
+  // A rough dust/harshness hint from the place description - only a suggestion.
+  const dustHint = (text) => {
+    const t = String(text || '').toLowerCase();
+    if (/(quarry|mine|industrial|factory|cement|crusher|desert|sand|port|dockyard|icad|mussafah|musaffah|construction|labour camp|labor camp)/.test(t)) return 'High';
+    if (/(farm|agri|depot|warehouse|yard|workshop|road|highway|outskirt)/.test(t)) return 'Medium';
+    if (/(city|downtown|residential|tower|mall|villa|street|building|hotel|office)/.test(t)) return 'Low';
+    return '';
+  };
+  try {
+    const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=ae&q='
+      + encodeURIComponent(q);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'DeluxeFleet/1.0 (deluxe-group-portal; site geocoding)' } });
+    clearTimeout(timer);
+    const data = await r.json();
+    const results = (Array.isArray(data) ? data : []).map((d) => ({
+      name: d.name || String(d.display_name || '').split(',')[0],
+      address: d.display_name || '',
+      lat: Number(d.lat),
+      lon: Number(d.lon),
+      kind: d.type || d.category || '',
+      dustHint: dustHint((d.display_name || '') + ' ' + (d.type || '') + ' ' + (d.category || '')),
+    })).filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
+    geoCache.set(key, { results, ts: Date.now() });
+    res.json({ results });
+  } catch (e) {
+    res.json({ results: [], error: 'lookup-unavailable' });
+  }
+});
+
 // ---------- Generator service log (hours-based servicing) ----------
 // Technicians submit a generator's current running hours; the server computes
 // the next service due (hours + interval, default 350) and stores it. Reuses the
