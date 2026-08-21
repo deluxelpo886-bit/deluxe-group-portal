@@ -698,7 +698,8 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
     + '\n📍 Location: https://www.google.com/maps?q='+gen.lat+','+gen.lon
     + (nrst ? '\n🚚 Nearest truck: '+nrst.name+' (~'+nrst.d.toFixed(1)+' km)' : '')
     + '\nPlease attend as soon as possible.';
-  html += `<a href="https://wa.me/?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin:0 0 10px;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:11px;font-weight:700;text-decoration:none;">📲 Send job to driver on WhatsApp</a>`;
+  html += `<a href="https://wa.me/?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin:0 0 8px;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:11px;font-weight:700;text-decoration:none;">📲 Send job to driver on WhatsApp</a>`;
+  html += `<button id="logBdBtn" style="display:block;width:100%;text-align:center;margin:0 0 10px;background:#2e1c1a;color:#e0644a;border:1px solid #5a2a22;border-radius:8px;padding:11px;font-weight:700;font-size:13px;cursor:pointer;">🚨 Log this breakdown</button>`;
   html += `<div id="routeStatus" style="font-size:12px;color:var(--amber);margin-bottom:8px;">⏳ Calculating real driving route...</div>`;
   vdist.forEach((v,i)=>{
     const eta = Math.round(v.d/45*60);
@@ -713,6 +714,20 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
   document.getElementById('dispatchResult').innerHTML = html;
   map.flyTo([gen.lat, gen.lon], 12, {duration:0.6});
   if(genMarkers[dg]) genMarkers[dg].circle.openPopup();
+
+  // Log this breakdown straight into the breakdown log (DG, location, nearest truck).
+  var logBd = document.getElementById('logBdBtn');
+  if(logBd){ logBd.addEventListener('click', async function(){
+    logBd.disabled=true; logBd.textContent='Logging…';
+    try{
+      var tok = localStorage.getItem('deluxeFleetToken')||'';
+      var r = await fetch('/api/breakdowns/add',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+        body:JSON.stringify({dg:gen.dg, location:gen.location||'', truck:(nrst?nrst.name:'')})});
+      if(r.ok){ logBd.textContent='✓ Logged — open Breakdowns'; logBd.style.color='#4caf7d'; logBd.style.borderColor='#2a5c40'; logBd.style.background='#1a2e24';
+        logBd.onclick=function(){ window.location.href='/breakdowns'; }; logBd.disabled=false; }
+      else { logBd.textContent='🚨 Log this breakdown'; logBd.disabled=false; }
+    }catch(e){ logBd.textContent='🚨 Log this breakdown'; logBd.disabled=false; }
+  }); }
 
   // Real driving route via our own server (same-origin) so it works even when
   // the office network blocks the public routing host. Server falls back to a
