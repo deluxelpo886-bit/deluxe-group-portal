@@ -21,6 +21,7 @@ const spares = require('./spares');
 const sites = require('./sites');
 const hire = require('./hire');
 const serviceAlert = require('./service-alert');
+const breakdowns = require('./breakdowns');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -711,6 +712,43 @@ app.get('/sites', (req, res) => {
       + "worker-src 'self' blob:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'sites.html'));
+});
+
+// ---------- Breakdown log ----------
+// Records generator breakdowns and their resolution, for response-time history
+// and repeat-offender tracking. Same fleet login. See server/breakdowns.js.
+app.get('/api/breakdowns', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ breakdowns: breakdowns.getAll(), stats: breakdowns.stats() });
+});
+app.post('/api/breakdowns/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: breakdowns.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/breakdowns/resolve', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: breakdowns.resolve((req.body || {}).id) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/breakdowns/reopen', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: breakdowns.reopen((req.body || {}).id) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/breakdowns/update', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  try { res.json({ ok: true, item: breakdowns.update(b.id, b) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
+  breakdowns.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+app.get('/breakdowns', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'breakdowns.html'));
 });
 
 // Operations dashboard: at-a-glance counts (fleet, service due, spares, sites)

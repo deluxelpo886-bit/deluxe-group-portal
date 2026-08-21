@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Breakdown Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text],input[type=datetime-local],textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  input:focus,textarea:focus{border-color:var(--amber);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:130px;}
+  .field{margin-bottom:12px;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:11px 14px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .stat .big{font-size:26px;font-weight:800;font-family:var(--mono);line-height:1;}
+  .stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
+  .stat.alert .big{color:var(--red);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  .dg{font-family:var(--mono);font-weight:700;}
+  .muted{color:var(--muted);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+  .b-Open{background:#3a1414;color:#ff8a75;}
+  .b-Resolved{background:var(--green-bg);color:var(--green);}
+  .chip{display:inline-block;background:#2e2410;color:var(--gold);border-radius:20px;padding:2px 9px;font-size:11.5px;font-weight:700;margin:0 6px 6px 0;}
+  .x{color:var(--red);cursor:pointer;border:none;background:transparent;font-size:15px;padding:2px 6px;}
+  .mini{background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;}
+  .mini.green{background:var(--green-bg);color:var(--green);border-color:#2a5c40;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🚨 Breakdowns</a></nav>
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>Breakdown Log</h1>
+    </div>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+  <p class="sub">Log every breakdown and resolve it when fixed — the portal tracks your response times and flags repeat-offender generators. See also the <a href="/fleet" class="link">live map</a> (nearest-truck dispatch) or the <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="field"><label>Generator (DG) *</label><input type="text" id="dg" placeholder="e.g. DG-537" autocomplete="off"></div>
+      <div class="field" style="flex:2;"><label>Location / site</label><input type="text" id="location" placeholder="e.g. Mussafah ICAD-2" autocomplete="off"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Truck / team sent</label><input type="text" id="truck" placeholder="e.g. Imran" autocomplete="off"></div>
+      <div class="field"><label>Reported by</label><input type="text" id="reportedBy" placeholder="e.g. TK" autocomplete="off"></div>
+      <div class="field"><label>When reported</label><input type="datetime-local" id="reportedAt"></div>
+    </div>
+    <div class="field"><label>Problem / notes</label><input type="text" id="notes" placeholder="e.g. Not starting — battery / fuel issue"></div>
+    <button class="btn" id="add">🚨 Log breakdown</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="panel">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Generator</th><th>Status</th><th>Reported</th><th>Truck</th><th>Problem</th><th>Resolved</th><th></th></tr></thead>
+        <tbody id="body"><tr><td colspan="7" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Breakdown Log — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to log and track breakdowns.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  function fmt(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return iso; } }
+  function since(a,b){ // hours between two ISO strings, human
+    if(!a||!b) return '';
+    var h=(new Date(b)-new Date(a))/3600000;
+    if(h<1) return Math.round(h*60)+' min';
+    if(h<48) return (Math.round(h*10)/10)+' h';
+    return Math.round(h/24)+' d';
+  }
+
+  function renderStats(s){
+    s=s||{};
+    $('stats').innerHTML =
+       '<div class="stat '+(s.open?'alert':'')+'"><div class="big">'+(s.open||0)+'</div><div class="lbl">Open now</div></div>'
+      +'<div class="stat"><div class="big">'+(s.thisMonth||0)+'</div><div class="lbl">This month</div></div>'
+      +'<div class="stat"><div class="big">'+(s.avgHours!=null?s.avgHours+'h':'—')+'</div><div class="lbl">Avg fix time</div></div>'
+      +'<div class="stat"><div class="big">'+(s.total||0)+'</div><div class="lbl">Total logged</div></div>'
+      +((s.repeat&&s.repeat.length)?('<div class="stat" style="grid-column:1/-1;"><div class="lbl" style="margin:0 0 8px;">⚠ Repeat-offender generators</div>'
+         +s.repeat.map(function(r){return '<span class="chip">'+esc(r.dg)+' · '+r.count+'×</span>';}).join('')+'</div>'):'');
+  }
+
+  function render(list){
+    $('body').innerHTML = list.length ? list.map(function(it){
+      var open=it.status==='Open';
+      var action = open
+        ? '<button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
+        : '<button class="mini" data-reopen="'+esc(it.id)+'">Reopen</button>';
+      return '<tr'+(open?'':' style="opacity:.7;"')+'>'
+        +'<td class="dg">'+esc(it.dg)+(it.location?'<div class="muted" style="font-size:12px;">'+esc(it.location)+'</div>':'')+'</td>'
+        +'<td><span class="badge b-'+esc(it.status)+'">'+esc(it.status)+'</span>'+(open?'<div class="muted" style="font-size:11px;margin-top:3px;">open '+since(it.reportedAt,new Date().toISOString())+'</div>':'')+'</td>'
+        +'<td class="muted">'+fmt(it.reportedAt)+(it.reportedBy?'<br>by '+esc(it.reportedBy):'')+'</td>'
+        +'<td class="muted">'+(it.truck?esc(it.truck):'—')+'</td>'
+        +'<td class="muted">'+(it.notes?esc(it.notes):'—')+'</td>'
+        +'<td class="muted">'+(it.resolvedAt?(fmt(it.resolvedAt)+'<br><span style="color:var(--green)">'+since(it.reportedAt,it.resolvedAt)+'</span>'):'—')+'</td>'
+        +'<td style="white-space:nowrap;">'+action+' <button class="x" data-rm="'+esc(it.id)+'" title="Delete">✕</button></td>'
+        +'</tr>';
+    }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No breakdowns logged yet. 👍</td></tr>';
+    $('body').querySelectorAll('button[data-resolve]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve')}); }); });
+    $('body').querySelectorAll('button[data-reopen]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/reopen',{id:b.getAttribute('data-reopen')}); }); });
+    $('body').querySelectorAll('button[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Delete this breakdown record?')) post('/api/breakdowns/remove',{id:b.getAttribute('data-rm')}); }); });
+  }
+
+  async function post(url,body){
+    try{
+      var r=await fetch(url,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body)});
+      if(r.status===401){ showLogin('Please sign in again.'); return null; }
+      var d=await r.json().catch(function(){return{};});
+      load();
+      return d;
+    }catch(e){ return null; }
+  }
+  async function load(){
+    try{
+      var r=await fetch('/api/breakdowns',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json(); renderStats(d.stats); render(d.breakdowns||[]);
+    }catch(e){ $('body').innerHTML='<tr><td colspan="7" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+  }
+
+  $('add').addEventListener('click',async function(){
+    $('err').textContent='';
+    if(!$('dg').value.trim()){ $('err').textContent='Generator (DG) number is required'; return; }
+    $('add').disabled=true;
+    var body={dg:$('dg').value,location:$('location').value,truck:$('truck').value,reportedBy:$('reportedBy').value,notes:$('notes').value};
+    if($('reportedAt').value) body.reportedAt=new Date($('reportedAt').value).toISOString();
+    var d=await post('/api/breakdowns/add',body);
+    $('add').disabled=false;
+    if(d && d.error){ $('err').textContent=d.error; return; }
+    if(d && d.ok){ $('dg').value=''; $('location').value=''; $('truck').value=''; $('notes').value=''; $('reportedAt').value=''; }
+  });
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
