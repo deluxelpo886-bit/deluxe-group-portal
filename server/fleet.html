@@ -1644,6 +1644,53 @@ refreshAll();
   }
   reportBtn.addEventListener('click', openReport);
 
+  // ---- Fleet availability & utilisation (real-time, by KVA size) ----
+  var availBtn=document.createElement('button');
+  availBtn.type='button'; availBtn.textContent='📊 Availability';
+  availBtn.title='Fleet utilisation and what is available to rent, by KVA size';
+  availBtn.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;';
+  if(typeof searchBar!=='undefined' && searchBar){ searchBar.appendChild(availBtn); }
+  var availModal=document.createElement('div');
+  availModal.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:16px;';
+  availModal.addEventListener('click', function(e){ if(e.target===availModal) availModal.style.display='none'; });
+  document.body.appendChild(availModal);
+  function openAvail(){
+    var rows=DATA.filter(function(r){ return r.status!=='Off-Fleet'; });
+    var total=rows.length;
+    var availN=rows.filter(function(r){ return isAvailable(r); }).length;
+    var onHire=total-availN;
+    var util=total?Math.round(onHire/total*100):0;
+    var byk={};
+    rows.forEach(function(r){
+      var lbl=(r.kva!=null&&r.kva!=='')?(r.kva+' KVA'):'—';
+      byk[lbl]=byk[lbl]||{kva:Number(r.kva)||0,label:lbl,total:0,avail:0};
+      byk[lbl].total++; if(isAvailable(r)) byk[lbl].avail++;
+    });
+    var krows=Object.keys(byk).map(function(k){return byk[k];}).sort(function(a,b){return a.kva-b.kva;});
+    function comp(c){ var rs=rows.filter(function(r){return r.company===c;}); var a=rs.filter(isAvailable).length; return {total:rs.length, avail:a}; }
+    var heavy=comp('Heavy'), energy=comp('Energy');
+    var ktable=krows.map(function(x){
+      return '<tr style="border-bottom:1px solid #2c333a;"><td style="padding:7px 10px;font-weight:700;">'+x.label+'</td>'
+        +'<td style="padding:7px 10px;text-align:right;font-family:monospace;">'+x.total+'</td>'
+        +'<td style="padding:7px 10px;text-align:right;font-family:monospace;color:#8b95a1;">'+(x.total-x.avail)+'</td>'
+        +'<td style="padding:7px 10px;text-align:right;font-family:monospace;font-weight:700;color:'+(x.avail?'#4caf7d':'#8b95a1')+';">'+x.avail+'</td></tr>';
+    }).join('');
+    availModal.innerHTML='<div style="background:#1c2126;border:1px solid #2c333a;border-radius:14px;max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:20px;font-family:Inter,-apple-system,Segoe UI,sans-serif;color:#e8ecef;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h2 style="margin:0;font-size:18px;">📊 Availability &amp; utilisation</h2><button id="availClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">Close</button></div>'
+      +'<div style="background:#20262c;border:1px solid #2c333a;border-radius:10px;padding:14px;margin-bottom:14px;">'
+      +'<div style="font-size:26px;font-weight:800;font-family:monospace;">'+util+'% <span style="font-size:13px;font-weight:400;color:#8b95a1;">fleet utilisation</span></div>'
+      +'<div style="height:10px;background:#14181c;border-radius:6px;overflow:hidden;margin:8px 0;"><div style="height:100%;width:'+util+'%;background:#4caf7d;"></div></div>'
+      +'<div style="font-size:13px;color:#8b95a1;"><b style="color:#e8ecef;">'+onHire+'</b> on hire (earning) &middot; <b style="color:#4caf7d;">'+availN+'</b> available &middot; '+total+' total</div></div>'
+      +'<div style="display:flex;gap:10px;margin-bottom:14px;">'
+      +'<div style="flex:1;background:#20262c;border:1px solid #2c333a;border-radius:10px;padding:12px;"><div style="color:#e8a13a;font-weight:700;font-size:13px;">Heavy</div><div style="font-size:13px;color:#8b95a1;margin-top:4px;"><b style="color:#4caf7d;">'+heavy.avail+'</b> avail / '+heavy.total+'</div></div>'
+      +'<div style="flex:1;background:#20262c;border:1px solid #2c333a;border-radius:10px;padding:12px;"><div style="color:#5b9bd5;font-weight:700;font-size:13px;">Energy</div><div style="font-size:13px;color:#8b95a1;margin-top:4px;"><b style="color:#4caf7d;">'+energy.avail+'</b> avail / '+energy.total+'</div></div></div>'
+      +'<div style="font-size:12px;color:#8b95a1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Available by size — what you can rent out now</div>'
+      +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="color:#8b95a1;font-size:11px;text-transform:uppercase;"><th style="padding:7px 10px;text-align:left;">Size</th><th style="padding:7px 10px;text-align:right;">Total</th><th style="padding:7px 10px;text-align:right;">On hire</th><th style="padding:7px 10px;text-align:right;">Available</th></tr></thead><tbody>'+(ktable||'<tr><td colspan="4" style="padding:12px;color:#8b95a1;">No generators.</td></tr>')+'</tbody></table></div></div>';
+    availModal.style.display='flex';
+    document.getElementById('availClose').addEventListener('click', function(){ availModal.style.display='none'; });
+  }
+  availBtn.addEventListener('click', openAvail);
+
   // ---- Declutter map labels: only show the name tags when zoomed in ----
   var LABEL_MIN_ZOOM = 13;
   (function(){ var st=document.createElement('style'); st.textContent='.hide-map-labels .dg-label,.hide-map-labels .site-label{display:none !important;}'
