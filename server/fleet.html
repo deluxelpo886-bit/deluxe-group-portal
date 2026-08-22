@@ -634,7 +634,7 @@ function serviceUrgency(dg){
 function genIcon(r){
   const logo = r.company==='Energy' ? ENERGY_LOGO : HEAVY_LOGO;
   const svc0 = (window.SERVICE_BY_DG||{})[r.dg];
-  const isOff = !!(svc0 && svc0.offHire);
+  const isOff = isAvailable(r);
   const ring = isOff ? '#6b7280' : statusColor(r.status);
   const u = serviceUrgency(r.dg);
   const glow = isOff ? '0 1px 4px rgba(0,0,0,0.5)'
@@ -664,7 +664,12 @@ function hoursInfo(r){
 var availOn=false;
 function isAvailable(r){
   var svc=(window.SERVICE_BY_DG||{})[r.dg];
-  return r.status==='Available' || !!(svc && svc.offHire);
+  if(svc && svc.offHire) return true;                 // marked off-hire
+  if(r.status==='Available') return true;             // fleet status says available
+  // Auto-detect workshop/yard from the customer or location text.
+  var t=((r.customer||'')+' '+(r.location||'')).toUpperCase();
+  if(/WORK\s*SHOP|WORKSHOP|\bYARD\b/.test(t)) return true;
+  return false;
 }
 function availCount(){ return getFiltered().filter(function(r){ return r.status!=='Off-Fleet' && isAvailable(r); }).length; }
 function rebuildMap(){
@@ -683,8 +688,8 @@ function rebuildMap(){
     const endBtn = (!isAvailable(r) && r.status!=='Off-Fleet') ? ('<button class="end-contract" data-dg="'+r.dg+'" style="width:100%;margin-top:8px;background:#2b2f33;color:#b4bcc4;border:1px solid #3a4148;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">⚪ End contract (return to yard)</button>') : '';
     const svc = (window.SERVICE_BY_DG||{})[r.dg];
     const su = serviceUrgency(r.dg);
-    const isOff = !!(svc && svc.offHire);
-    const offNote = isOff ? `<br><b style="color:#b4bcc4;">🏭 In workshop — service paused (off-hire${svc.hireSince?(' since '+svc.hireSince):''}, not running)</b>` : '';
+    const isOff = isAvailable(r);
+    const offNote = isOff ? `<br><b style="color:#b4bcc4;">🏭 In workshop — service paused (not running)${(svc&&svc.hireSince)?(' · off-hire since '+svc.hireSince):''}</b>` : '';
     const suNote = isOff ? '' : ((su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : ''));
     const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${(!isOff && svc.nextServiceDate)?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
     m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
@@ -907,7 +912,7 @@ function renderTable(){
     // the old static "next_service" value; fall back to the static one.
     const _svc = (window.SERVICE_BY_DG||{})[r.dg];
     let nextCls, nextCell;
-    if(_svc && _svc.offHire){
+    if(isAvailable(r)){
       nextCls = '';
       nextCell = '<span style="color:#b4bcc4;">🏭 In workshop · paused</span>';
     } else if(_svc){
@@ -1547,6 +1552,8 @@ refreshAll();
     var overdue=0, soon=0;
     gens.forEach(function(g){
       if(g.offHire) return;   // off-hire units are idle in the yard - no service alarm
+      var dr=(typeof DATA!=='undefined')?DATA.find(function(x){return x.dg===g.dg;}):null;
+      if(dr && typeof isAvailable==='function' && isAvailable(dr)) return; // in workshop - paused
       if(!g.nextServiceDate) return;
       var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
       if(days<0) overdue++; else if(days<=5) soon++;
