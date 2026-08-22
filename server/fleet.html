@@ -684,9 +684,9 @@ function rebuildMap(){
     const svc = (window.SERVICE_BY_DG||{})[r.dg];
     const su = serviceUrgency(r.dg);
     const isOff = !!(svc && svc.offHire);
-    const offNote = isOff ? `<br><b style="color:#b4bcc4;">⚪ OFF-HIRE${svc.hireSince?(' since '+svc.hireSince):''} — in yard</b>` : '';
+    const offNote = isOff ? `<br><b style="color:#b4bcc4;">🏭 In workshop — service paused (off-hire${svc.hireSince?(' since '+svc.hireSince):''}, not running)</b>` : '';
     const suNote = isOff ? '' : ((su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : ''));
-    const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${svc.nextServiceDate?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
+    const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${(!isOff && svc.nextServiceDate)?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
     m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
     var svcH = (svc && svc.hours!=null) ? svc.hours : (r.last_service_hours!=null ? r.last_service_hours : null);
     var labelTxt = (availOn && svcH!=null) ? (r.dg + ' · ' + svcH + 'h') : r.dg;
@@ -909,7 +909,7 @@ function renderTable(){
     let nextCls, nextCell;
     if(_svc && _svc.offHire){
       nextCls = '';
-      nextCell = '<span style="color:#b4bcc4;">⚪ OFF-HIRE</span>';
+      nextCell = '<span style="color:#b4bcc4;">🏭 In workshop · paused</span>';
     } else if(_svc){
       const _u = (typeof serviceUrgency==='function') ? serviceUrgency(r.dg) : null;
       nextCls = (_u && (_u.level==='overdue'||_u.level==='soon')) ? 'svc-soon' : '';
