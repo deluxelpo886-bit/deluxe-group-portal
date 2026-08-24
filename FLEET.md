@@ -34,6 +34,12 @@ tracking is simply off and the rest of the portal runs normally.
 
 ## Setup on Render (one time, ~5 minutes)
 
+> **Before anything else — make the data permanent.** Without a persistent disk,
+> everything entered in the portal is wiped on every deploy/restart. This is a
+> one-time setup and it's essential. See **[STORAGE.md](STORAGE.md)** (add a
+> disk + set `DB_PATH`). Check `https://<your-portal>/api/health` shows
+> `"storagePersistent": true`.
+
 1. Merge this branch and let Render deploy it (or push and it auto-deploys).
 2. In the Render dashboard → your portal service → **Environment** → add:
 
