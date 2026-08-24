@@ -60,7 +60,7 @@
       <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
     </div>
   </div>
-  <p class="sub">Plan the day's servicing for each team. Technicians tick jobs off as they finish. Tap <b>🔧 Auto-add due</b> to drop every generator due for service (within 7 days) straight onto the two teams. Also see the <a href="/service" class="link">service log</a>, the <a href="/fleet" class="link">live map</a>, or the <a href="/menu" class="link">☰ menu</a>.</p>
+  <p class="sub">Plan the day's servicing for each team. Technicians tick jobs off as they finish. Tap <b>🔧 Auto-add due</b> to drop the generators <b>confirmed due by hours</b> onto the two teams — machines flagged only by the date estimate are held back so you <b>confirm their real hours first</b> (no wasted trips to low-usage sites). Also see the <a href="/service" class="link">service log</a>, the <a href="/fleet" class="link">live map</a>, or the <a href="/menu" class="link">☰ menu</a>.</p>
   <div id="autoStatus" style="font-size:13px;color:var(--green);min-height:18px;margin:-4px 0 12px;"></div>
 
   <div class="cols" id="cols"></div>
@@ -172,26 +172,31 @@
       var sr=await fetch('/api/service/status',{cache:'no-store',headers:authHeaders()});
       if(sr.status===401){ showLogin(); return; }
       var sd=await sr.json(); var gens=sd.generators||[];
-      var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
-      var due=gens.map(function(g){
-        if(g.offHire||!g.nextServiceDate) return null;
-        var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
-        return days<=7 ? {g:g,days:days} : null;
-      }).filter(Boolean).sort(function(a,b){ return a.days-b.days; });
+      // Hours-first: only auto-add the machines CONFIRMED due by real running
+      // hours. Machines flagged only by the date estimate are NOT dispatched on
+      // a guess - they're reported so the office confirms the hours first.
+      var send=gens.filter(function(g){ return g.due&&g.due.state==='due'; })
+        .sort(function(a,b){ return (a.due.hoursLeft||0)-(b.due.hoursLeft||0); });
+      var confirm=gens.filter(function(g){ return g.due&&g.due.state==='confirm'; });
       // Existing DGs already on the schedule for this date (either team).
       var er=await fetch('/api/schedule?date='+encodeURIComponent($('date').value),{cache:'no-store',headers:authHeaders()});
       var ed=await er.json(); var existing={};
       TEAMS.forEach(function(t){ ((ed.teams&&ed.teams[t])||[]).forEach(function(it){ existing[String(it.dg).toUpperCase()]=true; }); });
       var added=0, i=0;
-      for(var k=0;k<due.length;k++){
-        var x=due[k]; if(existing[String(x.g.dg).toUpperCase()]) continue;
+      for(var k=0;k<send.length;k++){
+        var g=send[k]; if(existing[String(g.dg).toUpperCase()]) continue;
         var team=TEAMS[i%TEAMS.length]; i++;
-        var note=(x.days<0?('overdue '+Math.abs(x.days)+'d'):(x.days===0?'due today':('due in '+x.days+'d')))+' · next @ '+x.g.nextService+'h';
-        await addSilently(team,x.g.dg,note); added++;
+        var note=Math.abs(g.due.hoursLeft||0)+'h over · next @ '+g.nextService+'h (confirmed by hours)';
+        await addSilently(team,g.dg,note); added++;
       }
-      $('autoStatus').textContent = added
-        ? ('Added '+added+' due service'+(added>1?'s':'')+', split across the two teams.')
-        : (due.length ? 'All due services are already on today’s schedule. 👍' : 'No services due within 7 days. 👍');
+      var msg = added
+        ? ('Added '+added+' confirmed-due service'+(added>1?'s':'')+', split across the two teams.')
+        : (send.length ? 'All confirmed-due services are already on today’s schedule. 👍' : 'Nothing confirmed due by hours. 👍');
+      if(confirm.length){
+        msg += ' ⚠ '+confirm.length+' more flagged by date estimate ('+confirm.slice(0,8).map(function(g){return g.dg;}).join(', ')+(confirm.length>8?'…':'')+') — confirm their hours in the service log before sending a team.';
+        $('autoStatus').style.color='var(--amber)';
+      } else { $('autoStatus').style.color='var(--green)'; }
+      $('autoStatus').innerHTML = msg + ' <a href="/service" class="link">Open service log →</a>';
       load();
     }catch(e){ $('autoStatus').style.color='var(--red)'; $('autoStatus').textContent='Could not auto-add. Try again.'; }
     finally{ btn.disabled=false; btn.textContent=old; }

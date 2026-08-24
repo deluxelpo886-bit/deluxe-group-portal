@@ -249,4 +249,39 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { logService, logReading, getAll, getPhoto, remove, applySeed, DEFAULT_INTERVAL };
+// Classify a generator's service urgency the way an operation head should read
+// it: by real running HOURS when we have a confirmed reading (from an "Hours
+// check"), and only falling back to the calendar-date estimate when we don't -
+// and in that case telling the office to CONFIRM the hours before sending a team
+// rather than treating the estimate as gospel. This is what stops a low-usage
+// machine (ran 100h of 350) being dispatched just because a date passed.
+//
+// States: 'paused' (off-hire), 'due' (confirmed by hours - send), 'plan'
+// (confirmed, within hoursSoon of due), 'confirm' (estimate says due/soon but
+// hours not confirmed - verify first), 'ok' (not due).
+function classifyDue(g, todayStr, opts) {
+  opts = opts || {};
+  const hoursSoon = opts.hoursSoon > 0 ? opts.hoursSoon : 50;
+  const windowDays = opts.windowDays > 0 ? opts.windowDays : 7;
+  if (!g) return { state: 'ok', send: false, confirmed: false, label: '' };
+  if (g.offHire) return { state: 'paused', send: false, confirmed: false, label: 'Paused (off-hire)' };
+
+  const hasReading = g.currentHours != null && isFinite(Number(g.currentHours));
+  if (hasReading) {
+    const left = Math.round(Number(g.nextService) - Number(g.currentHours));
+    if (left <= 0) return { state: 'due', send: true, confirmed: true, hoursLeft: left, label: 'Due now — ' + Math.abs(left) + ' h over (confirmed)' };
+    if (left <= hoursSoon) return { state: 'plan', send: false, confirmed: true, hoursLeft: left, label: left + ' h left (confirmed) — plan soon' };
+    return { state: 'ok', send: false, confirmed: true, hoursLeft: left, label: left + ' h left (confirmed)' };
+  }
+
+  if (g.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(g.nextServiceDate))) {
+    const days = Math.round((new Date(g.nextServiceDate + 'T00:00:00') - new Date(todayStr + 'T00:00:00')) / 86400000);
+    if (days <= windowDays) {
+      const when = days < 0 ? ('due ' + Math.abs(days) + 'd ago') : (days === 0 ? 'due today' : ('due in ' + days + 'd'));
+      return { state: 'confirm', send: false, confirmed: false, daysEst: days, label: 'Estimate: ' + when + ' — confirm hours first' };
+    }
+  }
+  return { state: 'ok', send: false, confirmed: false, label: 'Not due' };
+}
+
+module.exports = { logService, logReading, getAll, getPhoto, remove, applySeed, classifyDue, DEFAULT_INTERVAL };
