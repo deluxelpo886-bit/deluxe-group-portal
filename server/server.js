@@ -31,17 +31,29 @@ const DATA_DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 
 const ATTACH_DIR = path.join(DATA_DIR, 'attachments');
 try { fs.mkdirSync(ATTACH_DIR, { recursive: true }); } catch (e) { /* created on first write */ }
 
-// One-time import of historical generator services from the Energy service
-// report. Runs at most once per persistent disk (guarded by a marker file in
-// service.js), so it's safe to leave wired in across deploys and restarts.
+// One-time import of the full fleet's service data from the final asset list.
+// Guarded by a marker file per version, so it's safe to leave wired in across
+// deploys/restarts; a new version cleanly rebuilds the seeded generators.
 try {
-  const seedPath = path.join(__dirname, 'seed', 'energy-service.json');
+  const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'energy-report-2026-08-19');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-08-22');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
+
+// One-time import of on-hire/off-hire status from the final asset list:
+// everything not "ON HIRE" (in the workshop/yard/repair) starts off-hire so its
+// service is paused. Runs once per version.
+try {
+  const hireSeedPath = path.join(__dirname, 'seed', 'fleet-hire.json');
+  if (fs.existsSync(hireSeedPath)) {
+    const hs = JSON.parse(fs.readFileSync(hireSeedPath, 'utf8'));
+    const r = hire.applySeed(hs, 'fleet-hire-2026-08-22');
+    if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
+  }
+} catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
 
 const app = express();
 const PORT = process.env.PORT || 3000;

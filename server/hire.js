@@ -65,4 +65,26 @@ function remove(dg) {
   return false;
 }
 
-module.exports = { setStatus, getAll, getMap, remove };
+// One-time bulk import of on-hire/off-hire status (e.g. from the asset list).
+// Guarded by a marker file keyed by version, so it applies at most once and is
+// safe to leave wired into startup. Only sets the generators listed; others are
+// left untouched (default on-hire).
+function applySeed(records, version) {
+  if (!Array.isArray(records) || !version) return { skipped: true };
+  const marker = path.join(DIR, 'hire-seed.json');
+  let applied = {};
+  try { if (fs.existsSync(marker)) applied = JSON.parse(fs.readFileSync(marker, 'utf8')) || {}; } catch (_) { applied = {}; }
+  if (applied[version]) return { skipped: true, version };
+  let n = 0;
+  for (const r of records) {
+    try { setStatus(r); n += 1; } catch (_) { /* skip bad row */ }
+  }
+  applied[version] = { at: new Date().toISOString(), count: n };
+  try {
+    if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
+    fs.writeFileSync(marker, JSON.stringify(applied, null, 2));
+  } catch (_) { /* best-effort */ }
+  return { applied: n, version };
+}
+
+module.exports = { setStatus, getAll, getMap, remove, applySeed };
