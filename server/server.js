@@ -1041,8 +1041,12 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
 // set; otherwise it stays dormant (the digest is still previewable in the app).
 {
   const wa = require('./whatsapp');
-  const recips = String(process.env.SERVICE_ALERT_WHATSAPP_TO || '').trim();
-  if (wa.isConfigured() && recips) {
+  const mail = require('./email');
+  const waRecips = serviceAlert.recipients();
+  const emRecips = serviceAlert.emailRecipients();
+  const waReady = wa.isConfigured() && waRecips.length;
+  const emReady = mail.isConfigured() && emRecips.length;
+  if (waReady || emReady) {
     const SA_TZ = process.env.ALERT_TIMEZONE || 'Asia/Dubai';
     const SA_HOUR = Number(process.env.SERVICE_ALERT_HOUR) >= 0 ? Number(process.env.SERVICE_ALERT_HOUR) : 7;
     const SA_CHECK_MS = 15 * 60 * 1000;
@@ -1067,7 +1071,11 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
     };
     setTimeout(saCheck, 20000);
     setInterval(saCheck, SA_CHECK_MS);
-    console.log('[service-alert] morning WhatsApp reminder enabled (' + SA_TZ + ' ' + SA_HOUR + ':00)');
+    const channels = [waReady ? 'WhatsApp' : null, emReady ? 'email' : null].filter(Boolean).join(' + ');
+    console.log('[service-alert] morning reminder enabled via ' + channels + ' (' + SA_TZ + ' ' + SA_HOUR + ':00)');
+  } else {
+    console.log('[service-alert] morning reminder DORMANT - no channel ready. '
+      + 'Set SMTP_* + SERVICE_ALERT_EMAIL_TO for email, and/or TWILIO_* + SERVICE_ALERT_WHATSAPP_TO for WhatsApp.');
   }
 }
 
