@@ -40,6 +40,13 @@ function add(rec) {
     location: String((rec && rec.location) || '').trim(),
     truck: String((rec && rec.truck) || '').trim(),
     notes: String((rec && rec.notes) || '').trim(),
+    // Triage: the reported symptom and the likely fault category (Electrical,
+    // Mechanical, Fuel, Cooling, Control panel, Other). Recorded at report time
+    // so patterns ("why do our breakdowns happen?") build up over time.
+    symptom: String((rec && rec.symptom) || '').trim(),
+    category: String((rec && rec.category) || '').trim(),
+    // Confirmed root cause, filled when the breakdown is resolved.
+    cause: String((rec && rec.cause) || '').trim(),
     reportedBy: String((rec && rec.reportedBy) || '').trim(),
     reportedAt: (rec && rec.reportedAt) ? new Date(rec.reportedAt).toISOString() : new Date().toISOString(),
     status: 'Open',
@@ -52,11 +59,15 @@ function add(rec) {
   return it;
 }
 
-function resolve(id) {
+function resolve(id, fields) {
   const it = items.find((x) => x.id === id);
   if (!it) throw new Error('Breakdown not found');
   it.status = 'Resolved';
   it.resolvedAt = new Date().toISOString();
+  // Capture what was actually wrong (and confirm/correct the category) so the
+  // record teaches you the real cause, not just the reported symptom.
+  if (fields && fields.cause != null && String(fields.cause).trim()) it.cause = String(fields.cause).trim();
+  if (fields && fields.category != null && String(fields.category).trim()) it.category = String(fields.category).trim();
   it.updatedAt = new Date().toISOString();
   persist();
   return it;
@@ -119,7 +130,15 @@ function stats() {
     .sort((a, b) => b.count - a.count)
     .slice(0, 6);
 
-  return { total: items.length, open: open.length, resolved: resolved.length, thisMonth, avgHours, repeat };
+  // Breakdown counts by fault category, so the office can see the pattern -
+  // e.g. mostly Fuel or Cooling (dust) - and act on it.
+  const cat = {};
+  items.forEach((x) => { if (x.category) cat[x.category] = (cat[x.category] || 0) + 1; });
+  const byCategory = Object.keys(cat)
+    .map((k) => ({ category: k, count: cat[k] }))
+    .sort((a, b) => b.count - a.count);
+
+  return { total: items.length, open: open.length, resolved: resolved.length, thisMonth, avgHours, repeat, byCategory };
 }
 
 module.exports = { add, resolve, reopen, update, remove, getAll, stats };

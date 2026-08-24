@@ -65,17 +65,37 @@
 
   <div class="stats" id="stats"></div>
 
+  <!-- TRIAGE HELPER -->
+  <div class="panel" id="triagePanel">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <span style="font-size:18px;">🩺</span><b style="font-size:15px;">Breakdown helper — what did the customer say?</b>
+    </div>
+    <p class="sub" style="margin:0 0 12px;">Tap the closest symptom. You'll get the likely cause, quick checks to try on the phone <b>before</b> sending the team (saves a long drive for far sites like Ruwais), and whether to dispatch.</p>
+    <div id="symptoms" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    <div id="triageOut" style="display:none;margin-top:14px;"></div>
+  </div>
+
   <div class="panel">
     <div class="row">
       <div class="field"><label>Generator (DG) *</label><input type="text" id="dg" placeholder="e.g. DG-537" autocomplete="off"></div>
       <div class="field" style="flex:2;"><label>Location / site</label><input type="text" id="location" placeholder="e.g. Mussafah ICAD-2" autocomplete="off"></div>
     </div>
     <div class="row">
+      <div class="field"><label>Fault category</label>
+        <select id="category" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;">
+          <option value="">— (pick from helper above)</option>
+          <option>Electrical</option><option>Mechanical</option><option>Fuel</option>
+          <option>Cooling</option><option>Control panel</option><option>Other</option>
+        </select>
+      </div>
       <div class="field"><label>Truck / team sent</label><input type="text" id="truck" placeholder="e.g. Imran" autocomplete="off"></div>
       <div class="field"><label>Reported by</label><input type="text" id="reportedBy" placeholder="e.g. TK" autocomplete="off"></div>
+    </div>
+    <div class="row">
+      <div class="field" style="flex:2;"><label>Problem / notes</label><input type="text" id="notes" placeholder="e.g. Not starting — battery / fuel issue"></div>
       <div class="field"><label>When reported</label><input type="datetime-local" id="reportedAt"></div>
     </div>
-    <div class="field"><label>Problem / notes</label><input type="text" id="notes" placeholder="e.g. Not starting — battery / fuel issue"></div>
+    <input type="hidden" id="symptom">
     <button class="btn" id="add">🚨 Log breakdown</button>
     <div class="err" id="err"></div>
   </div>
@@ -110,6 +130,120 @@
   function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 
+  /* ---- Breakdown triage knowledge base (safe, practical diesel-generator guidance) ----
+     Each symptom maps to a likely fault category, plain-English likely causes,
+     quick phone checks to try before dispatch, a dispatch recommendation, and
+     an optional safety warning. This is first-line triage, not a repair manual —
+     anything dangerous says "stop and send a technician". */
+  var KB=[
+    {key:'no-crank',label:"Won't start (starter silent / no crank)",cat:'Electrical',
+      causes:['Flat or loose battery, corroded terminals','Emergency-stop button pressed in','Panel not in AUTO/MANUAL','Blown control fuse'],
+      checks:['Is the red EMERGENCY STOP button pushed in? Twist to release it.','Is the panel switch on AUTO or MANUAL (not OFF)?','Are the battery terminals tight and clean?','Battery charged? (~12V or ~24V). Try charging/jump.','Any blown fuse on the control panel?'],
+      dispatch:'phone', note:'Very often it is the E-stop or a flat battery — fixable on the phone.'},
+    {key:'crank-no-start',label:"Cranks but won't fire",cat:'Fuel',
+      causes:['Out of fuel / air in the fuel line','Clogged fuel filter or closed fuel valve','Water in the fuel','Faulty fuel solenoid'],
+      checks:['Is there fuel in the tank? Check the gauge and look.','Is the fuel valve/cock open?','Drain the water trap / check for water in fuel.','When was the fuel filter last changed?','Try the priming/bleed pump if fitted.'],
+      dispatch:'phone', note:'Fuel, valve and a clogged filter are the usual causes.'},
+    {key:'start-then-stop',label:'Starts then shuts down after a bit',cat:'Fuel',
+      causes:['Fuel starvation (filter / air)','Low oil pressure shutdown','High coolant temperature shutdown','Sensor fault'],
+      checks:['Does the panel show a shutdown code/alarm? Read it or send a photo.','Engine oil level OK (on the dipstick)?','Coolant level OK (when cold)?','Fuel filter / air in line?'],
+      dispatch:'code-first', note:'The shutdown code tells us why — get it before the truck rolls.'},
+    {key:'no-output',label:'Engine runs but NO power / breaker tripped',cat:'Electrical',
+      causes:['Main output breaker tripped','Overload (too many loads)','Loose or damaged output cable','AVR fault'],
+      checks:['Is the main output breaker ON? Reset it once.','Too much load connected? Reduce it, then reset.','Any burning smell from the alternator end? If yes, STOP.'],
+      dispatch:'electrician', danger:'Do NOT open the alternator or touch output terminals — that is a qualified-electrician job.',
+      note:'Reset the breaker once. If it trips again, send an electrician with the right spare.'},
+    {key:'panel-alarm',label:'Warning light / alarm on the panel',cat:'Control panel',
+      causes:['The panel is telling you the fault — low oil pressure, high temp, low fuel, charge fault, overspeed'],
+      checks:['📷 Send a clear PHOTO of the panel, or read the exact words/code.','That code is the answer — do not clear it until we have read it.'],
+      dispatch:'code-first', note:'A photo of the panel lets us decide the cause before anyone drives out.'},
+    {key:'leak',label:'Leaking (oil / fuel / coolant / water)',cat:'Mechanical',
+      causes:['Oil: seal or loose filter','Fuel: line/filter — FIRE RISK','Coolant/water: hose or radiator'],
+      checks:['What colour and where from? (black=oil, dyed=fuel, green/pink=coolant)','FUEL leak → STOP the generator, no smoking/flames, keep people away.','Oil/coolant → note the level; do not run it if very low.'],
+      dispatch:'dispatch', danger:'A fuel leak is a fire hazard — shut it down and isolate until a technician arrives.',
+      note:'Leaks need hands-on — dispatch. Fuel leak = urgent.'},
+    {key:'overheat',label:'Overheating / high-temperature alarm',cat:'Cooling',
+      causes:['Low coolant','Radiator blocked with dust (common on dusty sites)','Broken fan belt or fan','Overload / very hot ambient'],
+      checks:['Coolant level OK — only check when COOL, never open a hot cap.','Is the radiator clogged with dust? Blow/brush it clean.','Is the fan belt intact and tight?','Reduce the load and let it cool.'],
+      dispatch:'dispatch', danger:'Never open a hot radiator cap — steam can scald.',
+      note:'Dusty sites (Ruwais, quarries) block radiators fast — schedule regular radiator cleaning.'},
+    {key:'smoke',label:'Smoke from exhaust',cat:'Mechanical',
+      causes:['Black = overload / dirty air filter / injector','White = water/coolant in combustion, or unburnt fuel','Blue = burning oil'],
+      checks:['What colour is the smoke?','Black: reduce load, check/clean the air filter (dust!).','White or blue: note it and dispatch — likely internal.'],
+      dispatch:'mixed', note:'Black smoke is often load or a dusty air filter (phone-fixable); white/blue needs a technician.'},
+    {key:'noise',label:'Strange noise / heavy vibration',cat:'Mechanical',
+      causes:['Loose mounting or guard','Failing bearing / fan / belt','Exhaust or coupling'],
+      checks:['Where is the noise from?','Loud KNOCKING from the engine → STOP it immediately.'],
+      dispatch:'dispatch', danger:'Knocking can mean serious engine damage — stop the generator and dispatch.',
+      note:'Noise/vibration is hands-on — dispatch.'},
+    {key:'low-fuel',label:'Low-fuel warning',cat:'Fuel',
+      causes:['Tank low','Leak or theft','Faulty gauge/sensor'],
+      checks:['Refuel and confirm it runs.','Check for a leak or unexpected fast drop.'],
+      dispatch:'phone', note:'Usually just refuel — arrange fuel delivery.'},
+    {key:'unknown',label:'Just "not working" (no detail)',cat:'Other',
+      causes:['Not enough information yet — narrow it down with 3 questions'],
+      checks:['1) Is the engine running, or completely off?','2) Any light, alarm or beep on the panel? 📷 send a photo.','3) Any smoke, smell, or leak?','Then tap the matching symptom above.'],
+      dispatch:'triage', note:'Ask these 3 questions first — the answers point to the real symptom.'}
+  ];
+  var CATCOL={Electrical:'#5b9bd5',Mechanical:'#e0644a',Fuel:'#e8a13a',Cooling:'#4caf7d','Control panel':'#b98cff',Other:'#8b95a1'};
+  function dispatchLine(d){
+    if(d==='phone') return {t:'📞 Try the checks on the phone first — often fixed without a visit.',c:'#4caf7d'};
+    if(d==='code-first'||d==='triage') return {t:'🔎 Get the panel code / answers first, then decide.',c:'#e8c168'};
+    if(d==='electrician') return {t:'⚡ If the quick reset fails, send a qualified electrician with spares.',c:'#e8a13a'};
+    if(d==='mixed') return {t:'📞/🚚 Some causes are phone-fixable; if not, dispatch the team.',c:'#e8c168'};
+    return {t:'🚚 Dispatch the team — this needs hands-on work.',c:'#e0644a'};
+  }
+  var currentSym=null;
+  function renderSymptoms(){
+    $('symptoms').innerHTML=KB.map(function(s){
+      return '<button type="button" class="mini" data-sym="'+s.key+'" style="border-color:'+(CATCOL[s.cat]||'#2c333a')+'44;">'+esc(s.label)+'</button>';
+    }).join('');
+    $('symptoms').querySelectorAll('button[data-sym]').forEach(function(b){
+      b.addEventListener('click',function(){ showTriage(b.getAttribute('data-sym')); });
+    });
+  }
+  function customerSteps(s){
+    return 'Deluxe — quick checks for the generator ('+s.label+'):\n'
+      + s.checks.map(function(c,i){ return (i+1)+') '+c.replace(/📷|⚡|🔎/g,'').trim(); }).join('\n')
+      + '\n\nIf these do not fix it, our team will come. Please send a photo of the control panel.';
+  }
+  function showTriage(key){
+    var s=KB.filter(function(x){return x.key===key;})[0]; if(!s) return;
+    currentSym=s;
+    var dl=dispatchLine(s.dispatch);
+    var html='<div style="border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--panel2);">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;">'
+        +'<span class="badge" style="background:'+(CATCOL[s.cat]||'#333')+'22;color:'+(CATCOL[s.cat]||'#ccc')+';border:1px solid '+(CATCOL[s.cat]||'#333')+'55;">'+esc(s.cat)+'</span>'
+        +'<b>'+esc(s.label)+'</b></div>'
+      +(s.danger?('<div style="background:#3a1414;border:1px solid #5a2a22;color:#ff9a86;border-radius:8px;padding:9px 11px;font-size:13px;font-weight:600;margin-bottom:10px;">⚠ '+esc(s.danger)+'</div>'):'')
+      +'<div style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;">Likely cause</div>'
+      +'<ul style="margin:0 0 12px;padding-left:18px;font-size:13.5px;">'+s.causes.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'
+      +'<div style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;">Try these first (on the phone)</div>'
+      +'<ol style="margin:0 0 12px;padding-left:18px;font-size:13.5px;line-height:1.5;">'+s.checks.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ol>'
+      +'<div style="font-weight:700;color:'+dl.c+';font-size:13.5px;margin-bottom:10px;">'+esc(dl.t)+'</div>'
+      +(s.note?('<div class="muted" style="font-size:12.5px;margin-bottom:12px;">💡 '+esc(s.note)+'</div>'):'')
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;">'
+        +'<button type="button" class="mini green" id="prefill">➕ Use this in the log below</button>'
+        +'<button type="button" class="mini" id="copySteps">📋 Copy steps to send customer</button>'
+        +'<button type="button" class="mini" id="clearTri">Clear</button>'
+      +'</div>'
+      +'<div id="copyMsg" class="muted" style="font-size:12px;margin-top:8px;"></div>'
+    +'</div>';
+    $('triageOut').innerHTML=html; $('triageOut').style.display='';
+    $('prefill').addEventListener('click',function(){
+      $('category').value=s.cat; $('symptom').value=s.label;
+      if(!$('notes').value.trim()) $('notes').value=s.label;
+      $('dg').focus(); $('dg').scrollIntoView({behavior:'smooth',block:'center'});
+    });
+    $('copySteps').addEventListener('click',function(){
+      var txt=customerSteps(s);
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ $('copyMsg').textContent='Copied — paste into WhatsApp to the customer.'; },function(){ $('copyMsg').textContent=txt; }); }
+      else { $('copyMsg').textContent=txt; }
+    });
+    $('clearTri').addEventListener('click',function(){ $('triageOut').style.display='none'; currentSym=null; });
+    $('triageOut').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
   function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
   function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
   async function doLogin(){
@@ -143,6 +277,8 @@
       +'<div class="stat"><div class="big">'+(s.thisMonth||0)+'</div><div class="lbl">This month</div></div>'
       +'<div class="stat"><div class="big">'+(s.avgHours!=null?s.avgHours+'h':'—')+'</div><div class="lbl">Avg fix time</div></div>'
       +'<div class="stat"><div class="big">'+(s.total||0)+'</div><div class="lbl">Total logged</div></div>'
+      +((s.byCategory&&s.byCategory.length)?('<div class="stat" style="grid-column:1/-1;"><div class="lbl" style="margin:0 0 8px;">📊 Breakdowns by cause</div>'
+         +s.byCategory.map(function(c){var col=(CATCOL[c.category]||'#8b95a1');return '<span class="chip" style="background:'+col+'22;color:'+col+';">'+esc(c.category)+' · '+c.count+'×</span>';}).join('')+'</div>'):'')
       +((s.repeat&&s.repeat.length)?('<div class="stat" style="grid-column:1/-1;"><div class="lbl" style="margin:0 0 8px;">⚠ Repeat-offender generators</div>'
          +s.repeat.map(function(r){return '<span class="chip">'+esc(r.dg)+' · '+r.count+'×</span>';}).join('')+'</div>'):'');
   }
@@ -158,12 +294,12 @@
         +'<td><span class="badge b-'+esc(it.status)+'">'+esc(it.status)+'</span>'+(open?'<div class="muted" style="font-size:11px;margin-top:3px;">open '+since(it.reportedAt,new Date().toISOString())+'</div>':'')+'</td>'
         +'<td class="muted">'+fmt(it.reportedAt)+(it.reportedBy?'<br>by '+esc(it.reportedBy):'')+'</td>'
         +'<td class="muted">'+(it.truck?esc(it.truck):'—')+'</td>'
-        +'<td class="muted">'+(it.notes?esc(it.notes):'—')+'</td>'
+        +'<td class="muted">'+(it.category?('<span class="badge" style="background:'+((CATCOL[it.category]||"#8b95a1"))+'22;color:'+((CATCOL[it.category]||"#8b95a1"))+';margin-bottom:4px;">'+esc(it.category)+'</span><br>'):'')+(it.notes?esc(it.notes):'—')+(it.cause?'<div style="font-size:11.5px;margin-top:3px;">✔ cause: '+esc(it.cause)+'</div>':'')+'</td>'
         +'<td class="muted">'+(it.resolvedAt?(fmt(it.resolvedAt)+'<br><span style="color:var(--green)">'+since(it.reportedAt,it.resolvedAt)+'</span>'):'—')+'</td>'
         +'<td style="white-space:nowrap;">'+action+' <button class="x" data-rm="'+esc(it.id)+'" title="Delete">✕</button></td>'
         +'</tr>';
     }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No breakdowns logged yet. 👍</td></tr>';
-    $('body').querySelectorAll('button[data-resolve]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve')}); }); });
+    $('body').querySelectorAll('button[data-resolve]').forEach(function(b){ b.addEventListener('click',function(){ var cause=prompt('What was actually wrong? (root cause — helps spot patterns)\\nLeave blank to skip.'); if(cause===null){ post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve')}); } else { post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve'),cause:cause}); } }); });
     $('body').querySelectorAll('button[data-reopen]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/reopen',{id:b.getAttribute('data-reopen')}); }); });
     $('body').querySelectorAll('button[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Delete this breakdown record?')) post('/api/breakdowns/remove',{id:b.getAttribute('data-rm')}); }); });
   }
@@ -189,14 +325,15 @@
     $('err').textContent='';
     if(!$('dg').value.trim()){ $('err').textContent='Generator (DG) number is required'; return; }
     $('add').disabled=true;
-    var body={dg:$('dg').value,location:$('location').value,truck:$('truck').value,reportedBy:$('reportedBy').value,notes:$('notes').value};
+    var body={dg:$('dg').value,location:$('location').value,truck:$('truck').value,reportedBy:$('reportedBy').value,notes:$('notes').value,category:$('category').value,symptom:$('symptom').value};
     if($('reportedAt').value) body.reportedAt=new Date($('reportedAt').value).toISOString();
     var d=await post('/api/breakdowns/add',body);
     $('add').disabled=false;
     if(d && d.error){ $('err').textContent=d.error; return; }
-    if(d && d.ok){ $('dg').value=''; $('location').value=''; $('truck').value=''; $('notes').value=''; $('reportedAt').value=''; }
+    if(d && d.ok){ $('dg').value=''; $('location').value=''; $('truck').value=''; $('notes').value=''; $('reportedAt').value=''; $('category').value=''; $('symptom').value=''; }
   });
 
+  renderSymptoms();
   if(TOKEN){ hideLogin(); } else { showLogin(); }
 })();
 </script>
