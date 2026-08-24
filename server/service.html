@@ -83,6 +83,7 @@
         <input type="number" id="interval" min="1" value="350">
       </div>
     </div>
+    <div id="nextPreview" style="display:none;background:var(--green-bg);border:1px solid #2a5c40;border-radius:8px;padding:10px 12px;margin:-4px 0 14px;font-size:14px;color:var(--green);font-weight:700;"></div>
     <div class="row">
       <div class="field">
         <label>Service date</label>
@@ -246,6 +247,15 @@
 
   // date default = today
   $('date').value=new Date().toISOString().slice(0,10);
+
+  // Live preview of the next-service hours (current hours + interval), like the sheet.
+  function updateNextPreview(){
+    var h=Number($('hours').value), iv=Number($('interval').value)||350;
+    if(isFinite(h) && $('hours').value!==''){ $('nextPreview').style.display=''; $('nextPreview').textContent='→ Next service at '+(h+iv)+' hours'; }
+    else { $('nextPreview').style.display='none'; }
+  }
+  $('hours').addEventListener('input',updateNextPreview);
+  $('interval').addEventListener('input',updateNextPreview);
   $('interval').addEventListener('input',function(){ var v=parseInt($('interval').value,10); if(v>0) $('intvlLabel').textContent=v; });
 
   /* ---- auth ---- */
