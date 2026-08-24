@@ -48,6 +48,41 @@ not freeform text. To support that:
 Utility templates (transactional alerts like these) are the low-cost category
 and, in the UAE, are roughly ~US$0.03/message including Twilio's per-message fee.
 
+## Morning service reminder (why it may not arrive)
+
+The daily 07:00 digest of generators due for service can be sent by **WhatsApp,
+email, or both**. Two things stop the WhatsApp version from arriving:
+
+1. **The service must be awake at 07:00.** The reminder runs *inside* the web
+   service. On Render's **Free** plan the service sleeps after ~15 min idle, so
+   at 7 AM it's usually asleep and the timer never fires. Fix: use the **Starter**
+   instance (never sleeps — this also makes your data permanent, see
+   [STORAGE.md](STORAGE.md)), or add an external uptime pinger (UptimeRobot /
+   cron-job.org) hitting `/api/health` every 5 minutes.
+
+2. **The Twilio WhatsApp *Sandbox* only allows freeform messages within 24 hours
+   of your last message to it.** An unprompted 7 AM WhatsApp therefore gets
+   blocked on any day you didn't just message the sandbox. Reliable daily WhatsApp
+   needs an approved **template** on a real Business sender (see *Going to
+   production* above) — that's paid and takes Meta verification.
+
+**Recommended: send the morning reminder by email** — it has no 24-hour window
+and no template approval, so it "just works". The SMTP mailer is already built
+in. Set these in Render → Environment:
+
+| Variable | Example | Purpose |
+| --- | --- | --- |
+| `SMTP_HOST` | `smtp.gmail.com` | SMTP server |
+| `SMTP_PORT` | `587` | 587 (STARTTLS) or 465 (TLS) |
+| `SMTP_USER` | `you@gmail.com` | SMTP username |
+| `SMTP_PASS` | *(app password)* | Gmail **App Password**, not your login password |
+| `SERVICE_ALERT_EMAIL_TO` | `you@gmail.com` | who receives the morning digest (comma-separate for several) |
+
+Optional: `SERVICE_ALERT_HOUR` (0–23, default 7), `ALERT_TIMEZONE` (default
+`Asia/Dubai`). With email configured, the boot log shows
+`[service-alert] morning reminder enabled via email`. You can send it on demand
+any time from the dashboard's **Send now** button to test.
+
 ## Endpoint reference
 
 `POST /api/send-wa` (auth required)
