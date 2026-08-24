@@ -23,6 +23,7 @@ const hire = require('./hire');
 const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
 const rentals = require('./rentals');
+const delivery = require('./delivery');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -826,6 +827,44 @@ app.get('/rentals', (req, res) => {
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'rentals.html'));
+});
+
+// ---------- Delivery / on-hire notes ----------
+// A numbered hand-over note raised when a generator leaves the yard on hire.
+// Optionally, saving a note can flip the generator on-hire and log its meter
+// reading in one step, so the map, service list and rental tracker stay in sync
+// with what physically went out. Same fleet login. See server/delivery.js.
+app.get('/api/delivery', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ notes: delivery.getAll() });
+});
+app.post('/api/delivery/create', fleetProtect, (req, res) => {
+  try {
+    const body = req.body || {};
+    const note = delivery.create(body);
+    // Keep the rest of the system in step with what left the yard.
+    if (body.setOnHire) {
+      try { hire.setStatus({ dg: note.dg, offHire: false, since: note.date, note: 'On hire — ' + note.number }); } catch (_) { /* best-effort */ }
+    }
+    if (note.meterReading != null) {
+      try { serviceLog.logReading({ dg: note.dg, hours: note.meterReading, date: note.date, technician: note.driver }); } catch (_) { /* best-effort */ }
+    }
+    res.json({ ok: true, note });
+  } catch (e) {
+    res.status(400).json({ error: (e && e.message) || 'Invalid' });
+  }
+});
+app.post('/api/delivery/remove', fleetProtect, (req, res) => {
+  delivery.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+app.get('/delivery', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'delivery.html'));
 });
 
 app.get('/breakdowns', (req, res) => {
