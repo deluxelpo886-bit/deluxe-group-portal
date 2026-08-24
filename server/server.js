@@ -32,6 +32,30 @@ const DATA_DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 
 const ATTACH_DIR = path.join(DATA_DIR, 'attachments');
 try { fs.mkdirSync(ATTACH_DIR, { recursive: true }); } catch (e) { /* created on first write */ }
 
+// --- Storage durability check ------------------------------------------------
+// Everything the office enters (service logs, on/off-hire, delivery notes,
+// rentals, spares, schedule, sites, uploaded files and the SQLite DB) is written
+// under DATA_DIR. On Render a web service's ordinary filesystem is EPHEMERAL: it
+// is wiped on every deploy and every restart. Data only survives if DATA_DIR
+// points at a mounted persistent disk - which is exactly what setting DB_PATH to
+// a path on that disk does. If DB_PATH is unset we are almost certainly writing
+// to ephemeral storage, which is the usual cause of "my data disappeared after a
+// deploy", so warn loudly and expose the status on /api/health so it can be
+// verified after the disk is added. See STORAGE.md.
+const STORAGE_PERSISTENT = !!process.env.DB_PATH;
+if (!STORAGE_PERSISTENT) {
+  console.warn('*****************************************************************');
+  console.warn('[STORAGE] DB_PATH is NOT set - data is being written to a folder');
+  console.warn('[STORAGE] inside the app (' + DATA_DIR + ').');
+  console.warn('[STORAGE] On Render that folder is EPHEMERAL and is WIPED on every');
+  console.warn('[STORAGE] deploy and restart, so everything entered in the portal');
+  console.warn('[STORAGE] will be LOST. Add a persistent disk and set DB_PATH to a');
+  console.warn('[STORAGE] path on it. Steps: see STORAGE.md.');
+  console.warn('*****************************************************************');
+} else {
+  console.log('[STORAGE] Persistent storage enabled (DB_PATH set): ' + DATA_DIR);
+}
+
 // One-time import of the full fleet's service data from the final asset list.
 // Guarded by a marker file per version, so it's safe to leave wired in across
 // deploys/restarts; a new version cleanly rebuilds the seeded generators.
@@ -407,7 +431,7 @@ app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, re
 app.use('/api/ops', createOpsRouter({ authRequired }));
 
 // ---------- Health check ----------
-app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
+app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString(), storagePersistent: STORAGE_PERSISTENT }));
 
 // ---------- Live fleet: login + vehicle positions (Total Secure / Traccar) ----
 // The /fleet map link is protected by a dedicated "Deluxe Operations" login.
