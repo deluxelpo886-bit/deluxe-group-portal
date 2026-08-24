@@ -614,6 +614,17 @@ app.post('/api/service/log', fleetProtect, (req, res) => {
     res.status(400).json({ error: (err && err.message) || 'Invalid submission' });
   }
 });
+// Log a plain hours reading WITHOUT resetting the service. For low-usage / far
+// sites (the Ruwais case): record the real current hours and hours-remaining
+// while leaving the next-service target exactly where it was. See service.js.
+app.post('/api/service/reading', fleetProtect, (req, res) => {
+  try {
+    const entry = serviceLog.logReading(req.body || {});
+    res.json({ ok: true, entry });
+  } catch (err) {
+    res.status(400).json({ error: (err && err.message) || 'Invalid submission' });
+  }
+});
 app.get('/api/service/status', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   // Merge each generator's on-hire/off-hire status so the service list and the
