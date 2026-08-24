@@ -109,6 +109,88 @@ function logService(rec) {
   return entry;
 }
 
+// Record a plain hours reading WITHOUT performing a service. Use this for the
+// low-usage / far-site case (e.g. a generator in Ruwais that has only run 100h
+// against a 350h interval): the office wants the real current hours and the
+// real hours-remaining, but the generator is NOT due yet and its next-service
+// target must stay exactly where it was. So we update currentHours /
+// currentHoursDate / hoursToService on the existing entry and leave nextService,
+// nextServiceDate and the service history untouched. If the generator has no
+// service record yet we create a light one (nextService = hours + interval) so
+// there is something to measure against.
+function logReading(rec) {
+  const dg = String((rec && rec.dg) || '').trim().toUpperCase();
+  if (!dg) throw new Error('Generator (DG) number is required');
+
+  const hours = Number(rec.hours);
+  if (!isFinite(hours) || hours < 0) throw new Error('A valid current hours reading is required');
+
+  const date = (rec.date && String(rec.date).slice(0, 10)) || new Date().toISOString().slice(0, 10);
+  const prev = store[dg];
+
+  // Base entry: keep the existing service record if there is one, otherwise
+  // create a minimal one so the reading has a next-service target to count down
+  // towards.
+  let entry;
+  if (prev) {
+    entry = Object.assign({}, prev);
+  } else {
+    const interval = Number(rec.interval) > 0 ? Number(rec.interval) : DEFAULT_INTERVAL;
+    entry = {
+      dg,
+      hours,
+      interval,
+      nextService: hours + interval,
+      nextServiceDate: null,
+      dailyHours: null,
+      observedDailyHours: null,
+      effectiveDailyHours: null,
+      daysToService: null,
+      date,
+      checks: { oil: false, oilFilter: false, fuelFilter: false, airFilter: false },
+      technician: '',
+      notes: '',
+      photo: null,
+      history: [],
+    };
+  }
+
+  // Observed running rate since the last known hours point (a previous reading
+  // or the last service), used only to project a rough date for the remaining
+  // hours - it does not move the service target.
+  const lastHours = isFinite(entry.currentHours) ? Number(entry.currentHours) : Number(entry.hours);
+  const lastDate = entry.currentHoursDate || entry.date;
+  let observed = null;
+  if (isFinite(lastHours) && lastDate) {
+    const days = (new Date(date + 'T00:00:00') - new Date(lastDate + 'T00:00:00')) / 86400000;
+    const dh = hours - lastHours;
+    if (days > 0 && dh > 0) observed = dh / days;
+  }
+  const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
+
+  entry.currentHours = hours;
+  entry.currentHoursDate = date;
+  const target = Number(entry.nextService);
+  entry.hoursToService = isFinite(target) ? Math.round(target - hours) : null;
+  if (observed) entry.readingDailyHours = round1(observed);
+  entry.updatedAt = new Date().toISOString();
+
+  // Log the reading in history, tagged so it is distinguishable from a service.
+  const history = (Array.isArray(entry.history) ? entry.history : []).concat([{
+    date,
+    hours,
+    reading: true,
+    hoursToService: entry.hoursToService,
+    technician: String((rec.technician) || '').trim(),
+    updatedAt: entry.updatedAt,
+  }]).slice(-30);
+  entry.history = history;
+
+  store[dg] = entry;
+  persist();
+  return entry;
+}
+
 // All generators with a service record, most-recently-updated first. The photo
 // is stripped from the list (fetched separately via getPhoto) to keep it light;
 // a hasPhoto flag tells the UI whether one exists.
@@ -167,4 +249,4 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { logService, getAll, getPhoto, remove, applySeed, DEFAULT_INTERVAL };
+module.exports = { logService, logReading, getAll, getPhoto, remove, applySeed, DEFAULT_INTERVAL };
