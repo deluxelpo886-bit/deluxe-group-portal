@@ -655,9 +655,15 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
   // Merge each generator's on-hire/off-hire status so the service list and the
   // live map can mute off-hire units and drop them from the service alarms.
   const hm = hire.getMap();
+  const todayStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: process.env.ALERT_TIMEZONE || 'Asia/Dubai', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
   const generators = serviceLog.getAll().map((g) => {
     const h = hm[g.dg];
     if (h) { g.offHire = !!h.offHire; g.hireSince = h.since; g.hireNote = h.note; }
+    // Attach the hours-first due classification so every view (service list,
+    // schedule, dashboard) shares the same "confirm before dispatch" logic.
+    g.due = serviceLog.classifyDue(g, todayStr);
     return g;
   });
   res.json({ generators, hire: hire.getAll() });

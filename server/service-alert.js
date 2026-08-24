@@ -59,74 +59,92 @@ function prettyDate(iso) {
   } catch (_) { return iso; }
 }
 
-// Compute the list of generators due for service and a ready-to-send text.
+// Compute the generators needing attention and a ready-to-send text, using the
+// hours-first "confirm before dispatch" logic: machines confirmed due by real
+// running hours are separated from those only flagged by the calendar estimate
+// (whose hours must be confirmed before a team is sent). Off-hire units are
+// excluded.
 function buildDigest() {
   const win = windowDays();
   const todayStr = todayInTz();
-  const today = new Date(todayStr + 'T00:00:00');
   const hm = hire.getMap();
 
-  const due = [];
+  const send = [];    // confirmed due by hours -> send the team
+  const confirm = []; // estimate flags due/soon but hours not confirmed
   serviceLog.getAll().forEach((g) => {
     const h = hm[g.dg];
-    if (h && h.offHire) return;            // off-hire units are idle - skip
-    if (!g.nextServiceDate) return;
-    const days = Math.round((new Date(g.nextServiceDate + 'T00:00:00') - today) / 86400000);
-    if (days <= win) due.push({ dg: g.dg, days, nextService: g.nextService, nextServiceDate: g.nextServiceDate });
+    if (h) g.offHire = !!h.offHire;
+    const d = serviceLog.classifyDue(g, todayStr, { windowDays: win });
+    if (d.state === 'due') send.push({ dg: g.dg, nextService: g.nextService, currentHours: g.currentHours, hoursLeft: d.hoursLeft, nextServiceDate: g.nextServiceDate });
+    else if (d.state === 'confirm') confirm.push({ dg: g.dg, nextService: g.nextService, days: d.daysEst, nextServiceDate: g.nextServiceDate });
   });
-  due.sort((a, b) => a.days - b.days);
+  send.sort((a, b) => (a.hoursLeft || 0) - (b.hoursLeft || 0));
+  confirm.sort((a, b) => (a.days || 0) - (b.days || 0));
 
-  const overdue = due.filter((x) => x.days < 0);
-  const soon = due.filter((x) => x.days >= 0);
+  const count = send.length + confirm.length;
+  const MAX = 20; // keep the WhatsApp message a sensible length
 
-  const MAX = 25; // keep the WhatsApp message a sensible length
-  function line(x) {
-    const when = x.days < 0 ? ('overdue ' + Math.abs(x.days) + 'd')
-      : (x.days === 0 ? 'due today' : ('in ' + x.days + 'd'));
-    return '• ' + x.dg + ' — ' + when + ' (next @ ' + x.nextService + 'h)';
-  }
-
-  let text = '🔧 Deluxe — Generators due for service (' + prettyDate(todayStr) + ')\n';
-  if (!due.length) {
+  let text = '🔧 Deluxe — Service check (' + prettyDate(todayStr) + ')\n';
+  if (!count) {
     text += '\nNothing due in the next ' + win + ' days. 👍';
   } else {
-    if (overdue.length) {
-      text += '\n⚠ OVERDUE (' + overdue.length + '):\n' + overdue.slice(0, MAX).map(line).join('\n') + '\n';
+    if (send.length) {
+      text += '\n🔴 SEND TEAM — confirmed due by hours (' + send.length + '):\n'
+        + send.slice(0, MAX).map((x) => '• ' + x.dg + ' — ' + Math.abs(x.hoursLeft || 0) + 'h over (next @ ' + x.nextService + 'h)').join('\n') + '\n';
     }
-    if (soon.length) {
-      text += '\n🟡 Due soon (' + soon.length + '):\n' + soon.slice(0, Math.max(0, MAX - overdue.length)).map(line).join('\n') + '\n';
+    if (confirm.length) {
+      text += '\n🔵 CONFIRM HOURS FIRST — flagged by date estimate (' + confirm.length + '):\n'
+        + confirm.slice(0, Math.max(0, MAX - send.length)).map((x) => {
+          const when = x.days < 0 ? ('est. due ' + Math.abs(x.days) + 'd ago') : (x.days === 0 ? 'est. due today' : ('est. in ' + x.days + 'd'));
+          return '• ' + x.dg + ' — ' + when;
+        }).join('\n') + '\n';
+      text += '\nCheck the real running hours before sending anyone — low-usage units may not be due.\n';
     }
-    if (due.length > MAX) text += '\n…and ' + (due.length - MAX) + ' more.\n';
     text += '\nOpen the schedule: ' + PUBLIC_URL + '/schedule';
   }
 
   return {
     date: todayStr,
     windowDays: win,
-    count: due.length,
-    overdueCount: overdue.length,
-    soonCount: soon.length,
-    due,
+    count,
+    sendCount: send.length,
+    confirmCount: confirm.length,
+    send,
+    confirm,
+    // kept for the email HTML / backward compatibility: a flat "due" list
+    due: send.map((x) => ({ dg: x.dg, days: 0, nextService: x.nextService, nextServiceDate: x.nextServiceDate }))
+      .concat(confirm.map((x) => ({ dg: x.dg, days: x.days, nextService: x.nextService, nextServiceDate: x.nextServiceDate }))),
     text,
   };
 }
 
-// Simple HTML version of the digest for the email channel.
+// HTML version of the digest for the email channel: the same two groups as the
+// text - confirmed due by hours (send the team) and estimate-flagged (confirm
+// hours first).
 function buildHtml(digest) {
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-  const rows = digest.due.map((x) => {
-    const when = x.days < 0 ? ('overdue ' + Math.abs(x.days) + 'd')
-      : (x.days === 0 ? 'due today' : ('in ' + x.days + 'd'));
-    const col = x.days < 0 ? '#c0392b' : (x.days === 0 ? '#b26a00' : '#1f6f43');
-    return '<tr><td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-weight:700;">' + esc(x.dg) + '</td>'
-      + '<td style="padding:6px 10px;border-bottom:1px solid #eee;color:' + col + ';font-weight:600;">' + esc(when) + '</td>'
-      + '<td style="padding:6px 10px;border-bottom:1px solid #eee;">next @ ' + esc(x.nextService) + 'h &middot; ' + esc(prettyDate(x.nextServiceDate)) + '</td></tr>';
+  function section(title, colour, note, rowsHtml) {
+    return '<div style="margin:14px 0 4px;font-weight:700;color:' + colour + ';">' + title + '</div>'
+      + (note ? '<div style="color:#666;font-size:13px;margin-bottom:6px;">' + note + '</div>' : '')
+      + '<table style="border-collapse:collapse;width:100%;font-size:14px;">' + rowsHtml + '</table>';
+  }
+  const sendRows = (digest.send || []).map((x) => '<tr>'
+    + '<td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-weight:700;">' + esc(x.dg) + '</td>'
+    + '<td style="padding:6px 10px;border-bottom:1px solid #eee;color:#c0392b;font-weight:600;">' + esc(Math.abs(x.hoursLeft || 0)) + 'h over</td>'
+    + '<td style="padding:6px 10px;border-bottom:1px solid #eee;">next @ ' + esc(x.nextService) + 'h' + (x.currentHours != null ? (' &middot; now ' + esc(x.currentHours) + 'h') : '') + '</td></tr>').join('');
+  const confirmRows = (digest.confirm || []).map((x) => {
+    const when = x.days < 0 ? ('est. due ' + Math.abs(x.days) + 'd ago') : (x.days === 0 ? 'est. due today' : ('est. in ' + x.days + 'd'));
+    return '<tr>'
+      + '<td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-weight:700;">' + esc(x.dg) + '</td>'
+      + '<td style="padding:6px 10px;border-bottom:1px solid #eee;color:#1a6fd6;font-weight:600;">' + esc(when) + '</td>'
+      + '<td style="padding:6px 10px;border-bottom:1px solid #eee;">next @ ' + esc(x.nextService) + 'h</td></tr>';
   }).join('');
   return '<div style="font-family:Arial,Helvetica,sans-serif;color:#111;max-width:640px;">'
-    + '<h2 style="margin:0 0 4px;">🔧 Generators due for service</h2>'
-    + '<div style="color:#666;margin-bottom:12px;">' + esc(prettyDate(digest.date)) + ' &middot; next ' + esc(digest.windowDays) + ' days</div>'
+    + '<h2 style="margin:0 0 4px;">🔧 Service check</h2>'
+    + '<div style="color:#666;margin-bottom:8px;">' + esc(prettyDate(digest.date)) + ' &middot; next ' + esc(digest.windowDays) + ' days</div>'
     + (digest.count
-      ? ('<table style="border-collapse:collapse;width:100%;font-size:14px;">' + rows + '</table>')
+      ? ((digest.sendCount ? section('🔴 Send the team — confirmed due by hours (' + digest.sendCount + ')', '#c0392b', '', sendRows) : '')
+        + (digest.confirmCount ? section('🔵 Confirm hours first — flagged by date estimate (' + digest.confirmCount + ')', '#1a6fd6', 'Check the real running hours before sending anyone — low-usage units may not be due.', confirmRows) : ''))
       : '<p style="font-size:15px;">Nothing due in the next ' + esc(digest.windowDays) + ' days. 👍</p>')
     + '<p style="margin-top:16px;"><a href="' + PUBLIC_URL + '/schedule" style="color:#1a6fd6;">Open the schedule →</a></p>'
     + '</div>';

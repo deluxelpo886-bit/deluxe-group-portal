@@ -144,8 +144,9 @@
       <input type="text" id="statusSearch" placeholder="🔍 Search DG or technician…" style="flex:2;min-width:160px;">
       <select id="statusFilter" style="flex:1;min-width:150px;">
         <option value="all">All generators</option>
-        <option value="overdue">⚠ Overdue only</option>
-        <option value="soon">🟡 Due within 7 days</option>
+        <option value="send">🔴 Send team (confirmed by hours)</option>
+        <option value="confirm">🔵 Confirm hours first</option>
+        <option value="plan">🟠 Plan soon (confirmed)</option>
         <option value="onhire">🟢 On hire</option>
         <option value="offhire">⚪ Off-hire</option>
       </select>
@@ -154,7 +155,7 @@
       <table>
         <thead><tr>
           <th>Generator</th><th>Status</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
-          <th>Est. date</th><th class="n">Usage</th><th>Serviced</th><th>By</th><th></th>
+          <th>Due (by hours)</th><th class="n">Usage</th><th>Serviced</th><th>By</th><th></th>
         </tr></thead>
         <tbody id="statusBody"><tr><td colspan="9" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
       </table>
@@ -358,6 +359,35 @@
     else leftTxt='';
     return '<br><span class="muted" style="font-size:11px;" title="Latest hours check on '+(g.currentHoursDate||'')+'">now '+g.currentHours+'h '+(leftTxt?'· '+leftTxt:'')+'</span>';
   }
+  // Hours-first "due" badge. Green/OK, blue = confirm the real hours before
+  // sending anyone, orange = plan soon (confirmed), red = send the team now
+  // (confirmed by hours), grey = paused (off-hire).
+  function dueBadge(g){
+    var d=g.due||{};
+    var map={
+      due:{bg:'#3a1414',fg:'#ff8a75',br:'#5a2a22',t:'🔴 SEND TEAM'},
+      plan:{bg:'#2e2410',fg:'#e8c168',br:'#5a4a20',t:'🟠 PLAN SOON'},
+      confirm:{bg:'#1c2733',fg:'#5b9bd5',br:'#274056',t:'🔵 CONFIRM HOURS'},
+      ok:{bg:'#1a2e24',fg:'#4caf7d',br:'#2a5c40',t:'🟢 OK'},
+      paused:{bg:'#2b2f33',fg:'#b4bcc4',br:'#3a4148',t:'⏸ PAUSED'}
+    };
+    var m=map[d.state]||map.ok;
+    return '<span style="display:inline-block;background:'+m.bg+';color:'+m.fg+';border:1px solid '+m.br+';border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;white-space:nowrap;">'+m.t+'</span>';
+  }
+  function dueCell(g){
+    var d=g.due||{};
+    var sub=d.label?('<div class="muted" style="font-size:11px;margin-top:3px;">'+d.label+'</div>'):'';
+    var canConfirm=(d.state==='confirm'||d.state==='due'||d.state==='plan');
+    var btn=canConfirm?('<div><button data-confirm="'+g.dg+'" title="Log the real running hours before sending a team" style="margin-top:5px;background:#1c2733;color:#5b9bd5;border:1px solid #274056;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">📋 Confirm hours</button></div>'):'';
+    return dueBadge(g)+sub+btn;
+  }
+  // Jump to the log form pre-set for an Hours check (no service) on this DG.
+  function confirmHours(dg){
+    $('tabLog').click();
+    $('dg').value=dg; $('readingOnly').checked=true; setSubmitLabel(); updateNextPreview();
+    $('hours').value=''; try{ $('hours').focus(); }catch(e){}
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
   function renderStatusTable(){
     var q=($('statusSearch').value||'').trim().toLowerCase();
     var f=$('statusFilter').value;
@@ -365,8 +395,9 @@
       if(q && String(g.dg).toLowerCase().indexOf(q)<0 && String(g.technician||'').toLowerCase().indexOf(q)<0) return false;
       if(f==='onhire') return !g.offHire;
       if(f==='offhire') return !!g.offHire;
-      if(f==='overdue'){ if(g.offHire) return false; var da=statusDays(g); return da!=null&&da<0; }
-      if(f==='soon'){ if(g.offHire) return false; var db=statusDays(g); return db!=null&&db>=0&&db<=7; }
+      if(f==='send') return (g.due&&g.due.state==='due');
+      if(f==='confirm') return (g.due&&g.due.state==='confirm');
+      if(f==='plan') return (g.due&&g.due.state==='plan');
       return true;
     });
     $('statusCount').textContent=list.length+' of '+lastGens.length+' shown';
@@ -380,13 +411,14 @@
         var rowStyle = off ? ' style="opacity:.55;"' : '';
         return '<tr'+rowStyle+'><td class="dg">'+g.dg+'</td>'
           +'<td style="white-space:nowrap;">'+statusCell+'<br><button data-hire="'+g.dg+'" data-off="'+(off?'0':'1')+'" style="margin-top:5px;background:transparent;color:#8b95a1;border:1px solid #2c333a;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">'+toggleLbl+'</button></td>'
-          +'<td class="n">'+g.hours+readingCell(g)+'</td><td class="n">'+g.nextService+'</td><td class="muted">'+(off?'<span title="Service paused while in the workshop">⏸ paused</span>':(g.nextServiceDate||'-'))+'</td><td class="n">'+(off?'<span class="muted">off</span>':((g.effectiveDailyHours||'-')+' h/d'))+'</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
+          +'<td class="n">'+g.hours+readingCell(g)+'</td><td class="n">'+g.nextService+'</td><td>'+dueCell(g)+'</td><td class="n">'+(off?'<span class="muted">off</span>':((g.effectiveDailyHours||'-')+' h/d'))+'</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
           +'<td style="white-space:nowrap;"><button data-edit="'+g.dg+'" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;">Edit</button> <button data-del="'+g.dg+'" style="background:transparent;color:#e0644a;border:1px solid #5a2a22;border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;">Delete</button></td></tr>';
       }).join('') : ('<tr><td colspan="9" class="muted" style="padding:14px;">'+(lastGens.length?'No generators match.':'No services logged yet.')+'</td></tr>');
       $('statusBody').querySelectorAll('a.photo-link').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); viewPhoto(a.getAttribute('data-dg')); }); });
       $('statusBody').querySelectorAll('button[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ editEntry(b.getAttribute('data-edit')); }); });
       $('statusBody').querySelectorAll('button[data-del]').forEach(function(b){ b.addEventListener('click',function(){ deleteEntry(b.getAttribute('data-del')); }); });
       $('statusBody').querySelectorAll('button[data-hire]').forEach(function(b){ b.addEventListener('click',function(){ setHire(b.getAttribute('data-hire'), b.getAttribute('data-off')==='1'); }); });
+      $('statusBody').querySelectorAll('button[data-confirm]').forEach(function(b){ b.addEventListener('click',function(){ confirmHours(b.getAttribute('data-confirm')); }); });
     }catch(e){ $('statusBody').innerHTML='<tr><td colspan="9" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
   document.getElementById('statusSearch').addEventListener('input',renderStatusTable);
@@ -401,27 +433,38 @@
   }
 
   var lastGens=[];
+  // Hours-first reminder: separate the machines confirmed due by real hours
+  // (SEND the team) from the ones the calendar estimate flags but whose hours
+  // are unconfirmed (CONFIRM hours before dispatch). This is the operation-head
+  // play built into the banner so nobody is sent on a guess.
   function renderAlarm(gens){
-    var today=new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
-    var due=gens.map(function(g){
-      if(g.offHire) return null;           // off-hire units don't raise service alarms
-      if(!g.nextServiceDate) return null;
-      var days=Math.round((new Date(g.nextServiceDate+'T00:00:00')-today)/86400000);
-      return (days<=7) ? {g:g, days:days} : null;
-    }).filter(Boolean).sort(function(a,b){ return a.days-b.days; });
+    var send=[], confirm=[];
+    gens.forEach(function(g){
+      var d=g.due||{};
+      if(d.state==='due') send.push(g);
+      else if(d.state==='confirm') confirm.push(g);
+    });
     var box=$('dueAlarm');
-    if(!due.length){ box.innerHTML=''; box.style.display='none'; return; }
+    if(!send.length && !confirm.length){ box.innerHTML=''; box.style.display='none'; return; }
     box.style.display='block';
-    var overdueCount=due.filter(function(x){ return x.days<0; }).length;
-    var rows=due.map(function(x){
-      var overdue=x.days<0, col=overdue?'#e0644a':'#e8c168';
-      var when=overdue?('OVERDUE by '+Math.abs(x.days)+'d'):(x.days===0?'DUE TODAY':('in '+x.days+'d'));
+    function row(g,col,right){
       return '<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid rgba(255,255,255,0.07);">'
-        +'<span><b class="dg">'+esc(x.g.dg)+'</b> <span class="muted" style="font-size:12px;">next @ '+x.g.nextService+'h &middot; '+(x.g.nextServiceDate||'')+'</span></span>'
-        +'<b style="color:'+col+';font-size:12.5px;white-space:nowrap;">'+when+'</b></div>';
-    }).join('');
-    box.innerHTML='<div style="background:#2e1c1a;border:1px solid #5a2a22;border-radius:12px;padding:14px 16px;">'
-      +'<div style="font-weight:800;color:#e0644a;margin-bottom:2px;">🔔 Service reminder — '+due.length+' due soon'+(overdueCount?(' ('+overdueCount+' overdue)'):'')+'</div>'+rows+'</div>';
+        +'<span><b class="dg">'+esc(g.dg)+'</b> <span class="muted" style="font-size:12px;">next @ '+g.nextService+'h'+(g.currentHours!=null?(' &middot; now '+g.currentHours+'h'):'')+'</span></span>'
+        +'<b style="color:'+col+';font-size:12.5px;white-space:nowrap;">'+right+'</b></div>';
+    }
+    var html='';
+    if(send.length){
+      html+='<div style="background:#2e1c1a;border:1px solid #5a2a22;border-radius:12px;padding:14px 16px;margin-bottom:'+(confirm.length?'10px':'0')+';">'
+        +'<div style="font-weight:800;color:#e0644a;margin-bottom:2px;">🔴 Send the team — '+send.length+' confirmed due (by hours)</div>'
+        +send.map(function(g){ return row(g,'#ff8a75', Math.abs(g.due.hoursLeft||0)+'h over'); }).join('')+'</div>';
+    }
+    if(confirm.length){
+      html+='<div style="background:#152230;border:1px solid #274056;border-radius:12px;padding:14px 16px;">'
+        +'<div style="font-weight:800;color:#5b9bd5;margin-bottom:2px;">🔵 Confirm hours first — '+confirm.length+' flagged by date estimate</div>'
+        +'<div class="muted" style="font-size:12px;margin-bottom:2px;">Check the real running hours before sending anyone — low-usage units may not be due.</div>'
+        +confirm.map(function(g){ var days=g.due.daysEst; var w=days<0?('est. due '+Math.abs(days)+'d ago'):(days===0?'est. due today':('est. in '+days+'d')); return row(g,'#8fb8e0', w); }).join('')+'</div>';
+    }
+    box.innerHTML=html;
   }
 
   function editEntry(dg){
