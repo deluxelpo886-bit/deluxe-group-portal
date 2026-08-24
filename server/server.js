@@ -808,7 +808,8 @@ app.post('/api/breakdowns/add', fleetProtect, (req, res) => {
   catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 app.post('/api/breakdowns/resolve', fleetProtect, (req, res) => {
-  try { res.json({ ok: true, item: breakdowns.resolve((req.body || {}).id) }); }
+  const b = req.body || {};
+  try { res.json({ ok: true, item: breakdowns.resolve(b.id, b) }); }
   catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 app.post('/api/breakdowns/reopen', fleetProtect, (req, res) => {
