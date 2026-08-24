@@ -39,7 +39,9 @@ function logService(rec) {
   if (!isFinite(hours) || hours < 0) throw new Error('A valid current hours reading is required');
 
   const interval = Number(rec.interval) > 0 ? Number(rec.interval) : DEFAULT_INTERVAL;
-  const nextService = hours + interval;
+  // Next-service hours: use an explicit value when given (e.g. from an imported
+  // asset list), otherwise current hours + interval.
+  const nextService = Number(rec.nextService) > 0 ? Number(rec.nextService) : hours + interval;
   const date = (rec.date && String(rec.date).slice(0, 10)) || new Date().toISOString().slice(0, 10);
   const prev = store[dg];
 
@@ -61,7 +63,11 @@ function logService(rec) {
   const daysToService = Math.max(1, Math.round(interval / effectiveDailyHours));
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
-  const nextServiceDate = nsd.toISOString().slice(0, 10);
+  // Next-service date: use an explicit date when given (e.g. the authoritative
+  // date from an imported asset list), otherwise the projected estimate.
+  const nextServiceDate = (rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
+    ? String(rec.nextServiceDate).slice(0, 10)
+    : nsd.toISOString().slice(0, 10);
   const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
 
   const entry = {
