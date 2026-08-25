@@ -1448,7 +1448,8 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 1.38,
-  "nextServiceDate": "2026-09-10"
+  "nextServiceDate": "2026-09-10",
+  "nextService": 11723
  },
  {
   "dg": "DG-38",
