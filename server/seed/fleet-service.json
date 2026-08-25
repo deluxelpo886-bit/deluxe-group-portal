@@ -1723,5 +1723,82 @@
   "dailyHours": 13.17,
   "nextService": 508,
   "nextServiceDate": "2026-09-12"
+ },
+ {
+  "dg": "DC-803",
+  "hours": 3165,
+  "date": "2025-10-08",
+  "technician": "PARDEEP",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 3515,
+  "nextServiceDate": "2026-07-10",
+  "dailyHours": 0.38
+ },
+ {
+  "dg": "DC-804",
+  "hours": 1122,
+  "date": "2026-01-03",
+  "technician": "MIA KHAN",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 1472,
+  "nextServiceDate": "2026-07-20"
+ },
+ {
+  "dg": "DC-805 (406)",
+  "hours": 2551,
+  "date": "2026-01-03",
+  "technician": "PARDEEP&MIA KHAN",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 2901,
+  "nextServiceDate": "2026-07-20",
+  "dailyHours": 0.3
+ },
+ {
+  "dg": "DTL-801",
+  "hours": 4087,
+  "date": "2025-11-01",
+  "technician": "MAAZ&RAMESH",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 4437,
+  "nextServiceDate": "2026-08-25",
+  "dailyHours": 0.64
+ },
+ {
+  "dg": "CH-01",
+  "hours": 2161,
+  "date": "2025-12-16",
+  "technician": "IMRAN&ANSARI",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 2511,
+  "nextServiceDate": "2026-08-25",
+  "dailyHours": 3.67
+ },
+ {
+  "dg": "G-54",
+  "hours": 7192,
+  "date": "2026-05-06",
+  "technician": "IMRAN&SABIR",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 7542,
+  "nextServiceDate": "2026-07-10",
+  "dailyHours": 16.59
  }
 ]
