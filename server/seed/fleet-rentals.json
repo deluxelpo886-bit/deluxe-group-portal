@@ -1,0 +1,572 @@
+[
+ {
+  "dg": "DG-35",
+  "customer": "AGRITEK",
+  "rate": 1890,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-36",
+  "customer": "WORK SHOP",
+  "rate": 1500,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-38",
+  "customer": "MIRFAQ",
+  "rate": 3675,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-375",
+  "customer": "TROJAN",
+  "rate": 93600,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-448",
+  "customer": "MAWAAD",
+  "rate": 1700,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-452",
+  "customer": "WORK SHOP",
+  "rate": 1900,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-453",
+  "customer": "KHALIQ NOOR SCRAP LLC",
+  "rate": 1700,
+  "startDate": "2026-08-24"
+ },
+ {
+  "dg": "DG-456",
+  "customer": "MUSSAFAH",
+  "rate": 2300,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-457",
+  "customer": "WORK SHOP",
+  "rate": 2100,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-459",
+  "customer": "COVER GENERAL",
+  "rate": 2520,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-466",
+  "customer": "HYDRO POWER",
+  "rate": 18000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-467",
+  "customer": "DAFOOS FIRE",
+  "rate": 2782.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-470",
+  "customer": "WORK SHOP",
+  "rate": 7350,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-471",
+  "customer": "TROJAN",
+  "rate": 23362,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-473",
+  "customer": "EL MASRIA CEMENT INDUSTRIES",
+  "rate": 5880,
+  "startDate": "2026-08-24"
+ },
+ {
+  "dg": "DG-476",
+  "customer": "WORK SHOP",
+  "rate": 5407.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-477",
+  "customer": "OSAI",
+  "rate": 4095,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-478",
+  "customer": "WORK SHOP",
+  "rate": 4725,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-479",
+  "customer": "HYDRO POWER",
+  "rate": 5300,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-481",
+  "customer": "SIX SIGMA",
+  "rate": 3465,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-483",
+  "customer": "WORK SHOP",
+  "rate": 4935,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-484",
+  "customer": "AL SAFAKH",
+  "rate": 4300,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-485",
+  "customer": "WORK SHOP",
+  "rate": 2100,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-488",
+  "customer": "WORK SHOP",
+  "rate": 1500,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-489",
+  "customer": "SIX SIGMA",
+  "rate": 2572.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-490",
+  "customer": "KON",
+  "rate": 3675,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-491",
+  "customer": "HYDRO POWER",
+  "rate": 10080,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-492",
+  "customer": "EMDAD",
+  "rate": 2100,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-494",
+  "customer": "KAT",
+  "rate": 3650,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-496",
+  "customer": "WORK SHOP",
+  "rate": 1575,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-500",
+  "customer": "MAWAAD",
+  "rate": 1785,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-501",
+  "customer": "HYDRO POWER",
+  "rate": 6930,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-502",
+  "customer": "HYDRO POWER",
+  "rate": 18480,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-503",
+  "customer": "HYDRO POWER",
+  "rate": 18480,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-506",
+  "customer": "WORK SHOP",
+  "rate": 4935,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-507",
+  "customer": "WORK SHOP",
+  "rate": 1837.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-515",
+  "customer": "WORK SHOP",
+  "rate": 14000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-518",
+  "customer": "TOTAL",
+  "rate": 1900,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-520",
+  "customer": "TROJAN",
+  "rate": 18000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-529",
+  "customer": "TROJAN",
+  "rate": 62400,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-531",
+  "customer": "RAMAH",
+  "rate": 4620,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-535",
+  "customer": "HYDRO POWER",
+  "rate": 3150,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-537",
+  "customer": "PATHAN",
+  "rate": 2000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-540",
+  "customer": "AL HASHIM",
+  "rate": 2467,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-543",
+  "customer": "WORK SHOP",
+  "rate": 20265,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-545",
+  "customer": "WORK SHOP",
+  "rate": 3150,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-547",
+  "customer": "WORK SHOP",
+  "rate": 8400,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-548",
+  "customer": "SIX SIGMA",
+  "rate": 2500,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-549",
+  "customer": "SIX SIGMA",
+  "rate": 3307.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-554",
+  "customer": "ASWAR",
+  "rate": 5200,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-556",
+  "customer": "WORK SHOP",
+  "rate": 19950,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-557",
+  "customer": "WORK SHOP",
+  "rate": 19950,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-560",
+  "customer": "X DOM",
+  "rate": 5670,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-800",
+  "customer": "TROJAN GENERAL CONTRACTING LLC",
+  "rate": 3800,
+  "startDate": "2026-08-24"
+ },
+ {
+  "dg": "DG-802",
+  "customer": "BRIGHT ACCORD",
+  "rate": 2700,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-803",
+  "customer": "BRIGHT ACCORD",
+  "rate": 58800,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-806",
+  "customer": "WORK SHOP",
+  "rate": 9975,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-811",
+  "customer": "ROCK STAR SCRAP TRADING LLC SPC",
+  "rate": 1700,
+  "startDate": "2026-08-24"
+ },
+ {
+  "dg": "DG-814",
+  "customer": "WORK SHOP",
+  "rate": 1500,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-815",
+  "customer": "OSAI",
+  "rate": 2625,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-816",
+  "customer": "OSAI",
+  "rate": 3045,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-818",
+  "customer": "GULF CONTRACTING",
+  "rate": 1785,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-820",
+  "customer": "HYDRO POWER",
+  "rate": 1995,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-821",
+  "customer": "AL REEF",
+  "rate": 2600,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-822",
+  "customer": "CITY CONST",
+  "rate": 19950,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-823",
+  "customer": "NOOR AL SHAHRA",
+  "rate": 2100,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-825",
+  "customer": "WORK SHOP",
+  "rate": 37800,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-826",
+  "customer": "EMDAD",
+  "rate": 7875,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-827",
+  "customer": "WORK SHOP",
+  "rate": 37747.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-828",
+  "customer": "EMDAD",
+  "rate": 17850,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-832",
+  "customer": "CITY CONST",
+  "rate": 1890,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-834",
+  "customer": "GRAND FALCON",
+  "rate": 5000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-836",
+  "customer": "WORK SHOP",
+  "rate": 74970,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-837",
+  "customer": "CITY CONST",
+  "rate": 3360,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-838",
+  "customer": "WORK SHOP",
+  "rate": 4800,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-839",
+  "customer": "TROJAN",
+  "rate": 3800,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-841",
+  "customer": "TROJAN",
+  "rate": 4500,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-842",
+  "customer": "BASUNDHARA",
+  "rate": 4000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-843",
+  "customer": "HASIM",
+  "rate": 29400,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-844",
+  "customer": "WORK SHOP",
+  "rate": 14700,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-846",
+  "customer": "AL FARJHAN",
+  "rate": 6509,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-847",
+  "customer": "FANTASTIC",
+  "rate": 4800,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-848",
+  "customer": "SIX SIGMA",
+  "rate": 5600,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-851",
+  "customer": "AL HASHIM",
+  "rate": 1837.5,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-853",
+  "customer": "TROJAN",
+  "rate": 18000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-854",
+  "customer": "BRIGHT ACCORD",
+  "rate": 37800,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-856",
+  "customer": "TROJAN",
+  "rate": 34200,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-857",
+  "customer": "HOTEL",
+  "rate": 69300,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-858",
+  "customer": "RAMAH",
+  "rate": 5460,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-859",
+  "customer": "TROJAN",
+  "rate": 5000,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-860",
+  "customer": "CITY CONST",
+  "rate": 9975,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-861",
+  "customer": "GREEN STON",
+  "rate": 63682,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-864",
+  "customer": "GULF CONTRACTING",
+  "rate": 27300,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-865",
+  "customer": "GULF CONTRACTING",
+  "rate": 31042,
+  "startDate": ""
+ },
+ {
+  "dg": "DG-826",
+  "customer": "EMDAD",
+  "rate": 7875,
+  "startDate": ""
+ }
+]
