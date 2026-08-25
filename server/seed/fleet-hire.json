@@ -29,7 +29,9 @@
  },
  {
   "dg": "DG-473",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-24",
+  "note": "On hire — EL MASRIA CEMENT INDUSTRIES"
  },
  {
   "dg": "DG-476",
