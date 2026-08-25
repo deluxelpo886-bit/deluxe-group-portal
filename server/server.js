@@ -75,7 +75,7 @@ try {
   const hireSeedPath = path.join(__dirname, 'seed', 'fleet-hire.json');
   if (fs.existsSync(hireSeedPath)) {
     const hs = JSON.parse(fs.readFileSync(hireSeedPath, 'utf8'));
-    const r = hire.applySeed(hs, 'fleet-hire-2026-08-25b');
+    const r = hire.applySeed(hs, 'fleet-hire-2026-08-25c');
     if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
