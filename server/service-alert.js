@@ -118,6 +118,17 @@ function buildDigest() {
   };
 }
 
+// Translate the common Twilio WhatsApp error codes into plain-English guidance
+// so the dashboard can tell the user exactly what to fix.
+function explainWhatsAppError(code, msg) {
+  const c = String(code || '');
+  if (c === '63016') return "Outside the 24-hour window. The Twilio WhatsApp SANDBOX only allows free-text messages within 24 hours of that phone last messaging the sandbox — so an early-morning message is blocked. Fix: from the phone, re-send the sandbox 'join <code>' message (or any message) to the sandbox number, then test again within 24h. For a reliable DAILY message, use the email channel instead (no 24h limit).";
+  if (c === '63015' || c === '63007' || c === '63021' || c === '63013') return "The WhatsApp sender/sandbox isn't set up for this number. Check TWILIO_WHATSAPP_FROM is whatsapp:+14155238886 (the sandbox number) and that your phone has joined the sandbox with 'join <code>'.";
+  if (c === '21211' || c === '21608' || c === '21610' || c === '63024') return "The recipient number isn't valid or hasn't joined the sandbox. Send 'join <code>' from that WhatsApp number to the sandbox, and set SERVICE_ALERT_WHATSAPP_TO in +9715XXXXXXXX form.";
+  if (c === '20003') return 'Twilio authentication failed — TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN is wrong (check for an accidental extra prefix or a trailing space).';
+  return msg || 'Send failed.';
+}
+
 // HTML version of the digest for the email channel: the same two groups as the
 // text - confirmed due by hours (send the team) and estimate-flagged (confirm
 // hours first).
@@ -186,10 +197,16 @@ async function sendDigest(opts) {
         const r = await whatsapp.sendWhatsApp({ to: num, body: digest.text });
         results.push(Object.assign({ to: num }, r));
       } catch (e) {
-        results.push({ to: num, ok: false, error: (e && e.message) || 'send failed' });
+        results.push({ to: num, ok: false, error: (e && e.message) || 'send failed', code: e && e.code });
       }
     }
     out.whatsapp = { results, ok: results.some((r) => r.ok) };
+    if (!out.whatsapp.ok) {
+      const first = results.find((r) => !r.ok) || {};
+      out.whatsapp.error = first.error;
+      out.whatsapp.code = first.code;
+      out.whatsapp.hint = explainWhatsAppError(first.code, first.error);
+    }
   } else {
     out.whatsapp = { skipped: true, reason: whatsapp.isConfigured() ? 'no-recipients' : 'not-configured' };
   }

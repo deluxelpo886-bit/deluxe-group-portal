@@ -84,7 +84,7 @@
   </div>
 
   <div class="panel">
-    <h2>🔔 Morning WhatsApp reminder <span id="waState" class="muted" style="font-weight:400;"></span></h2>
+    <h2>🔔 Morning service reminder <span class="muted" style="font-weight:400;font-size:13px;">(WhatsApp / email)</span> <span id="waState" class="muted" style="font-weight:400;"></span></h2>
     <div id="waPreview" class="muted" style="white-space:pre-wrap;font-family:var(--mono);font-size:12px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;max-height:220px;overflow:auto;">Loading…</div>
     <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <button class="btn" id="waSend" disabled>Send now (test)</button>
@@ -220,28 +220,45 @@
       if(r.status===401){ showLogin(); return; }
       var d=await r.json();
       $('waPreview').textContent=(d.digest&&d.digest.text)||'—';
-      var conf=d.configured, hasTo=(d.recipients&&d.recipients.length);
-      if(conf&&hasTo){
-        $('waState').textContent='· sends daily at '+d.hour+':00 to '+d.recipients.join(', ');
+      var wa=d.whatsapp||{configured:d.configured,recipients:d.recipients||[]};
+      var em=d.email||{configured:false,recipients:[]};
+      var waReady=wa.configured&&wa.recipients&&wa.recipients.length;
+      var emReady=em.configured&&em.recipients&&em.recipients.length;
+      var parts=[];
+      if(waReady) parts.push('WhatsApp → '+wa.recipients.join(', '));
+      if(emReady) parts.push('email → '+em.recipients.join(', '));
+      if(parts.length){
+        $('waState').textContent='· sends daily at '+d.hour+':00 · '+parts.join(' · ');
         $('waSend').disabled=false;
-        $('waHint').textContent='';
+        $('waHint').innerHTML=(!emReady)
+          ? '💡 Tip: WhatsApp (sandbox) can be blocked outside a 24-hour window, so an early-morning message may not arrive. Email has no such limit — add <b>SMTP_HOST/PORT/USER/PASS</b> + <b>SERVICE_ALERT_EMAIL_TO</b> on Render for a reliable daily reminder.'
+          : '';
       }else{
         $('waState').textContent='· not set up yet';
         $('waSend').disabled=true;
-        $('waHint').innerHTML='Not sending yet. To turn it on, add these on Render → Environment: '
-          +'<b>TWILIO_ACCOUNT_SID</b>, <b>TWILIO_AUTH_TOKEN</b>, <b>TWILIO_WHATSAPP_FROM</b>, '
-          +'<b>SERVICE_ALERT_WHATSAPP_TO</b> (your WhatsApp number), and optionally '
-          +'<b>SERVICE_ALERT_HOUR</b> (default 7). The preview above is exactly what will be sent.';
+        $('waHint').innerHTML='Not sending yet. <b>Recommended (reliable): email</b> — add on Render → Environment: '
+          +'<b>SMTP_HOST</b>, <b>SMTP_PORT</b> (587), <b>SMTP_USER</b>, <b>SMTP_PASS</b> (Gmail App Password), '
+          +'<b>SERVICE_ALERT_EMAIL_TO</b>. Or for WhatsApp: <b>TWILIO_ACCOUNT_SID</b>, <b>TWILIO_AUTH_TOKEN</b>, '
+          +'<b>TWILIO_WHATSAPP_FROM</b> (whatsapp:+14155238886), <b>SERVICE_ALERT_WHATSAPP_TO</b>. Optional <b>SERVICE_ALERT_HOUR</b> (default 7).';
       }
     }catch(e){ $('waPreview').textContent='Could not load the reminder preview.'; }
   }
   $('waSend').addEventListener('click',async function(){
-    $('waSend').disabled=true; $('waMsg').textContent='Sending…';
+    $('waSend').disabled=true; $('waMsg').style.color='var(--muted)'; $('waMsg').textContent='Sending…'; $('waHint').textContent='';
     try{
       var r=await fetch('/api/service/alert/send',{method:'POST',headers:authHeaders()});
       var d=await r.json().catch(function(){return{};});
-      if(d.sent){ $('waMsg').style.color='var(--green)'; $('waMsg').textContent='✓ Sent to '+((d.recipients||[]).join(', ')); }
-      else{ $('waMsg').style.color='var(--red)'; $('waMsg').textContent='Not sent ('+(d.reason||'error')+')'; }
+      var ok=[], bad=[];
+      if(d.whatsapp){ if(d.whatsapp.ok) ok.push('WhatsApp'); else if(!d.whatsapp.skipped) bad.push('WhatsApp: '+(d.whatsapp.hint||d.whatsapp.error||'failed')); }
+      if(d.email){ if(d.email.ok) ok.push('email'); else if(!d.email.skipped) bad.push('email: '+(d.email.error||'failed')); }
+      if(d.sent){
+        $('waMsg').style.color='var(--green)'; $('waMsg').textContent='✓ Sent via '+ok.join(' + ');
+        if(bad.length){ $('waHint').style.color='var(--amber)'; $('waHint').textContent='But one channel failed — '+bad.join(' | '); }
+      }else{
+        $('waMsg').style.color='var(--red)';
+        $('waMsg').textContent='Not sent'+(d.reason?(' ('+d.reason+')'):'');
+        if(bad.length){ $('waHint').style.color='var(--red)'; $('waHint').innerHTML=bad.join('<br>'); }
+      }
     }catch(e){ $('waMsg').style.color='var(--red)'; $('waMsg').textContent='Send failed'; }
     finally{ $('waSend').disabled=false; }
   });
