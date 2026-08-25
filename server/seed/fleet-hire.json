@@ -99,7 +99,9 @@
  },
  {
   "dg": "DG-800",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-24",
+  "note": "On hire — TROJAN GENERAL CONTRACTING LLC"
  },
  {
   "dg": "DG-805",
@@ -168,5 +170,11 @@
  {
   "dg": "DG-863",
   "offHire": true
+ },
+ {
+  "dg": "DG-811",
+  "offHire": false,
+  "since": "2026-08-24",
+  "note": "On hire — ROCK STAR SCRAP TRADING LLC SPC"
  }
 ]
