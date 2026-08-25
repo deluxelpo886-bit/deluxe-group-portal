@@ -56,11 +56,13 @@
     </div>
     <div style="display:flex;gap:10px;align-items:flex-end;">
       <div><label>Date</label><input type="date" id="date"></div>
-      <button class="btn" id="autoDue" style="display:none;">🔧 Auto-add due</button>
+      <div style="max-width:92px;"><label>Per team</label><input type="number" id="perTeam" value="3" min="1" max="8" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-size:14px;outline:none;"></div>
+      <button class="btn" id="planDay" style="display:none;">🧭 Plan today</button>
+      <button class="btn sec" id="autoDue" style="display:none;">🔧 Auto-add due</button>
       <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
     </div>
   </div>
-  <p class="sub">Plan the day's servicing for each team. Technicians tick jobs off as they finish. Tap <b>🔧 Auto-add due</b> to drop the generators <b>confirmed due by hours</b> onto the two teams — machines flagged only by the date estimate are held back so you <b>confirm their real hours first</b> (no wasted trips to low-usage sites). Also see the <a href="/service" class="link">service log</a>, the <a href="/fleet" class="link">live map</a>, or the <a href="/menu" class="link">☰ menu</a>.</p>
+  <p class="sub">Plan the day's work for each team. Technicians tick jobs off as they finish. Tap <b>🧭 Plan today</b> to auto-assign a rough <b>Per team</b> number of jobs (default 3) across the two teams — <b>open breakdowns come first</b>, then services confirmed due by hours, then the rest; anything over the cap is reported so you can push it to another day. Or <b>🔧 Auto-add due</b> for services only. Also see the <a href="/breakdowns" class="link">breakdowns</a>, <a href="/service" class="link">service log</a>, <a href="/fleet" class="link">live map</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
   <div id="autoStatus" style="font-size:13px;color:var(--green);min-height:18px;margin:-4px 0 12px;"></div>
 
   <div class="cols" id="cols"></div>
@@ -87,8 +89,8 @@
   $('date').value=new Date().toISOString().slice(0,10);
 
   function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
-  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; $('autoDue').style.display='none'; }
-  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; $('autoDue').style.display=''; load(); }
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; $('autoDue').style.display='none'; $('planDay').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; $('autoDue').style.display=''; $('planDay').style.display=''; load(); }
   async function doLogin(){
     var email=$('loginEmail').value.trim(), password=$('loginPass').value;
     $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
@@ -202,6 +204,70 @@
     finally{ btn.disabled=false; btn.textContent=old; }
   }
   $('autoDue').addEventListener('click',autoFillDue);
+
+  // ---- Plan today: assign each team a rough handful of jobs, breakdowns first ----
+  // Builds one prioritised job list - open breakdowns (urgent), then services
+  // confirmed due by hours, then "plan soon", then "confirm hours" checks - and
+  // deals them out round-robin across the two teams up to the per-team cap. Jobs
+  // already on today's schedule are left alone; anything over the cap is reported
+  // as overflow so the office can push it to another day or send an extra team.
+  async function planToday(){
+    var btn=$('planDay'); var old=btn.textContent; btn.disabled=true; btn.textContent='Planning…'; $('autoStatus').textContent=''; $('autoStatus').style.color='var(--green)';
+    var cap=Math.max(1,Math.min(8, parseInt($('perTeam').value,10)||3));
+    try{
+      var hdr=authHeaders();
+      var bdP=fetch('/api/breakdowns',{cache:'no-store',headers:hdr});
+      var svP=fetch('/api/service/status',{cache:'no-store',headers:hdr});
+      var exP=fetch('/api/schedule?date='+encodeURIComponent($('date').value),{cache:'no-store',headers:hdr});
+      var bdR=await bdP; if(bdR.status===401){ showLogin(); return; }
+      var bd=(await bdR.json())||{}; var sv=(await (await svP).json())||{}; var ex=(await (await exP).json())||{};
+      var existing={}; TEAMS.forEach(function(t){ ((ex.teams&&ex.teams[t])||[]).forEach(function(it){ existing[String(it.dg).toUpperCase()]=true; }); });
+
+      var jobs=[];
+      // 1) Open breakdowns first (most urgent), oldest first.
+      (bd.breakdowns||[]).filter(function(b){ return b.status==='Open'; })
+        .sort(function(a,b){ return String(a.reportedAt).localeCompare(String(b.reportedAt)); })
+        .forEach(function(b){ jobs.push({dg:b.dg, note:'🚨 BREAKDOWN'+(b.location?' — '+b.location:'')+(b.category?' ['+b.category+']':''), pr:0}); });
+      // 2) Services confirmed due by hours, then plan-soon, then confirm-hours.
+      var gens=sv.generators||[];
+      gens.filter(function(g){ return g.due&&g.due.state==='due'; })
+        .sort(function(a,b){ return (a.due.hoursLeft||0)-(b.due.hoursLeft||0); })
+        .forEach(function(g){ jobs.push({dg:g.dg, note:'🔧 service — '+Math.abs(g.due.hoursLeft||0)+'h over (confirmed)', pr:1}); });
+      gens.filter(function(g){ return g.due&&g.due.state==='plan'; })
+        .forEach(function(g){ jobs.push({dg:g.dg, note:'🔧 service soon — '+(g.due.hoursLeft||0)+'h left', pr:2}); });
+      gens.filter(function(g){ return g.due&&g.due.state==='confirm'; })
+        .forEach(function(g){ jobs.push({dg:g.dg, note:'📋 confirm hours first (est. due)', pr:3}); });
+
+      // De-dup by DG (a breakdown wins over a service for the same machine) and
+      // drop ones already scheduled today.
+      var seen={}, queue=[];
+      jobs.forEach(function(j){ var k=String(j.dg).toUpperCase(); if(seen[k]||existing[k]) return; seen[k]=true; queue.push(j); });
+
+      var capacity=cap*TEAMS.length;
+      var toAssign=queue.slice(0,capacity);
+      var overflow=queue.slice(capacity);
+
+      // Deal round-robin so breakdowns and services spread evenly across teams.
+      var counts={}; TEAMS.forEach(function(t){ counts[t]=0; });
+      var added=0, i=0;
+      for(var k=0;k<toAssign.length;k++){
+        var team=TEAMS[i%TEAMS.length]; i++;
+        await addSilently(team,toAssign[k].dg,toAssign[k].note); counts[team]++; added++;
+      }
+      var bdCount=toAssign.filter(function(j){return j.pr===0;}).length;
+      var msg='Planned '+added+' job'+(added!==1?'s':'')+' ('+bdCount+' breakdown'+(bdCount!==1?'s':'')+') — '
+        +TEAMS.map(function(t){ return t+': '+counts[t]; }).join(', ')+'.';
+      if(overflow.length){
+        $('autoStatus').style.color='var(--amber)';
+        msg+=' ⚠ '+overflow.length+' more didn’t fit ('+overflow.slice(0,6).map(function(j){return j.dg;}).join(', ')+(overflow.length>6?'…':'')+') — raise "Per team", add a day, or send an extra team.';
+      }
+      if(!added && !overflow.length) msg='Nothing to plan — no open breakdowns and nothing due. 👍';
+      $('autoStatus').innerHTML=msg;
+      load();
+    }catch(e){ $('autoStatus').style.color='var(--red)'; $('autoStatus').textContent='Could not plan today. Try again.'; }
+    finally{ btn.disabled=false; btn.textContent=old; }
+  }
+  $('planDay').addEventListener('click',planToday);
 
   if(TOKEN){ hideLogin(); } else { showLogin(); }
 })();
