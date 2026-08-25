@@ -80,6 +80,19 @@ try {
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
 
+// One-time import of rental contracts (monthly rate + customer per generator)
+// from the fleet's rate data, so the income tracker and dashboard show the real
+// monthly income instead of zero. On/off-hire status still decides earning vs
+// idle at read time. Runs once per version.
+try {
+  const rentalSeedPath = path.join(__dirname, 'seed', 'fleet-rentals.json');
+  if (fs.existsSync(rentalSeedPath)) {
+    const rs = JSON.parse(fs.readFileSync(rentalSeedPath, 'utf8'));
+    const r = rentals.applySeed(rs, 'fleet-rentals-2026-08-25a');
+    if (r && r.applied) console.log('[seed] imported ' + r.applied + ' rental contracts');
+  }
+} catch (e) { console.warn('[seed] rentals import skipped:', e && e.message); }
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 // JWT signing secret. It MUST come from the environment - the old hardcoded

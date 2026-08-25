@@ -99,4 +99,30 @@ function stats(hireMap) {
   };
 }
 
-module.exports = { save, remove, getAll, getMap, daysOnHire, stats };
+// One-time bulk import of rental contracts (from the fleet's rate data). Guarded
+// by a marker file keyed by version, so it applies at most once and is safe to
+// leave wired into startup. Clean-rebuilds exactly the seeded generators so a
+// re-import with updated rates replaces rather than stacks.
+function applySeed(records, version) {
+  if (!Array.isArray(records) || !version) return { skipped: true };
+  const marker = path.join(DIR, 'rentals-seed.json');
+  let applied = {};
+  try { if (fs.existsSync(marker)) applied = JSON.parse(fs.readFileSync(marker, 'utf8')) || {}; } catch (_) { applied = {}; }
+  if (applied[version]) return { skipped: true, version };
+
+  const seededDgs = new Set(records.map((r) => String((r && r.dg) || '').trim().toUpperCase()).filter(Boolean));
+  seededDgs.forEach((dg) => { if (store[dg]) delete store[dg]; });
+
+  let n = 0;
+  for (const r of records) {
+    try { save(r); n += 1; } catch (_) { /* skip bad row */ }
+  }
+  applied[version] = { at: new Date().toISOString(), count: n };
+  try {
+    if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
+    fs.writeFileSync(marker, JSON.stringify(applied, null, 2));
+  } catch (_) { /* best-effort */ }
+  return { applied: n, version };
+}
+
+module.exports = { save, remove, getAll, getMap, daysOnHire, stats, applySeed };
