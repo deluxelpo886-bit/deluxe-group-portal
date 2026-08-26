@@ -173,14 +173,20 @@
  },
  {
   "dg": "DG-811",
-  "offHire": false,
-  "since": "2026-08-24",
-  "note": "On hire — ROCK STAR SCRAP TRADING LLC SPC"
+  "offHire": true,
+  "since": "2026-08-26",
+  "note": "Off hire - not working (returned from Rock Star)"
  },
  {
   "dg": "DG-453",
   "offHire": false,
   "since": "2026-08-24",
   "note": "On hire — KHALIQ NOOR SCRAP LLC"
+ },
+ {
+  "dg": "DG-488",
+  "offHire": false,
+  "since": "2026-08-26",
+  "note": "On hire - ROCK STAR SCRAP TRADING LLC SPC (replaced DG-811)"
  }
 ]
