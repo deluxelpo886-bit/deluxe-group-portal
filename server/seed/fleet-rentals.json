@@ -139,9 +139,9 @@
  },
  {
   "dg": "DG-488",
-  "customer": "WORK SHOP",
-  "rate": 1500,
-  "startDate": ""
+  "customer": "ROCK STAR SCRAP TRADING LLC SPC",
+  "rate": 1700,
+  "startDate": "2026-08-26"
  },
  {
   "dg": "DG-489",
@@ -340,12 +340,6 @@
   "customer": "WORK SHOP",
   "rate": 9975,
   "startDate": ""
- },
- {
-  "dg": "DG-811",
-  "customer": "ROCK STAR SCRAP TRADING LLC SPC",
-  "rate": 1700,
-  "startDate": "2026-08-24"
  },
  {
   "dg": "DG-814",
