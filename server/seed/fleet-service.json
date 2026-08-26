@@ -1013,11 +1013,11 @@
   "dg": "DG-501",
   "hours": 20631,
   "date": "2026-07-30",
-  "technician": "SATNAM&HUSAIN",
+  "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
   "dailyHours": 10.77,
   "nextService": 20981,
   "nextServiceDate": "2026-08-25"
@@ -1026,11 +1026,11 @@
   "dg": "DG-535",
   "hours": 34173,
   "date": "2026-07-30",
-  "technician": "SATNAM&HUSAIN",
+  "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
   "dailyHours": 5.28,
   "nextService": 34523,
   "nextServiceDate": "2026-08-25"
@@ -1719,5 +1719,17 @@
   "dailyHours": 13.17,
   "nextService": 508,
   "nextServiceDate": "2026-09-12"
+ },
+ {
+  "dg": "DG-546",
+  "hours": 14706,
+  "date": "2026-08-26",
+  "technician": "",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 15056,
+  "dailyHours": 12
  }
 ]
