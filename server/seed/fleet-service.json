@@ -984,16 +984,15 @@
  },
  {
   "dg": "DG-834",
-  "hours": 5460,
-  "date": "2026-07-28",
+  "hours": 5967,
+  "date": "2026-08-26",
   "technician": "BAKHTAMAL&ROLAND",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.04,
-  "nextService": 5810,
-  "nextServiceDate": "2026-08-25"
+  "dailyHours": 17.5,
+  "nextService": 6417
  },
  {
   "dg": "DG-557",
