@@ -72,9 +72,9 @@
     <div class="tile"><div class="big">…</div><div class="lbl">Loading</div></div>
   </div>
 
-  <div class="panel" id="workshopPanel" style="display:none;">
-    <h2>🏭 In the workshop / yard <span class="muted" id="workshopCount" style="font-weight:400;font-size:13px;"></span> <a href="#" class="link" id="workshopClose">Hide ▸</a></h2>
-    <div id="workshopList"><div class="empty">Loading…</div></div>
+  <div class="panel" id="detailPanel" style="display:none;">
+    <h2><span id="detailTitle">List</span> <a class="link" id="detailOpen" style="display:none;">Open page ▸</a> <a href="#" class="link" id="detailClose">Hide ▸</a></h2>
+    <div id="detailList"><div class="empty">Loading…</div></div>
   </div>
 
   <div class="split">
@@ -143,25 +143,74 @@
     return Math.round((new Date(dateStr+'T00:00:00')-today)/86400000);
   }
 
-  function tile(cls,big,lbl,sm,href){
-    var inner='<div class="big">'+big+'</div><div class="lbl">'+lbl+'</div>'+(sm?'<div class="sm">'+sm+'</div>':'');
-    return href ? '<a class="tile '+cls+'" href="'+href+'">'+inner+'</a>' : '<div class="tile '+cls+'">'+inner+'</div>';
+  // Every tile is now tappable and opens its list inline (see showDetail).
+  function tile(cls,big,lbl,sm,key){
+    var inner='<div class="big">'+big+'</div><div class="lbl">'+lbl+(key?' ▸':'')+'</div>'+(sm?'<div class="sm">'+sm+'</div>':'');
+    return key ? '<div class="tile '+cls+'" data-detail="'+key+'" style="cursor:pointer;">'+inner+'</div>' : '<div class="tile '+cls+'">'+inner+'</div>';
   }
 
-  // Render the workshop / in-yard list (off-hire generators) with why each is idle.
-  function renderWorkshop(){
-    var list=window.__workshop||[];
-    $('workshopCount').textContent='· '+list.length+' unit'+(list.length===1?'':'s');
-    $('workshopList').innerHTML = list.length ? list.map(function(g){
-      var reason=(g.hireNote||'').trim() || 'In yard';
-      var since=g.hireSince?('since '+g.hireSince):'';
-      return '<div class="row"><span class="dg">'+esc(g.dg)+'</span>'
-        +'<span class="muted">'+(g.hours!=null?g.hours+'h':'')+(since?(' · '+since):'')+'</span>'
-        +'<span class="muted" style="margin-left:auto;text-align:right;max-width:55%;">'+esc(reason)+'</span></div>';
-    }).join('') : '<div class="empty">Nothing in the workshop right now. 👍</div>';
+  // ---- Tap any tile to open its list inline ----
+  var _openDetail=null;
+  function row3(a,b,c){ return '<div class="row"><span class="dg">'+a+'</span><span class="muted">'+(b||'')+'</span><span class="muted" style="margin-left:auto;text-align:right;max-width:55%;">'+(c||'')+'</span></div>'; }
+  function renderDetail(key){
+    var D=window.__D||{}; var title='List', open='', rows='', empty='Nothing to show.';
+    if(key==='income'){
+      title='💰 Earning generators';
+      var l=(D.rentals||[]).filter(function(r){return !r.offHire && r.rate>0;}).sort(function(a,b){return (b.rate||0)-(a.rate||0);});
+      rows=l.map(function(r){return row3(esc(r.dg), esc(r.customer||'-'), 'AED '+(r.rate||0).toLocaleString());}).join('');
+      empty='No earning contracts.'; open=['/rentals','Open rentals ▸'];
+    } else if(key==='tracked'){
+      title='📋 All generators';
+      var l=(D.gens||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
+      rows=l.map(function(g){return row3(esc(g.dg), (g.hours!=null?g.hours+'h':''), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
+      open=['/service','Open service ▸'];
+    } else if(key==='overdue'){
+      title='⚠ Service overdue';
+      rows=(D.overdue||[]).map(function(x){return row3(esc(x.g.dg),'next @ '+x.g.nextService+'h','<span style="color:var(--red);font-weight:700;">OVERDUE '+Math.abs(x.d)+'d</span>');}).join('');
+      empty='Nothing overdue. 👍'; open=['/service','Open service ▸'];
+    } else if(key==='due30'){
+      title='📅 Due in the next 30 days';
+      rows=(D.month||[]).sort(function(a,b){return a.d-b.d;}).map(function(x){return row3(esc(x.g.dg),'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):''),'in '+x.d+'d');}).join('');
+      empty='Nothing due in 30 days. 👍'; open=['/schedule','Open schedule ▸'];
+    } else if(key==='spares'){
+      title='🧰 Spare parts pending';
+      rows=(D.pending||[]).map(function(i){return row3(esc(i.dg), esc(i.part)+(i.qty>1?(' ×'+i.qty):''), i.status);}).join('');
+      empty='No spare parts pending. 👍'; open=['/spares','Open spares ▸'];
+    } else if(key==='sites'){
+      title='📋 Customer sites';
+      rows=(D.sites||[]).map(function(s){return row3(esc(s.company||'-'), (s.gatePass?'🔒 gate pass':''), esc(s.rate||''));}).join('');
+      empty='No sites yet.'; open=['/sites','Open sites ▸'];
+    } else if(key==='offhire'){
+      title='🏭 In the workshop / yard';
+      var l=(D.offHire||[]).slice().sort(function(a,b){return String(b.hireSince||'').localeCompare(String(a.hireSince||''));});
+      rows=l.map(function(g){var since=g.hireSince?(' · since '+g.hireSince):'';return row3(esc(g.dg),(g.hours!=null?g.hours+'h':'')+since, esc((g.hireNote||'').trim()||'in yard'));}).join('');
+      empty='Nothing in the workshop. 👍'; open=['/service','Open service ▸'];
+    } else if(key==='onhire'){
+      title='🟢 On hire';
+      var l=(D.onHire||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
+      rows=l.map(function(g){return row3(esc(g.dg),(g.hours!=null?g.hours+'h':''),'next @ '+g.nextService+'h');}).join('');
+      open=['/service','Open service ▸'];
+    } else if(key==='sitesmap'){
+      title='🗺️ Sites on the map';
+      rows=(D.sites||[]).filter(function(s){return s.lat!=null;}).map(function(s){return row3(esc(s.company||'-'), '📍 pinned', esc(s.rate||''));}).join('');
+      empty='No sites pinned yet.'; open=['/fleet','Open map ▸'];
+    }
+    _openDetail=key;
+    $('detailTitle').innerHTML=title;
+    $('detailList').innerHTML = rows || ('<div class="empty">'+empty+'</div>');
+    var ol=$('detailOpen');
+    if(open){ ol.href=open[0]; ol.textContent=open[1]; ol.style.display=''; } else { ol.style.display='none'; }
   }
-  var wc=document.getElementById('workshopClose');
-  if(wc) wc.addEventListener('click', function(e){ e.preventDefault(); $('workshopPanel').style.display='none'; });
+  function showDetail(key){
+    if(_openDetail===key && $('detailPanel').style.display!=='none'){ $('detailPanel').style.display='none'; _openDetail=null; return; }
+    renderDetail(key);
+    $('detailPanel').style.display='';
+    $('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  document.getElementById('tiles').addEventListener('click', function(e){
+    var t=e.target.closest('[data-detail]'); if(t) showDetail(t.getAttribute('data-detail'));
+  });
+  document.getElementById('detailClose').addEventListener('click', function(e){ e.preventDefault(); $('detailPanel').style.display='none'; _openDetail=null; });
 
   async function load(){
     var res=await Promise.all([
@@ -200,29 +249,22 @@
     var gatePass=sites.filter(function(s){return s.gatePass;}).length;
     var premium=sites.filter(function(s){return s.rate==='Premium';}).length;
 
-    // ---- tiles ----
+    // ---- tiles (all tappable -> inline list) ----
     var income=(rstats.totalMonthly||0).toLocaleString('en-US');
     $('tiles').innerHTML=
-       tile('good', income, 'AED / month income', (rstats.earningCount||0)+' earning'+(rstats.idleCount?' · '+rstats.idleCount+' idle':''), '/rentals')
-      +tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', '/service')
-      +tile(overdue.length?'alert':(soon.length?'warn':'good'), overdue.length, 'Service overdue', soon.length+' due within 7 days', '/service')
-      +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', '/schedule')
-      +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', '/spares')
-      +tile('', sites.length, 'Customer sites', gatePass+' 🔒 gate pass · '+premium+' premium', '/sites')
-      +'<div class="tile" id="offHireTile" style="cursor:pointer;"><div class="big">'+offHire.length+'</div><div class="lbl">Off-hire (in yard) ▸</div><div class="sm">tap to view workshop list</div></div>'
-      +tile('good', onHire.length, 'On hire', 'generators earning', '/service')
-      +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', '/fleet');
+       tile('good', income, 'AED / month income', (rstats.earningCount||0)+' earning'+(rstats.idleCount?' · '+rstats.idleCount+' idle':''), 'income')
+      +tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', 'tracked')
+      +tile(overdue.length?'alert':(soon.length?'warn':'good'), overdue.length, 'Service overdue', soon.length+' due within 7 days', 'overdue')
+      +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', 'due30')
+      +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', 'spares')
+      +tile('', sites.length, 'Customer sites', gatePass+' 🔒 gate pass · '+premium+' premium', 'sites')
+      +tile('', offHire.length, 'Off-hire (in yard)', 'tap to view workshop list', 'offhire')
+      +tile('good', onHire.length, 'On hire', 'generators earning', 'onhire')
+      +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', 'sitesmap');
 
-    // ---- workshop list (off-hire / in-yard generators), shown when the tile is tapped ----
-    window.__workshop = offHire.slice().sort(function(a,b){ return String(b.hireSince||'').localeCompare(String(a.hireSince||'')); });
-    var oht=document.getElementById('offHireTile');
-    if(oht) oht.addEventListener('click', function(){
-      var open = $('workshopPanel').style.display!=='none';
-      if(open){ $('workshopPanel').style.display='none'; return; }
-      renderWorkshop();
-      $('workshopPanel').style.display='';
-      $('workshopPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
-    });
+    // Stash the computed data so any tile's list can be rendered on tap.
+    window.__D = { gens:gens, onHire:onHire, offHire:offHire, overdue:overdue, soon:soon, month:month, pending:pending, sites:sites, rentals:(rent.rentals||[]) };
+    if(_openDetail){ renderDetail(_openDetail); }   // keep the open list refreshed after reload
 
     // ---- due list (overdue then soon) ----
     var due=overdue.concat(soon).slice(0,8);
