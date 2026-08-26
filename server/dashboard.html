@@ -72,6 +72,11 @@
     <div class="tile"><div class="big">…</div><div class="lbl">Loading</div></div>
   </div>
 
+  <div class="panel" id="workshopPanel" style="display:none;">
+    <h2>🏭 In the workshop / yard <span class="muted" id="workshopCount" style="font-weight:400;font-size:13px;"></span> <a href="#" class="link" id="workshopClose">Hide ▸</a></h2>
+    <div id="workshopList"><div class="empty">Loading…</div></div>
+  </div>
+
   <div class="split">
     <div class="panel">
       <h2>🔧 Service due soon <a href="/service" class="link">Open service ▸</a></h2>
@@ -143,6 +148,21 @@
     return href ? '<a class="tile '+cls+'" href="'+href+'">'+inner+'</a>' : '<div class="tile '+cls+'">'+inner+'</div>';
   }
 
+  // Render the workshop / in-yard list (off-hire generators) with why each is idle.
+  function renderWorkshop(){
+    var list=window.__workshop||[];
+    $('workshopCount').textContent='· '+list.length+' unit'+(list.length===1?'':'s');
+    $('workshopList').innerHTML = list.length ? list.map(function(g){
+      var reason=(g.hireNote||'').trim() || 'In yard';
+      var since=g.hireSince?('since '+g.hireSince):'';
+      return '<div class="row"><span class="dg">'+esc(g.dg)+'</span>'
+        +'<span class="muted">'+(g.hours!=null?g.hours+'h':'')+(since?(' · '+since):'')+'</span>'
+        +'<span class="muted" style="margin-left:auto;text-align:right;max-width:55%;">'+esc(reason)+'</span></div>';
+    }).join('') : '<div class="empty">Nothing in the workshop right now. 👍</div>';
+  }
+  var wc=document.getElementById('workshopClose');
+  if(wc) wc.addEventListener('click', function(e){ e.preventDefault(); $('workshopPanel').style.display='none'; });
+
   async function load(){
     var res=await Promise.all([
       fetch('/api/service/status',{cache:'no-store',headers:authHeaders()}),
@@ -189,9 +209,20 @@
       +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', '/schedule')
       +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', '/spares')
       +tile('', sites.length, 'Customer sites', gatePass+' 🔒 gate pass · '+premium+' premium', '/sites')
-      +tile('', offHire.length, 'Off-hire (in yard)', 'idle units', '/service')
+      +'<div class="tile" id="offHireTile" style="cursor:pointer;"><div class="big">'+offHire.length+'</div><div class="lbl">Off-hire (in yard) ▸</div><div class="sm">tap to view workshop list</div></div>'
       +tile('good', onHire.length, 'On hire', 'generators earning', '/service')
       +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', '/fleet');
+
+    // ---- workshop list (off-hire / in-yard generators), shown when the tile is tapped ----
+    window.__workshop = offHire.slice().sort(function(a,b){ return String(b.hireSince||'').localeCompare(String(a.hireSince||'')); });
+    var oht=document.getElementById('offHireTile');
+    if(oht) oht.addEventListener('click', function(){
+      var open = $('workshopPanel').style.display!=='none';
+      if(open){ $('workshopPanel').style.display='none'; return; }
+      renderWorkshop();
+      $('workshopPanel').style.display='';
+      $('workshopPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
 
     // ---- due list (overdue then soon) ----
     var due=overdue.concat(soon).slice(0,8);
