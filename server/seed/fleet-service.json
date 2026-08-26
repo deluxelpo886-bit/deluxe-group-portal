@@ -959,16 +959,15 @@
  },
  {
   "dg": "DG-817",
-  "hours": 9623,
-  "date": "2026-07-28",
+  "hours": 9628,
+  "date": "2026-07-26",
   "technician": "IMRAN&VELU",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 18.22,
-  "nextService": 9973,
-  "nextServiceDate": "2026-09-10"
+  "nextService": 9978
  },
  {
   "dg": "DG-830",
