@@ -403,16 +403,15 @@
  },
  {
   "dg": "DG-832",
-  "hours": 10500,
-  "date": "2026-06-06",
-  "technician": "BAKHTAMAL&ROLAND",
+  "hours": 10856,
+  "date": "2026-08-27",
+  "technician": "LK/JAYARAJ",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 5.88,
-  "nextService": 10850,
-  "nextServiceDate": "2026-08-28"
+  "dailyHours": 4.3,
+  "nextService": 11206
  },
  {
   "dg": "DG-829",
@@ -932,16 +931,15 @@
  },
  {
   "dg": "DG-540",
-  "hours": 14342,
-  "date": "2026-07-28",
-  "technician": "ROLAND&BAKHTAMAL",
+  "hours": 14706,
+  "date": "2026-08-26",
+  "technician": "ADIL/JAYARAJ",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 13.26,
-  "nextService": 14692,
-  "nextServiceDate": "2026-08-25"
+  "dailyHours": 12.6,
+  "nextService": 15056
  },
  {
   "dg": "DG-816",
@@ -1008,29 +1006,27 @@
  },
  {
   "dg": "DG-501",
-  "hours": 20631,
-  "date": "2026-07-30",
+  "hours": 20837,
+  "date": "2026-08-26",
   "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 10.77,
-  "nextService": 20981,
-  "nextServiceDate": "2026-08-25"
+  "nextService": 20981
  },
  {
   "dg": "DG-535",
-  "hours": 34173,
-  "date": "2026-07-30",
+  "hours": 34291,
+  "date": "2026-08-26",
   "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 5.28,
-  "nextService": 34523,
-  "nextServiceDate": "2026-08-25"
+  "dailyHours": 4.4,
+  "nextService": 34641
  },
  {
   "dg": "DG-549",
@@ -1112,15 +1108,14 @@
  {
   "dg": "DG-542",
   "hours": 1679,
-  "date": "2026-08-04",
+  "date": "2026-08-12",
   "technician": "SABIR&BAKHTAMAL",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 3.9,
-  "nextService": 2029,
-  "nextServiceDate": "2026-09-01"
+  "nextService": 2029
  },
  {
   "dg": "DG-811",
@@ -1652,7 +1647,7 @@
  },
  {
   "dg": "DG-809",
-  "hours": 14789,
+  "hours": 14786,
   "date": "2026-08-19",
   "technician": "SATNAM&HUSAIN",
   "oil": true,
@@ -1660,8 +1655,7 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 15.66,
-  "nextService": 15139,
-  "nextServiceDate": "2026-09-12"
+  "nextService": 15136
  },
  {
   "dg": "DG-849",
@@ -1679,15 +1673,14 @@
  {
   "dg": "DG-467",
   "hours": 29672,
-  "date": "2026-08-20",
+  "date": "2026-08-21",
   "technician": "SATNAM",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 8.6,
-  "nextService": 30022,
-  "nextServiceDate": "2026-09-25"
+  "nextService": 30022
  },
  {
   "dg": "DG-459",
@@ -1714,17 +1707,5 @@
   "dailyHours": 13.17,
   "nextService": 508,
   "nextServiceDate": "2026-09-12"
- },
- {
-  "dg": "DG-546",
-  "hours": 14706,
-  "date": "2026-08-26",
-  "technician": "",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": true,
-  "nextService": 15056,
-  "dailyHours": 12
  }
 ]
