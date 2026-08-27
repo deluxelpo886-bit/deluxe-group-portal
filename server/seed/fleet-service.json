@@ -410,7 +410,7 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 4.3,
+  "dailyHours": 12,
   "nextService": 11206
  },
  {
@@ -667,7 +667,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.47,
+  "dailyHours": 12,
   "nextService": 7055
  },
  {
@@ -822,7 +822,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 10.6,
+  "dailyHours": 12,
   "nextService": 1707
  },
  {
@@ -938,7 +938,7 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 12.6,
+  "dailyHours": 12,
   "nextService": 15056
  },
  {
@@ -989,7 +989,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 17.5,
+  "dailyHours": 12,
   "nextService": 6417
  },
  {
@@ -1014,7 +1014,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 10.77,
+  "dailyHours": 12,
   "nextService": 20981
  },
  {
@@ -1026,7 +1026,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 4.4,
+  "dailyHours": 12,
   "nextService": 34641
  },
  {
@@ -1038,7 +1038,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 18.88,
+  "dailyHours": 12,
   "nextService": 6385
  },
  {
@@ -1165,7 +1165,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 12.9,
+  "dailyHours": 12,
   "nextService": 9893
  },
  {
@@ -1177,7 +1177,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 18.83,
+  "dailyHours": 12,
   "nextService": 8263
  },
  {
@@ -1202,7 +1202,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 19.5,
+  "dailyHours": 12,
   "nextService": 3378
  },
  {
@@ -1253,7 +1253,7 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 21.6,
+  "dailyHours": 12,
   "nextService": 10562
  },
  {
