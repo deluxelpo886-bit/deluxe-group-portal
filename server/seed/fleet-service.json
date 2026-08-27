@@ -1094,16 +1094,15 @@
  },
  {
   "dg": "DG-815",
-  "hours": 36945,
-  "date": "2026-08-01",
-  "technician": "IMRAN&JAIRAZ",
+  "hours": 37259,
+  "date": "2026-08-23",
+  "technician": "ADEEL",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 11.89,
-  "nextService": 37295,
-  "nextServiceDate": "2026-08-28"
+  "airFilter": true,
+  "dailyHours": 14.3,
+  "nextService": 37609
  },
  {
   "dg": "DG-542",
@@ -1244,16 +1243,15 @@
  },
  {
   "dg": "DG-812",
-  "hours": 9801,
-  "date": "2026-08-08",
-  "technician": "SABIR&IMRAN",
+  "hours": 10212,
+  "date": "2026-08-27",
+  "technician": "LK/JAYARAJ",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
-  "dailyHours": 20.94,
-  "nextService": 10151,
-  "nextServiceDate": "2026-08-28"
+  "airFilter": false,
+  "dailyHours": 21.6,
+  "nextService": 10562
  },
  {
   "dg": "DG-35",
