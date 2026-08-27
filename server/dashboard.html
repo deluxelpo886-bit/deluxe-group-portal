@@ -79,7 +79,7 @@
 
   <div class="split">
     <div class="panel">
-      <h2>🔧 Service due soon <a href="/service" class="link">Open service ▸</a></h2>
+      <h2>🔧 Service — send &amp; confirm <a href="/service" class="link">Open service ▸</a></h2>
       <div id="dueList"><div class="empty">Loading…</div></div>
     </div>
     <div class="panel">
@@ -165,13 +165,13 @@
       rows=l.map(function(g){return row3(esc(g.dg), (g.hours!=null?g.hours+'h':''), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
       open=['/service','Open service ▸'];
     } else if(key==='overdue'){
-      title='⚠ Service overdue';
-      rows=(D.overdue||[]).map(function(x){return row3(esc(x.g.dg),'next @ '+x.g.nextService+'h','<span style="color:var(--red);font-weight:700;">OVERDUE '+Math.abs(x.d)+'d</span>');}).join('');
-      empty='Nothing overdue. 👍'; open=['/service','Open service ▸'];
+      title='🔴 Send team — due by hours';
+      rows=(D.sendDue||[]).map(function(g){return row3(esc(g.dg),'next @ '+g.nextService+'h · now '+(g.currentHours!=null?g.currentHours+'h':'?'),'<span style="color:var(--red);font-weight:700;">'+Math.abs(g.due.hoursLeft||0)+'h over</span>');}).join('');
+      empty='Nothing confirmed due by hours. 👍'; open=['/service','Open service ▸'];
     } else if(key==='due30'){
-      title='📅 Due in the next 30 days';
-      rows=(D.month||[]).sort(function(a,b){return a.d-b.d;}).map(function(x){return row3(esc(x.g.dg),'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):''),'in '+x.d+'d');}).join('');
-      empty='Nothing due in 30 days. 👍'; open=['/schedule','Open schedule ▸'];
+      title='🔵 Confirm hours first (estimate says due)';
+      rows=(D.confirmDue||[]).map(function(g){return row3(esc(g.dg),'next @ '+g.nextService+'h'+(g.nextServiceDate?(' · est. '+g.nextServiceDate):''),'confirm hours');}).join('');
+      empty='Nothing to confirm. 👍'; open=['/service','Open service ▸'];
     } else if(key==='spares'){
       title='🧰 Spare parts pending';
       rows=(D.pending||[]).map(function(i){return row3(esc(i.dg), esc(i.part)+(i.qty>1?(' ×'+i.qty):''), i.status);}).join('');
@@ -232,16 +232,18 @@
     var offHire=gens.filter(function(g){return g.offHire;});
     var active=onHire;   // service alarms only apply to on-hire units
 
-    var overdue=[], soon=[], month=[];
+    // Hours-first classification (same as the Service page): send = confirmed
+    // due by real hours; confirm = the date estimate flags it but the hours are
+    // not confirmed (do NOT call these "overdue"); plan = confirmed, due soon.
+    var sendDue=[], confirmDue=[], planDue=[];
     active.forEach(function(g){
-      var d=daysTo(g.nextServiceDate);
-      if(d==null) return;
-      if(d<0) overdue.push({g:g,d:d});
-      else if(d<=7) soon.push({g:g,d:d});
-      else if(d<=30) month.push({g:g,d:d});
+      var st=(g.due&&g.due.state)||'';
+      if(st==='due') sendDue.push(g);
+      else if(st==='confirm') confirmDue.push(g);
+      else if(st==='plan') planDue.push(g);
     });
-    var dueSort=function(a,b){return a.d-b.d;};
-    overdue.sort(dueSort); soon.sort(dueSort);
+    var byHrs=function(a,b){return (a.due.hoursLeft||0)-(b.due.hoursLeft||0);};
+    sendDue.sort(byHrs);
 
     var items=spr.items||[];
     var pending=items.filter(function(i){return i.status==='Needed'||i.status==='Ordered';});
@@ -254,8 +256,8 @@
     $('tiles').innerHTML=
        tile('good', income, 'AED / month income', (rstats.earningCount||0)+' earning'+(rstats.idleCount?' · '+rstats.idleCount+' idle':''), 'income')
       +tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', 'tracked')
-      +tile(overdue.length?'alert':(soon.length?'warn':'good'), overdue.length, 'Service overdue', soon.length+' due within 7 days', 'overdue')
-      +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', 'due30')
+      +tile(sendDue.length?'alert':'good', sendDue.length, 'Send team (due by hours)', planDue.length+' due soon', 'overdue')
+      +tile(confirmDue.length?'warn':'', confirmDue.length, 'Confirm hours first', 'estimate says due — verify', 'due30')
       +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', 'spares')
       +tile('', sites.length, 'Customer sites', gatePass+' 🔒 gate pass · '+premium+' premium', 'sites')
       +tile('', offHire.length, 'Off-hire (in yard)', 'tap to view workshop list', 'offhire')
@@ -263,18 +265,22 @@
       +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', 'sitesmap');
 
     // Stash the computed data so any tile's list can be rendered on tap.
-    window.__D = { gens:gens, onHire:onHire, offHire:offHire, overdue:overdue, soon:soon, month:month, pending:pending, sites:sites, rentals:(rent.rentals||[]) };
+    window.__D = { gens:gens, onHire:onHire, offHire:offHire, sendDue:sendDue, confirmDue:confirmDue, planDue:planDue, pending:pending, sites:sites, rentals:(rent.rentals||[]) };
     if(_openDetail){ renderDetail(_openDetail); }   // keep the open list refreshed after reload
 
-    // ---- due list (overdue then soon) ----
-    var due=overdue.concat(soon).slice(0,8);
-    $('dueList').innerHTML = due.length ? due.map(function(x){
-      var over=x.d<0;
-      var when=over?('OVERDUE '+Math.abs(x.d)+'d'):(x.d===0?'DUE TODAY':('in '+x.d+'d'));
-      return '<div class="row"><span class="dg">'+esc(x.g.dg)+'</span>'
-        +'<span class="muted">next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):'')+'</span>'
-        +'<span class="pill '+(over?'p-over':'p-soon')+'">'+when+'</span></div>';
-    }).join('') : '<div class="empty">Nothing due in the next 7 days. 👍</div>';
+    // ---- due list: confirmed-due (send) first, then confirm-hours ----
+    var dl='';
+    sendDue.slice(0,6).forEach(function(g){
+      dl+='<div class="row"><span class="dg">'+esc(g.dg)+'</span>'
+        +'<span class="muted">next @ '+g.nextService+'h · now '+(g.currentHours!=null?g.currentHours+'h':'?')+'</span>'
+        +'<span class="pill p-over">SEND · '+Math.abs(g.due.hoursLeft||0)+'h over</span></div>';
+    });
+    confirmDue.slice(0,8).forEach(function(g){
+      dl+='<div class="row"><span class="dg">'+esc(g.dg)+'</span>'
+        +'<span class="muted">next @ '+g.nextService+'h'+(g.nextServiceDate?(' · est. '+g.nextServiceDate):'')+'</span>'
+        +'<span class="pill p-soon">CONFIRM HOURS</span></div>';
+    });
+    $('dueList').innerHTML = dl || '<div class="empty">Nothing due. 👍</div>';
 
     // ---- spares pending ----
     $('sparesList').innerHTML = pending.length ? pending.slice(0,8).map(function(i){
