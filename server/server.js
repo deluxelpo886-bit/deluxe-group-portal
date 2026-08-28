@@ -25,6 +25,7 @@ const breakdowns = require('./breakdowns');
 const rentals = require('./rentals');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
+const specs = require('./specs');
 const directory = require('./directory');
 
 const fs = require('fs');
@@ -989,6 +990,25 @@ app.get('/contract', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'contract.html'), { cacheControl: false });
+});
+
+// ---------- Service specs (filters + engine oil per generator) ----------
+app.get('/api/specs', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ specs: specs.getMap() });
+});
+app.post('/api/specs/save', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, spec: specs.save(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.get('/specs', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'specs.html'), { cacheControl: false });
 });
 
 app.get('/breakdowns', (req, res) => {
