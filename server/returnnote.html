@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Deluxe — Delivery / On-hire Note</title>
+<title>Deluxe — Return / Off-hire Note</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#14181c">
 <style>
@@ -54,6 +54,7 @@
   .note td{border:1px solid #ccc;padding:8px 10px;font-size:13px;vertical-align:top;}
   .note td.k{background:#f4f4f4;color:#444;font-size:11px;text-transform:uppercase;letter-spacing:.04em;width:26%;white-space:nowrap;}
   .note .big{font-family:var(--mono);font-weight:700;font-size:15px;}
+  .note .yes{color:#1a7a45;font-weight:700;} .note .no{color:#c0392b;font-weight:700;}
   .note .notes{font-size:12.5px;color:#333;min-height:34px;border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:16px;}
   .note .signs{display:flex;gap:26px;margin-top:26px;}
   .note .signs > div{flex:1;}
@@ -71,16 +72,16 @@
 </head>
 <body>
 <div class="wrap">
-  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a><a href="/rentals" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">💰 Rentals</a><a href="/delivery" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">📦 Delivery</a><a href="/return" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">↩️ Return</a></nav>
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a><a href="/rentals" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">💰 Rentals</a><a href="/delivery" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📦 Delivery</a><a href="/return" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">↩️ Return</a></nav>
   <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
   <div class="toolbar">
     <div>
       <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
-      <h1>Delivery / On-hire Note</h1>
+      <h1>Return / Off-hire Note</h1>
     </div>
     <button class="btn sec" id="signOut" style="width:auto;display:none;padding:8px 12px;font-size:13px;">Sign out</button>
   </div>
-  <p class="sub">Raise a numbered hand-over note when a generator leaves the yard on hire. Tick <b>Mark on-hire &amp; log meter</b> to flip it on-hire on the map and record the delivery meter reading in one step. Print and hand the customer a copy. See the <a href="/rentals" class="link">rentals</a>, <a href="/service" class="link">service</a>, <a href="/fleet" class="link">map</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
+  <p class="sub">Raise a numbered return note when a generator comes back off hire (process Step 19). Record its condition on arrival, and tick <b>Mark off-hire &amp; log meter</b> to flip it off-hire (service pauses) and record the final reading in one step. Print it and file it with the delivery note &amp; hire contract. See the <a href="/delivery" class="link">delivery notes</a>, <a href="/rentals" class="link">rentals</a>, <a href="/fleet" class="link">map</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
 
   <!-- FORM -->
   <div class="panel" id="formPanel">
@@ -101,11 +102,11 @@
     </div>
     <div class="row">
       <div class="field">
-        <label>Customer</label>
+        <label>Customer (off-hired from)</label>
         <input type="text" id="customer" placeholder="Company name" autocomplete="off">
       </div>
       <div class="field">
-        <label>Site / location</label>
+        <label>Collected from (site)</label>
         <input type="text" id="site" placeholder="e.g. Ruwais — Plot 12" autocomplete="off">
       </div>
     </div>
@@ -115,13 +116,13 @@
         <input type="text" id="contact" placeholder="e.g. Mr. Ali 050…" autocomplete="off">
       </div>
       <div class="field">
-        <label>Delivery date</label>
+        <label>Return date</label>
         <input type="date" id="date">
       </div>
     </div>
     <div class="row">
       <div class="field">
-        <label>Driver</label>
+        <label>Driver (collected by)</label>
         <input type="text" id="driver" placeholder="Driver name" autocomplete="off">
       </div>
       <div class="field">
@@ -129,35 +130,53 @@
         <input type="text" id="vehicle" placeholder="e.g. Truck 3 / plate" autocomplete="off">
       </div>
       <div class="field">
-        <label>Meter reading at delivery (hours)</label>
-        <input type="number" id="meterReading" min="0" placeholder="e.g. 8391">
+        <label>Meter reading at return (hours)</label>
+        <input type="number" id="meterReading" min="0" placeholder="e.g. 9120">
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:4px 0 8px;">Condition on return</div>
+    <div class="row">
+      <div class="field">
+        <label>Working condition</label>
+        <select id="working">
+          <option value="">—</option>
+          <option value="yes">Working OK</option>
+          <option value="no">Not working / faulty</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fuel level</label>
+        <select id="fuelLevel">
+          <option value="">—</option>
+          <option value="Full">Full</option>
+          <option value="3/4">3/4</option>
+          <option value="Half">Half</option>
+          <option value="1/4">1/4</option>
+          <option value="Empty">Empty</option>
+        </select>
       </div>
     </div>
     <div class="row">
       <div class="field">
-        <label>Rate type</label>
-        <select id="rateType">
-          <option value="">—</option>
-          <option value="Monthly">Monthly</option>
-          <option value="Daily">Daily</option>
-          <option value="Hourly">Hourly</option>
-        </select>
+        <label>Physical damage (if any)</label>
+        <input type="text" id="damage" placeholder="e.g. dented canopy door, none" autocomplete="off">
       </div>
       <div class="field">
-        <label>Rate (AED)</label>
-        <input type="number" id="rate" min="0" placeholder="e.g. 6500">
+        <label>Accessories returned</label>
+        <input type="text" id="accessories" placeholder="e.g. 2 batteries, cables, fuel cap" autocomplete="off">
       </div>
     </div>
     <div class="field">
-      <label>Notes / condition (optional)</label>
-      <textarea id="notes" rows="2" placeholder="e.g. delivered with full tank, 2 batteries, gate pass required"></textarea>
+      <label>Other notes (optional)</label>
+      <textarea id="notes" rows="2" placeholder="e.g. needs wash, oil leak observed, service due"></textarea>
     </div>
     <div class="field">
       <div class="checks" style="background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;">
-        <label><input type="checkbox" id="setOnHire" checked> <span><b>Mark on-hire &amp; log meter</b> — flip this generator on-hire on the map and record the delivery meter reading (no service).</span></label>
+        <label><input type="checkbox" id="setOffHire" checked> <span><b>Mark off-hire &amp; log meter</b> — flip this generator off-hire (service pauses) and record the final meter reading.</span></label>
       </div>
     </div>
-    <button class="btn" id="submit">Generate delivery note</button>
+    <button class="btn" id="submit">Generate return note</button>
     <div class="err" id="err"></div>
   </div>
 
@@ -173,12 +192,12 @@
   <!-- RECENT NOTES -->
   <div class="panel" id="listPanel">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <b style="font-size:14px;">Recent delivery notes</b>
+      <b style="font-size:14px;">Recent return notes</b>
       <a href="#" class="link" id="refresh">↻ Refresh</a>
     </div>
     <div style="overflow-x:auto;">
       <table>
-        <thead><tr><th>No.</th><th>Date</th><th>Generator</th><th>Customer</th><th>Site</th><th>Driver</th><th class="n">Meter</th><th></th></tr></thead>
+        <thead><tr><th>No.</th><th>Date</th><th>Generator</th><th>Customer</th><th>From</th><th>Condition</th><th class="n">Meter</th><th></th></tr></thead>
         <tbody id="listBody"><tr><td colspan="8" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
       </table>
     </div>
@@ -189,8 +208,8 @@
 <div id="overlay">
   <div class="card">
     <div class="eyebrow">Deluxe Operations</div>
-    <h1 style="font-size:19px;margin:0 0 4px;">Delivery Notes — Sign in</h1>
-    <p class="sub" style="margin-bottom:16px;">Sign in to raise delivery notes.</p>
+    <h1 style="font-size:19px;margin:0 0 4px;">Return Notes — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to raise return notes.</p>
     <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
     <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
     <div class="err" id="loginErr"></div>
@@ -206,7 +225,6 @@
   function show(el,on){ el.style.display=on?'':'none'; }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
-  // default date = today
   $('date').value=new Date().toISOString().slice(0,10);
 
   /* ---- auth ---- */
@@ -243,8 +261,9 @@
       dg:$('dg').value, kva:$('kva').value, brand:$('brand').value,
       customer:$('customer').value, site:$('site').value, contact:$('contact').value,
       date:$('date').value, driver:$('driver').value, vehicle:$('vehicle').value,
-      meterReading:$('meterReading').value, rateType:$('rateType').value, rate:$('rate').value,
-      notes:$('notes').value, setOnHire:$('setOnHire').checked
+      meterReading:$('meterReading').value, working:$('working').value, fuelLevel:$('fuelLevel').value,
+      damage:$('damage').value, accessories:$('accessories').value,
+      notes:$('notes').value, setOffHire:$('setOffHire').checked
     };
   }
   $('submit').addEventListener('click',async function(){
@@ -252,44 +271,47 @@
     if(!$('dg').value.trim()){ $('err').textContent='Enter the generator (DG) number.'; return; }
     $('submit').disabled=true; $('submit').textContent='Saving…';
     try{
-      var r=await fetch('/api/delivery/create',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify(currentBody())});
+      var r=await fetch('/api/return/create',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify(currentBody())});
       if(r.status===401){ showLogin('Please sign in again.'); return; }
       var d=await r.json().catch(function(){return{};});
       if(!r.ok) throw new Error(d.error||'Could not save');
       renderNote(d.note);
       loadList();
     }catch(e){ $('err').textContent=e.message||'Could not save'; }
-    finally{ $('submit').disabled=false; $('submit').textContent='Generate delivery note'; }
+    finally{ $('submit').disabled=false; $('submit').textContent='Generate return note'; }
   });
 
   function cell(k,v){ return '<tr><td class="k">'+esc(k)+'</td><td>'+(v||'<span style="color:#aaa;">—</span>')+'</td></tr>'; }
+  function workText(w){ return w==='yes' ? '<span class="yes">Working OK</span>' : (w==='no' ? '<span class="no">Not working / faulty</span>' : ''); }
   function renderNote(n){
-    var rate = (n.rate!=null? ('AED '+n.rate+(n.rateType?(' / '+esc(n.rateType).toLowerCase()):'')) : (n.rateType||''));
     $('note').innerHTML =
       '<div class="head">'
         +'<div class="logos"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC">'
           +'<div class="co">Deluxe Heavy Equipment Rental LLC<br>Deluxe Energy Solutions LLC<br>Abu Dhabi, United Arab Emirates</div></div>'
-        +'<div class="title"><div class="t">DELIVERY / ON-HIRE NOTE</div><div class="n">'+esc(n.number)+'</div><div class="d">Date: '+esc(n.date)+'</div></div>'
+        +'<div class="title"><div class="t">RETURN / OFF-HIRE NOTE</div><div class="n">'+esc(n.number)+'</div><div class="d">Date: '+esc(n.date)+'</div></div>'
       +'</div>'
       +'<table>'
         +cell('Generator (DG)','<span class="big">'+esc(n.dg)+'</span>')
         +cell('Rating (KVA)', n.kva?esc(n.kva)+' KVA':'')
         +cell('Brand / model', esc(n.brand))
-        +cell('Customer','<b>'+esc(n.customer)+'</b>')
-        +cell('Site / location', esc(n.site))
+        +cell('Customer (off-hired from)','<b>'+esc(n.customer)+'</b>')
+        +cell('Collected from', esc(n.site))
         +cell('Site contact', esc(n.contact))
-        +cell('Meter reading at delivery', n.meterReading!=null?('<span class="big">'+n.meterReading+'</span> hours'):'')
-        +cell('Rate', rate?esc(String(rate)):'')
-        +cell('Driver / delivered by', esc(n.driver))
+        +cell('Meter reading at return', n.meterReading!=null?('<span class="big">'+n.meterReading+'</span> hours'):'')
+        +cell('Working condition', workText(n.working))
+        +cell('Fuel level', esc(n.fuelLevel))
+        +cell('Physical damage', esc(n.damage))
+        +cell('Accessories returned', esc(n.accessories))
+        +cell('Collected by (driver)', esc(n.driver))
         +cell('Vehicle', esc(n.vehicle))
       +'</table>'
-      +'<div class="k" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#444;margin-bottom:4px;">Notes / condition on delivery</div>'
+      +'<div class="k" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#444;margin-bottom:4px;">Other notes</div>'
       +'<div class="notes">'+esc(n.notes)+'</div>'
       +'<div class="signs">'
-        +'<div><div class="sigline">Delivered by (driver) — name &amp; signature</div></div>'
-        +'<div><div class="sigline">Received by (customer) — name, signature &amp; date</div></div>'
+        +'<div><div class="sigline">Returned by (driver) — name &amp; signature</div></div>'
+        +'<div><div class="sigline">Received by (Store Keeper) — name, signature &amp; date</div></div>'
       +'</div>'
-      +'<div class="terms">The generator described above is delivered on hire in good working condition. The customer is responsible for fuel, safe operation, and any damage or loss while on site, and for providing site access / gate passes. Servicing is carried out by Deluxe every 350 running hours. This note confirms hand-over only.</div>';
+      +'<div class="terms">The generator described above has been off-hired and returned to the yard in the condition recorded above. This note is filed together with the delivery note and hire contract. Any damage, missing accessories or faults noted are the basis for assessment before the next hire.</div>';
     show($('formPanel'),false);
     show($('noteArea'),true);
     window.scrollTo(0,0);
@@ -298,34 +320,35 @@
   $('printBtn').addEventListener('click',function(){ window.print(); });
   $('newBtn').addEventListener('click',function(){
     show($('noteArea'),false); show($('formPanel'),true);
-    ['dg','kva','brand','customer','site','contact','driver','vehicle','meterReading','rate','notes'].forEach(function(id){ $(id).value=''; });
-    $('rateType').value=''; $('setOnHire').checked=true; $('date').value=new Date().toISOString().slice(0,10);
+    ['dg','kva','brand','customer','site','contact','driver','vehicle','meterReading','damage','accessories','notes'].forEach(function(id){ $(id).value=''; });
+    $('working').value=''; $('fuelLevel').value=''; $('setOffHire').checked=true; $('date').value=new Date().toISOString().slice(0,10);
     window.scrollTo(0,0);
   });
 
   /* ---- recent notes ---- */
   async function loadList(){
     try{
-      var r=await fetch('/api/delivery',{cache:'no-store',headers:{'Authorization':'Bearer '+TOKEN}});
+      var r=await fetch('/api/return',{cache:'no-store',headers:{'Authorization':'Bearer '+TOKEN}});
       if(r.status===401){ showLogin(); return; }
       var d=await r.json();
       var notes=d.notes||[];
       $('listBody').innerHTML = notes.length ? notes.map(function(n){
+        var cond = n.working==='yes'?'<span style="color:var(--green);">OK</span>':(n.working==='no'?'<span style="color:var(--red);">Faulty</span>':'-');
         return '<tr><td class="dg">'+esc(n.number)+'</td><td class="muted">'+esc(n.date)+'</td><td class="dg">'+esc(n.dg)+'</td>'
-          +'<td>'+esc(n.customer||'-')+'</td><td class="muted">'+esc(n.site||'-')+'</td><td>'+esc(n.driver||'-')+'</td>'
+          +'<td>'+esc(n.customer||'-')+'</td><td class="muted">'+esc(n.site||'-')+'</td><td>'+cond+'</td>'
           +'<td class="n">'+(n.meterReading!=null?n.meterReading:'-')+'</td>'
           +'<td style="white-space:nowrap;"><button data-print="'+n.id+'" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;">Print</button> '
           +'<button data-del="'+n.id+'" style="background:transparent;color:#e0644a;border:1px solid #5a2a22;border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;">Delete</button></td></tr>';
-      }).join('') : '<tr><td colspan="8" class="muted" style="padding:14px;">No delivery notes yet.</td></tr>';
+      }).join('') : '<tr><td colspan="8" class="muted" style="padding:14px;">No return notes yet.</td></tr>';
       window.__notes=notes;
       $('listBody').querySelectorAll('button[data-print]').forEach(function(b){ b.addEventListener('click',function(){ var n=(window.__notes||[]).find(function(x){return x.id===b.getAttribute('data-print');}); if(n) renderNote(n); }); });
       $('listBody').querySelectorAll('button[data-del]').forEach(function(b){ b.addEventListener('click',function(){ delNote(b.getAttribute('data-del')); }); });
     }catch(e){ $('listBody').innerHTML='<tr><td colspan="8" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
   async function delNote(id){
-    if(!confirm('Delete this delivery note?')) return;
+    if(!confirm('Delete this return note?')) return;
     try{
-      var r=await fetch('/api/delivery/remove',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({id:id})});
+      var r=await fetch('/api/return/remove',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({id:id})});
       if(r.status===401){ showLogin(); return; }
       loadList();
     }catch(e){}
