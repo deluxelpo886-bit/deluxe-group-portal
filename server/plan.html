@@ -40,6 +40,11 @@
   .u .meta .cust{color:var(--text);}
   .zfoot{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;background:#191e23;}
   .maplink{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--blue);color:#07121c;font-weight:700;font-size:13px;padding:8px 13px;border-radius:8px;}
+  .wa{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;background:#25D366;color:#04331a;font-weight:700;font-size:13px;padding:8px 13px;border-radius:8px;font-family:inherit;}
+  .wa:hover{filter:brightness(1.05);}
+  .copy{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);cursor:pointer;background:var(--panel2);color:var(--text);font-weight:600;font-size:12.5px;padding:8px 11px;border-radius:8px;font-family:inherit;}
+  .copy.done{border-color:var(--green);color:var(--green);}
+  .shareall{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;background:#25D366;color:#04331a;font-weight:700;font-size:13.5px;padding:10px 16px;border-radius:9px;font-family:inherit;margin-top:10px;}
   .assign{display:flex;align-items:center;gap:8px;margin-left:auto;}
   .assign label{margin:0;}
   .assign input{width:170px;}
@@ -97,7 +102,7 @@
       <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
     </div>
   </div>
-  <p class="sub">The day's servicing, <b>grouped by area</b> the way an experienced scheduler plans it: worst-overdue area first, all units at one site together, a <b>Google Maps route</b> for each area, and a box to write which team takes it. In-yard units are listed separately (serviced in-house, no travel). Type the team names, then <b>🖨️ Print</b> for the morning hand-out.</p>
+  <p class="sub">The day's servicing, <b>grouped by area</b> the way an experienced scheduler plans it: worst-overdue area first, all units at one site together, a <b>Google Maps route</b> for each area, and a box to write which team takes it. Type the team names, then send each area's route straight to the team on <b>📲 WhatsApp</b> — or <b>🖨️ Print</b> the whole sheet.</p>
 
   <div id="out"><div class="empty">Loading today's plan…</div></div>
 </div>
@@ -177,6 +182,50 @@
     return 'https://www.google.com/maps/dir/'+pts.map(function(p){return encodeURIComponent(p);}).join('/');
   }
 
+  // ---- WhatsApp / share helpers ----
+  var LAST=[];          // the zones currently rendered, for the share buttons
+  function badgeText(daysTo){ return daysTo<0 ? ('OVERDUE '+Math.abs(daysTo)+'d') : (daysTo===0 ? 'DUE TODAY' : ('due in '+daysTo+'d')); }
+  function niceDate(){ try{ return new Date($('date').value+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return $('date').value; } }
+  // Build the WhatsApp text for one area (reads the team name live).
+  function zoneMsg(zg){
+    var team=(loadTeams()[zg.zone]||'').trim();
+    var m='*DELUXE — Service Route*\n'+niceDate()+'\n\n';
+    m+='📍 *'+zg.zone+'*  ('+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+')\n';
+    if(team) m+='👷 Team: '+team+'\n';
+    m+='\n';
+    zg.units.forEach(function(u){
+      m+='• '+u.dg+(u.customer?(' — '+u.customer):'')+'  ['+badgeText(u.daysTo)+']';
+      if(u.nextHours) m+=' · next '+u.nextHours+'h';
+      m+='\n';
+    });
+    m+='\n🗺️ Route: '+mapsRoute(zg.units,zg.zone);
+    return m;
+  }
+  // Build one message for the whole morning plan.
+  function fullMsg(){
+    var m='*DELUXE — Morning Service Plan*\n'+niceDate()+'\n';
+    var total=LAST.reduce(function(n,z){return n+z.units.length;},0);
+    m+=total+' units · '+LAST.length+' areas\n';
+    LAST.forEach(function(zg){
+      var team=(loadTeams()[zg.zone]||'').trim();
+      m+='\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'\n';
+      zg.units.forEach(function(u){ m+='• '+u.dg+(u.customer?(' — '+u.customer):'')+' ['+badgeText(u.daysTo)+']\n'; });
+      m+='🗺️ '+mapsRoute(zg.units,zg.zone)+'\n';
+    });
+    return m;
+  }
+  function waOpen(text){ window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank'); }
+  function shareOrWa(text){
+    if(navigator.share){ navigator.share({text:text}).catch(function(){ waOpen(text); }); }
+    else waOpen(text);
+  }
+  function copyText(text,btn){
+    var done=function(){ if(btn){ var o=btn.textContent; btn.textContent='✓ Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=o; btn.classList.remove('done'); },1500); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text); done(); }); }
+    else { fallbackCopy(text); done(); }
+  }
+  function fallbackCopy(text){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
+
   function render(gens,dir){
     var when=$('date').value;
     var win=parseInt($('window').value,10)||0;
@@ -228,9 +277,10 @@
       +'<b>'+zoneList.length+'</b> area'+(zoneList.length!==1?'s':'')+'.<br>'
       +'<span style="color:var(--muted);font-size:12.5px;">Tip: give the worst-overdue area to your strongest team, and any far area (e.g. Ruwais, Dubai) its own team for the day.'
       +(pausedCount?(' · '+pausedCount+' off-hire units paused in the yard are not shown — they resume when back on hire.'):'')
-      +'</span></div>';
+      +'</span><br><button class="shareall" id="shareAll">📲 Share full plan on WhatsApp</button></div>';
 
-    zoneList.forEach(function(zg){
+    LAST=zoneList;
+    zoneList.forEach(function(zg,zi){
       var urgent=zg.worst<0;
       var manyHint = zg.units.length>=4 ? '<div class="hint">⚠ '+zg.units.length+' units here — consider two teams, or start early.</div>' : '';
       html+='<div class="zone'+(urgent?' urgent':'')+'">';
@@ -250,6 +300,8 @@
       var route=mapsRoute(zg.units,zg.zone);
       var tv=teams[zg.zone]||'';
       html+='<div class="zfoot"><a class="maplink" href="'+esc(route)+'" target="_blank" rel="noopener">🗺️ Open route ('+zg.units.length+' stop'+(zg.units.length!==1?'s':'')+')</a>'
+        +'<button class="wa" data-wa="'+zi+'">📲 WhatsApp</button>'
+        +'<button class="copy" data-copy="'+zi+'">⧉ Copy</button>'
         +'<span class="assign" data-team="'+esc(tv)+'"><label>Team</label><input type="text" placeholder="assign team…" value="'+esc(tv)+'" data-zone="'+esc(zg.zone)+'"></span></div>';
       html+='</div>';
     });
@@ -262,6 +314,14 @@
         inp.parentNode.setAttribute('data-team',inp.value.trim());
       });
     });
+    // Wire the per-area WhatsApp / Copy buttons and the full-plan share.
+    $('out').querySelectorAll('button[data-wa]').forEach(function(b){
+      b.addEventListener('click',function(){ var z=LAST[+b.getAttribute('data-wa')]; if(z) shareOrWa(zoneMsg(z)); });
+    });
+    $('out').querySelectorAll('button[data-copy]').forEach(function(b){
+      b.addEventListener('click',function(){ var z=LAST[+b.getAttribute('data-copy')]; if(z) copyText(zoneMsg(z),b); });
+    });
+    var sa=$('shareAll'); if(sa) sa.addEventListener('click',function(){ shareOrWa(fullMsg()); });
   }
 
   async function load(){
