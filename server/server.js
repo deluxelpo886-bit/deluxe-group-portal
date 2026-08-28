@@ -24,6 +24,7 @@ const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
 const rentals = require('./rentals');
 const delivery = require('./delivery');
+const returnNote = require('./returnnote');
 const directory = require('./directory');
 
 const fs = require('fs');
@@ -926,6 +927,46 @@ app.get('/delivery', (req, res) => {
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'delivery.html'));
+});
+
+// ---------- Return notes (off-hire hand-back) ----------
+// The mirror of the delivery note (see server/returnnote.js). Raising a return
+// note can flip the generator off-hire (service pauses) and record its final
+// meter reading, so the map, service list and hire status stay in step with
+// what physically came back to the yard. Same fleet login.
+app.get('/api/return', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ notes: returnNote.getAll() });
+});
+app.post('/api/return/create', fleetProtect, (req, res) => {
+  try {
+    const body = req.body || {};
+    const note = returnNote.create(body);
+    // Keep the rest of the system in step with what came back.
+    if (body.setOffHire) {
+      try { hire.setStatus({ dg: note.dg, offHire: true, since: note.date, note: 'Off hire — ' + note.number }); } catch (_) { /* best-effort */ }
+    }
+    // Record the final meter reading (informational; does not reset the service
+    // — an off-hire unit's service is paused and keeps its next-350h target).
+    if (note.meterReading != null) {
+      try { serviceLog.logReading({ dg: note.dg, hours: note.meterReading, date: note.date, technician: note.driver }); } catch (_) { /* best-effort */ }
+    }
+    res.json({ ok: true, note });
+  } catch (e) {
+    res.status(400).json({ error: (e && e.message) || 'Invalid' });
+  }
+});
+app.post('/api/return/remove', fleetProtect, (req, res) => {
+  returnNote.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+app.get('/return', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'returnnote.html'));
 });
 
 app.get('/breakdowns', (req, res) => {
