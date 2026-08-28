@@ -969,6 +969,19 @@ app.get('/return', (req, res) => {
   res.sendFile(path.join(__dirname, 'returnnote.html'));
 });
 
+// ---------- Contract file ----------
+// One page per generator that ties together its rental terms, hire status,
+// service, and every delivery & return note — the digital "file" the paper
+// documents are filed into. Composes the existing APIs client-side; no new data.
+app.get('/contract', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'contract.html'));
+});
+
 app.get('/breakdowns', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',

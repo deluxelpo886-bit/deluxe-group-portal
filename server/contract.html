@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Contract File</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --red-bg:#33201c; --blue:#5b9bd5; --gold:#e8a93a;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;line-height:1.5;}
+  .toolbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text]{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;min-width:180px;}
+  input:focus{border-color:var(--amber);}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+
+  .file{display:none;}
+  .idcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .idcard .dg{font-family:var(--mono);font-weight:700;font-size:26px;letter-spacing:.01em;}
+  .idcard .meta{color:var(--muted);font-size:13px;margin-top:3px;}
+  .idcard .meta a{color:var(--blue);text-decoration:none;}
+  .pill{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;}
+  .pill.on{background:var(--green-bg);color:var(--green);}
+  .pill.off{background:#2a2f36;color:var(--muted);}
+  .pill.paused{background:var(--red-bg);color:var(--amber);}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .card h2{font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);font-weight:700;display:flex;align-items:center;gap:7px;}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .kv:last-child{border-bottom:none;}
+  .kv .k{color:var(--muted);}
+  .kv .v{text-align:right;font-weight:600;}
+  .kv .v.mono{font-family:var(--mono);}
+  .big{font-family:var(--mono);font-weight:700;}
+
+  .docs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;}
+  .docs h2{font-size:13px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);font-weight:700;display:flex;align-items:center;gap:7px;justify-content:space-between;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:8px 9px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:8px 9px;border-bottom:1px solid var(--line);}
+  tbody tr:last-child td{border-bottom:none;}
+  .mono{font-family:var(--mono);} .muted{color:var(--muted);}
+  .empty{color:var(--muted);font-size:13px;padding:10px 2px;}
+  .ok{color:var(--green);} .bad{color:var(--red);}
+  #hint{color:var(--muted);font-size:14px;padding:30px 0;text-align:center;}
+
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card2{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .field{margin-bottom:13px;} #overlay input{width:100%;} .err{color:var(--red);font-size:13px;min-height:18px;}
+  #overlay input{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a><a href="/spares" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Spares</a><a href="/sites" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📋 Sites</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a><a href="/rentals" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">💰 Rentals</a><a href="/delivery" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📦 Delivery</a><a href="/return" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">↩️ Return</a><a href="/contract" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🗂️ Contract</a></nav>
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+  <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+  <h1>🗂️ Contract File</h1>
+  <p class="sub">Everything filed against one generator in one place — its customer &amp; rate, hire status, service, and every delivery &amp; return note. Pick a generator to open its file. See the <a href="/delivery" class="link">delivery</a> / <a href="/return" class="link">return</a> notes, <a href="/rentals" class="link">rentals</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div class="toolbar">
+    <div><label>Generator (DG)</label><input type="text" id="dg" list="dglist" placeholder="e.g. DG-812" autocomplete="off"><datalist id="dglist"></datalist></div>
+    <button class="btn" id="open">Open file</button>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+
+  <div id="hint">Pick a generator above to open its contract file.</div>
+  <div class="file" id="file"></div>
+</div>
+
+<div id="overlay">
+  <div class="card2">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Contract File — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to open contract files.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;padding:12px;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  var DATA={ gens:[], rentals:[], delivery:[], returns:[], dir:{} };
+
+  function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; boot(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  async function getJSON(url){ var r=await fetch(url,{cache:'no-store',headers:authH()}); if(r.status===401){ showLogin(); throw new Error('auth'); } return r.json(); }
+
+  async function boot(){
+    try{
+      var s=await getJSON('/api/service/status');
+      DATA.gens=s.generators||[];
+      var dl=$('dglist'); dl.innerHTML=DATA.gens.map(function(g){ return '<option value="'+esc(g.dg)+'">'; }).join('');
+      var res=await Promise.all([getJSON('/api/rentals'),getJSON('/api/delivery'),getJSON('/api/return'),getJSON('/api/fleet/directory')]);
+      DATA.rentals=res[0].rentals||[]; DATA.delivery=res[1].notes||[]; DATA.returns=res[2].notes||[]; DATA.dir=res[3].directory||{};
+      // deep-link ?dg=
+      var q=new URLSearchParams(location.search).get('dg');
+      if(q){ $('dg').value=q; render(q); }
+    }catch(e){}
+  }
+
+  function fmtDate(d){ return d?esc(d):'—'; }
+  function money(n){ return (n!=null&&n!=='')?('AED '+Number(n).toLocaleString()):'—'; }
+
+  function render(dgRaw){
+    var dg=String(dgRaw||'').trim().toUpperCase();
+    if(!dg) return;
+    var g=DATA.gens.find(function(x){return String(x.dg).toUpperCase()===dg;});
+    var rent=DATA.rentals.find(function(x){return String(x.dg).toUpperCase()===dg;});
+    var dir=DATA.dir[dg]||{};
+    var dns=DATA.delivery.filter(function(x){return String(x.dg).toUpperCase()===dg;});
+    var rns=DATA.returns.filter(function(x){return String(x.dg).toUpperCase()===dg;});
+
+    if(!g && !rent && !dir.dg && !dns.length && !rns.length){
+      $('hint').style.display='block'; $('hint').textContent='No records found for '+dg+'.'; $('file').style.display='none'; return;
+    }
+    $('hint').style.display='none'; $('file').style.display='block';
+
+    var offHire = g ? !!g.offHire : (rent?rent.offHire:false);
+    var paused = g && g.due && g.due.state==='paused';
+    var statusPill = offHire
+      ? '<span class="pill '+(paused?'paused':'off')+'">'+(paused?'OFF HIRE · PAUSED':'OFF HIRE')+'</span>'
+      : '<span class="pill on">ON HIRE</span>';
+
+    var kva=dir.kva||(g&&g.kva)||''; var brand=dir.brand||(g&&g.brand)||'';
+    var loc=dir.location||''; var maps=dir.maps_link;
+    var locHtml = loc ? (maps?('<a href="'+esc(maps)+'" target="_blank" rel="noopener">'+esc(loc)+' ↗</a>'):esc(loc)) : '—';
+
+    // identity
+    var html='<div class="idcard"><div><div class="dg">'+esc(dg)+'</div>'
+      +'<div class="meta">'+(kva?esc(kva)+' kVA':'')+(brand?' · '+esc(brand):'')+' · 📍 '+locHtml+'</div></div>'
+      +'<div>'+statusPill+'</div></div>';
+
+    // rental + service cards
+    html+='<div class="grid">';
+    html+='<div class="card"><h2>💰 Rental</h2>'
+      +kv('Customer', rent&&rent.customer?('<b>'+esc(rent.customer)+'</b>'):(dir.customer?esc(dir.customer):'—'))
+      +kv('Monthly rate', money(rent&&rent.rate))
+      +kv('On hire since', fmtDate(rent&&rent.startDate|| (g&&g.hireSince)))
+      +kv('Days on hire', (rent&&rent.days!=null)?(rent.days+' days'):'—')
+      +'</div>';
+    var cur = g ? (g.currentHours!=null?g.currentHours:g.hours) : null;
+    html+='<div class="card"><h2>🔧 Service</h2>'
+      +kv('Current hours', g&&cur!=null?('<span class="mono">'+cur+'</span> h'):'—')
+      +kv('Last service', g?(fmtDate(g.date)+(g.hours!=null?(' · <span class="mono">'+g.hours+'</span> h'):'')):'—')
+      +kv('Next service', g?('<span class="mono">'+(g.nextService||'?')+'</span> h · '+fmtDate(g.nextServiceDate)):'—')
+      +kv('Status', g&&g.due?dueLabel(g.due):'—')
+      +'</div>';
+    html+='</div>';
+
+    // delivery notes
+    html+='<div class="docs"><h2><span>📦 Delivery notes</span><span class="muted" style="font-weight:400;text-transform:none;letter-spacing:0;">'+dns.length+'</span></h2>';
+    html+= dns.length ? table(['No.','Date','Site','Meter','Driver'], dns.map(function(n){
+        return ['<span class="mono">'+esc(n.number)+'</span>', fmtDate(n.date), esc(n.site||'-'), n.meterReading!=null?('<span class="mono">'+n.meterReading+'</span>'):'-', esc(n.driver||'-')];
+      })) : '<div class="empty">No delivery note yet. <a class="link" href="/delivery">Raise one →</a></div>';
+    html+='</div>';
+
+    // return notes
+    html+='<div class="docs"><h2><span>↩️ Return notes</span><span class="muted" style="font-weight:400;text-transform:none;letter-spacing:0;">'+rns.length+'</span></h2>';
+    html+= rns.length ? table(['No.','Date','Condition','Meter','Driver'], rns.map(function(n){
+        var cond = n.working==='yes'?'<span class="ok">Working OK</span>':(n.working==='no'?'<span class="bad">Faulty</span>':'-');
+        return ['<span class="mono">'+esc(n.number)+'</span>', fmtDate(n.date), cond, n.meterReading!=null?('<span class="mono">'+n.meterReading+'</span>'):'-', esc(n.driver||'-')];
+      })) : '<div class="empty">No return note yet. <a class="link" href="/return">Raise one →</a></div>';
+    html+='</div>';
+
+    $('file').innerHTML=html;
+  }
+  function kv(k,v){ return '<div class="kv"><span class="k">'+esc(k)+'</span><span class="v">'+(v||'—')+'</span></div>'; }
+  function dueLabel(due){
+    var m={due:'<span class="bad">Service due</span>',plan:'Service soon',confirm:'Confirm hours',paused:'<span class="muted">Paused (off-hire)</span>',ok:'<span class="ok">OK</span>'};
+    return m[due.state]||esc(due.label||due.state||'—');
+  }
+  function table(cols,rows){
+    return '<div style="overflow-x:auto;"><table><thead><tr>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>'
+      +rows.map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table></div>';
+  }
+
+  $('open').addEventListener('click',function(){ render($('dg').value); });
+  $('dg').addEventListener('keydown',function(e){ if(e.key==='Enter') render($('dg').value); });
+  $('dg').addEventListener('change',function(){ render($('dg').value); });
+
+  if(TOKEN){ $('signOut').style.display=''; boot(); } else showLogin();
+})();
+</script>
+</body>
+</html>
