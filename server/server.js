@@ -24,6 +24,7 @@ const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
 const rentals = require('./rentals');
 const delivery = require('./delivery');
+const directory = require('./directory');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -752,6 +753,22 @@ app.get('/schedule', (req, res) => {
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
   res.sendFile(path.join(__dirname, 'schedule.html'));
+});
+
+// ---------- Morning route plan ----------
+// Each generator's location / GPS pin / customer, for the area-grouped morning
+// route plan. Cached from the fleet map's data (see directory.js).
+app.get('/api/fleet/directory', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ directory: directory.getMap() });
+});
+app.get('/plan', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.sendFile(path.join(__dirname, 'plan.html'));
 });
 
 // ---------- Spare-parts issue tracking ----------

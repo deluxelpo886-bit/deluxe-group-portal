@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Morning Route Plan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --red-bg:#33201c; --blue:#5b9bd5;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;line-height:1.5;}
+  .toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=date],select,input[type=text]{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  input:focus,select:focus{border-color:var(--amber);}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:9px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .summary{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:1.6;}
+  .summary b{color:var(--text);}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;}
+  .pill.over{background:var(--red-bg);color:var(--red);}
+  .pill.soon{background:#2a2620;color:var(--amber);}
+  .pill.today{background:var(--green-bg);color:var(--green);}
+  .zone{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0;margin-bottom:14px;overflow:hidden;}
+  .zone.urgent{border-color:#4a2b26;}
+  .zhead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap;background:var(--panel2);}
+  .zhead .zn{font-size:16px;font-weight:700;}
+  .zhead .zc{font-family:var(--mono);font-size:12px;color:var(--muted);}
+  .zbody{padding:6px 16px 14px;}
+  .u{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .u:last-child{border-bottom:none;}
+  .u .dg{font-family:var(--mono);font-weight:700;min-width:74px;}
+  .u .meta{color:var(--muted);font-size:12.5px;flex:1;min-width:0;}
+  .u .meta .cust{color:var(--text);}
+  .zfoot{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap;background:#191e23;}
+  .maplink{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--blue);color:#07121c;font-weight:700;font-size:13px;padding:8px 13px;border-radius:8px;}
+  .assign{display:flex;align-items:center;gap:8px;margin-left:auto;}
+  .assign label{margin:0;}
+  .assign input{width:170px;}
+  .hint{font-size:12px;color:var(--amber);margin-top:8px;}
+  .yard h2{font-size:14px;margin:22px 0 8px;color:var(--muted);}
+  .yard .u .dg{min-width:74px;}
+  .empty{color:var(--muted);font-size:14px;padding:24px 0;text-align:center;}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .field{margin-bottom:13px;}
+  #overlay input{width:100%;}
+  @media print{
+    body{background:#fff;color:#000;padding:0;}
+    nav,.toolbar,.logos,#overlay,.assign input{display:none !important;}
+    .zone,.summary{border:1px solid #bbb;break-inside:avoid;}
+    .zhead,.zfoot{background:#f2f2f2;}
+    .maplink{background:#eee;color:#000;border:1px solid #999;}
+    a{color:#000;}
+    .pill.over{background:#fde;color:#a00;}
+    .assign label{color:#000;}
+    .assign::after{content:attr(data-team);font-weight:700;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;">
+    <a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a>
+    <a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🧭 Morning Plan</a>
+    <a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a>
+    <a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a>
+    <a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a>
+    <a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">☰ Menu</a>
+  </nav>
+  <div class="logos" style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+      <h1>🧭 Morning Route Plan</h1>
+      <div class="sub" id="dateLine" style="margin:2px 0 0;"></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+      <div><label>Plan for</label><input type="date" id="date"></div>
+      <div><label>Include</label>
+        <select id="window">
+          <option value="0">Overdue &amp; due today</option>
+          <option value="3" selected>+ next 3 days</option>
+          <option value="7">+ next 7 days</option>
+        </select>
+      </div>
+      <button class="btn sec" id="printBtn" style="display:none;">🖨️ Print</button>
+      <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+    </div>
+  </div>
+  <p class="sub">The day's servicing, <b>grouped by area</b> the way an experienced scheduler plans it: worst-overdue area first, all units at one site together, a <b>Google Maps route</b> for each area, and a box to write which team takes it. In-yard units are listed separately (serviced in-house, no travel). Type the team names, then <b>🖨️ Print</b> for the morning hand-out.</p>
+
+  <div id="out"><div class="empty">Loading today's plan…</div></div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Morning Plan — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to view the route plan.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;padding:12px;font-size:14px;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  var today=new Date().toISOString().slice(0,10);
+  $('date').value=today;
+
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; $('printBtn').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; $('printBtn').style.display=''; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+  $('printBtn').addEventListener('click',function(){ window.print(); });
+  $('date').addEventListener('change',load);
+  $('window').addEventListener('change',load);
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  // Whole-day difference between two YYYY-MM-DD dates (b - a), in days.
+  function dayDiff(a,b){
+    if(!a||!b) return null;
+    var da=new Date(a+'T00:00:00'), db=new Date(b+'T00:00:00');
+    return Math.round((db-da)/86400000);
+  }
+  function overBadge(daysTo){
+    if(daysTo<0) return '<span class="pill over">OVERDUE '+Math.abs(daysTo)+'d</span>';
+    if(daysTo===0) return '<span class="pill today">DUE TODAY</span>';
+    return '<span class="pill soon">in '+daysTo+'d</span>';
+  }
+
+  // Team assignments are remembered per day on this device.
+  function teamKey(){ return 'deluxePlanTeams:'+$('date').value; }
+  function loadTeams(){ try{ return JSON.parse(localStorage.getItem(teamKey())||'{}')||{}; }catch(e){ return {}; } }
+  function saveTeam(zone,val){ var t=loadTeams(); if(val) t[zone]=val; else delete t[zone]; localStorage.setItem(teamKey(),JSON.stringify(t)); }
+
+  // Build a Google Maps directions link that chains a zone's stops. Prefer the
+  // GPS pin; fall back to the area name when a unit has no coordinates. Dedupe
+  // so repeated pins at one site don't bloat the route.
+  function mapsRoute(units,zone){
+    var pts=[], seen={};
+    units.forEach(function(u){
+      var key, seg;
+      if(typeof u.lat==='number' && typeof u.lon==='number'){ key=u.lat.toFixed(4)+','+u.lon.toFixed(4); seg=u.lat+','+u.lon; }
+      else { key='z:'+zone; seg=zone+', Abu Dhabi'; }
+      if(seen[key]) return; seen[key]=true; pts.push(seg);
+    });
+    if(!pts.length) pts=[zone+', Abu Dhabi'];
+    return 'https://www.google.com/maps/dir/'+pts.map(function(p){return encodeURIComponent(p);}).join('/');
+  }
+
+  function render(gens,dir){
+    var when=$('date').value;
+    var win=parseInt($('window').value,10)||0;
+    // Pick the units needing service in the window: overdue or due within `win`
+    // days, by next-service DATE (same basis as the dashboard). Skip anything
+    // with no date yet.
+    var picked=[];
+    gens.forEach(function(g){
+      if(!g.nextServiceDate) return;
+      var daysTo=dayDiff(when,g.nextServiceDate);
+      if(daysTo===null || daysTo>win) return;
+      var d=dir[String(g.dg).toUpperCase()]||{};
+      picked.push({
+        dg:g.dg, daysTo:daysTo, nextHours:g.nextService, nextDate:g.nextServiceDate,
+        offHire:!!g.offHire, zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
+        lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand
+      });
+    });
+
+    if(!picked.length){
+      $('out').innerHTML='<div class="empty">Nothing due in this window. 👍 Try widening <b>Include</b>, or enjoy the quiet morning.</div>';
+      return;
+    }
+
+    // Split field work (needs a route) from in-yard work (in-house, no travel).
+    var yard=picked.filter(function(u){ return u.offHire || u.zone==='Yard'; });
+    var field=picked.filter(function(u){ return !(u.offHire || u.zone==='Yard'); });
+
+    // Group field units by zone.
+    var zones={};
+    field.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
+    // Sort each zone's units worst-overdue first; order zones by worst-overdue,
+    // then by how many units (bigger clusters earlier).
+    var zoneList=Object.keys(zones).map(function(z){
+      var list=zones[z].sort(function(a,b){ return a.daysTo-b.daysTo; });
+      return { zone:z, units:list, worst:list[0].daysTo };
+    }).sort(function(a,b){ return a.worst-b.worst || b.units.length-a.units.length; });
+
+    var overCount=picked.filter(function(u){return u.daysTo<0;}).length;
+    var teams=loadTeams();
+
+    var html='';
+    html+='<div class="summary"><b>'+picked.length+'</b> generator'+(picked.length!==1?'s':'')+' to service · '
+      +'<span class="pill over">'+overCount+' overdue</span> · '
+      +'<b>'+zoneList.length+'</b> field area'+(zoneList.length!==1?'s':'')
+      +(yard.length?(' · <b>'+yard.length+'</b> in-yard'):'')+'.<br>'
+      +'<span style="color:var(--muted);font-size:12.5px;">Tip: give the worst-overdue area to your strongest team, and any far area (e.g. Ruwais, Dubai) its own team for the day.</span></div>';
+
+    zoneList.forEach(function(zg){
+      var urgent=zg.worst<0;
+      var manyHint = zg.units.length>=4 ? '<div class="hint">⚠ '+zg.units.length+' units here — consider two teams, or start early.</div>' : '';
+      html+='<div class="zone'+(urgent?' urgent':'')+'">';
+      html+='<div class="zhead"><span class="zn">📍 '+esc(zg.zone)+'</span>'
+        +'<span class="zc">'+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+'</span>'
+        +overBadge(zg.worst)+'</div>';
+      html+='<div class="zbody">';
+      zg.units.forEach(function(u){
+        var kva=u.kva?(' · '+u.kva+' kVA'):'';
+        html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
+          +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
+          +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+'</span>'
+          +overBadge(u.daysTo)+'</div>';
+      });
+      html+=manyHint;
+      html+='</div>';
+      var route=mapsRoute(zg.units,zg.zone);
+      var tv=teams[zg.zone]||'';
+      html+='<div class="zfoot"><a class="maplink" href="'+esc(route)+'" target="_blank" rel="noopener">🗺️ Open route ('+zg.units.length+' stop'+(zg.units.length!==1?'s':'')+')</a>'
+        +'<span class="assign" data-team="'+esc(tv)+'"><label>Team</label><input type="text" placeholder="assign team…" value="'+esc(tv)+'" data-zone="'+esc(zg.zone)+'"></span></div>';
+      html+='</div>';
+    });
+
+    if(yard.length){
+      html+='<div class="yard"><h2>🏭 In-yard — service in-house, no travel ('+yard.length+')</h2><div class="zone"><div class="zbody">';
+      yard.sort(function(a,b){return a.daysTo-b.daysTo;}).forEach(function(u){
+        html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
+          +'<span class="meta"><span class="cust">'+esc(u.customer||'Workshop')+'</span> · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+'</span>'
+          +overBadge(u.daysTo)+'</div>';
+      });
+      html+='</div></div></div>';
+    }
+
+    $('out').innerHTML=html;
+    // Wire the team inputs to remember what you type.
+    $('out').querySelectorAll('input[data-zone]').forEach(function(inp){
+      inp.addEventListener('input',function(){
+        saveTeam(inp.getAttribute('data-zone'),inp.value.trim());
+        inp.parentNode.setAttribute('data-team',inp.value.trim());
+      });
+    });
+  }
+
+  async function load(){
+    var nice=new Date($('date').value+'T00:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    $('dateLine').textContent=nice;
+    $('out').innerHTML='<div class="empty">Building plan…</div>';
+    try{
+      var sr=await fetch('/api/service/status',{cache:'no-store',headers:authHeaders()});
+      if(sr.status===401){ showLogin(); return; }
+      var sd=await sr.json();
+      var dr=await fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()});
+      var dd=await dr.json();
+      render(sd.generators||[], dd.directory||{});
+    }catch(e){ $('out').innerHTML='<div class="empty">Could not load the plan. Check your connection and try again.</div>'; }
+  }
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
