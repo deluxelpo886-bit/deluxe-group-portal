@@ -165,7 +165,7 @@
     var dg=String(dgRaw||'').trim().toUpperCase(); if(!dg) return;
     CUR=dg;
     var d=DIR[dg]||{}; var sp=SPECS[dg]||{};
-    $('hint').style.display='none'; $('detail').style.display='';
+    $('hint').style.display='none'; $('detail').style.display='block';
     $('dDg').textContent=dg;
     $('dMeta').textContent=[(d.kva?d.kva+' kVA':''),d.brand,(d.customer||'')].filter(Boolean).join(' · ');
     $('fAir').value=sp.air||''; $('fOil').value=sp.oil||''; $('fFuel').value=sp.fuel||'';
