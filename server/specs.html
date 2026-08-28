@@ -120,12 +120,22 @@
   var AIR=['AF46426 (Euroguard, outer)','ECC85002 (Toyofil)','A44256 (Filton)','ST40677AB (Stal, set)','FOA4903 (Filton)','A26510380 (Filton, set)','AF25454 (Hira, set)','AF25588 (Euroguard)','FOA9145 (Filton, outer)','AF45152 (Stal)','NP1005 (NP, outer)'];
   var DIR={}, SPECS={}, CUR=null;
 
-  // Typical engine oil capacity by kVA band (diesel gensets) — a starting
-  // estimate only; the real figure must be confirmed on the dipstick / manual.
-  function typicalOil(kva){ kva=Number(kva)||0;
-    if(!kva) return null;
-    if(kva<=30) return 6; if(kva<=60) return 9; if(kva<=100) return 13; if(kva<=150) return 18;
-    if(kva<=250) return 24; if(kva<=400) return 35; if(kva<=600) return 45; return 60; }
+  // Typical engine oil capacity by kVA band + engine brand — researched from
+  // Cummins (4BT ~9.5L, 6BT ~14L, 6C ~16-22L), Perkins (404 ~10L, 1106 ~15L,
+  // 2506 ~24L) and Kirloskar (50kVA ~9L, 100kVA ~14L) sump figures. A starting
+  // estimate only; the real figure MUST be confirmed on the dipstick / manual.
+  function typicalOil(kva, brand){ kva=Number(kva)||0; if(!kva) return null;
+    var b=String(brand||'').toUpperCase();
+    var small=/KUBOTA|YANMAR/.test(b); // small high-speed engines run a little lower
+    if(kva<=20) return small?4:6;
+    if(kva<=30) return small?6:8;
+    if(kva<=60) return 10;
+    if(kva<=100) return 14;
+    if(kva<=150) return 16;
+    if(kva<=250) return 24;
+    if(kva<=400) return 34;
+    if(kva<=600) return 45;
+    return 60; }
 
   function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
   function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
@@ -170,7 +180,7 @@
     $('dMeta').textContent=[(d.kva?d.kva+' kVA':''),d.brand,(d.customer||'')].filter(Boolean).join(' · ');
     $('fAir').value=sp.air||''; $('fOil').value=sp.oil||''; $('fFuel').value=sp.fuel||'';
     $('fEngine').value=sp.engine||''; $('fNotes').value=sp.notes||'';
-    var typ=typicalOil(d.kva);
+    var typ=typicalOil(d.kva, d.brand);
     $('fLitres').value=(sp.oilLitres!=null?sp.oilLitres:'');
     var shown=(sp.oilLitres!=null?sp.oilLitres:typ);
     $('dOil').textContent=(shown!=null?shown+' L':'—');
@@ -181,7 +191,7 @@
   $('open').addEventListener('click',function(){ openDg($('dg').value); });
   $('dg').addEventListener('change',function(){ openDg($('dg').value); });
   $('dg').addEventListener('keydown',function(e){ if(e.key==='Enter') openDg($('dg').value); });
-  $('fLitres').addEventListener('input',function(){ var v=Number($('fLitres').value); $('dOil').textContent=(v>0?v+' L':((typicalOil((DIR[CUR]||{}).kva)||'—')+(typicalOil((DIR[CUR]||{}).kva)?' L':''))); });
+  $('fLitres').addEventListener('input',function(){ var v=Number($('fLitres').value); $('dOil').textContent=(v>0?v+' L':((typicalOil((DIR[CUR]||{}).kva,(DIR[CUR]||{}).brand)||'—')+(typicalOil((DIR[CUR]||{}).kva,(DIR[CUR]||{}).brand)?' L':''))); });
 
   function body(){ return { dg:CUR, air:$('fAir').value, oil:$('fOil').value, fuel:$('fFuel').value, oilLitres:$('fLitres').value, engine:$('fEngine').value, notes:$('fNotes').value }; }
   $('save').addEventListener('click',async function(){
@@ -195,7 +205,7 @@
   });
 
   function partsMsg(){
-    var dg=CUR, d=DIR[dg]||{}; var typ=typicalOil(d.kva);
+    var dg=CUR, d=DIR[dg]||{}; var typ=typicalOil(d.kva, d.brand);
     var litres=Number($('fLitres').value)||null; var oilShown=litres||typ;
     var m='🧰 *DELUXE — Service parts*\n'+dg+(d.kva?(' · '+d.kva+' kVA'):'')+(d.brand?(' · '+d.brand):'')+'\n';
     if($('fEngine').value) m+='Engine: '+$('fEngine').value+'\n';
