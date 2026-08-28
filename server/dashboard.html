@@ -154,6 +154,9 @@
   function row3(a,b,c){ return '<div class="row"><span class="dg">'+a+'</span><span class="muted">'+(b||'')+'</span><span class="muted" style="margin-left:auto;text-align:right;max-width:55%;">'+(c||'')+'</span></div>'; }
   function renderDetail(key){
     var D=window.__D||{}; var title='List', open='', rows='', empty='Nothing to show.';
+    // KVA rating for a generator (from the fleet directory), e.g. "250 kVA".
+    var kvaOf=function(dg){ var k=((D.dir||{})[String(dg).toUpperCase()]||{}).kva; return k?(k+' kVA'):''; };
+    var withKva=function(dg,extra){ var k=kvaOf(dg); return (k?k:'')+(k&&extra?' · ':'')+(extra||''); };
     if(key==='income'){
       title='💰 Earning generators';
       var l=(D.rentals||[]).filter(function(r){return !r.offHire && r.rate>0;}).sort(function(a,b){return (b.rate||0)-(a.rate||0);});
@@ -162,15 +165,15 @@
     } else if(key==='tracked'){
       title='📋 All generators';
       var l=(D.gens||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
-      rows=l.map(function(g){return row3(esc(g.dg), (g.hours!=null?g.hours+'h':''), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
+      rows=l.map(function(g){return row3(esc(g.dg), withKva(g.dg, (g.hours!=null?g.hours+'h':'')), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
       open=['/service','Open service ▸'];
     } else if(key==='overdue'){
       title='⚠ Service overdue';
-      rows=(D.overdue||[]).map(function(x){return row3(esc(x.g.dg),'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):''),'<span style="color:var(--red);font-weight:700;">OVERDUE '+Math.abs(x.d)+'d</span>');}).join('');
+      rows=(D.overdue||[]).map(function(x){return row3(esc(x.g.dg),withKva(x.g.dg,'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):'')),'<span style="color:var(--red);font-weight:700;">OVERDUE '+Math.abs(x.d)+'d</span>');}).join('');
       empty='Nothing overdue. 👍'; open=['/service','Open service ▸'];
     } else if(key==='due30'){
       title='📅 Due in the next 30 days';
-      rows=(D.month||[]).map(function(x){return row3(esc(x.g.dg),'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):''),'in '+x.d+'d');}).join('');
+      rows=(D.month||[]).map(function(x){return row3(esc(x.g.dg),withKva(x.g.dg,'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):'')),'in '+x.d+'d');}).join('');
       empty='Nothing due in 30 days. 👍'; open=['/schedule','Open schedule ▸'];
     } else if(key==='spares'){
       title='🧰 Spare parts pending';
@@ -183,12 +186,12 @@
     } else if(key==='offhire'){
       title='🏭 In the workshop / yard';
       var l=(D.offHire||[]).slice().sort(function(a,b){return String(b.hireSince||'').localeCompare(String(a.hireSince||''));});
-      rows=l.map(function(g){var since=g.hireSince?(' · since '+g.hireSince):'';return row3(esc(g.dg),(g.hours!=null?g.hours+'h':'')+since, esc((g.hireNote||'').trim()||'in yard'));}).join('');
+      rows=l.map(function(g){var since=g.hireSince?(' · since '+g.hireSince):'';return row3(esc(g.dg),withKva(g.dg,(g.hours!=null?g.hours+'h':'')+since), esc((g.hireNote||'').trim()||'in yard'));}).join('');
       empty='Nothing in the workshop. 👍'; open=['/service','Open service ▸'];
     } else if(key==='onhire'){
       title='🟢 On hire';
       var l=(D.onHire||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
-      rows=l.map(function(g){return row3(esc(g.dg),(g.hours!=null?g.hours+'h':''),'next @ '+g.nextService+'h');}).join('');
+      rows=l.map(function(g){return row3(esc(g.dg),withKva(g.dg,(g.hours!=null?g.hours+'h':'')),'next @ '+g.nextService+'h');}).join('');
       open=['/service','Open service ▸'];
     } else if(key==='sitesmap'){
       title='🗺️ Sites on the map';
@@ -217,7 +220,8 @@
       fetch('/api/service/status',{cache:'no-store',headers:authHeaders()}),
       fetch('/api/spares',{cache:'no-store',headers:authHeaders()}),
       fetch('/api/sites',{cache:'no-store',headers:authHeaders()}),
-      fetch('/api/rentals',{cache:'no-store',headers:authHeaders()})
+      fetch('/api/rentals',{cache:'no-store',headers:authHeaders()}),
+      fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()})
     ]).catch(function(){return null;});
     if(!res){ return; }
     if(res.some(function(r){return r.status===401;})){ showLogin(); return; }
@@ -225,6 +229,7 @@
     var spr=await res[1].json().catch(function(){return{};});
     var sit=await res[2].json().catch(function(){return{};});
     var rent=await res[3].json().catch(function(){return{};});
+    var dir=(await res[4].json().catch(function(){return{};})).directory||{};
     var rstats=rent.stats||{};
 
     var gens=svc.generators||[];
@@ -266,7 +271,7 @@
       +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', 'sitesmap');
 
     // Stash the computed data so any tile's list can be rendered on tap.
-    window.__D = { gens:gens, onHire:onHire, offHire:offHire, overdue:overdue, soon:soon, month:month, pending:pending, sites:sites, rentals:(rent.rentals||[]) };
+    window.__D = { gens:gens, onHire:onHire, offHire:offHire, overdue:overdue, soon:soon, month:month, pending:pending, sites:sites, rentals:(rent.rentals||[]), dir:dir };
     if(_openDetail){ renderDetail(_openDetail); }   // keep the open list refreshed after reload
 
     // ---- due list: overdue first, then due soon (by date) ----
