@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Service Parts &amp; Oil</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8a93a;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;line-height:1.5;}
+  .toolbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input,textarea{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;width:100%;}
+  input:focus,textarea:focus{border-color:var(--amber);}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .wa{background:#25D366;color:#04331a;border:none;padding:10px 15px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+  .idrow{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+  .idrow .dg{font-family:var(--mono);font-weight:700;font-size:24px;}
+  .idrow .meta{color:var(--muted);font-size:13px;margin-top:3px;}
+  .oilcap{text-align:right;}
+  .oilcap .big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--amber);}
+  .oilcap .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:620px){.grid{grid-template-columns:1fr;}}
+  .field{margin-bottom:12px;}
+  .hintline{font-size:11.5px;color:var(--gold);margin-top:4px;}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:8px 9px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  .dg{font-family:var(--mono);font-weight:700;} .muted{color:var(--muted);}
+  .empty{color:var(--muted);font-size:13px;padding:10px 2px;}
+  #detail{display:none;}
+  #hint{color:var(--muted);font-size:14px;padding:24px 0;text-align:center;}
+  .msg{font-size:12.5px;color:var(--green);min-height:16px;margin-top:6px;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+</style>
+<link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/specs" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🧰 Parts &amp; Oil</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/contract" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗂️ Contract</a><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">☰ Menu</a></nav>
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
+  <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+  <h1>🧰 Service Parts &amp; Oil</h1>
+  <p class="sub">For each generator, record the <b>air / oil / fuel filter</b> and the <b>engine oil capacity</b> — then the service team gets it before they go. Pick a generator to set or send its parts. Oil capacity shows a <b>typical</b> value by kVA until you confirm the real one. See the <a href="/service" class="link">service log</a> or <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div class="toolbar">
+    <div><label>Generator (DG)</label><input type="text" id="dg" list="dglist" placeholder="e.g. DG-35" autocomplete="off" style="min-width:180px;"><datalist id="dglist"></datalist></div>
+    <button class="btn" id="open">Open</button>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+
+  <div id="hint">Pick a generator above to set its filters &amp; oil capacity.</div>
+
+  <div class="panel" id="detail">
+    <div class="idrow">
+      <div><div class="dg" id="dDg">—</div><div class="meta" id="dMeta"></div></div>
+      <div class="oilcap"><div class="big" id="dOil">—</div><div class="lbl">Engine oil</div></div>
+    </div>
+    <div class="grid">
+      <div class="field"><label>Air filter (part no.)</label><input type="text" id="fAir" list="airlist" placeholder="e.g. AF46426" autocomplete="off"><datalist id="airlist"></datalist></div>
+      <div class="field"><label>Oil filter (part no.)</label><input type="text" id="fOil" placeholder="e.g. LF3970" autocomplete="off"></div>
+      <div class="field"><label>Fuel filter (part no.)</label><input type="text" id="fFuel" placeholder="e.g. FF5052" autocomplete="off"></div>
+      <div class="field"><label>Engine oil capacity (litres)</label><input type="number" id="fLitres" min="0" step="0.5" placeholder="confirm on dipstick"><div class="hintline" id="oilHint"></div></div>
+      <div class="field"><label>Engine model (optional)</label><input type="text" id="fEngine" placeholder="e.g. Cummins 6BT5.9" autocomplete="off"></div>
+      <div class="field"><label>Notes (optional)</label><input type="text" id="fNotes" placeholder="e.g. also change water separator" autocomplete="off"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="save">💾 Save</button>
+      <button class="wa" id="sendTech">📲 Send to tech</button>
+      <button class="btn sec" id="copyParts">⧉ Copy</button>
+    </div>
+    <div class="err" id="err"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><b style="font-size:14px;">Saved specs</b><a href="#" class="link" id="refresh">↻ Refresh</a></div>
+    <div style="overflow-x:auto;">
+      <table><thead><tr><th>DG</th><th>Air</th><th>Oil</th><th>Fuel</th><th>Oil (L)</th><th></th></tr></thead>
+      <tbody id="listBody"><tr><td colspan="6" class="muted" style="padding:12px;">Loading…</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Service Parts — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to set service parts.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;padding:12px;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  // Air filters currently in store (from LPO1-000321) — a pick-list; the office
+  // can still type any other part number.
+  var AIR=['AF46426 (Euroguard, outer)','ECC85002 (Toyofil)','A44256 (Filton)','ST40677AB (Stal, set)','FOA4903 (Filton)','A26510380 (Filton, set)','AF25454 (Hira, set)','AF25588 (Euroguard)','FOA9145 (Filton, outer)','AF45152 (Stal)','NP1005 (NP, outer)'];
+  var DIR={}, SPECS={}, CUR=null;
+
+  // Typical engine oil capacity by kVA band (diesel gensets) — a starting
+  // estimate only; the real figure must be confirmed on the dipstick / manual.
+  function typicalOil(kva){ kva=Number(kva)||0;
+    if(!kva) return null;
+    if(kva<=30) return 6; if(kva<=60) return 9; if(kva<=100) return 13; if(kva<=150) return 18;
+    if(kva<=250) return 24; if(kva<=400) return 35; if(kva<=600) return 45; return 60; }
+
+  function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; boot(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent=''; $('loginBtn').textContent='Signing in…'; $('loginBtn').disabled=true;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
+    finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  async function getJSON(u){ var r=await fetch(u,{cache:'no-store',headers:authH()}); if(r.status===401){ showLogin(); throw new Error('auth'); } return r.json(); }
+
+  async function boot(){
+    try{
+      $('airlist').innerHTML=AIR.map(function(a){return '<option value="'+esc(a.split(' ')[0])+'">'+esc(a)+'</option>';}).join('');
+      var s=await getJSON('/api/service/status');
+      $('dglist').innerHTML=(s.generators||[]).map(function(g){return '<option value="'+esc(g.dg)+'">';}).join('');
+      DIR=(await getJSON('/api/fleet/directory')).directory||{};
+      await loadSpecs();
+      var q=new URLSearchParams(location.search).get('dg'); if(q){ $('dg').value=q; openDg(q); }
+    }catch(e){}
+  }
+  async function loadSpecs(){
+    try{ SPECS=(await getJSON('/api/specs')).specs||{}; renderList(); }catch(e){}
+  }
+
+  function openDg(dgRaw){
+    var dg=String(dgRaw||'').trim().toUpperCase(); if(!dg) return;
+    CUR=dg;
+    var d=DIR[dg]||{}; var sp=SPECS[dg]||{};
+    $('hint').style.display='none'; $('detail').style.display='';
+    $('dDg').textContent=dg;
+    $('dMeta').textContent=[(d.kva?d.kva+' kVA':''),d.brand,(d.customer||'')].filter(Boolean).join(' · ');
+    $('fAir').value=sp.air||''; $('fOil').value=sp.oil||''; $('fFuel').value=sp.fuel||'';
+    $('fEngine').value=sp.engine||''; $('fNotes').value=sp.notes||'';
+    var typ=typicalOil(d.kva);
+    $('fLitres').value=(sp.oilLitres!=null?sp.oilLitres:'');
+    var shown=(sp.oilLitres!=null?sp.oilLitres:typ);
+    $('dOil').textContent=(shown!=null?shown+' L':'—');
+    $('oilHint').textContent = sp.oilLitres!=null ? 'Confirmed value.' : (typ!=null?('Typical for '+(d.kva||'?')+' kVA is ~'+typ+' L — confirm on the dipstick and save.'):'Enter the oil capacity from the engine manual/dipstick.');
+    $('err').textContent=''; $('msg').textContent='';
+    $('fLitres').setAttribute('placeholder', typ!=null?('~'+typ+' (typical)'):'confirm on dipstick');
+  }
+  $('open').addEventListener('click',function(){ openDg($('dg').value); });
+  $('dg').addEventListener('change',function(){ openDg($('dg').value); });
+  $('dg').addEventListener('keydown',function(e){ if(e.key==='Enter') openDg($('dg').value); });
+  $('fLitres').addEventListener('input',function(){ var v=Number($('fLitres').value); $('dOil').textContent=(v>0?v+' L':((typicalOil((DIR[CUR]||{}).kva)||'—')+(typicalOil((DIR[CUR]||{}).kva)?' L':''))); });
+
+  function body(){ return { dg:CUR, air:$('fAir').value, oil:$('fOil').value, fuel:$('fFuel').value, oilLitres:$('fLitres').value, engine:$('fEngine').value, notes:$('fNotes').value }; }
+  $('save').addEventListener('click',async function(){
+    if(!CUR) return; $('err').textContent=''; $('msg').textContent='';
+    try{
+      var r=await fetch('/api/specs/save',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH()),body:JSON.stringify(body())});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json(); if(!r.ok){ $('err').textContent=d.error||'Could not save'; return; }
+      $('msg').textContent='Saved. ✔'; await loadSpecs(); openDg(CUR);
+    }catch(e){ $('err').textContent='Could not save'; }
+  });
+
+  function partsMsg(){
+    var dg=CUR, d=DIR[dg]||{}; var typ=typicalOil(d.kva);
+    var litres=Number($('fLitres').value)||null; var oilShown=litres||typ;
+    var m='🧰 *DELUXE — Service parts*\n'+dg+(d.kva?(' · '+d.kva+' kVA'):'')+(d.brand?(' · '+d.brand):'')+'\n';
+    if($('fEngine').value) m+='Engine: '+$('fEngine').value+'\n';
+    m+='\n';
+    m+='• Air filter: '+($('fAir').value||'—')+'\n';
+    m+='• Oil filter: '+($('fOil').value||'—')+'\n';
+    m+='• Fuel filter: '+($('fFuel').value||'—')+'\n';
+    m+='• Engine oil: '+(oilShown!=null?(oilShown+' L'+(litres?'':' (typical — confirm)')):'—')+'\n';
+    if($('fNotes').value) m+='\nNote: '+$('fNotes').value+'\n';
+    return m;
+  }
+  $('sendTech').addEventListener('click',function(){ if(!CUR) return; var t=partsMsg(); if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } });
+  $('copyParts').addEventListener('click',function(){ if(!CUR) return; var t=partsMsg(); if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){ $('msg').textContent='Copied.'; }); } else { $('msg').textContent=t; } });
+
+  function renderList(){
+    var keys=Object.keys(SPECS).sort();
+    $('listBody').innerHTML = keys.length ? keys.map(function(k){ var s=SPECS[k]||{};
+      return '<tr><td class="dg">'+esc(k)+'</td><td>'+esc(s.air||'—')+'</td><td>'+esc(s.oil||'—')+'</td><td>'+esc(s.fuel||'—')+'</td>'
+        +'<td class="mono">'+(s.oilLitres!=null?s.oilLitres:'—')+'</td>'
+        +'<td><button class="btn sec" data-edit="'+esc(k)+'" style="padding:5px 10px;font-size:12px;">Open</button></td></tr>';
+    }).join('') : '<tr><td colspan="6" class="muted" style="padding:12px;">No specs saved yet — pick a generator above to add the first.</td></tr>';
+    $('listBody').querySelectorAll('button[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ var dg=b.getAttribute('data-edit'); $('dg').value=dg; openDg(dg); window.scrollTo(0,0); }); });
+  }
+  $('refresh').addEventListener('click',function(e){ e.preventDefault(); loadSpecs(); });
+
+  if(TOKEN){ $('signOut').style.display=''; boot(); } else showLogin();
+})();
+</script>
+</body>
+</html>
