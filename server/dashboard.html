@@ -158,6 +158,11 @@
     // KVA rating for a generator (from the fleet directory), e.g. "250 kVA".
     var kvaOf=function(dg){ var k=((D.dir||{})[String(dg).toUpperCase()]||{}).kva; return k?(k+' kVA'):''; };
     var withKva=function(dg,extra){ var k=kvaOf(dg); return (k?k:'')+(k&&extra?' · ':'')+(extra||''); };
+    // Customer / company name for a generator — from the fleet directory, else
+    // the rental record.
+    var custOf=function(dg){ var k=String(dg).toUpperCase(); var c=((D.dir||{})[k]||{}).customer; if(c) return c; var r=(D.rentals||[]).filter(function(x){return String(x.dg).toUpperCase()===k;})[0]; return (r&&r.customer)||''; };
+    // "COMPANY · 45 kVA · 1234h" with the company name shown in normal text.
+    var withCust=function(dg,extra){ var c=custOf(dg), k=kvaOf(dg), out=[]; if(c) out.push('<span style="color:var(--text);font-weight:600;">'+esc(c)+'</span>'); if(k) out.push(k); if(extra) out.push(extra); return out.join(' · '); };
     if(key==='income'){
       title='💰 Earning generators';
       var l=(D.rentals||[]).filter(function(r){return !r.offHire && r.rate>0;}).sort(function(a,b){return (b.rate||0)-(a.rate||0);});
@@ -166,7 +171,7 @@
     } else if(key==='tracked'){
       title='📋 All generators';
       var l=(D.gens||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
-      rows=l.map(function(g){return row3(esc(g.dg), withKva(g.dg, (g.hours!=null?g.hours+'h':'')), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
+      rows=l.map(function(g){return row3(esc(g.dg), withCust(g.dg, (g.hours!=null?g.hours+'h':'')), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
       open=['/service','Open service ▸'];
     } else if(key==='overdue'){
       title='⚠ Service overdue';
@@ -187,12 +192,12 @@
     } else if(key==='offhire'){
       title='🏭 In the workshop / yard';
       var l=(D.offHire||[]).slice().sort(function(a,b){return String(b.hireSince||'').localeCompare(String(a.hireSince||''));});
-      rows=l.map(function(g){var since=g.hireSince?(' · since '+g.hireSince):'';return row3(esc(g.dg),withKva(g.dg,(g.hours!=null?g.hours+'h':'')+since), esc((g.hireNote||'').trim()||'in yard'));}).join('');
+      rows=l.map(function(g){var since=g.hireSince?(' · since '+g.hireSince):'';return row3(esc(g.dg),withCust(g.dg,(g.hours!=null?g.hours+'h':'')+since), esc((g.hireNote||'').trim()||'in yard'));}).join('');
       empty='Nothing in the workshop. 👍'; open=['/service','Open service ▸'];
     } else if(key==='onhire'){
       title='🟢 On hire';
       var l=(D.onHire||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
-      rows=l.map(function(g){return row3(esc(g.dg),withKva(g.dg,(g.hours!=null?g.hours+'h':'')),'next @ '+g.nextService+'h');}).join('');
+      rows=l.map(function(g){return row3(esc(g.dg),withCust(g.dg,(g.hours!=null?g.hours+'h':'')),'next @ '+g.nextService+'h');}).join('');
       open=['/service','Open service ▸'];
     } else if(key==='sitesmap'){
       title='🗺️ Sites on the map';
