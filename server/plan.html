@@ -183,27 +183,31 @@
     // Pick the units needing service in the window: overdue or due within `win`
     // days, by next-service DATE (same basis as the dashboard). Skip anything
     // with no date yet.
-    var picked=[];
+    var picked=[]; var pausedCount=0;
     gens.forEach(function(g){
       if(!g.nextServiceDate) return;
+      var d=dir[String(g.dg).toUpperCase()]||{};
+      // Off-hire / in-yard units are PAUSED — they're not running, so their
+      // service does not count. They keep their next-350-hours target and pick
+      // it back up when they go on hire again. Never dispatch them.
+      if(g.offHire || d.zone==='Yard'){ pausedCount++; return; }
       var daysTo=dayDiff(when,g.nextServiceDate);
       if(daysTo===null || daysTo>win) return;
-      var d=dir[String(g.dg).toUpperCase()]||{};
       picked.push({
         dg:g.dg, daysTo:daysTo, nextHours:g.nextService, nextDate:g.nextServiceDate,
-        offHire:!!g.offHire, zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
+        zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
         lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand
       });
     });
 
     if(!picked.length){
-      $('out').innerHTML='<div class="empty">Nothing due in this window. 👍 Try widening <b>Include</b>, or enjoy the quiet morning.</div>';
+      $('out').innerHTML='<div class="empty">Nothing due in this window for units on hire. 👍 Try widening <b>Include</b>, or enjoy the quiet morning.'
+        +(pausedCount?'<div style="margin-top:10px;font-size:12.5px;">('+pausedCount+' off-hire units are paused in the yard — not shown.)</div>':'')+'</div>';
       return;
     }
 
-    // Split field work (needs a route) from in-yard work (in-house, no travel).
-    var yard=picked.filter(function(u){ return u.offHire || u.zone==='Yard'; });
-    var field=picked.filter(function(u){ return !(u.offHire || u.zone==='Yard'); });
+    // Only running (on-hire) units make the plan.
+    var field=picked;
 
     // Group field units by zone.
     var zones={};
@@ -221,9 +225,10 @@
     var html='';
     html+='<div class="summary"><b>'+picked.length+'</b> generator'+(picked.length!==1?'s':'')+' to service · '
       +'<span class="pill over">'+overCount+' overdue</span> · '
-      +'<b>'+zoneList.length+'</b> field area'+(zoneList.length!==1?'s':'')
-      +(yard.length?(' · <b>'+yard.length+'</b> in-yard'):'')+'.<br>'
-      +'<span style="color:var(--muted);font-size:12.5px;">Tip: give the worst-overdue area to your strongest team, and any far area (e.g. Ruwais, Dubai) its own team for the day.</span></div>';
+      +'<b>'+zoneList.length+'</b> area'+(zoneList.length!==1?'s':'')+'.<br>'
+      +'<span style="color:var(--muted);font-size:12.5px;">Tip: give the worst-overdue area to your strongest team, and any far area (e.g. Ruwais, Dubai) its own team for the day.'
+      +(pausedCount?(' · '+pausedCount+' off-hire units paused in the yard are not shown — they resume when back on hire.'):'')
+      +'</span></div>';
 
     zoneList.forEach(function(zg){
       var urgent=zg.worst<0;
@@ -248,16 +253,6 @@
         +'<span class="assign" data-team="'+esc(tv)+'"><label>Team</label><input type="text" placeholder="assign team…" value="'+esc(tv)+'" data-zone="'+esc(zg.zone)+'"></span></div>';
       html+='</div>';
     });
-
-    if(yard.length){
-      html+='<div class="yard"><h2>🏭 In-yard — service in-house, no travel ('+yard.length+')</h2><div class="zone"><div class="zbody">';
-      yard.sort(function(a,b){return a.daysTo-b.daysTo;}).forEach(function(u){
-        html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
-          +'<span class="meta"><span class="cust">'+esc(u.customer||'Workshop')+'</span> · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+'</span>'
-          +overBadge(u.daysTo)+'</div>';
-      });
-      html+='</div></div></div>';
-    }
 
     $('out').innerHTML=html;
     // Wire the team inputs to remember what you type.
