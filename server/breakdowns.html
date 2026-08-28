@@ -62,7 +62,7 @@
     </div>
     <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
   </div>
-  <p class="sub">Log every breakdown and resolve it when fixed — the portal tracks your response times and flags repeat-offender generators. See also the <a href="/fleet" class="link">live map</a> (nearest-truck dispatch) or the <a href="/menu" class="link">☰ menu</a>.</p>
+  <p class="sub">Log every breakdown and resolve it when fixed. The portal tells you <b>which to fix first</b> (a generator on hire = a customer with no power), the <b>money at risk</b> while it's down, the <b>parts to carry</b>, and lets you <b>📲 send the team the job + map</b> on WhatsApp — plus response times and repeat-offenders. See also the <a href="/fleet" class="link">live map</a> or the <a href="/menu" class="link">☰ menu</a>.</p>
 
   <div class="stats" id="stats"></div>
 
@@ -187,6 +187,23 @@
       dispatch:'triage', note:'Ask these 3 questions first — the answers point to the real symptom.'}
   ];
   var CATCOL={Electrical:'#5b9bd5',Mechanical:'#e0644a',Fuel:'#e8a13a',Cooling:'#4caf7d','Control panel':'#b98cff',Other:'#8b95a1'};
+  // Likely spare parts to carry for each symptom — so the team brings the right
+  // thing on the first trip instead of driving back (huge for far sites).
+  var PARTS={
+    'no-crank':['Spare battery','Terminal clamps / cleaner','Control-panel fuses'],
+    'crank-no-start':['Fuel filter','Water-separator element','Hand priming pump'],
+    'start-then-stop':['Fuel filter','Engine oil','Coolant','Oil-pressure / temp sensor'],
+    'no-output':['Spare output breaker','AVR (voltage regulator)'],
+    'leak':['Oil filter + sealing washer','Fuel hose + clamps','Coolant hose'],
+    'overheat':['Coolant / water','Fan belt','Radiator cleaning kit'],
+    'smoke':['Air filter element'],
+    'noise':['Mounting bolts','Drive / fan belt'],
+    'low-fuel':['Diesel (arrange fuel bowser)']
+  };
+  // Live lookups filled on load: rate + on-hire status (from rentals) and
+  // location/GPS/customer/kVA (from the fleet directory). Used to work out which
+  // breakdowns are costing money now and to build the dispatch message.
+  var RATE={}, ONHIRE={}, DIR={}, RISK={down:0,daily:0};
   function dispatchLine(d){
     if(d==='phone') return {t:'📞 Try the checks on the phone first — often fixed without a visit.',c:'#4caf7d'};
     if(d==='code-first'||d==='triage') return {t:'🔎 Get the panel code / answers first, then decide.',c:'#e8c168'};
@@ -222,6 +239,9 @@
       +'<div style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;">Try these first (on the phone)</div>'
       +'<ol style="margin:0 0 12px;padding-left:18px;font-size:13.5px;line-height:1.5;">'+s.checks.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ol>'
       +'<div style="font-weight:700;color:'+dl.c+';font-size:13.5px;margin-bottom:10px;">'+esc(dl.t)+'</div>'
+      +((PARTS[s.key]&&PARTS[s.key].length)?('<div style="background:#20262c;border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:10px;">'
+        +'<div style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:5px;">🧰 If you dispatch, carry these parts</div>'
+        +PARTS[s.key].map(function(p){return '<span class="chip" style="background:#e8a13a22;color:#e8c168;">'+esc(p)+'</span>';}).join(' ')+'</div>'):'')
       +(s.note?('<div class="muted" style="font-size:12.5px;margin-bottom:12px;">💡 '+esc(s.note)+'</div>'):'')
       +'<div style="display:flex;flex-wrap:wrap;gap:8px;">'
         +'<button type="button" class="mini green" id="prefill">➕ Use this in the log below</button>'
@@ -274,7 +294,11 @@
   function renderStats(s){
     s=s||{};
     $('stats').innerHTML =
-       '<div class="stat '+(s.open?'alert':'')+'"><div class="big">'+(s.open||0)+'</div><div class="lbl">Open now</div></div>'
+       ((RISK.down)?('<div class="stat alert" style="grid-column:1/-1;background:#2a1614;border-color:#5a2a22;">'
+          +'<div class="lbl" style="color:#ff9a86;margin:0 0 4px;">🔴 Customers down right now</div>'
+          +'<div style="font-size:14px;font-weight:700;">'+RISK.down+' generator'+(RISK.down!==1?'s':'')+' on hire are broken · about <span style="color:#ffb4a0;">AED '+RISK.daily.toLocaleString()+'/day</span> of rental at risk</div>'
+          +'<div class="muted" style="font-size:12px;margin-top:3px;">Fix these first — they’re costing money and customer trust.</div></div>'):'')
+      +'<div class="stat '+(s.open?'alert':'')+'"><div class="big">'+(s.open||0)+'</div><div class="lbl">Open now</div></div>'
       +'<div class="stat"><div class="big">'+(s.thisMonth||0)+'</div><div class="lbl">This month</div></div>'
       +'<div class="stat"><div class="big">'+(s.avgHours!=null?s.avgHours+'h':'—')+'</div><div class="lbl">Avg fix time</div></div>'
       +'<div class="stat"><div class="big">'+(s.total||0)+'</div><div class="lbl">Total logged</div></div>'
@@ -284,15 +308,47 @@
          +s.repeat.map(function(r){return '<span class="chip">'+esc(r.dg)+' · '+r.count+'×</span>';}).join('')+'</div>'):'');
   }
 
+  // Priority from customer impact: an on-hire unit that's broken = a customer
+  // with no power right now (critical). A yard/off-hire unit is standby work.
+  function priorityOf(it){
+    if(it.status!=='Open') return {rank:9,label:'',color:''};
+    var oh=ONHIRE[String(it.dg).toUpperCase()];
+    if(oh===true) return {rank:0,label:'🔴 CUSTOMER DOWN',color:'#e0644a'};
+    if(oh===false) return {rank:2,label:'🟡 In yard',color:'#8b95a1'};
+    return {rank:1,label:'🟠 Attend',color:'#e8a13a'};
+  }
+  // WhatsApp dispatch message for the team: what, where, the problem, and a
+  // Google Maps link straight to the site.
+  function dispatchMsg(it){
+    var dg=String(it.dg).toUpperCase(); var d=DIR[dg]||{};
+    var m='🚨 *DELUXE — Breakdown dispatch*\n'+it.dg+(d.kva?(' · '+d.kva+' kVA'):'')+'\n';
+    var loc=it.location||d.location||''; if(loc) m+='📍 '+loc+'\n';
+    if(d.customer) m+='👤 '+d.customer+'\n';
+    if(it.category) m+='Type: '+it.category+'\n';
+    if(it.notes) m+='Problem: '+it.notes+'\n';
+    m+='Reported: '+fmt(it.reportedAt)+'\n';
+    if(typeof d.lat==='number' && typeof d.lon==='number') m+='\n🗺️ https://www.google.com/maps/dir/?api=1&destination='+d.lat+','+d.lon;
+    else if(loc) m+='\n🗺️ https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(loc+', Abu Dhabi');
+    return m;
+  }
   function render(list){
-    $('body').innerHTML = list.length ? list.map(function(it){
-      var open=it.status==='Open';
-      var action = open
-        ? '<button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
+    // Rank the open ones by customer impact (down first, then by rate, then
+    // oldest); keep resolved history after, newest first.
+    var open=list.filter(function(x){return x.status==='Open';}).map(function(it){ return {it:it,p:priorityOf(it),rate:RATE[String(it.dg).toUpperCase()]||0}; })
+      .sort(function(a,b){ return a.p.rank-b.p.rank || b.rate-a.rate || String(a.it.reportedAt).localeCompare(String(b.it.reportedAt)); }).map(function(x){return x.it;});
+    var done=list.filter(function(x){return x.status!=='Open';});
+    var ordered=open.concat(done);
+    window.__bd=ordered;
+    $('body').innerHTML = ordered.length ? ordered.map(function(it){
+      var isOpen=it.status==='Open'; var pr=priorityOf(it);
+      var action = isOpen
+        ? '<button class="mini" data-wa="'+esc(it.id)+'" style="background:#25D36622;border-color:#25D36655;color:#4fe08a;">📲 Send team</button> <button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
         : '<button class="mini" data-reopen="'+esc(it.id)+'">Reopen</button>';
-      return '<tr'+(open?'':' style="opacity:.7;"')+'>'
+      return '<tr'+(isOpen?'':' style="opacity:.7;"')+'>'
         +'<td class="dg">'+esc(it.dg)+(it.location?'<div class="muted" style="font-size:12px;">'+esc(it.location)+'</div>':'')+'</td>'
-        +'<td><span class="badge b-'+esc(it.status)+'">'+esc(it.status)+'</span>'+(open?'<div class="muted" style="font-size:11px;margin-top:3px;">open '+since(it.reportedAt,new Date().toISOString())+'</div>':'')+'</td>'
+        +'<td><span class="badge b-'+esc(it.status)+'">'+esc(it.status)+'</span>'
+          +(isOpen&&pr.label?('<div style="font-size:11px;font-weight:700;color:'+pr.color+';margin-top:4px;">'+pr.label+'</div>'):'')
+          +(isOpen?'<div class="muted" style="font-size:11px;margin-top:3px;">open '+since(it.reportedAt,new Date().toISOString())+'</div>':'')+'</td>'
         +'<td class="muted">'+fmt(it.reportedAt)+(it.reportedBy?'<br>by '+esc(it.reportedBy):'')+'</td>'
         +'<td class="muted">'+(it.truck?esc(it.truck):'—')+'</td>'
         +'<td class="muted">'+(it.category?('<span class="badge" style="background:'+((CATCOL[it.category]||"#8b95a1"))+'22;color:'+((CATCOL[it.category]||"#8b95a1"))+';margin-bottom:4px;">'+esc(it.category)+'</span><br>'):'')+(it.notes?esc(it.notes):'—')+(it.cause?'<div style="font-size:11.5px;margin-top:3px;">✔ cause: '+esc(it.cause)+'</div>':'')+'</td>'
@@ -300,6 +356,7 @@
         +'<td style="white-space:nowrap;">'+action+' <button class="x" data-rm="'+esc(it.id)+'" title="Delete">✕</button></td>'
         +'</tr>';
     }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No breakdowns logged yet. 👍</td></tr>';
+    $('body').querySelectorAll('button[data-wa]').forEach(function(b){ b.addEventListener('click',function(){ var it=(window.__bd||[]).filter(function(x){return x.id===b.getAttribute('data-wa');})[0]; if(it){ var t=dispatchMsg(it); if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } } }); });
     $('body').querySelectorAll('button[data-resolve]').forEach(function(b){ b.addEventListener('click',function(){ var cause=prompt('What was actually wrong? (root cause — helps spot patterns)\\nLeave blank to skip.'); if(cause===null){ post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve')}); } else { post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve'),cause:cause}); } }); });
     $('body').querySelectorAll('button[data-reopen]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/reopen',{id:b.getAttribute('data-reopen')}); }); });
     $('body').querySelectorAll('button[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Delete this breakdown record?')) post('/api/breakdowns/remove',{id:b.getAttribute('data-rm')}); }); });
@@ -318,7 +375,20 @@
     try{
       var r=await fetch('/api/breakdowns',{cache:'no-store',headers:authHeaders()});
       if(r.status===401){ showLogin(); return; }
-      var d=await r.json(); renderStats(d.stats); render(d.breakdowns||[]);
+      var d=await r.json();
+      // Pull rate + on-hire status and location/GPS so we can rank breakdowns by
+      // customer impact and build the dispatch message. Best-effort — the log
+      // still works if these fail.
+      try{
+        var rr=await (await fetch('/api/rentals',{cache:'no-store',headers:authHeaders()})).json();
+        RATE={}; ONHIRE={};
+        (rr.rentals||[]).forEach(function(x){ var k=String(x.dg).toUpperCase(); RATE[k]=x.rate||0; ONHIRE[k]=!x.offHire; });
+      }catch(e){}
+      try{ DIR=(await (await fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()})).json()).directory||{}; }catch(e){}
+      // Revenue at risk: on-hire units with an open breakdown = customers down now.
+      var openOnHire=(d.breakdowns||[]).filter(function(it){ return it.status==='Open' && ONHIRE[String(it.dg).toUpperCase()]; });
+      RISK={ down:openOnHire.length, daily:Math.round(openOnHire.reduce(function(sum,it){ return sum+((RATE[String(it.dg).toUpperCase()]||0)/30); },0)) };
+      renderStats(d.stats); render(d.breakdowns||[]);
     }catch(e){ $('body').innerHTML='<tr><td colspan="7" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
 
