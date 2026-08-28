@@ -724,7 +724,8 @@ app.get('/service', (req, res) => {
       + "connect-src 'self' https://cdn.jsdelivr.net; "
       + "worker-src 'self' blob:; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'service.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'service.html'), { cacheControl: false });
 });
 
 // ---------- Daily servicing schedule (two teams) ----------
@@ -753,7 +754,8 @@ app.get('/schedule', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'schedule.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'schedule.html'), { cacheControl: false });
 });
 
 // ---------- Morning route plan ----------
@@ -769,7 +771,8 @@ app.get('/plan', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'plan.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'plan.html'), { cacheControl: false });
 });
 
 // ---------- Spare-parts issue tracking ----------
@@ -796,7 +799,8 @@ app.get('/spares', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'spares.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'spares.html'), { cacheControl: false });
 });
 
 // ---------- Customer site profiles ----------
@@ -830,7 +834,8 @@ app.get('/sites', (req, res) => {
       + "img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; "
       + "worker-src 'self' blob:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'sites.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'sites.html'), { cacheControl: false });
 });
 
 // ---------- Breakdown log ----------
@@ -888,7 +893,8 @@ app.get('/rentals', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'rentals.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'rentals.html'), { cacheControl: false });
 });
 
 // ---------- Delivery / on-hire notes ----------
@@ -926,7 +932,8 @@ app.get('/delivery', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'delivery.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'delivery.html'), { cacheControl: false });
 });
 
 // ---------- Return notes (off-hire hand-back) ----------
@@ -966,7 +973,8 @@ app.get('/return', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'returnnote.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'returnnote.html'), { cacheControl: false });
 });
 
 // ---------- Contract file ----------
@@ -979,7 +987,8 @@ app.get('/contract', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'contract.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'contract.html'), { cacheControl: false });
 });
 
 app.get('/breakdowns', (req, res) => {
@@ -988,7 +997,8 @@ app.get('/breakdowns', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'breakdowns.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'breakdowns.html'), { cacheControl: false });
 });
 
 // Operations dashboard: at-a-glance counts (fleet, service due, spares, sites)
@@ -999,7 +1009,8 @@ app.get('/dashboard', (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'dashboard.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'dashboard.html'), { cacheControl: false });
 });
 
 // Operations menu (a simple home page linking to all the tools).
@@ -1009,7 +1020,8 @@ app.get(['/menu', '/home'], (req, res) => {
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
       + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'menu.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'menu.html'), { cacheControl: false });
 });
 
 // ---------- Serve the frontends ----------
@@ -1044,7 +1056,8 @@ app.get('/fleet', (req, res) => {
       + "manifest-src 'self'; "
       + "worker-src 'self';"
   );
-  res.sendFile(path.join(__dirname, 'fleet.html'));
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'fleet.html'), { cacheControl: false });
 });
 
 // Everything else falls back to the original LPO/invoice portal.
