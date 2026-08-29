@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Service Card</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:820px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .link{color:var(--blue);text-decoration:none;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:10px 15px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+  .chip{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:18px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono);}
+  .chip:hover{border-color:var(--amber);}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  .field{margin-bottom:13px;}
+
+  /* Printable service card (dark on screen, clean on paper) */
+  #cardArea{display:none;}
+  .svc{background:#fff;color:#111;border-radius:10px;padding:22px;max-width:680px;margin:0 auto;border:1px solid #ddd;}
+  .svc .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:6px;}
+  .svc .logos img{height:38px;width:auto;display:block;margin-bottom:5px;}
+  .svc .co{font-size:11px;color:#333;line-height:1.5;}
+  .svc .cardtitle{text-align:center;margin:10px 0 14px;}
+  .svc .cardtitle span{background:#1c4587;color:#fff;font-weight:800;letter-spacing:.06em;font-size:15px;padding:4px 16px;border-radius:5px;}
+  .svc table{width:100%;border-collapse:collapse;margin:0 0 12px;}
+  .svc td{border:1px solid #ccc;padding:8px 10px;font-size:13px;vertical-align:top;}
+  .svc td.k{background:#f4f4f4;color:#444;font-size:11px;text-transform:uppercase;letter-spacing:.04em;width:34%;white-space:nowrap;}
+  .svc .big{font-family:var(--mono);font-weight:700;font-size:16px;}
+  .svc .checks{display:flex;gap:20px;flex-wrap:wrap;margin:4px 0 12px;font-size:13px;}
+  .svc .checks span{display:inline-flex;align-items:center;gap:7px;}
+  .svc .box{display:inline-block;width:15px;height:15px;border:1.5px solid #111;border-radius:3px;}
+  .svc .parts{border:1px solid #ccc;border-radius:6px;padding:10px 12px;margin-bottom:12px;}
+  .svc .parts h3{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#b23b00;}
+  .svc .parts .p{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:3px 0;border-bottom:1px dotted #ddd;}
+  .svc .parts .p:last-child{border-bottom:none;}
+  .svc .parts .p b{font-family:var(--mono);}
+  .svc .foot{background:#14351f;color:#fff;text-align:center;font-size:11.5px;padding:7px;border-radius:5px;margin-top:6px;}
+  .svc .sign{display:flex;gap:24px;margin-top:16px;}
+  .svc .sign > div{flex:1;}
+  .svc .sigline{border-top:1px solid #111;margin-top:34px;padding-top:5px;font-size:11.5px;color:#333;}
+  @media print{
+    body{background:#fff;padding:0;}
+    .wrap > *:not(#cardArea){display:none !important;}
+    #cardArea{display:block !important;}
+    .svc{border:none;border-radius:0;padding:8mm;max-width:100%;}
+  }
+</style>
+<link rel="stylesheet" href="/theme.css">
+<link rel="manifest" href="/manifest-portal.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deluxe Ops">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+<script src="/alarm.js?v=4" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/servicecard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🃏 Service Card</a><a href="/specs" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧰 Parts</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">☰ Menu</a></nav>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:44px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:40px;width:auto;"></div>
+
+  <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
+  <h1>Service Card</h1>
+  <p class="sub">Pick a generator — the card fills in the next-service target and the exact filters &amp; oil to load for that unit. Print it and hand it to the technician. Confirm oil quantity on the dipstick. See <a href="/service" class="link">service</a>, <a href="/specs" class="link">parts</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div class="panel">
+    <div class="field">
+      <label>Generator (DG)</label>
+      <input type="text" id="dgPick" list="dglist" placeholder="e.g. DG-537" autocomplete="off">
+      <datalist id="dglist"></datalist>
+    </div>
+    <div id="dueWrap" style="display:none;">
+      <label style="margin-top:4px;">Due / overdue now — tap to load</label>
+      <div class="chips" id="dueChips"></div>
+    </div>
+    <div class="err" id="err" style="margin-top:8px;"></div>
+  </div>
+
+  <div id="cardArea">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;" class="noprint">
+      <button class="btn" id="printBtn" style="width:auto;padding:10px 18px;">🖨️ Print / Save PDF</button>
+      <button class="btn sec" id="waBtn" style="width:auto;padding:10px 18px;">📤 Send parts list to store</button>
+    </div>
+    <div class="svc" id="svc"></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Service Card — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to build service cards.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=(function(){ try{ return localStorage.getItem(LS)||''; }catch(e){ return ''; } })();
+  var $=function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
+  var DIR={}, SVC={}, SPECS={}, CUR=null;
+
+  function typicalOil(kva, brand){ kva=Number(kva)||0; if(!kva) return null;
+    var b=String(brand||'').toUpperCase();
+    var small=/KUBOTA|YANMAR/.test(b);
+    if(kva<=20) return small?4:6;
+    if(kva<=30) return small?6:8;
+    if(kva<=60) return 10;
+    if(kva<=100) return 14;
+    if(kva<=150) return 16;
+    if(kva<=250) return 24;
+    if(kva<=400) return 34;
+    if(kva<=600) return 45;
+    return 60; }
+
+  function today(){ return new Date().toLocaleDateString('en-GB'); }
+  function daysTo(dstr){ if(!dstr) return null; return Math.round((new Date(dstr+'T00:00:00')-new Date(new Date().toLocaleDateString('en-CA')+'T00:00:00'))/86400000); }
+
+  function partsFor(dg){
+    var d=DIR[dg]||{}, sp=SPECS[dg]||{};
+    var litres = (sp.oilLitres!=null? sp.oilLitres : typicalOil(d.kva, d.brand));
+    var litresConfirmed = sp.oilLitres!=null;
+    return {
+      air: sp.air||'', oil: sp.oil||'', fuel: sp.fuel||'',
+      litres: litres, litresConfirmed: litresConfirmed,
+      grade: sp.oilGrade||'15W-40', engine: sp.engine||''
+    };
+  }
+
+  function render(dg){
+    dg=String(dg||'').trim().toUpperCase();
+    var d=DIR[dg]; if(!d){ $('err').textContent='DG '+dg+' not found in the fleet list.'; return; }
+    $('err').textContent=''; CUR=dg;
+    var s=SVC[dg]||{};
+    var p=partsFor(dg);
+    var curHours=(s.hours!=null? s.hours : null);
+    var nextH=(s.nextService!=null? s.nextService : (curHours!=null? (curHours+350):null));
+    var oilLine = (p.litres!=null? (p.litres+' L '+esc(p.grade)+(p.litresConfirmed?'':' (typical — confirm on dipstick)')) : (esc(p.grade)+' — confirm quantity on dipstick'));
+    function partRow(lbl,val){ return '<div class="p"><span>'+lbl+'</span><b>'+(val?esc(val):'—')+'</b></div>'; }
+    $('svc').innerHTML=
+      '<div class="head">'
+        +'<div class="logos"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC">'
+          +'<div class="co">Deluxe Heavy Equipment Rental L.L.C<br>Deluxe Energy Solutions L.L.C</div></div>'
+        +'<div style="text-align:right;font-size:12px;color:#555;">Date: <b>'+today()+'</b></div>'
+      +'</div>'
+      +'<div class="cardtitle"><span>SERVICE CARD</span></div>'
+      +'<table>'
+        +'<tr><td class="k">Equipment No.</td><td><span class="big">'+esc(dg)+'</span>'+(d.kva?('  ·  '+esc(d.kva)+' kVA'):'')+(d.brand?('  ·  '+esc(d.brand)):'')+'</td></tr>'
+        +'<tr><td class="k">Customer / site</td><td>'+esc(d.customer||'—')+(d.location?('  ·  '+esc(d.location)):'')+'</td></tr>'
+        +'<tr><td class="k">Current hours</td><td><span class="big">'+(curHours!=null?curHours:'__________')+'</span> h'+(s.date?('  <span style="color:#777;font-size:11px;">(last logged '+esc(s.date)+')</span>'):'')+'</td></tr>'
+        +'<tr><td class="k">Maintenance date</td><td>________________________</td></tr>'
+        +'<tr><td class="k">Maintained by</td><td>________________________</td></tr>'
+        +'<tr><td class="k">Next service due at</td><td><span class="big">'+(nextH!=null?nextH:'__________')+'</span> h</td></tr>'
+      +'</table>'
+      +'<div class="checks">'
+        +'<span><span class="box"></span> Oil</span>'
+        +'<span><span class="box"></span> Oil filter</span>'
+        +'<span><span class="box"></span> Fuel filter</span>'
+        +'<span><span class="box"></span> Air filter</span>'
+      +'</div>'
+      +'<div class="parts"><h3>Parts &amp; oil to load for this generator</h3>'
+        +partRow('Air filter', p.air)
+        +partRow('Oil filter', p.oil)
+        +partRow('Fuel filter', p.fuel)
+        +partRow('Engine oil', oilLine)
+        +(p.engine?partRow('Engine', p.engine):'')
+      +'</div>'
+      +'<div class="sign"><div><div class="sigline">Technician — name &amp; signature</div></div>'
+        +'<div><div class="sigline">Checked by</div></div></div>'
+      +'<div class="foot">Emergency Contact No. 055 335 6428 / 02 554 5718</div>';
+    $('cardArea').style.display='block';
+    $('cardArea').scrollIntoView({behavior:'smooth',block:'start'});
+    if(!p.air && !p.oil && !p.fuel){ $('err').innerHTML='Tip: no exact filters saved for '+esc(dg)+' yet — add them on the <a href="/specs" class="link">Parts</a> page so this card lists the right part numbers.'; }
+  }
+
+  function partsMessage(dg){
+    var d=DIR[dg]||{}, s=SVC[dg]||{}, p=partsFor(dg);
+    var nextH=(s.nextService!=null? s.nextService : (s.hours!=null?(s.hours+350):null));
+    var m='*DELUXE — Service parts to load*\n'+dg+(d.kva?(' · '+d.kva+' kVA'):'')+(d.brand?(' · '+d.brand):'')+'\n';
+    if(d.customer) m+=d.customer+(d.location?(' · '+d.location):'')+'\n';
+    m+='\nAir filter: '+(p.air||'—')+'\nOil filter: '+(p.oil||'—')+'\nFuel filter: '+(p.fuel||'—');
+    m+='\nEngine oil: '+(p.litres!=null?(p.litres+' L '+p.grade+(p.litresConfirmed?'':' (typical — confirm)')):(p.grade+' — confirm qty'));
+    if(s.hours!=null) m+='\n\nCurrent hours: '+s.hours+' h';
+    if(nextH!=null) m+='\nNext service at: '+nextH+' h';
+    return m;
+  }
+
+  // Print in a real browser page (works from an installed PWA where window.print is a no-op)
+  function printCard(){
+    var el=$('svc'); if(!el||!el.innerHTML){ window.print(); return; }
+    var styles=':root{--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}body{background:#fff;margin:0;}';
+    document.querySelectorAll('style').forEach(function(s){ styles+=s.textContent; });
+    var w=window.open('','_blank'); if(!w){ window.print(); return; }
+    w.document.open();
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Service Card '+esc(CUR||'')+'</title><style>'+styles+'</style></head><body><div class="svc">'+el.innerHTML+'</div><scr'+'ipt>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},500);};</scr'+'ipt></body></html>');
+    w.document.close();
+  }
+
+  $('dgPick').addEventListener('change',function(){ if(this.value.trim()) render(this.value); });
+  $('dgPick').addEventListener('keydown',function(e){ if(e.key==='Enter'&&this.value.trim()) render(this.value); });
+  $('printBtn').addEventListener('click', printCard);
+  $('waBtn').addEventListener('click',function(){ if(!CUR)return; var t=partsMessage(CUR); if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } });
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; boot(); }
+  async function doLogin(){
+    $('loginErr').textContent='';
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json();
+      if(!r.ok||!d.token){ $('loginErr').textContent=d.error||'Wrong email or password'; return; }
+      TOKEN=d.token; try{ localStorage.setItem(LS,TOKEN); }catch(e){}
+      hideLogin();
+    }catch(e){ $('loginErr').textContent='Could not sign in.'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+
+  async function boot(){
+    try{
+      var res=await Promise.all([
+        fetch('/api/service/status',{cache:'no-store',headers:authH()}),
+        fetch('/api/fleet/directory',{cache:'no-store',headers:authH()}),
+        fetch('/api/specs',{cache:'no-store',headers:authH()})
+      ]);
+      if(res.some(function(r){return r.status===401;})){ showLogin(); return; }
+      var svc=await res[0].json(); var dir=await res[1].json(); var sp=await res[2].json();
+      (svc.generators||[]).forEach(function(g){ SVC[String(g.dg).toUpperCase()]=g; });
+      DIR=dir.directory||{};
+      SPECS=sp.specs||sp.map||{}; if(Array.isArray(sp.specs)){ var m={}; sp.specs.forEach(function(x){ m[String(x.dg).toUpperCase()]=x; }); SPECS=m; }
+      // fill the DG datalist
+      var dl=$('dglist'); dl.innerHTML=Object.keys(DIR).sort().map(function(k){ var d=DIR[k]; return '<option value="'+k+'">'+(d.customer||'')+(d.kva?(' · '+d.kva+' kVA'):'')+'</option>'; }).join('');
+      // due / overdue chips (on-hire only)
+      var due=(svc.generators||[]).filter(function(g){ if(g.offHire) return false; var t=daysTo(g.nextServiceDate); return t!=null && t<=7; })
+        .sort(function(a,b){ return (daysTo(a.nextServiceDate)||0)-(daysTo(b.nextServiceDate)||0); }).slice(0,24);
+      if(due.length){
+        $('dueWrap').style.display='block';
+        $('dueChips').innerHTML=due.map(function(g){ var t=daysTo(g.nextServiceDate); var lbl=t<0?('OVERDUE '+Math.abs(t)+'d'):(t===0?'today':('in '+t+'d')); return '<span class="chip" data-dg="'+esc(g.dg)+'">'+esc(g.dg)+' · '+lbl+'</span>'; }).join('');
+        $('dueChips').querySelectorAll('.chip').forEach(function(c){ c.addEventListener('click',function(){ $('dgPick').value=c.getAttribute('data-dg'); render(c.getAttribute('data-dg')); }); });
+      }
+    }catch(e){ $('err').textContent='Could not load fleet data.'; }
+  }
+
+  if(TOKEN){ boot(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
