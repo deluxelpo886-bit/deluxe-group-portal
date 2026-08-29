@@ -187,7 +187,8 @@
     var sp=(DATA.specs||{})[dg]||{};
     var typicalOil=function(k,brand){ k=Number(k)||0; if(!k)return null; var small=/KUBOTA|YANMAR/.test(String(brand||'').toUpperCase()); if(k<=20)return small?4:6; if(k<=30)return small?6:8; if(k<=60)return 10; if(k<=100)return 14; if(k<=150)return 16; if(k<=250)return 24; if(k<=400)return 34; if(k<=600)return 45; return 60; };
     var typ=typicalOil(dir.kva, dir.brand);
-    var oilTxt = sp.oilLitres!=null ? ('<span class="mono">'+sp.oilLitres+'</span> L') : (typ!=null?('<span class="mono">~'+typ+'</span> L <span class="muted" style="font-weight:400;">typical — confirm</span>'):'—');
+    var grade=esc(sp.oilGrade||'15W-40');
+    var oilTxt = grade+' · '+(sp.oilLitres!=null ? ('<span class="mono">'+sp.oilLitres+'</span> L') : (typ!=null?('<span class="mono">~'+typ+'</span> L <span class="muted" style="font-weight:400;">typical — confirm</span>'):'—'));
     html+='<div class="docs"><h2><span>🧰 Service parts &amp; oil</span><a class="link" href="/specs?dg='+encodeURIComponent(dg)+'">Edit ▸</a></h2>'
       +'<div class="grid" style="margin:0;">'
       +'<div class="card" style="border:none;padding:0;background:none;box-shadow:none;">'

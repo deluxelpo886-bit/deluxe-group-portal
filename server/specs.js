@@ -37,12 +37,13 @@ function save(rec) {
     oil: str(rec.oil),
     fuel: str(rec.fuel),
     oilLitres: (isFinite(litres) && litres > 0) ? litres : null,
+    oilGrade: str(rec.oilGrade),
     engine: str(rec.engine),
     notes: str(rec.notes),
     updatedAt: new Date().toISOString(),
   };
   // If every meaningful field is empty, treat a save as a delete (clear override).
-  if (!entry.air && !entry.oil && !entry.fuel && entry.oilLitres == null && !entry.engine && !entry.notes) {
+  if (!entry.air && !entry.oil && !entry.fuel && entry.oilLitres == null && !entry.oilGrade && !entry.engine && !entry.notes) {
     delete store[dg]; persist(); return null;
   }
   store[dg] = entry;
