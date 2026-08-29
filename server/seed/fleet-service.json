@@ -1080,6 +1080,18 @@
   "nextServiceDate": "2026-08-25"
  },
  {
+  "dg": "DG-492",
+  "hours": 6870,
+  "date": "2026-08-29",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 7220,
+  "notes": "Air filter not changed"
+ },
+ {
   "dg": "DG-826",
   "hours": 801,
   "date": "2026-07-31",
