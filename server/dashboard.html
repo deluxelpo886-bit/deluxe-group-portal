@@ -105,6 +105,31 @@
     </div>
     <div class="muted" id="waHint" style="margin-top:10px;font-size:12px;"></div>
   </div>
+
+  <div class="panel">
+    <h2>⏰ Morning alarm <span class="muted" style="font-weight:400;font-size:13px;">(rings inside the app — no email/WhatsApp setup)</span></h2>
+    <p class="sub" style="margin:0 0 12px;">When you open the app in the morning it rings and shows what's due for service today. Keep the app open at the set time and it rings on its own.</p>
+    <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;color:var(--text);cursor:pointer;"><input type="checkbox" id="almOn" style="width:20px;height:20px;"> <b>Alarm on</b></label>
+      <div><label>Time</label><input type="time" id="almTime" value="07:00" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-size:14px;outline:none;"></div>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;color:var(--text);cursor:pointer;"><input type="checkbox" id="almSound" checked style="width:20px;height:20px;"> 🔊 Sound</label>
+      <button class="btn sec" id="almTest">🔔 Test</button>
+    </div>
+    <div class="muted" id="almStatus" style="margin-top:10px;font-size:12px;"></div>
+  </div>
+</div>
+
+<div id="alarmOverlay" style="position:fixed;inset:0;background:rgba(8,10,14,.94);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;">
+  <div style="max-width:430px;width:100%;background:var(--panel);border:2px solid var(--amber);border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 26px 70px -20px #000;">
+    <div style="font-size:46px;line-height:1;">⏰</div>
+    <h2 id="alarmTitle" style="margin:10px 0 8px;font-size:22px;">Good morning</h2>
+    <div id="alarmBody" style="font-size:15px;line-height:1.6;margin-bottom:20px;color:var(--text);"></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <a href="/plan" class="btn" style="text-decoration:none;">🧭 Open plan</a>
+      <button class="btn sec" id="alarmSnooze">😴 Snooze 10 min</button>
+      <button class="btn sec" id="alarmDismiss">Dismiss</button>
+    </div>
+  </div>
 </div>
 
 <div id="overlay">
@@ -356,6 +381,94 @@
     }catch(e){ $('waMsg').style.color='var(--red)'; $('waMsg').textContent='Send failed'; }
     finally{ $('waSend').disabled=false; }
   });
+
+  /* ================= In-app morning alarm ================= */
+  // Rings inside the app (no email/WhatsApp needed). Fires when the app is open
+  // at the set time, and also the moment you open the app in the morning if
+  // it hasn't rung yet today. Settings + last-fired date live on this device.
+  var ALM='deluxeAlarm';
+  function almGet(){ try{ return JSON.parse(localStorage.getItem(ALM)||'{}')||{}; }catch(e){ return {}; } }
+  function almSet(o){ try{ localStorage.setItem(ALM, JSON.stringify(o)); }catch(e){} }
+  function todayStr(){ return new Date().toLocaleDateString('en-CA'); } // YYYY-MM-DD local
+  function nowMins(){ var d=new Date(); return d.getHours()*60+d.getMinutes(); }
+  function hhmmToMins(s){ var p=String(s||'07:00').split(':'); return (parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0); }
+
+  // Load settings into the controls.
+  (function initAlm(){
+    var a=almGet();
+    $('almOn').checked = a.on!==false && !!a.on;      // default off until turned on
+    $('almTime').value = a.time || '07:00';
+    $('almSound').checked = a.sound!==false;
+    updateAlmStatus();
+  })();
+  function saveAlm(){
+    var a=almGet();
+    a.on=$('almOn').checked; a.time=$('almTime').value||'07:00'; a.sound=$('almSound').checked;
+    almSet(a); updateAlmStatus();
+    if(a.on && 'Notification' in window && Notification.permission==='default'){ Notification.requestPermission().catch(function(){}); }
+  }
+  function updateAlmStatus(){
+    var a=almGet();
+    if(a.on){ $('almStatus').style.color='var(--green)'; $('almStatus').textContent='✓ Alarm on — rings at '+ (a.time||'07:00') +' every day (while the app is open, or when you open it after that time).'; }
+    else { $('almStatus').style.color='var(--muted)'; $('almStatus').textContent='Alarm off. Turn it on to get a morning ring with today’s due list.'; }
+  }
+  $('almOn').addEventListener('change',saveAlm);
+  $('almTime').addEventListener('change',saveAlm);
+  $('almSound').addEventListener('change',saveAlm);
+
+  // Beep with the Web Audio API (no sound file needed).
+  var _actx=null;
+  function beep(times){
+    var a=almGet(); if(a.sound===false) return;
+    try{
+      _actx=_actx||new (window.AudioContext||window.webkitAudioContext)();
+      if(_actx.state==='suspended') _actx.resume();
+      var n=times||6;
+      for(var i=0;i<n;i++){
+        var t=_actx.currentTime+i*0.42;
+        var o=_actx.createOscillator(), g=_actx.createGain();
+        o.type='sine'; o.frequency.value=(i%2?988:784);
+        g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.32,t+0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+0.32);
+        o.connect(g); g.connect(_actx.destination); o.start(t); o.stop(t+0.34);
+      }
+    }catch(e){}
+  }
+
+  function dueLine(){
+    var D=window.__D||{};
+    var over=(D.overdue||[]).length, soon=(D.soon||[]).length, month=(D.month||[]).length;
+    if(over) return '<b style="color:var(--red);">'+over+' overdue</b>'+(soon?(' · '+soon+' due within 7 days'):'');
+    if(soon) return '<b style="color:var(--amber);">'+soon+' due within 7 days</b>';
+    if(month) return month+' due in the next 30 days';
+    return 'No services due right now. 👍';
+  }
+  function fireAlarm(){
+    var a=almGet(); a.firedDate=todayStr(); delete a.snooze; almSet(a);
+    $('alarmTitle').textContent='⏰ Good morning';
+    $('alarmBody').innerHTML='Service check for today:<br><br>'+dueLine()+'<br><br><span class="muted" style="font-size:12.5px;">Open the plan to see the route and send teams.</span>';
+    $('alarmOverlay').style.display='flex';
+    beep(6);
+    try{ if(navigator.vibrate) navigator.vibrate([300,150,300,150,300]); }catch(e){}
+    try{ if('Notification' in window && Notification.permission==='granted'){ new Notification('Deluxe Ops — Morning service check', { body: (window.__D&&((window.__D.overdue||[]).length+' overdue, '+(window.__D.soon||[]).length+' due soon'))||'Open the app', icon:'/icon-192.png' }); } }catch(e){}
+  }
+  $('alarmDismiss').addEventListener('click',function(){ $('alarmOverlay').style.display='none'; var a=almGet(); a.firedDate=todayStr(); delete a.snooze; almSet(a); });
+  $('alarmSnooze').addEventListener('click',function(){ $('alarmOverlay').style.display='none'; var a=almGet(); a.snooze=Date.now()+10*60000; delete a.firedDate; almSet(a); });
+  $('almTest').addEventListener('click',function(){ if('Notification' in window && Notification.permission==='default'){ Notification.requestPermission().catch(function(){}); } fireAlarm(); });
+
+  // Check whether the alarm should ring (on load + every 30s while open).
+  function checkAlarm(){
+    var a=almGet(); if(!a.on) return;
+    if($('alarmOverlay').style.display==='flex') return;
+    if(a.snooze && Date.now()<a.snooze) return;
+    var pastTime = nowMins() >= hhmmToMins(a.time||'07:00');
+    var firedToday = a.firedDate===todayStr();
+    var snoozeReady = a.snooze && Date.now()>=a.snooze;
+    if((pastTime && !firedToday) || snoozeReady){ fireAlarm(); }
+  }
+  setInterval(checkAlarm, 30000);
+  // First check shortly after the dashboard data has loaded.
+  setTimeout(checkAlarm, 4000);
 
   if(TOKEN){ hideLogin(); } else { showLogin(); }
 })();
