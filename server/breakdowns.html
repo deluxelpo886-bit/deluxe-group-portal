@@ -84,6 +84,24 @@
     <div id="triageOut" style="display:none;margin-top:14px;"></div>
   </div>
 
+  <!-- CONTROL-PANEL PHOTO DIAGNOSIS (AI) -->
+  <div class="panel" id="diagPanel">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <span style="font-size:18px;">📷</span><b style="font-size:15px;">Read the control panel — snap a photo</b>
+    </div>
+    <p class="sub" style="margin:0 0 12px;">Take or upload a clear photo of the generator's control panel (the display / alarm screen). The app reads the fault and tells you the likely cause, what to check, and a message you can send the customer.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <label for="panelPhoto" class="btn" style="cursor:pointer;display:inline-block;">📷 Take / choose photo</label>
+      <input type="file" id="panelPhoto" accept="image/*" capture="environment" style="display:none;">
+      <span class="muted" id="diagFileName" style="font-size:12.5px;"></span>
+    </div>
+    <div id="diagPreviewWrap" style="display:none;margin-top:12px;">
+      <img id="diagPreview" alt="control panel" style="max-width:100%;max-height:260px;border-radius:10px;border:1px solid var(--line);">
+    </div>
+    <div id="diagStatus" class="muted" style="font-size:13px;margin-top:10px;display:none;"></div>
+    <div id="diagOut" style="display:none;margin-top:12px;"></div>
+  </div>
+
   <div class="panel">
     <div class="row">
       <div class="field"><label>Generator (DG) *</label><input type="text" id="dg" placeholder="e.g. DG-537" autocomplete="off"></div>
@@ -410,6 +428,91 @@
     $('add').disabled=false;
     if(d && d.error){ $('err').textContent=d.error; return; }
     if(d && d.ok){ $('dg').value=''; $('location').value=''; $('truck').value=''; $('notes').value=''; $('reportedAt').value=''; $('category').value=''; $('symptom').value=''; }
+  });
+
+  // ---- Control-panel photo diagnosis (AI vision) ----
+  // Resize the chosen photo to a sane size, POST the JPEG bytes, render the
+  // structured diagnosis, and offer a ready-to-send customer message.
+  function resizeToBlob(file, maxPx, cb){
+    var reader=new FileReader();
+    reader.onload=function(){
+      var img=new Image();
+      img.onload=function(){
+        var w=img.width, h=img.height, scale=Math.min(1, maxPx/Math.max(w,h));
+        var cw=Math.round(w*scale), ch=Math.round(h*scale);
+        var c=document.createElement('canvas'); c.width=cw; c.height=ch;
+        c.getContext('2d').drawImage(img,0,0,cw,ch);
+        c.toBlob(function(b){ cb(b, c.toDataURL('image/jpeg',0.85)); }, 'image/jpeg', 0.85);
+      };
+      img.onerror=function(){ cb(null,null); };
+      img.src=reader.result; // data: URL (allowed by CSP)
+    };
+    reader.onerror=function(){ cb(null,null); };
+    reader.readAsDataURL(file);
+  }
+  function sevBadge(sev){
+    var map={shutdown:['#3a1414','#ff8a75','⛔ SHUTDOWN — engine tripped'],warning:['#2e2410','#ffcf6a','⚠ WARNING — running but flagged'],info:['#12241c','#5fe0a8','ℹ️ Status / info'],unknown:['#20262c','#9aa6b2','❓ Unclear']};
+    var m=map[sev]||map.unknown;
+    return '<span style="display:inline-block;background:'+m[0]+';color:'+m[1]+';font-weight:700;font-size:12px;padding:3px 10px;border-radius:20px;">'+m[2]+'</span>';
+  }
+  function runBadge(s){
+    var map={no:['#3a1414','#ff8a75','Do NOT keep running'],caution:['#2e2410','#ffcf6a','Run with caution'],yes:['#12241c','#5fe0a8','OK to run'],unknown:['#20262c','#9aa6b2','Unsure — check first']};
+    var m=map[s]||map.unknown;
+    return '<span style="display:inline-block;background:'+m[0]+';color:'+m[1]+';font-weight:700;font-size:12px;padding:3px 10px;border-radius:20px;">'+m[2]+'</span>';
+  }
+  function renderDiagnosis(d){
+    if(!d.readable){
+      $('diagOut').innerHTML='<div style="background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px;">'
+        +'<b>Couldn’t read the panel clearly.</b><br><span class="muted" style="font-size:13px;">'+esc(d.fault_summary||'Please retake the photo: hold steady, get the whole screen in frame, avoid glare, and make sure the display is lit.')+'</span></div>';
+      $('diagOut').style.display='block'; return;
+    }
+    var causes=(d.likely_causes||[]).map(function(c){ return '<li style="margin-bottom:6px;"><b>'+esc(c.cause)+'</b><br><span class="muted" style="font-size:12.5px;">Check: '+esc(c.check)+'</span></li>'; }).join('');
+    var actions=(d.technician_actions||[]).map(function(a){ return '<li style="margin-bottom:4px;">'+esc(a)+'</li>'; }).join('');
+    var cust=d.customer_message||'';
+    $('diagOut').innerHTML=
+      '<div style="background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:16px;">'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+sevBadge(d.severity)+runBadge(d.safe_to_run)+'</div>'
+      +(d.controller?('<div class="muted" style="font-size:12px;margin-bottom:6px;">Controller: '+esc(d.controller)+'</div>'):'')
+      +(d.panel_reading?('<div style="font-size:13px;margin-bottom:10px;"><span class="muted">Panel shows:</span> <b>'+esc(d.panel_reading)+'</b></div>'):'')
+      +'<div style="font-size:14.5px;font-weight:700;margin-bottom:10px;">'+esc(d.fault_summary||'')+'</div>'
+      +(causes?('<div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;">Likely causes</div><ul style="margin:0 0 12px;padding-left:18px;">'+causes+'</ul>'):'')
+      +(actions?('<div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;">Team should</div><ul style="margin:0 0 12px;padding-left:18px;">'+actions+'</ul>'):'')
+      +'<div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;">Message for the customer</div>'
+      +'<div id="diagCust" style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:11px 12px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;">'+esc(cust)+'</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">'
+        +'<button type="button" class="btn" id="diagWa" style="padding:9px 14px;">📤 Send to customer (WhatsApp)</button>'
+        +'<button type="button" class="btn sec" id="diagCopy" style="padding:9px 14px;">📋 Copy message</button>'
+        +'<button type="button" class="btn sec" id="diagUse" style="padding:9px 14px;">➕ Use in the log below</button>'
+      +'</div><div class="muted" id="diagCopyMsg" style="font-size:12px;margin-top:8px;"></div></div>';
+    $('diagOut').style.display='block';
+    $('diagWa').addEventListener('click',function(){ var t=cust; if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } });
+    $('diagCopy').addEventListener('click',function(){ (navigator.clipboard?navigator.clipboard.writeText(cust):Promise.reject()).then(function(){ $('diagCopyMsg').textContent='Copied ✓'; }).catch(function(){ $('diagCopyMsg').textContent='Select and copy the message above.'; }); });
+    $('diagUse').addEventListener('click',function(){
+      if(!$('category').value) $('category').value='Control panel';
+      var line=(d.panel_reading?('Panel: '+d.panel_reading+' — '):'')+(d.fault_summary||'');
+      $('notes').value=line.slice(0,300);
+      $('diagCopyMsg').textContent='Added to the breakdown notes below. Fill DG number and Log it.';
+      $('notes').scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  }
+  $('panelPhoto').addEventListener('change',function(){
+    var f=this.files && this.files[0]; if(!f) return;
+    $('diagFileName').textContent=f.name||'photo';
+    $('diagOut').style.display='none';
+    $('diagStatus').style.display='block'; $('diagStatus').textContent='Reading the panel…';
+    resizeToBlob(f,1400,function(blob,dataUrl){
+      if(!blob){ $('diagStatus').textContent='Could not read that image. Try another photo.'; return; }
+      if(dataUrl){ $('diagPreview').src=dataUrl; $('diagPreviewWrap').style.display='block'; }
+      var qs=[]; if($('dg').value.trim()) qs.push('dg='+encodeURIComponent($('dg').value.trim())); if($('location').value.trim()) qs.push('location='+encodeURIComponent($('location').value.trim()));
+      fetch('/api/breakdowns/diagnose'+(qs.length?('?'+qs.join('&')):''),{method:'POST',headers:{'Authorization':'Bearer '+TOKEN,'Content-Type':'image/jpeg'},body:blob})
+        .then(function(r){ if(r.status===401){ showLogin(); throw new Error('auth'); } return r.json(); })
+        .then(function(d){
+          $('diagStatus').style.display='none';
+          if(!d || !d.ok){ $('diagStatus').style.display='block'; $('diagStatus').textContent=(d&&d.message)||'Could not analyse the photo. Please log it manually.'; return; }
+          renderDiagnosis(d.diagnosis||{});
+        })
+        .catch(function(e){ if(e&&e.message==='auth')return; $('diagStatus').style.display='block'; $('diagStatus').textContent='Could not analyse the photo right now. Please log it manually.'; });
+    });
   });
 
   renderSymptoms();

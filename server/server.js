@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');
 
 const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus } = require('./db');
 const { extractFields } = require('./extract');
+const { diagnosePanel } = require('./diagnose');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
@@ -881,6 +882,24 @@ app.post('/api/breakdowns/update', fleetProtect, (req, res) => {
 app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
   breakdowns.remove((req.body || {}).id);
   res.json({ ok: true });
+});
+// Diagnose a control-panel photo. Accepts the raw image bytes (Content-Type
+// image/jpeg|png|webp). Optional ?dg= and ?location= add context. Always
+// responds 200 with { ok, diagnosis } or { ok:false, message } so the page can
+// fall back to manual logging.
+app.post('/api/breakdowns/diagnose', fleetProtect, express.raw({ type: ['image/*'], limit: '15mb' }), async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  if (!req.body || !req.body.length) {
+    return res.status(400).json({ ok: false, message: 'No image received' });
+  }
+  try {
+    const ctx = { dg: (req.query.dg || '').toString().slice(0, 20), location: (req.query.location || '').toString().slice(0, 80) };
+    const result = await diagnosePanel(req.body, req.headers['content-type'], ctx);
+    res.json(result);
+  } catch (e) {
+    console.error('Panel diagnosis failed:', e && e.message);
+    res.json({ ok: false, message: 'Could not analyse the photo right now - please log the breakdown manually.' });
+  }
 });
 // ---------- Rental income tracker ----------
 // Per-generator rental terms (customer, monthly rate, start date). Combined with
