@@ -76,6 +76,7 @@
       <div class="field"><label>Oil filter (part no.)</label><input type="text" id="fOil" placeholder="e.g. LF3970" autocomplete="off"></div>
       <div class="field"><label>Fuel filter (part no.)</label><input type="text" id="fFuel" placeholder="e.g. FF5052" autocomplete="off"></div>
       <div class="field"><label>Engine oil capacity (litres)</label><input type="number" id="fLitres" min="0" step="0.5" placeholder="confirm on dipstick"><div class="hintline" id="oilHint"></div></div>
+      <div class="field"><label>Oil grade</label><input type="text" id="fGrade" list="gradelist" placeholder="15W-40" autocomplete="off"><datalist id="gradelist"><option value="15W-40"><option value="20W-50"><option value="10W-30"><option value="SAE 40"></datalist></div>
       <div class="field"><label>Engine model (optional)</label><input type="text" id="fEngine" placeholder="e.g. Cummins 6BT5.9" autocomplete="off"></div>
       <div class="field"><label>Notes (optional)</label><input type="text" id="fNotes" placeholder="e.g. also change water separator" autocomplete="off"></div>
     </div>
@@ -179,7 +180,7 @@
     $('dDg').textContent=dg;
     $('dMeta').textContent=[(d.kva?d.kva+' kVA':''),d.brand,(d.customer||'')].filter(Boolean).join(' · ');
     $('fAir').value=sp.air||''; $('fOil').value=sp.oil||''; $('fFuel').value=sp.fuel||'';
-    $('fEngine').value=sp.engine||''; $('fNotes').value=sp.notes||'';
+    $('fGrade').value=sp.oilGrade||'15W-40'; $('fEngine').value=sp.engine||''; $('fNotes').value=sp.notes||'';
     var typ=typicalOil(d.kva, d.brand);
     $('fLitres').value=(sp.oilLitres!=null?sp.oilLitres:'');
     var shown=(sp.oilLitres!=null?sp.oilLitres:typ);
@@ -193,7 +194,7 @@
   $('dg').addEventListener('keydown',function(e){ if(e.key==='Enter') openDg($('dg').value); });
   $('fLitres').addEventListener('input',function(){ var v=Number($('fLitres').value); $('dOil').textContent=(v>0?v+' L':((typicalOil((DIR[CUR]||{}).kva,(DIR[CUR]||{}).brand)||'—')+(typicalOil((DIR[CUR]||{}).kva,(DIR[CUR]||{}).brand)?' L':''))); });
 
-  function body(){ return { dg:CUR, air:$('fAir').value, oil:$('fOil').value, fuel:$('fFuel').value, oilLitres:$('fLitres').value, engine:$('fEngine').value, notes:$('fNotes').value }; }
+  function body(){ return { dg:CUR, air:$('fAir').value, oil:$('fOil').value, fuel:$('fFuel').value, oilLitres:$('fLitres').value, oilGrade:$('fGrade').value, engine:$('fEngine').value, notes:$('fNotes').value }; }
   $('save').addEventListener('click',async function(){
     if(!CUR) return; $('err').textContent=''; $('msg').textContent='';
     try{
@@ -213,7 +214,8 @@
     m+='• Air filter: '+($('fAir').value||'—')+'\n';
     m+='• Oil filter: '+($('fOil').value||'—')+'\n';
     m+='• Fuel filter: '+($('fFuel').value||'—')+'\n';
-    m+='• Engine oil: '+(oilShown!=null?(oilShown+' L'+(litres?'':' (typical — confirm)')):'—')+'\n';
+    var grade=($('fGrade').value||'15W-40').trim();
+    m+='• Engine oil: '+grade+(oilShown!=null?(' · '+oilShown+' L'+(litres?'':' (typical — confirm)')):'')+'\n';
     if($('fNotes').value) m+='\nNote: '+$('fNotes').value+'\n';
     return m;
   }
