@@ -10,6 +10,7 @@
  * in the morning and it greets you with the alarm.
  */
 (function () {
+  var ENGINE = 'v4';
   var ALM = 'deluxeAlarm';
   var TOKEN = (function () { try { return localStorage.getItem('deluxeFleetToken') || ''; } catch (e) { return ''; } })();
   var $ = function (id) { return document.getElementById(id); };
@@ -17,7 +18,27 @@
   function set(o) { try { localStorage.setItem(ALM, JSON.stringify(o)); } catch (e) {} }
   function today() { return new Date().toLocaleDateString('en-CA'); }
   function nowMins() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+  function hhmm() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
   function toMins(s) { var p = String(s || '07:00').split(':'); return (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0); }
+
+  // Housekeeping: a firedDate left over from a PREVIOUS day must never suppress
+  // today's ring. Clear it on load so a stale flag can't keep the alarm silent.
+  (function () { var a = get(); if (a.firedDate && a.firedDate !== today()) { delete a.firedDate; set(a); } })();
+
+  // Unlock audio on the very first tap anywhere, so a scheduled ring (which has
+  // no user gesture of its own) is allowed to make sound by the browser.
+  var audioUnlocked = false;
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      audioUnlocked = true;
+    } catch (e) {}
+  }
+  document.addEventListener('pointerdown', unlockAudio, { once: false });
+  document.addEventListener('touchstart', unlockAudio, { once: false });
+  document.addEventListener('click', unlockAudio, { once: false });
 
   // ---- due count (best-effort; cached) ----
   var due = { over: null, soon: null };
@@ -109,7 +130,25 @@
     try { if ('Notification' in window && Notification.permission === 'granted') new Notification('Deluxe Ops — Morning service check', { body: (due.over != null ? (due.over + ' overdue, ' + due.soon + ' due soon') : 'Open the app to check services'), icon: '/icon-192.png' }); } catch (e) {}
   }
 
+  // Live status line (shown on the dashboard panel). Kept at module scope so
+  // both the panel wiring and every check() tick refresh the same text.
+  function renderStatus() {
+    var el = $('almStatus'); if (!el) return;
+    var b = get();
+    if (!b.on) { el.style.color = '#8a99ab'; el.textContent = 'Alarm off. Turn it on for a morning ring with today’s due list. (engine ' + ENGINE + ')'; return; }
+    var tgt = b.time || '07:00';
+    var mins = toMins(tgt) - nowMins();
+    var firedToday = b.firedDate === today();
+    var line;
+    if (firedToday) line = '✓ On — already rang today at ' + tgt + '. Will ring again tomorrow.';
+    else if (mins > 0) line = '✓ On — armed. Rings at ' + tgt + ' (in ' + mins + ' min) while the app is open. Now ' + hhmm() + '.';
+    else line = '✓ On — armed. It is past ' + tgt + '; will ring within ~30s while the app is open. Now ' + hhmm() + '.';
+    el.style.color = '#37d99a';
+    el.textContent = line + ' (engine ' + ENGINE + ')';
+  }
+
   function check() {
+    renderStatus();
     var a = get(); if (!a.on) return;
     if (ov && ov.style.display === 'flex') return;
     if (a.snooze && Date.now() < a.snooze) return;
@@ -131,17 +170,11 @@
     $('almOn').checked = !!a.on;
     $('almTime').value = a.time || '07:00';
     if ($('almSound')) $('almSound').checked = a.sound !== false;
-    function status() {
-      var b = get();
-      var el = $('almStatus'); if (!el) return;
-      if (b.on) { el.style.color = '#37d99a'; el.textContent = '✓ Alarm on — rings at ' + (b.time || '07:00') + ' whenever the app is open (any page), and when you open it after that time.'; }
-      else { el.style.color = '#8a99ab'; el.textContent = 'Alarm off. Turn it on for a morning ring with today’s due list.'; }
-    }
     function save() {
       var b = get(); b.on = $('almOn').checked; b.time = $('almTime').value || '07:00'; if ($('almSound')) b.sound = $('almSound').checked;
       // Re-arm for today whenever settings change (so a new time can still fire today).
       delete b.firedDate; delete b.snooze;
-      set(b); status();
+      set(b); renderStatus();
       if (b.on && 'Notification' in window && Notification.permission === 'default') { Notification.requestPermission().catch(function () {}); }
       setTimeout(check, 500);
     }
@@ -149,18 +182,19 @@
     $('almTime').addEventListener('change', save);
     if ($('almSound')) $('almSound').addEventListener('change', save);
     if ($('almTest')) $('almTest').addEventListener('click', function () {
+      unlockAudio();
       if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(function () {});
       refreshDue(); fire();
     });
-    status();
+    renderStatus();
   }
 
   // ---- boot ----
   function boot() {
     wirePanel();
     refreshDue();
-    setTimeout(check, 3500);        // shortly after load
-    setInterval(check, 30000);      // and every 30s while open
+    setTimeout(check, 2000);        // shortly after load
+    setInterval(check, 15000);      // and every 15s while open
     setInterval(refreshDue, 300000); // keep the count fresh
     // re-check when the app is brought back to the foreground
     document.addEventListener('visibilitychange', function () { if (!document.hidden) { refreshDue(); setTimeout(check, 800); } });

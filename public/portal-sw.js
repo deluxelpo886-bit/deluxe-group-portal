@@ -4,7 +4,7 @@
  * fast. Network-first so updates are always picked up when online; falls back to
  * the cache only when offline. Live data and auth (/api/…) are never cached.
  */
-const CACHE = 'deluxe-portal-v1';
+const CACHE = 'deluxe-portal-v2';
 
 self.addEventListener('install', () => { self.skipWaiting(); });
 
