@@ -674,9 +674,23 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
   const todayStr = new Intl.DateTimeFormat('en-CA', {
     timeZone: process.env.ALERT_TIMEZONE || 'Asia/Dubai', year: 'numeric', month: '2-digit', day: '2-digit',
   }).format(new Date());
+  const dirMap = directory.getMap();
   const generators = serviceLog.getAll().map((g) => {
     const h = hm[g.dg];
     if (h) { g.offHire = !!h.offHire; g.hireSince = h.since; g.hireNote = h.note; }
+    // A unit physically in the YARD / WORK SHOP is not on hire, even if no
+    // off-hire status was set for it. Treat it as off-hire (in the workshop) so
+    // it drops out of the on-hire list, the on-hire count, and the service
+    // alarms everywhere at once.
+    const d = dirMap[String(g.dg || '').toUpperCase()];
+    if (d) {
+      const loc = String(d.location || '').toUpperCase();
+      const cust = String(d.customer || '').toUpperCase();
+      if (loc === 'YARD' || cust.indexOf('WORK SHOP') >= 0 || cust.indexOf('WORKSHOP') >= 0) {
+        g.offHire = true;
+        if (!g.hireNote) g.hireNote = 'in yard';
+      }
+    }
     // Attach the hours-first due classification so every view (service list,
     // schedule, dashboard) shares the same "confirm before dispatch" logic.
     g.due = serviceLog.classifyDue(g, todayStr);

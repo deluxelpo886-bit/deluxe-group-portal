@@ -192,7 +192,7 @@
     } else if(key==='tracked'){
       title='📋 All generators';
       var l=(D.gens||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
-      rows=l.map(function(g){return row3(esc(g.dg), withCust(g.dg, (g.hours!=null?g.hours+'h':'')), g.offHire?'⚪ off-hire':'🟢 on hire');}).join('');
+      rows=l.map(function(g){return row3(esc(g.dg), withCust(g.dg, (g.hours!=null?g.hours+'h':'')), (g.offHire||g.inYard)?'⚪ off-hire':'🟢 on hire');}).join('');
       open=['/service','Open service ▸'];
     } else if(key==='overdue'){
       title='⚠ Service overdue';
@@ -260,8 +260,13 @@
     var rstats=rent.stats||{};
 
     var gens=svc.generators||[];
-    var onHire=gens.filter(function(g){return !g.offHire;});
-    var offHire=gens.filter(function(g){return g.offHire;});
+    // A unit physically in the YARD / WORK SHOP is not on hire, even if the
+    // off-hire flag hasn't been set for it. Treat it as in-yard (off-hire) so it
+    // drops out of the on-hire list, the on-hire count and the service alarms.
+    var inYard=function(dg){ var r=(dir||{})[String(dg).toUpperCase()]||{}; var loc=String(r.location||'').toUpperCase(); var cust=String(r.customer||'').toUpperCase(); return loc==='YARD'||cust.indexOf('WORK SHOP')>=0||cust.indexOf('WORKSHOP')>=0; };
+    gens.forEach(function(g){ g.inYard=inYard(g.dg); });
+    var onHire=gens.filter(function(g){return !g.offHire && !g.inYard;});
+    var offHire=gens.filter(function(g){return g.offHire || g.inYard;});
     var active=onHire;   // service alarms only apply to on-hire units
 
     // Date-based service countdown: days to the next-service date (from the

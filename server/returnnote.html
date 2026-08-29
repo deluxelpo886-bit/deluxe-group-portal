@@ -326,7 +326,26 @@
     window.scrollTo(0,0);
   }
 
-  $('printBtn').addEventListener('click',function(){ window.print(); });
+  // Printing from an INSTALLED app (standalone PWA) is unreliable — window.print()
+  // is often a no-op in the app webview. Open the note as a normal browser page
+  // and print from there (where Save-as-PDF works); fall back to in-app print if
+  // the popup is blocked.
+  function printNote(){
+    var el=$('note'); if(!el||!el.innerHTML){ window.print(); return; }
+    var styles=':root{--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}body{background:#fff;margin:0;}';
+    document.querySelectorAll('style').forEach(function(s){ styles+=s.textContent; });
+    var w=window.open('','_blank'); if(!w){ window.print(); return; }
+    w.document.open();
+    w.document.write(
+      '<!doctype html><html><head><meta charset="utf-8">'
+      +'<meta name="viewport" content="width=device-width,initial-scale=1">'
+      +'<title>Return note</title><style>'+styles+'</style></head>'
+      +'<body><div class="note">'+el.innerHTML+'</div>'
+      +'<scr'+'ipt>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},500);};</scr'+'ipt>'
+      +'</body></html>');
+    w.document.close();
+  }
+  $('printBtn').addEventListener('click', printNote);
   $('newBtn').addEventListener('click',function(){
     show($('noteArea'),false); show($('formPanel'),true);
     ['dg','kva','brand','customer','site','contact','driver','vehicle','meterReading','damage','accessories','notes'].forEach(function(id){ $(id).value=''; });
