@@ -91,8 +91,10 @@
     </div>
     <p class="sub" style="margin:0 0 12px;">Take or upload a clear photo of the generator's control panel (the display / alarm screen). The app reads the fault and tells you the likely cause, what to check, and a message you can send the customer.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-      <label for="panelPhoto" class="btn" style="cursor:pointer;display:inline-block;">📷 Take / choose photo</label>
-      <input type="file" id="panelPhoto" accept="image/*" capture="environment" style="display:none;">
+      <label for="panelPhotoCam" class="btn" style="cursor:pointer;display:inline-block;">📷 Take photo</label>
+      <input type="file" id="panelPhotoCam" accept="image/*" capture="environment" style="display:none;">
+      <label for="panelPhotoLib" class="btn sec" style="cursor:pointer;display:inline-block;">🖼️ Upload photo</label>
+      <input type="file" id="panelPhotoLib" accept="image/*" style="display:none;">
       <span class="muted" id="diagFileName" style="font-size:12.5px;"></span>
     </div>
     <div id="diagPreviewWrap" style="display:none;margin-top:12px;">
@@ -495,8 +497,8 @@
       $('notes').scrollIntoView({behavior:'smooth',block:'center'});
     });
   }
-  $('panelPhoto').addEventListener('change',function(){
-    var f=this.files && this.files[0]; if(!f) return;
+  function handlePanelFile(f){
+    if(!f) return;
     $('diagFileName').textContent=f.name||'photo';
     $('diagOut').style.display='none';
     $('diagStatus').style.display='block'; $('diagStatus').textContent='Reading the panel…';
@@ -513,7 +515,9 @@
         })
         .catch(function(e){ if(e&&e.message==='auth')return; $('diagStatus').style.display='block'; $('diagStatus').textContent='Could not analyse the photo right now. Please log it manually.'; });
     });
-  });
+  }
+  $('panelPhotoCam').addEventListener('change',function(){ handlePanelFile(this.files && this.files[0]); this.value=''; });
+  $('panelPhotoLib').addEventListener('change',function(){ handlePanelFile(this.files && this.files[0]); this.value=''; });
 
   renderSymptoms();
   if(TOKEN){ hideLogin(); } else { showLogin(); }
