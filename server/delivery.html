@@ -304,7 +304,48 @@
     window.scrollTo(0,0);
   }
 
-  $('printBtn').addEventListener('click',function(){ window.print(); });
+  // Printing from an INSTALLED app (standalone PWA) is unreliable: window.print()
+  // is often a no-op in the app's webview. So we open the note as a normal page
+  // in the browser and print from there, where Save-as-PDF works. If the popup is
+  // blocked we fall back to the in-app print.
+  function printNote(){
+    var inner = $('note') ? $('note').innerHTML : '';
+    if(!inner){ window.print(); return; }
+    var css =
+      ':root{--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}'
+      +'*{box-sizing:border-box;}'
+      +'body{margin:0;background:#fff;color:#111;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}'
+      +'.note{background:#fff;color:#111;padding:8mm;max-width:720px;margin:0 auto;}'
+      +'.note .head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px;}'
+      +'.note .logos img{height:40px;width:auto;display:block;margin-bottom:6px;}'
+      +'.note .co{font-size:12px;color:#333;line-height:1.5;}'
+      +'.note .title{text-align:right;}'
+      +'.note .title .t{font-size:20px;font-weight:800;letter-spacing:.02em;}'
+      +'.note .title .n{font-family:var(--mono);font-size:14px;color:#000;font-weight:700;margin-top:4px;}'
+      +'.note .title .d{font-size:12px;color:#555;margin-top:2px;}'
+      +'.note table{width:100%;border-collapse:collapse;margin:6px 0 14px;}'
+      +'.note td{border:1px solid #ccc;padding:8px 10px;font-size:13px;vertical-align:top;}'
+      +'.note td.k{background:#f4f4f4;color:#444;font-size:11px;text-transform:uppercase;letter-spacing:.04em;width:26%;white-space:nowrap;}'
+      +'.note .big{font-family:var(--mono);font-weight:700;font-size:15px;}'
+      +'.note .notes{font-size:12.5px;color:#333;min-height:34px;border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:16px;}'
+      +'.note .signs{display:flex;gap:26px;margin-top:26px;}'
+      +'.note .signs > div{flex:1;}'
+      +'.note .sigline{border-top:1px solid #111;margin-top:38px;padding-top:5px;font-size:12px;color:#333;}'
+      +'.note .terms{font-size:10.5px;color:#777;margin-top:18px;border-top:1px solid #eee;padding-top:8px;line-height:1.5;}'
+      +'.k{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#444;margin-bottom:4px;}';
+    var w = window.open('', '_blank');
+    if(!w){ window.print(); return; }   // popup blocked -> in-app print fallback
+    w.document.open();
+    w.document.write(
+      '<!doctype html><html><head><meta charset="utf-8">'
+      +'<meta name="viewport" content="width=device-width,initial-scale=1">'
+      +'<title>Delivery note</title><style>'+css+'</style></head>'
+      +'<body><div class="note">'+inner+'</div>'
+      +'<scr'+'ipt>window.onload=function(){setTimeout(function(){try{window.focus();window.print();}catch(e){}},500);};</scr'+'ipt>'
+      +'</body></html>');
+    w.document.close();
+  }
+  $('printBtn').addEventListener('click', printNote);
   $('newBtn').addEventListener('click',function(){
     show($('noteArea'),false); show($('formPanel'),true);
     ['dg','kva','brand','customer','site','contact','driver','vehicle','meterReading','rate','notes'].forEach(function(id){ $(id).value=''; });
