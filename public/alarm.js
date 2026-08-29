@@ -102,7 +102,6 @@
   }
   function fire() {
     buildOverlay();
-    var a = get(); a.firedDate = today(); delete a.snooze; set(a);
     $('dxAlmTitle').textContent = '⏰ Good morning';
     $('dxAlmBody').innerHTML = 'Service check for today:<br><br>' + dueText() + '<br><br><span style="color:#8a99ab;font-size:12.5px;">Tap Open plan to send the teams.</span>';
     ov.style.display = 'flex';
@@ -117,7 +116,12 @@
     var pastTime = nowMins() >= toMins(a.time || '07:00');
     var firedToday = a.firedDate === today();
     var snoozeReady = a.snooze && Date.now() >= a.snooze;
-    if ((pastTime && !firedToday) || snoozeReady) fire();
+    if ((pastTime && !firedToday) || snoozeReady) {
+      // Mark the day as rung ONLY for the real scheduled alarm (not for Test),
+      // so testing never suppresses today's real ring.
+      var b = get(); b.firedDate = today(); delete b.snooze; set(b);
+      fire();
+    }
   }
 
   // ---- wire the settings panel if this page has it (dashboard) ----
@@ -134,8 +138,12 @@
       else { el.style.color = '#8a99ab'; el.textContent = 'Alarm off. Turn it on for a morning ring with today’s due list.'; }
     }
     function save() {
-      var b = get(); b.on = $('almOn').checked; b.time = $('almTime').value || '07:00'; if ($('almSound')) b.sound = $('almSound').checked; set(b); status();
+      var b = get(); b.on = $('almOn').checked; b.time = $('almTime').value || '07:00'; if ($('almSound')) b.sound = $('almSound').checked;
+      // Re-arm for today whenever settings change (so a new time can still fire today).
+      delete b.firedDate; delete b.snooze;
+      set(b); status();
       if (b.on && 'Notification' in window && Notification.permission === 'default') { Notification.requestPermission().catch(function () {}); }
+      setTimeout(check, 500);
     }
     $('almOn').addEventListener('change', save);
     $('almTime').addEventListener('change', save);
