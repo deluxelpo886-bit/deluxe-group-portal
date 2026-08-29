@@ -31,6 +31,13 @@
   footer{margin-top:22px;color:var(--muted);font-size:12px;line-height:1.6;}
 </style>
 <link rel="stylesheet" href="/theme.css">
+<link rel="manifest" href="/manifest-portal.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deluxe Ops">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
 </head>
 <body>
 <div class="wrap">
