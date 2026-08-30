@@ -176,7 +176,7 @@
         +'<div class="counts"><span>Due (≤30d): <b>'+z.units.length+'</b></span>'+(z.overdue?('<span style="color:#ff8a75;">Overdue: <b>'+z.overdue+'</b></span>'):'')+(z.soon?('<span style="color:'+'var(--gold)'+';">≤7 days: <b>'+z.soon+'</b></span>'):'')+'</div>'
         +'<div class="rec">'+z.rec+'</div>'
         +'<div class="units">'+z.units.map(function(u){ return '<div class="u"><span><span class="dg">'+esc(u.dg)+'</span> <span style="color:var(--muted);">'+(u.kva?esc(u.kva)+' kVA':'')+(u.customer?(' · '+esc(u.customer)):'')+'</span></span>'+pill(u.days)+'</div>'; }).join('')+'</div>'
-        +'<div class="actions"><a class="mini" href="/fleet">🗺️ Open map</a><a class="mini" href="/servicecard">🃏 Service cards</a></div>'
+        +'<div class="actions"><a class="mini" href="/fleet?routeDgs='+encodeURIComponent(z.units.map(function(u){return u.dg;}).join(','))+'&zoneLabel='+encodeURIComponent(z.name)+'">🗺️ Route this zone on the map</a><a class="mini" href="/servicecard">🃏 Service cards</a></div>'
       +'</div>';
     }).join('');
     $('empty').style.display='none';
