@@ -1742,7 +1742,14 @@ refreshAll();
   updateLabelVisibility();
 
   // ---- Full-screen map (phone-friendly, works on iOS too) ----
-  (function(){ var st=document.createElement('style'); st.textContent='#mapEl.fs-map{position:fixed;inset:0;width:100vw;height:100vh !important;z-index:5500;border-radius:0;}'; document.head.appendChild(st); })();
+  (function(){ var st=document.createElement('style'); st.textContent=
+      '#mapEl.fs-map{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh !important;z-index:5500;border-radius:0;}'
+      // In full screen, float the status-filter chips over the top of the map so you can still filter.
+      +'body.map-is-fs #mapCats{position:fixed;top:54px;left:8px;right:8px;z-index:5650;margin:0;padding:8px;background:rgba(16,19,23,0.9);border:1px solid #2c333a;border-radius:12px;overflow-x:auto;flex-wrap:nowrap;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 4px 16px rgba(0,0,0,.5);}'
+      +'body.map-is-fs #mapCats .mapcat{white-space:nowrap;}'
+      // push the map's own top controls (zoom, satellite, available, locate) below the chip bar
+      +'body.map-is-fs .leaflet-top{margin-top:52px;}'
+      ; document.head.appendChild(st); })();
   var mapElRef=document.getElementById('mapEl');
   var fsBtn=document.createElement('button');
   fsBtn.type='button'; fsBtn.textContent='⛶ Full screen';
@@ -1762,12 +1769,37 @@ refreshAll();
   function setFullscreen(on){
     if(!mapElRef) return;
     mapElRef.classList.toggle('fs-map', on);
+    document.body.classList.toggle('map-is-fs', on);
     fsExitBtn.style.display = on ? 'block' : 'none';
     document.body.style.overflow = on ? 'hidden' : '';
-    setTimeout(function(){ if(map && map.invalidateSize) map.invalidateSize(); }, 150);
+    // Let the browser paint the new size, then tell Leaflet to re-measure a
+    // couple of times (mobile toolbars settle late).
+    setTimeout(function(){ if(map && map.invalidateSize) map.invalidateSize(); }, 120);
+    setTimeout(function(){ if(map && map.invalidateSize) map.invalidateSize(); }, 450);
   }
+  // Exit full screen with the back button / Esc instead of leaving the page.
+  window.addEventListener('keydown', function(e){ if(e.key==='Escape' && mapElRef.classList.contains('fs-map')) setFullscreen(false); });
   fsBtn.addEventListener('click', function(){ setFullscreen(true); });
   fsExitBtn.addEventListener('click', function(){ setFullscreen(false); });
+
+  // ---- "My location" button (blue dot, like Google Maps) ----
+  var locBtn=null, locMarker=null, locCircle=null;
+  var LocateCtl = L.Control.extend({ options:{position:'topright'}, onAdd:function(){
+    var b=L.DomUtil.create('button','');
+    locBtn=b; b.type='button'; b.textContent='📍'; b.title='Show my location';
+    b.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:7px 10px;border-radius:8px;font-size:15px;line-height:1;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.5);margin-top:6px;';
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b,'click',function(){ b.textContent='…'; try{ map.locate({setView:true, maxZoom:16, enableHighAccuracy:true, timeout:10000}); }catch(e){ b.textContent='📍'; } });
+    return b;
+  }});
+  map.addControl(new LocateCtl());
+  map.on('locationfound', function(e){
+    if(locBtn) locBtn.textContent='📍';
+    if(locMarker) map.removeLayer(locMarker); if(locCircle) map.removeLayer(locCircle);
+    locCircle=L.circle(e.latlng,{radius:Math.min(e.accuracy||40,120),color:'#4285F4',fillColor:'#4285F4',fillOpacity:0.12,weight:1}).addTo(map);
+    locMarker=L.circleMarker(e.latlng,{radius:7,color:'#fff',weight:3,fillColor:'#4285F4',fillOpacity:1}).addTo(map).bindTooltip('You are here',{direction:'top'});
+  });
+  map.on('locationerror', function(){ if(locBtn) locBtn.textContent='📍'; if(typeof locateMsgShow==='function'){} alert('Could not get your location. Please allow location access for the browser and try again.'); });
 
   // ---- Auto "arrived on site" banner (after a breakdown dispatch) ----
   var arrivalBanner=document.createElement('div');
