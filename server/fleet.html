@@ -1453,13 +1453,16 @@ refreshAll();
     let m=vehMarkers[key];
     if(!m){
       m=L.marker([d.lat,d.lon],{icon:icon}).addTo(map);
-      m.bindTooltip(v.name, {permanent:true, direction:'top', offset:[0,-20], className:'dg-label'});
+      m.bindTooltip(v.name, {permanent:true, direction:'top', offset:[0,-20], className:'dg-label veh-label'});
       vehMarkers[key]=m;
     } else {
       m.setLatLng([d.lat,d.lon]); m.setIcon(icon);
       if(m.getTooltip()) m.setTooltipContent(v.name);
     }
     m.setOpacity(stale?0.4:1);
+    // Hide the name label for offline/parked trucks (the yard pile-up); keep it
+    // on live/moving trucks. Tap any truck to see its name in the popup.
+    var _tt=m.getTooltip(); if(_tt && _tt._container){ _tt._container.classList.toggle('veh-off', stale); }
     m.bindPopup(popup);
 
     if(!TRAILS[key]) TRAILS[key]=[];
@@ -1731,6 +1734,7 @@ refreshAll();
   // ---- Declutter map labels: only show the name tags when zoomed in ----
   var LABEL_MIN_ZOOM = 13;
   (function(){ var st=document.createElement('style'); st.textContent='.hide-map-labels .dg-label,.hide-map-labels .site-label{display:none !important;}'
+    +'.leaflet-tooltip.veh-off{display:none !important;}'
     +'.site-label{background:#14181c;color:#e8a13a;border:1px solid #3a3320;border-radius:5px;padding:1px 6px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:11px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.5);}'
     +'.site-label:before{display:none;}'; document.head.appendChild(st); })();
   function updateLabelVisibility(){ if(map && map.getContainer) map.getContainer().classList.toggle('hide-map-labels', map.getZoom() < LABEL_MIN_ZOOM); }
