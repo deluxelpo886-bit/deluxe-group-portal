@@ -1830,23 +1830,19 @@ refreshAll();
     while(rem.length){ var bi=0,bd=Infinity; for(var i=0;i<rem.length;i++){ var d=haversine(cur.lat,cur.lon,rem[i].lat,rem[i].lon); if(d<bd){bd=d;bi=i;} } cur=rem[bi]; out.push(rem.splice(bi,1)[0]); }
     return out;
   }
-  async function drawServiceRoute(){
+  async function renderRoute(stops, totalCount, title){
     if(typeof closeFind==='function') closeFind();
     svcRouteLayer.clearLayers();
-    var all=orderNearest(routeDueUnits());
-    var CAP=15; var stops=all.slice(0,CAP);
+    svcRouteOn=true; if(svcRouteBtn){ svcRouteBtn.style.background='#e8a13a'; svcRouteBtn.style.color='#1a1300'; }
     if(!stops.length){ svcRouteBanner.style.display='flex'; svcRouteBanner.innerHTML='<span>No due services with a map location right now. 👍</span><button id="svcRouteClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button>'; document.getElementById('svcRouteClose').onclick=clearServiceRoute; return; }
-    // office start marker
     L.marker([OFFICE.lat,OFFICE.lon],{icon:numIcon('▶','#8b95a1')}).addTo(svcRouteLayer).bindTooltip('Start — yard',{direction:'top'});
     stops.forEach(function(r,i){
       var u=serviceUrgency(r.dg); var col=(u&&u.level==='overdue')?'#ff7a5c':'#e8c168';
       L.marker([r.lat,r.lon],{icon:numIcon(i+1,col)}).addTo(svcRouteLayer)
-        .bindPopup('<b>'+(i+1)+'. '+r.dg+'</b> — '+r.kva+' kVA<br>'+(r.customer||'')+' · '+(r.location||'')+'<br>'+((u&&u.level==='overdue')?('<b style="color:#ff5c4d">OVERDUE '+Math.abs(u.days)+'d</b>'):('<b style="color:#e8c168">due in '+ (u?u.days:'?') +'d</b>')));
+        .bindPopup('<b>'+(i+1)+'. '+r.dg+'</b> — '+r.kva+' kVA<br>'+(r.customer||'')+' · '+(r.location||'')+'<br>'+((u&&u.level==='overdue')?('<b style="color:#ff5c4d">OVERDUE '+Math.abs(u.days)+'d</b>'):(u?('<b style="color:#e8c168">due in '+u.days+'d</b>'):'')));
     });
-    // draw segments office->1->2...  (road route each, straight-line fallback)
     var pts=[[OFFICE.lat,OFFICE.lon]].concat(stops.map(function(r){return [r.lat,r.lon];}));
-    var totalKm=0, anyApprox=false;
-    var segs=[];
+    var totalKm=0, anyApprox=false, segs=[];
     for(var i=0;i<pts.length-1;i++){ (function(a,b){ segs.push(
       fetch('/api/route?fromLat='+a[0]+'&fromLon='+a[1]+'&toLat='+b[0]+'&toLon='+b[1],{cache:'no-store'})
         .then(function(r){return r.json();}).catch(function(){return null;})
@@ -1855,15 +1851,25 @@ refreshAll();
           else { totalKm+=haversine(a[0],a[1],b[0],b[1]); anyApprox=true; L.polyline([a,b],{color:'#4caf7d',weight:3,opacity:0.7,dashArray:'6 8'}).addTo(svcRouteLayer); }
         })
       ); })(pts[i],pts[i+1]); }
-    svcRouteBanner.style.display='flex';
-    svcRouteBanner.innerHTML='<span>🛣️ Calculating route…</span>';
+    svcRouteBanner.style.display='flex'; svcRouteBanner.innerHTML='<span>🛣️ Calculating route…</span>';
     await Promise.all(segs);
     try{ map.fitBounds(L.latLngBounds(pts),{padding:[50,50]}); }catch(e){}
-    var extra=all.length>CAP?(' · +'+(all.length-CAP)+' more not shown'):'';
-    svcRouteBanner.innerHTML='<span>🛣️ <b>'+stops.length+' stops</b> · ~'+totalKm.toFixed(0)+' km'+(anyApprox?' (approx)':'')+extra+' · worst-overdue routed first from the yard</span>'
+    var extra=(totalCount>stops.length)?(' · +'+(totalCount-stops.length)+' more not shown'):'';
+    svcRouteBanner.innerHTML='<span>🛣️ '+(title||'')+'<b>'+stops.length+' stops</b> · ~'+totalKm.toFixed(0)+' km'+(anyApprox?' (approx)':'')+extra+'</span>'
       +'<span style="display:flex;gap:8px;"><button id="svcRouteWa" style="background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:700;">📱 Share</button><button id="svcRouteClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button></span>';
     document.getElementById('svcRouteClose').onclick=clearServiceRoute;
-    document.getElementById('svcRouteWa').onclick=function(){ var msg='*DELUXE — Service route today*\n'+stops.length+' stops · ~'+totalKm.toFixed(0)+' km\n\n'+stops.map(function(r,i){ var u=serviceUrgency(r.dg); return (i+1)+'. '+r.dg+' ('+r.kva+' kVA) — '+(r.customer||'')+' · '+(r.location||'')+((u&&u.level==='overdue')?(' — OVERDUE '+Math.abs(u.days)+'d'):(' — due '+(u?u.days:'?')+'d')); }).join('\n'); if(navigator.share){ navigator.share({text:msg}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); } };
+    document.getElementById('svcRouteWa').onclick=function(){ var msg='*DELUXE — Service route*\n'+(title||'')+stops.length+' stops · ~'+totalKm.toFixed(0)+' km\n\n'+stops.map(function(r,i){ var u=serviceUrgency(r.dg); return (i+1)+'. '+r.dg+' ('+r.kva+' kVA) — '+(r.customer||'')+' · '+(r.location||'')+((u&&u.level==='overdue')?(' — OVERDUE '+Math.abs(u.days)+'d'):(u?(' — due '+u.days+'d'):'')); }).join('\n'); if(navigator.share){ navigator.share({text:msg}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); } };
+  }
+  async function drawServiceRoute(){
+    var all=orderNearest(routeDueUnits());
+    await renderRoute(all.slice(0,15), all.length, 'worst-overdue first · ');
+  }
+  // Route a specific set of generators (used when opened from the Strategy page).
+  async function drawRouteForDgs(dgs, label){
+    var set={}; dgs.forEach(function(d){ set[String(d).trim().toUpperCase()]=1; });
+    var units=getFiltered().filter(function(r){ return set[String(r.dg).toUpperCase()] && r.lat!=null && r.lon!=null; });
+    var safe=label?String(label).replace(/[&<>"']/g,''):'';
+    await renderRoute(orderNearest(units).slice(0,25), units.length, safe?(safe+' · '):'');
   }
   function clearServiceRoute(){ svcRouteOn=false; svcRouteLayer.clearLayers(); svcRouteBanner.style.display='none'; if(svcRouteBtn){ svcRouteBtn.style.background='#20262c'; svcRouteBtn.style.color='#e8ecef'; } }
   function toggleServiceRoute(){ svcRouteOn=!svcRouteOn; if(svcRouteBtn){ svcRouteBtn.style.background=svcRouteOn?'#e8a13a':'#20262c'; svcRouteBtn.style.color=svcRouteOn?'#1a1300':'#e8ecef'; } if(svcRouteOn) drawServiceRoute(); else clearServiceRoute(); }
@@ -1912,6 +1918,17 @@ refreshAll();
     return b;
   }});
   map.addControl(new FindCtl());
+
+  // Opened from the Strategy page with ?routeDgs=DG-1,DG-2&zoneLabel=Mussafah — draw that zone's route.
+  (function(){
+    try{
+      var q=new URLSearchParams(location.search); var rd=q.get('routeDgs');
+      if(!rd) return;
+      var lbl=q.get('zoneLabel')||''; var dgs=rd.split(',').map(function(s){return s.trim();}).filter(Boolean);
+      if(!dgs.length) return;
+      var tries=0; var iv=setInterval(function(){ tries++; if(window.SERVICE_BY_DG || tries>20){ clearInterval(iv); drawRouteForDgs(dgs, lbl); } }, 400);
+    }catch(e){}
+  })();
 
   // ---- Auto "arrived on site" banner (after a breakdown dispatch) ----
   var arrivalBanner=document.createElement('div');
