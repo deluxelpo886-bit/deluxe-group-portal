@@ -1801,6 +1801,68 @@ refreshAll();
   });
   map.on('locationerror', function(){ if(locBtn) locBtn.textContent='📍'; if(typeof locateMsgShow==='function'){} alert('Could not get your location. Please allow location access for the browser and try again.'); });
 
+  // ---- Today's service route (the dispatch plan, drawn on the map) ----
+  var svcRouteLayer=L.layerGroup().addTo(map), svcRouteOn=false, svcRouteBtn=null;
+  var svcRouteBanner=document.createElement('div');
+  svcRouteBanner.style.cssText='position:fixed;left:8px;right:8px;bottom:10px;z-index:5700;background:rgba(16,19,23,0.94);border:1px solid #2c333a;border-radius:12px;padding:10px 12px;font-family:Inter,-apple-system,Segoe UI,sans-serif;color:#e8ecef;font-size:13px;display:none;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 4px 18px rgba(0,0,0,.6);max-width:820px;margin:0 auto;';
+  document.body.appendChild(svcRouteBanner);
+  function numIcon(n,color){ return L.divIcon({className:'',html:'<div style="background:'+color+';color:#12161a;font-weight:800;font-family:Inter,sans-serif;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #12161a;box-shadow:0 1px 5px rgba(0,0,0,.6);font-size:13px;">'+n+'</div>', iconSize:[26,26], iconAnchor:[13,13]}); }
+  function routeDueUnits(){
+    return getFiltered().filter(function(r){
+      if(r.status==='Off-Fleet' || r.lat==null || r.lon==null) return false;
+      if(isAvailable(r)) return false;                 // only on-hire units get serviced
+      var u=serviceUrgency(r.dg); return !!(u && (u.level==='overdue'||u.level==='soon'));
+    });
+  }
+  function orderNearest(units){
+    var rem=units.slice(), out=[], cur={lat:OFFICE.lat,lon:OFFICE.lon};
+    while(rem.length){ var bi=0,bd=Infinity; for(var i=0;i<rem.length;i++){ var d=haversine(cur.lat,cur.lon,rem[i].lat,rem[i].lon); if(d<bd){bd=d;bi=i;} } cur=rem[bi]; out.push(rem.splice(bi,1)[0]); }
+    return out;
+  }
+  async function drawServiceRoute(){
+    svcRouteLayer.clearLayers();
+    var all=orderNearest(routeDueUnits());
+    var CAP=15; var stops=all.slice(0,CAP);
+    if(!stops.length){ svcRouteBanner.style.display='flex'; svcRouteBanner.innerHTML='<span>No due services with a map location right now. 👍</span><button id="svcRouteClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button>'; document.getElementById('svcRouteClose').onclick=clearServiceRoute; return; }
+    // office start marker
+    L.marker([OFFICE.lat,OFFICE.lon],{icon:numIcon('▶','#8b95a1')}).addTo(svcRouteLayer).bindTooltip('Start — yard',{direction:'top'});
+    stops.forEach(function(r,i){
+      var u=serviceUrgency(r.dg); var col=(u&&u.level==='overdue')?'#ff7a5c':'#e8c168';
+      L.marker([r.lat,r.lon],{icon:numIcon(i+1,col)}).addTo(svcRouteLayer)
+        .bindPopup('<b>'+(i+1)+'. '+r.dg+'</b> — '+r.kva+' kVA<br>'+(r.customer||'')+' · '+(r.location||'')+'<br>'+((u&&u.level==='overdue')?('<b style="color:#ff5c4d">OVERDUE '+Math.abs(u.days)+'d</b>'):('<b style="color:#e8c168">due in '+ (u?u.days:'?') +'d</b>')));
+    });
+    // draw segments office->1->2...  (road route each, straight-line fallback)
+    var pts=[[OFFICE.lat,OFFICE.lon]].concat(stops.map(function(r){return [r.lat,r.lon];}));
+    var totalKm=0, anyApprox=false;
+    var segs=[];
+    for(var i=0;i<pts.length-1;i++){ (function(a,b){ segs.push(
+      fetch('/api/route?fromLat='+a[0]+'&fromLon='+a[1]+'&toLat='+b[0]+'&toLon='+b[1],{cache:'no-store'})
+        .then(function(r){return r.json();}).catch(function(){return null;})
+        .then(function(d){
+          if(d && d.ok && d.geometry){ totalKm+=(d.distance||0)/1000; if(d.approx) anyApprox=true; L.geoJSON(d.geometry,{style:{color:'#4caf7d',weight:4,opacity:0.85,dashArray:d.approx?'6 8':null}}).addTo(svcRouteLayer); }
+          else { totalKm+=haversine(a[0],a[1],b[0],b[1]); anyApprox=true; L.polyline([a,b],{color:'#4caf7d',weight:3,opacity:0.7,dashArray:'6 8'}).addTo(svcRouteLayer); }
+        })
+      ); })(pts[i],pts[i+1]); }
+    svcRouteBanner.style.display='flex';
+    svcRouteBanner.innerHTML='<span>🛣️ Calculating route…</span>';
+    await Promise.all(segs);
+    try{ map.fitBounds(L.latLngBounds(pts),{padding:[50,50]}); }catch(e){}
+    var extra=all.length>CAP?(' · +'+(all.length-CAP)+' more not shown'):'';
+    svcRouteBanner.innerHTML='<span>🛣️ <b>'+stops.length+' stops</b> · ~'+totalKm.toFixed(0)+' km'+(anyApprox?' (approx)':'')+extra+' · worst-overdue routed first from the yard</span>'
+      +'<span style="display:flex;gap:8px;"><button id="svcRouteWa" style="background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:700;">📱 Share</button><button id="svcRouteClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button></span>';
+    document.getElementById('svcRouteClose').onclick=clearServiceRoute;
+    document.getElementById('svcRouteWa').onclick=function(){ var msg='*DELUXE — Service route today*\n'+stops.length+' stops · ~'+totalKm.toFixed(0)+' km\n\n'+stops.map(function(r,i){ var u=serviceUrgency(r.dg); return (i+1)+'. '+r.dg+' ('+r.kva+' kVA) — '+(r.customer||'')+' · '+(r.location||'')+((u&&u.level==='overdue')?(' — OVERDUE '+Math.abs(u.days)+'d'):(' — due '+(u?u.days:'?')+'d')); }).join('\n'); if(navigator.share){ navigator.share({text:msg}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); } };
+  }
+  function clearServiceRoute(){ svcRouteOn=false; svcRouteLayer.clearLayers(); svcRouteBanner.style.display='none'; if(svcRouteBtn){ svcRouteBtn.style.background='#20262c'; svcRouteBtn.style.color='#e8ecef'; } }
+  function toggleServiceRoute(){ svcRouteOn=!svcRouteOn; if(svcRouteBtn){ svcRouteBtn.style.background=svcRouteOn?'#e8a13a':'#20262c'; svcRouteBtn.style.color=svcRouteOn?'#1a1300':'#e8ecef'; } if(svcRouteOn) drawServiceRoute(); else clearServiceRoute(); }
+  var RouteCtl = L.Control.extend({ options:{position:'topright'}, onAdd:function(){
+    var b=L.DomUtil.create('button',''); svcRouteBtn=b; b.type='button'; b.textContent='🛣️ Route'; b.title="Draw today's service run (worst-overdue first, from the yard)";
+    b.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:7px 11px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.5);margin-top:6px;';
+    L.DomEvent.disableClickPropagation(b); L.DomEvent.on(b,'click',function(){ toggleServiceRoute(); });
+    return b;
+  }});
+  map.addControl(new RouteCtl());
+
   // ---- Auto "arrived on site" banner (after a breakdown dispatch) ----
   var arrivalBanner=document.createElement('div');
   arrivalBanner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:6500;background:#1a2e24;color:#4caf7d;border-bottom:1px solid #2a5c40;padding:12px 16px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-weight:700;font-size:14px;display:none;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.4);';
