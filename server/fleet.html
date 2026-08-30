@@ -1562,10 +1562,21 @@ refreshAll();
       var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
       (d.sites||[]).forEach(function(s){
         if(s.lat==null||s.lng==null) return;
+        // Our generators actually on hire at this customer, with live service status.
+        var comp=String(s.company||'').trim().toUpperCase();
+        var gensHere=comp?DATA.filter(function(g){ return String(g.customer||'').trim().toUpperCase()===comp; }):[];
+        var gensHtml='';
+        if(gensHere.length){
+          gensHtml='<div style="font-size:12px;margin-top:6px;border-top:1px solid #2c333a;padding-top:6px;">'
+            +'<div style="color:#8b95a1;text-transform:uppercase;letter-spacing:.04em;font-size:10px;margin-bottom:3px;">Our units here ('+gensHere.length+')</div>'
+            +gensHere.map(function(g){ var u=(typeof serviceUrgency==='function')?serviceUrgency(g.dg):null; var svc=(window.SERVICE_BY_DG||{})[g.dg]; var nx=(svc&&svc.nextService!=null)?(' · next @ '+svc.nextService+'h'):''; var badge=u?(u.level==='overdue'?'<span style="color:#ff5c4d;font-weight:700;"> · ⚠ OVERDUE '+Math.abs(u.days)+'d</span>':'<span style="color:#e8c168;font-weight:700;"> · due '+u.days+'d</span>'):'<span style="color:#4caf7d;"> · ok</span>'; return '<div style="padding:2px 0;"><b style="font-family:monospace;">'+esc(g.dg)+'</b> — '+esc(g.kva)+' kVA'+nx+badge+'</div>'; }).join('')
+            +'</div>';
+        }
         var pop='<div style="font-family:Inter,-apple-system,Segoe UI,sans-serif;min-width:180px;">'
           +'<div style="font-weight:700;margin-bottom:4px;">🏭 '+esc(s.company)+'</div>'
           +'<div style="font-size:12px;margin-bottom:3px;">'+esc(s.dust)+' dust &middot; '+esc(s.rate)+' rate'+(s.gatePass?' &middot; 🔒 gate pass':'')+'</div>'
-          +(s.generators?'<div style="font-size:12px;color:#8b95a1;">Gensets: '+esc(s.generators)+'</div>':'')
+          +gensHtml
+          +(!gensHere.length&&s.generators?'<div style="font-size:12px;color:#8b95a1;">Gensets: '+esc(s.generators)+'</div>':'')
           +(s.gatePassNotes?'<div style="font-size:12px;color:#8b95a1;margin-top:3px;">🔒 '+esc(s.gatePassNotes)+'</div>':'')
           +(s.phone?'<div style="font-size:12px;margin-top:3px;">📞 <a href="tel:'+esc(s.phone)+'">'+esc(s.phone)+'</a></div>':'')
           +'<div style="margin-top:6px;"><a href="https://www.google.com/maps?q='+s.lat+','+s.lng+'" target="_blank" rel="noopener" style="color:#5b9bd5;">Navigate ▸</a> &middot; <a href="/sites" style="color:#5b9bd5;">Edit</a></div>'
@@ -1820,6 +1831,7 @@ refreshAll();
     return out;
   }
   async function drawServiceRoute(){
+    if(typeof closeFind==='function') closeFind();
     svcRouteLayer.clearLayers();
     var all=orderNearest(routeDueUnits());
     var CAP=15; var stops=all.slice(0,CAP);
@@ -1862,6 +1874,44 @@ refreshAll();
     return b;
   }});
   map.addControl(new RouteCtl());
+
+  // ---- Nearest ready-to-rent unit finder ----
+  var findLayer=L.layerGroup().addTo(map);
+  var findBanner=document.createElement('div');
+  findBanner.style.cssText='position:fixed;left:8px;right:8px;bottom:10px;z-index:5700;background:rgba(16,19,23,0.94);border:1px solid #2c333a;border-radius:12px;padding:10px 12px;font-family:Inter,-apple-system,Segoe UI,sans-serif;color:#e8ecef;font-size:13px;display:none;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 4px 18px rgba(0,0,0,.6);';
+  document.body.appendChild(findBanner);
+  function closeFind(){ findLayer.clearLayers(); findBanner.style.display='none'; }
+  function findNearestUnit(){
+    var kvaStr=prompt('Customer needs a generator — minimum kVA? (leave blank for any size)','');
+    if(kvaStr===null) return;
+    var minKva=parseInt(kvaStr,10)||0;
+    if(typeof clearServiceRoute==='function') clearServiceRoute();
+    findLayer.clearLayers();
+    var target=(locMarker && locMarker.getLatLng)?locMarker.getLatLng():map.getCenter();
+    var cands=getFiltered().filter(function(r){ return isReadyToRent(r) && r.lat!=null && (!minKva || (Number(r.kva)||0)>=minKva); })
+      .map(function(r){ return {r:r, d:haversine(target.lat,target.lng,r.lat,r.lon)}; })
+      .sort(function(a,b){ return a.d-b.d; });
+    if(!cands.length){ findBanner.style.display='flex'; findBanner.innerHTML='<span>No ready-to-rent unit'+(minKva?(' ≥ '+minKva+' kVA'):'')+' available right now.</span><button id="findClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button>'; document.getElementById('findClose').onclick=closeFind; return; }
+    L.circleMarker([target.lat,target.lng],{radius:8,color:'#fff',weight:2,fillColor:'#e0644a',fillOpacity:1}).addTo(findLayer).bindTooltip((locMarker&&locMarker.getLatLng)?'You / delivery point':'Delivery point (map centre)',{direction:'top'});
+    var top=cands.slice(0,3);
+    top.forEach(function(c,i){ L.marker([c.r.lat,c.r.lon],{icon:numIcon(i+1,'#4caf7d')}).addTo(findLayer).bindPopup('<b>'+(i+1)+'. '+c.r.dg+'</b> — '+c.r.kva+' kVA'+(c.r.brand?(' · '+c.r.brand):'')+'<br>'+(c.r.location||'')+'<br><b style="color:#4caf7d;">READY TO RENT</b> · '+c.d.toFixed(1)+' km away'); });
+    var nearest=top[0];
+    fetch('/api/route?fromLat='+nearest.r.lat+'&fromLon='+nearest.r.lon+'&toLat='+target.lat+'&toLon='+target.lng,{cache:'no-store'}).then(function(r){return r.json();}).catch(function(){return null;}).then(function(d){
+      if(d&&d.ok&&d.geometry){ L.geoJSON(d.geometry,{style:{color:'#5b9bd5',weight:4,opacity:.85,dashArray:d.approx?'6 8':null}}).addTo(findLayer); }
+      else { L.polyline([[nearest.r.lat,nearest.r.lon],[target.lat,target.lng]],{color:'#5b9bd5',weight:3,opacity:.75,dashArray:'6 8'}).addTo(findLayer); }
+      try{ map.fitBounds(findLayer.getBounds(),{padding:[60,60]}); }catch(e){}
+    });
+    findBanner.style.display='flex';
+    findBanner.innerHTML='<span>🔎 Closest'+(minKva?(' ≥'+minKva+' kVA'):'')+' ready unit: <b>'+nearest.r.dg+'</b> ('+nearest.r.kva+' kVA) · '+nearest.d.toFixed(1)+' km · '+(nearest.r.location||'')+(top[1]?(' &nbsp;·&nbsp; then '+top[1].r.dg+' ('+top[1].d.toFixed(1)+' km)'):'')+'</span><button id="findClose" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button>';
+    document.getElementById('findClose').onclick=closeFind;
+  }
+  var FindCtl = L.Control.extend({ options:{position:'topright'}, onAdd:function(){
+    var b=L.DomUtil.create('button',''); b.type='button'; b.textContent='🔎 Find unit'; b.title='Find the nearest ready-to-rent generator to here (by kVA)';
+    b.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:7px 11px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.5);margin-top:6px;';
+    L.DomEvent.disableClickPropagation(b); L.DomEvent.on(b,'click',findNearestUnit);
+    return b;
+  }});
+  map.addControl(new FindCtl());
 
   // ---- Auto "arrived on site" banner (after a breakdown dispatch) ----
   var arrivalBanner=document.createElement('div');
