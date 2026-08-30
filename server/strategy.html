@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Service Strategy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .link{color:var(--blue);text-decoration:none;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:9px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .headline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .headline .big{font-size:15px;line-height:1.55;}
+  .zone{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px;}
+  .zone.go{border-color:#5a2a22;}
+  .zone .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .zone h2{font-size:16px;margin:0;}
+  .zone .dist{font-size:12px;color:var(--muted);font-family:var(--mono);}
+  .badge{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:20px;white-space:nowrap;}
+  .b-go{background:#3a1414;color:#ff8a75;}
+  .b-week{background:#2e2410;color:var(--gold);}
+  .b-hold{background:#122031;color:#7db4e6;}
+  .b-ok{background:#12241c;color:var(--green);}
+  .counts{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-bottom:8px;}
+  .counts b{font-family:var(--mono);}
+  .rec{font-size:13.5px;line-height:1.5;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:9px;}
+  .units{font-size:12.5px;}
+  .u{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dotted #262d34;}
+  .u:last-child{border-bottom:none;}
+  .u .dg{font-family:var(--mono);font-weight:700;}
+  .pill{font-size:11px;font-weight:700;padding:1px 8px;border-radius:12px;white-space:nowrap;}
+  .p-over{background:#3a1414;color:#ff8a75;}
+  .p-soon{background:#2e2410;color:var(--gold);}
+  .p-plan{background:#20262c;color:var(--muted);}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .mini{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 11px;font-size:12.5px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;}
+  .field{margin-bottom:13px;} .err{color:var(--red);font-size:13px;min-height:18px;}
+</style>
+<link rel="stylesheet" href="/theme.css">
+<link rel="manifest" href="/manifest-portal.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deluxe Ops">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+<script src="/alarm.js?v=4" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/strategy" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🧠 Strategy</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">☰ Menu</a></nav>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:44px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:40px;width:auto;"></div>
+
+  <div class="eyebrow">Deluxe Operations — Dispatch Brain</div>
+  <h1>Service Strategy</h1>
+  <p class="sub">Every on-hire generator, grouped by area and ranked by what to do — <b>go now</b>, <b>plan this week</b>, or <b>hold &amp; combine</b> a far trip until enough units there are due. Distance is measured from the Mussafah yard. <a href="/plan" class="link">Morning plan</a> · <a href="/fleet" class="link">map</a>.</p>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+    <button class="btn" id="waBtn">📱 Share the strategy</button>
+    <button class="btn sec" id="refreshBtn">↻ Refresh</button>
+  </div>
+
+  <div id="headline" class="headline" style="display:none;"></div>
+  <div id="zones"></div>
+  <div id="empty" class="sub" style="display:none;">Loading…</div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Service Strategy — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to view the dispatch strategy.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=(function(){ try{ return localStorage.getItem(LS)||''; }catch(e){ return ''; } })();
+  var $=function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
+  var OFFICE={lat:24.3462062, lon:54.4998379};
+  var FAR_KM=70;   // beyond this, a zone is a "far trip" worth batching
+  var STRAT=null;
+
+  function haversine(la1,lo1,la2,lo2){ var R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180,a=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2); return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+  function daysTo(dstr){ if(!dstr) return null; return Math.round((new Date(dstr+'T00:00:00')-new Date(new Date().toLocaleDateString('en-CA')+'T00:00:00'))/86400000); }
+  function fmtDate(dstr){ if(!dstr) return '?'; try{ return new Date(dstr+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }catch(e){ return dstr; } }
+
+  function build(gens, dir){
+    var zones={};
+    gens.forEach(function(g){
+      if(g.offHire) return;                       // paused units don't get planned
+      var d=daysTo(g.nextServiceDate); if(d==null) return;
+      if(d>30) return;                            // only the next 30 days matter for planning
+      var info=(dir||{})[String(g.dg).toUpperCase()]||{};
+      var zone=info.zone||'Unknown';
+      var z=zones[zone]||(zones[zone]={name:zone, units:[], lat:[], lon:[]});
+      z.units.push({dg:g.dg, kva:info.kva||'', customer:info.customer||'', days:d, date:g.nextServiceDate, nextH:g.nextService});
+      if(info.lat!=null){ z.lat.push(info.lat); z.lon.push(info.lon); }
+    });
+    var list=Object.keys(zones).map(function(k){
+      var z=zones[k];
+      z.units.sort(function(a,b){ return a.days-b.days; });
+      z.overdue=z.units.filter(function(u){return u.days<0;}).length;
+      z.soon=z.units.filter(function(u){return u.days>=0&&u.days<=7;}).length;
+      z.plan=z.units.filter(function(u){return u.days>7;}).length;
+      z.dist=z.lat.length?haversine(OFFICE.lat,OFFICE.lon, z.lat.reduce(function(a,b){return a+b;},0)/z.lat.length, z.lon.reduce(function(a,b){return a+b;},0)/z.lon.length):null;
+      z.far=(z.dist!=null && z.dist>FAR_KM);
+      // recommendation
+      var actionable=z.overdue+z.soon;
+      if(z.overdue>0){
+        z.level='go';
+        z.rec = z.far
+          ? ('🔴 GO — but it’s a far trip ('+Math.round(z.dist)+' km). Clear all '+(z.overdue+z.soon+z.plan)+' due/soon units here in ONE run, not just the overdue ones.')
+          : ('🔴 GO NOW — '+z.overdue+' overdue'+(z.soon?(' + '+z.soon+' due within 7 days'):'')+'. Send a team.');
+      } else if(z.soon>=2 || (z.soon===1 && !z.far)){
+        z.level='week';
+        z.rec = '🟡 PLAN THIS WEEK — '+z.soon+' due within 7 days'+(z.far?(' ('+Math.round(z.dist)+' km — combine with any others out that way)'):'')+'.';
+      } else if(z.soon===1 && z.far){
+        z.level='hold';
+        var secondDue=z.units[1]?(' Next two both done by '+fmtDate(z.units[1].date)+' — wait and do them together.'):' Watch for more before making the drive.';
+        z.rec = '🔵 HOLD &amp; COMBINE — only 1 due but it’s '+Math.round(z.dist)+' km away. Don’t drive out for one.'+secondDue;
+      } else {
+        z.level='ok';
+        z.rec = '🟢 Nothing urgent — next due '+ (z.units[0]?('in '+z.units[0].days+' days ('+fmtDate(z.units[0].date)+')'):'—')+'.';
+      }
+      // priority score for ordering
+      z.score = z.overdue*1000 + z.soon*100 + (z.level==='hold'?-50:0) - (z.dist!=null?z.dist*0.1:0);
+      return z;
+    });
+    list.sort(function(a,b){ return b.score-a.score; });
+    return list;
+  }
+
+  function levelBadge(l){ var m={go:['b-go','GO NOW'],week:['b-week','THIS WEEK'],hold:['b-hold','HOLD & COMBINE'],ok:['b-ok','OK']}[l]||['b-ok','OK']; return '<span class="badge '+m[0]+'">'+m[1]+'</span>'; }
+  function pill(d){ if(d<0) return '<span class="pill p-over">OVERDUE '+Math.abs(d)+'d</span>'; if(d<=7) return '<span class="pill p-soon">'+(d===0?'today':('in '+d+'d'))+'</span>'; return '<span class="pill p-plan">in '+d+'d</span>'; }
+
+  function render(list){
+    STRAT=list;
+    var totalOver=list.reduce(function(a,z){return a+z.overdue;},0);
+    var totalSoon=list.reduce(function(a,z){return a+z.soon;},0);
+    var goZones=list.filter(function(z){return z.level==='go';});
+    var holdZones=list.filter(function(z){return z.level==='hold';});
+    var hl='<div class="big">';
+    if(totalOver){ hl+='🔴 <b>'+totalOver+' generators overdue</b> across <b>'+goZones.length+' area'+(goZones.length===1?'':'s')+'</b>. '; }
+    else { hl+='✅ Nothing overdue. '; }
+    hl+=totalSoon?('<br>🟡 '+totalSoon+' more due within 7 days. '):'';
+    if(goZones.length){ var first=goZones[0]; hl+='<br><br><b>First run:</b> '+esc(first.name)+' — '+first.overdue+' overdue'+(first.soon?(' + '+first.soon+' soon'):'')+(first.dist!=null?(' ('+Math.round(first.dist)+' km)'):'')+'. '; if(goZones[1]) hl+='Then '+esc(goZones[1].name)+'.'; }
+    if(holdZones.length){ hl+='<br>⏳ <b>Hold:</b> '+holdZones.map(function(z){return esc(z.name);}).join(', ')+' — far, only 1 due each; wait to batch.'; }
+    hl+='</div>';
+    $('headline').innerHTML=hl; $('headline').style.display='block';
+
+    $('zones').innerHTML=list.map(function(z){
+      return '<div class="zone '+(z.level==='go'?'go':'')+'">'
+        +'<div class="top"><div><h2>'+esc(z.name)+'</h2>'+(z.dist!=null?('<div class="dist">📍 '+Math.round(z.dist)+' km from yard'+(z.far?' · far':'')+'</div>'):'')+'</div>'+levelBadge(z.level)+'</div>'
+        +'<div class="counts"><span>Due (≤30d): <b>'+z.units.length+'</b></span>'+(z.overdue?('<span style="color:#ff8a75;">Overdue: <b>'+z.overdue+'</b></span>'):'')+(z.soon?('<span style="color:'+'var(--gold)'+';">≤7 days: <b>'+z.soon+'</b></span>'):'')+'</div>'
+        +'<div class="rec">'+z.rec+'</div>'
+        +'<div class="units">'+z.units.map(function(u){ return '<div class="u"><span><span class="dg">'+esc(u.dg)+'</span> <span style="color:var(--muted);">'+(u.kva?esc(u.kva)+' kVA':'')+(u.customer?(' · '+esc(u.customer)):'')+'</span></span>'+pill(u.days)+'</div>'; }).join('')+'</div>'
+        +'<div class="actions"><a class="mini" href="/fleet">🗺️ Open map</a><a class="mini" href="/servicecard">🃏 Service cards</a></div>'
+      +'</div>';
+    }).join('');
+    $('empty').style.display='none';
+  }
+
+  function shareMsg(){
+    if(!STRAT) return '';
+    var m='*DELUXE — Service Strategy* ('+new Date().toLocaleDateString('en-GB')+')\n\n';
+    STRAT.forEach(function(z){
+      var tag={go:'🔴 GO NOW',week:'🟡 THIS WEEK',hold:'🔵 HOLD & COMBINE',ok:'🟢 OK'}[z.level];
+      m+=tag+' — '+z.name+(z.dist!=null?(' ('+Math.round(z.dist)+'km)'):'')+': '+z.overdue+' overdue, '+z.soon+' ≤7d\n';
+      z.units.slice(0,6).forEach(function(u){ m+='   • '+u.dg+' '+(u.kva?u.kva+'kVA ':'')+(u.days<0?('OVERDUE '+Math.abs(u.days)+'d'):('in '+u.days+'d'))+'\n'; });
+    });
+    return m;
+  }
+  $('waBtn').addEventListener('click',function(){ var t=shareMsg(); if(!t) return; if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } });
+  $('refreshBtn').addEventListener('click',boot);
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; boot(); }
+  async function doLogin(){
+    $('loginErr').textContent='';
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('loginEmail').value.trim(),password:$('loginPass').value})});
+      var d=await r.json(); if(!r.ok||!d.token){ $('loginErr').textContent=d.error||'Wrong email or password'; return; }
+      TOKEN=d.token; try{ localStorage.setItem(LS,TOKEN); }catch(e){} hideLogin();
+    }catch(e){ $('loginErr').textContent='Could not sign in.'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+
+  async function boot(){
+    $('empty').style.display='block'; $('empty').textContent='Loading…';
+    try{
+      var res=await Promise.all([
+        fetch('/api/service/status',{cache:'no-store',headers:authH()}),
+        fetch('/api/fleet/directory',{cache:'no-store',headers:authH()})
+      ]);
+      if(res.some(function(r){return r.status===401;})){ showLogin(); return; }
+      var svc=await res[0].json(); var dir=await res[1].json();
+      var list=build(svc.generators||[], dir.directory||{});
+      if(!list.length){ $('empty').textContent='No on-hire services due in the next 30 days. 👍'; $('headline').style.display='none'; $('zones').innerHTML=''; return; }
+      render(list);
+    }catch(e){ $('empty').textContent='Could not load the strategy.'; }
+  }
+  if(TOKEN){ boot(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
