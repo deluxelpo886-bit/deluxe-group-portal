@@ -1054,6 +1054,16 @@ app.get('/servicecard', (req, res) => {
   res.sendFile(path.join(__dirname, 'servicecard.html'), { cacheControl: false });
 });
 
+app.get('/strategy', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'strategy.html'), { cacheControl: false });
+});
+
 app.get('/breakdowns', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
