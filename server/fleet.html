@@ -71,6 +71,9 @@
     padding:9px 11px; border-radius:8px; font-family:var(--sans); font-size:13.5px; outline:none;}
   select:focus, input:focus{border-color:var(--amber);}
   #mapEl{height:560px; border-radius:12px; border:1px solid var(--line); z-index:1;}
+  .mapcat{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:18px;padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+  .mapcat:hover{border-color:var(--amber);}
+  .mapcat.active{background:var(--amber);color:#1a1300;border-color:var(--amber);}
   .dg-label{
     background:rgba(11,13,15,0.88); border:1px solid rgba(232,161,58,0.5); color:#e8ecef;
     font-family:'JetBrains Mono','SF Mono',Consolas,monospace; font-size:10px; font-weight:600;
@@ -231,6 +234,13 @@
         <button class="btn" id="locateBtn">📍 Locate on map</button>
       </div>
       <div id="locateMsg" style="font-size:12.5px; color:var(--red); margin:-6px 0 10px; display:none;"></div>
+      <div id="mapCats" style="display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px;">
+        <button type="button" class="mapcat active" data-cat="all">All</button>
+        <button type="button" class="mapcat" data-cat="onhire">🟢 On hire</button>
+        <button type="button" class="mapcat" data-cat="ready">🏭 Ready to rent</button>
+        <button type="button" class="mapcat" data-cat="repair">🔧 In repair</button>
+        <button type="button" class="mapcat" data-cat="servicedue">⚠ Service due</button>
+      </div>
       <div id="mapEl"></div>
       <div class="legend">
         <span>🟠 Heavy logo = Deluxe Heavy generator</span>
@@ -677,12 +687,22 @@ function isAvailable(r){
 function isInRepair(r){ return isAvailable(r) && (r.status==='Under Service' || r.status==='Breakdown'); }
 // Ready to hire out TODAY: in the yard/off-hire and working (not under repair).
 function isReadyToRent(r){ return r.status!=='Off-Fleet' && isAvailable(r) && !isInRepair(r); }
+// ---- Map status filter (chips above the map) ----
+var mapCat='all';
+function matchCat(r){
+  if(mapCat==='all') return true;
+  if(mapCat==='ready') return isReadyToRent(r);
+  if(mapCat==='repair') return isInRepair(r);
+  if(mapCat==='onhire') return !isAvailable(r) && r.status!=='Off-Fleet';
+  if(mapCat==='servicedue'){ if(isAvailable(r)) return false; var u=serviceUrgency(r.dg); return !!(u && (u.level==='overdue'||u.level==='soon')); }
+  return true;
+}
 function availCount(){ return getFiltered().filter(isReadyToRent).length; }
 function repairCount(){ return getFiltered().filter(function(r){ return r.status!=='Off-Fleet' && isInRepair(r); }).length; }
 function rebuildMap(){
   genLayer.clearLayers();
   for(const k in genMarkers) delete genMarkers[k];
-  getFiltered().filter(r=>r.status!=='Off-Fleet').filter(r=> !availOn || isReadyToRent(r)).forEach(r=>{
+  getFiltered().filter(r=>r.status!=='Off-Fleet').filter(matchCat).filter(r=> !availOn || isReadyToRent(r)).forEach(r=>{
     if(r.lat==null || r.lon==null) return;
     const m = L.marker([r.lat, r.lon], { icon: genIcon(r), draggable: false }); // fixed pin
     const hi = hoursInfo(r);
@@ -1232,6 +1252,14 @@ function refreshAll(){
 document.getElementById('companyFilter').addEventListener('change', refreshAll);
 document.getElementById('search').addEventListener('input', renderTable);
 document.getElementById('statusFilter').addEventListener('change', renderTable);
+// Map status-filter chips
+(function(){ var box=document.getElementById('mapCats'); if(!box) return;
+  box.addEventListener('click', function(e){ var b=e.target.closest('.mapcat'); if(!b) return;
+    mapCat=b.getAttribute('data-cat');
+    box.querySelectorAll('.mapcat').forEach(function(x){ x.classList.toggle('active', x===b); });
+    if(typeof rebuildMap==='function') rebuildMap();
+  });
+})();
 
 refreshAll();
 
