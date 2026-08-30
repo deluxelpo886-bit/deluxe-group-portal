@@ -526,7 +526,7 @@ map.addControl(new SatCtl());
 function setAvailable(on){
   availOn = on;
   var b=document.getElementById('availToggle');
-  if(b){ b.textContent = on ? ('🏭 Available: '+availCount()) : '🏭 Available'; b.style.color = on ? '#4caf7d' : '#e8ecef'; b.style.borderColor = on ? '#2a5c40' : '#2c333a'; }
+  if(b){ var rep=repairCount(); b.textContent = on ? ('🏭 Ready to rent: '+availCount()+(rep?(' · 🔧 '+rep+' in repair'):'')) : '🏭 Available'; b.title = on ? ('Ready to hire today. '+rep+' more are in the yard under service/breakdown (not rentable).') : 'Show only generators ready to rent (in the yard, not under repair).'; b.style.color = on ? '#4caf7d' : '#e8ecef'; b.style.borderColor = on ? '#2a5c40' : '#2c333a'; }
   if(typeof rebuildMap==='function') rebuildMap();
 }
 var AvailCtl = L.Control.extend({
@@ -673,11 +673,16 @@ function isAvailable(r){
   if(/WORK\s*SHOP|WORKSHOP|\bYARD\b/.test(t)) return true;
   return false;
 }
-function availCount(){ return getFiltered().filter(function(r){ return r.status!=='Off-Fleet' && isAvailable(r); }).length; }
+// In the yard/off-hire AND being repaired — physically here but NOT rentable.
+function isInRepair(r){ return isAvailable(r) && (r.status==='Under Service' || r.status==='Breakdown'); }
+// Ready to hire out TODAY: in the yard/off-hire and working (not under repair).
+function isReadyToRent(r){ return r.status!=='Off-Fleet' && isAvailable(r) && !isInRepair(r); }
+function availCount(){ return getFiltered().filter(isReadyToRent).length; }
+function repairCount(){ return getFiltered().filter(function(r){ return r.status!=='Off-Fleet' && isInRepair(r); }).length; }
 function rebuildMap(){
   genLayer.clearLayers();
   for(const k in genMarkers) delete genMarkers[k];
-  getFiltered().filter(r=>r.status!=='Off-Fleet').filter(r=> !availOn || isAvailable(r)).forEach(r=>{
+  getFiltered().filter(r=>r.status!=='Off-Fleet').filter(r=> !availOn || isReadyToRent(r)).forEach(r=>{
     if(r.lat==null || r.lon==null) return;
     const m = L.marker([r.lat, r.lon], { icon: genIcon(r), draggable: false }); // fixed pin
     const hi = hoursInfo(r);
@@ -686,12 +691,14 @@ function rebuildMap(){
       +'<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
       +'<a href="https://wa.me/?text='+encodeURIComponent(r.dg+' ('+(r.location||'')+') location: https://maps.google.com/?q='+r.lat+','+r.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
       +'</div>';
-    const contractBtn = isAvailable(r) ? ('<button class="put-contract" data-dg="'+r.dg+'" data-kva="'+(r.kva||'')+'" style="width:100%;margin-top:8px;background:#e8a13a;color:#1a1300;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">📄 Put on contract</button>') : '';
+    const contractBtn = isReadyToRent(r) ? ('<button class="put-contract" data-dg="'+r.dg+'" data-kva="'+(r.kva||'')+'" style="width:100%;margin-top:8px;background:#e8a13a;color:#1a1300;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">📄 Put on contract</button>') : '';
     const endBtn = (!isAvailable(r) && r.status!=='Off-Fleet') ? ('<button class="end-contract" data-dg="'+r.dg+'" style="width:100%;margin-top:8px;background:#2b2f33;color:#b4bcc4;border:1px solid #3a4148;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">⚪ End contract (return to yard)</button>') : '';
     const svc = (window.SERVICE_BY_DG||{})[r.dg];
     const su = serviceUrgency(r.dg);
     const isOff = isAvailable(r);
-    const offNote = isOff ? `<br><b style="color:#b4bcc4;">🏭 In workshop — service paused (not running)${(svc&&svc.hireSince)?(' · off-hire since '+svc.hireSince):''}</b>` : '';
+    const offNote = isInRepair(r)
+      ? `<br><b style="color:#e8c168;">🔧 In workshop — UNDER REPAIR (not available to rent)</b>`
+      : (isOff ? `<br><b style="color:#4caf7d;">🏭 In the yard — READY TO RENT${(svc&&svc.hireSince)?(' · since '+svc.hireSince):''}</b>` : '');
     const suNote = isOff ? '' : ((su && su.level==='overdue') ? `<br><b style="color:#ff5c4d;">⚠ SERVICE OVERDUE by ${Math.abs(su.days)} day${Math.abs(su.days)===1?'':'s'}</b>` : ((su && su.level==='soon') ? `<br><b style="color:#e8c168;">⚠ service due in ${su.days} day${su.days===1?'':'s'}</b>` : ''));
     const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${(!isOff && svc.nextServiceDate)?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
     m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
