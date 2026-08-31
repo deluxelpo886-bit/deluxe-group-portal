@@ -402,18 +402,6 @@
   "nextServiceDate": "2026-09-10"
  },
  {
-  "dg": "DG-832",
-  "hours": 10856,
-  "date": "2026-08-27",
-  "technician": "LK/JAYARAJ",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 11206
- },
- {
   "dg": "DG-829",
   "hours": 5579,
   "date": "2026-06-09",
@@ -659,18 +647,6 @@
   "nextServiceDate": "2026-09-01"
  },
  {
-  "dg": "DG-494",
-  "hours": 6705,
-  "date": "2026-08-25",
-  "technician": "SONU HUSSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 7055
- },
- {
   "dg": "DG-836",
   "hours": 1957,
   "date": "2026-07-19",
@@ -814,18 +790,6 @@
   "nextServiceDate": "2026-08-25"
  },
  {
-  "dg": "DG-820",
-  "hours": 1357,
-  "date": "2026-08-27",
-  "technician": "SATNAM&HUSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 1707
- },
- {
   "dg": "DG-856",
   "hours": 21329,
   "date": "2026-07-25",
@@ -878,18 +842,6 @@
   "nextServiceDate": "2026-08-25"
  },
  {
-  "dg": "DG-466",
-  "hours": 32266,
-  "date": "2026-08-29",
-  "technician": "SONU HUSSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "nextService": 32616,
-  "notes": "Air filter not changed"
- },
- {
   "dg": "DG-488",
   "hours": 5448,
   "date": "2026-07-27",
@@ -940,18 +892,6 @@
   "dailyHours": 5.29,
   "nextService": 17640,
   "nextServiceDate": "2026-08-25"
- },
- {
-  "dg": "DG-540",
-  "hours": 14706,
-  "date": "2026-08-26",
-  "technician": "ADIL/JAYARAJ",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 15056
  },
  {
   "dg": "DG-816",
@@ -1030,30 +970,6 @@
   "nextService": 20981
  },
  {
-  "dg": "DG-535",
-  "hours": 34291,
-  "date": "2026-08-26",
-  "technician": "SONU HUSSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 34641
- },
- {
-  "dg": "DG-549",
-  "hours": 6035,
-  "date": "2026-08-24",
-  "technician": "SONU HUSSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": true,
-  "dailyHours": 12,
-  "nextService": 6385
- },
- {
   "dg": "DG-477",
   "hours": 27698,
   "date": "2026-07-31",
@@ -1078,18 +994,6 @@
   "dailyHours": 13.57,
   "nextService": 6881,
   "nextServiceDate": "2026-08-25"
- },
- {
-  "dg": "DG-492",
-  "hours": 6870,
-  "date": "2026-08-29",
-  "technician": "SONU HUSSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "nextService": 7220,
-  "notes": "Air filter not changed"
  },
  {
   "dg": "DG-826",
@@ -1179,30 +1083,6 @@
   "airFilter": false,
   "nextService": 2523,
   "nextServiceDate": "2026-09-01"
- },
- {
-  "dg": "DG-837",
-  "hours": 9543,
-  "date": "2026-08-27",
-  "technician": "VELU&IMRAN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 9893
- },
- {
-  "dg": "DG-448",
-  "hours": 7913,
-  "date": "2026-08-24",
-  "technician": "SONU HUSSAIN",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 12,
-  "nextService": 8263
  },
  {
   "dg": "DG-858",
@@ -1697,19 +1577,6 @@
   "nextServiceDate": "2026-09-12"
  },
  {
-  "dg": "DG-467",
-  "hours": 29672,
-  "date": "2026-08-21",
-  "technician": "SATNAM",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 8.6,
-  "nextService": 30022,
-  "nextServiceDate": "2026-09-25"
- },
- {
   "dg": "DG-459",
   "hours": 912,
   "date": "2026-08-21",
@@ -1734,5 +1601,161 @@
   "dailyHours": 13.17,
   "nextService": 508,
   "nextServiceDate": "2026-09-12"
+ },
+ {
+  "dg": "DG-822",
+  "hours": 6279,
+  "date": "2026-08-30",
+  "technician": "LK/SABIR",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 6729,
+  "nextServiceDate": "2026-09-28"
+ },
+ {
+  "dg": "DG-492",
+  "hours": 6870,
+  "date": "2026-08-29",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 7220,
+  "nextServiceDate": "2026-09-27"
+ },
+ {
+  "dg": "DG-466",
+  "hours": 32266,
+  "date": "2026-08-29",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 32616,
+  "nextServiceDate": "2026-09-12"
+ },
+ {
+  "dg": "DG-837",
+  "hours": 9543,
+  "date": "2026-08-27",
+  "technician": "LK/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 9893,
+  "nextServiceDate": "2026-09-25"
+ },
+ {
+  "dg": "DG-832",
+  "hours": 10856,
+  "date": "2026-08-27",
+  "technician": "LK/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 11206,
+  "nextServiceDate": "2026-09-25"
+ },
+ {
+  "dg": "DG-820",
+  "hours": 1357,
+  "date": "2026-08-27",
+  "technician": "LK/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 1707,
+  "nextServiceDate": "2026-09-26"
+ },
+ {
+  "dg": "DG-540",
+  "hours": 14706,
+  "date": "2026-08-26",
+  "technician": "ADIL/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 15056,
+  "nextServiceDate": "2026-09-25"
+ },
+ {
+  "dg": "DG-535",
+  "hours": 34291,
+  "date": "2026-08-26",
+  "technician": "SERVICE",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 34641,
+  "nextServiceDate": "2026-09-15"
+ },
+ {
+  "dg": "DG-494",
+  "hours": 6705,
+  "date": "2026-08-25",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 7055,
+  "nextServiceDate": "2026-09-23"
+ },
+ {
+  "dg": "DG-549",
+  "hours": 6035,
+  "date": "2026-08-24",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 6385,
+  "nextServiceDate": "2026-09-22"
+ },
+ {
+  "dg": "DG-467",
+  "hours": 29672,
+  "date": "2026-08-21",
+  "technician": "SONU",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 30022,
+  "nextServiceDate": "2026-09-22"
+ },
+ {
+  "dg": "DG-448",
+  "hours": 7913,
+  "date": "2026-08-24",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 8263,
+  "nextServiceDate": "2026-09-22"
+ },
+ {
+  "dg": "DG-537",
+  "hours": 7981,
+  "date": "2026-07-19",
+  "technician": "LK/VELU",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 8331,
+  "nextServiceDate": "2026-08-18"
  }
 ]
