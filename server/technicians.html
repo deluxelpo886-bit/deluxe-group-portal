@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Technicians</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .link{color:var(--blue);text-decoration:none;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:9px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .seg button{background:none;border:none;color:var(--muted);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);}
+  .seg button.on{background:var(--amber);color:#1a1300;}
+  .today{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:1.55;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:11px;}
+  .card .top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .card .name{font-size:16px;font-weight:800;}
+  .card .rank{font-family:var(--mono);color:var(--muted);font-size:12px;margin-right:8px;}
+  .bignum{font-family:var(--mono);font-weight:800;font-size:22px;color:var(--green);}
+  .bignum span{font-size:12px;color:var(--muted);font-weight:400;}
+  .meta{font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .bar{height:7px;background:var(--panel2);border-radius:5px;overflow:hidden;margin:9px 0 6px;}
+  .bar > div{height:100%;background:var(--green);}
+  .jobs{font-size:12px;color:var(--muted);margin-top:6px;display:flex;flex-wrap:wrap;gap:5px;}
+  .jobs span{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:2px 8px;font-family:var(--mono);}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card2{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;}
+  .field{margin-bottom:13px;} .err{color:var(--red);font-size:13px;min-height:18px;}
+</style>
+<link rel="stylesheet" href="/theme.css">
+<link rel="manifest" href="/manifest-portal.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deluxe Ops">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+<script src="/alarm.js?v=4" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/technicians" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">👷 Technicians</a><a href="/strategy" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧠 Strategy</a><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">☰ Menu</a></nav>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:44px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:40px;width:auto;"></div>
+
+  <div class="eyebrow">Deluxe Operations</div>
+  <h1>Technicians &amp; Teams</h1>
+  <p class="sub">Who serviced what, from the service log. Switch between the <b>team</b> as recorded and each <b>person</b> (splits pairs like “IMRAN&amp;ADIL”). See the <a href="/service" class="link">service log</a> or <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+    <div class="seg" id="modeSeg"><button data-mode="person" class="on">👤 Per person</button><button data-mode="team">👥 By team</button></div>
+    <div class="seg" id="winSeg"><button data-win="7">This week</button><button data-win="30" class="on">This month</button><button data-win="9999">All time</button></div>
+    <button class="btn sec" id="waBtn" style="margin-left:auto;">📱 Share</button>
+  </div>
+
+  <div id="today" class="today" style="display:none;"></div>
+  <div id="list"></div>
+  <div id="empty" class="sub" style="display:none;">Loading…</div>
+</div>
+
+<div id="overlay">
+  <div class="card2">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Technicians — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to view technician activity.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=(function(){ try{ return localStorage.getItem(LS)||''; }catch(e){ return ''; } })();
+  var $=function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
+  var EVENTS=[], MODE='person', WIN=30;
+
+  function todayStr(){ return new Date().toLocaleDateString('en-CA'); }
+  function daysAgo(dstr){ if(!dstr) return 99999; return Math.round((new Date(todayStr()+'T00:00:00')-new Date(dstr+'T00:00:00'))/86400000); }
+  function fmt(dstr){ if(!dstr) return '—'; try{ return new Date(dstr+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }catch(e){ return dstr; } }
+  function names(tech, mode){
+    var t=String(tech||'').trim(); if(!t) return [];
+    if(mode==='team') return [t.toUpperCase()];
+    return t.split(/[&,/+]| AND /i).map(function(x){return x.trim().toUpperCase();}).filter(Boolean);
+  }
+
+  // Build the event log from each generator's service history.
+  function collect(gens){
+    var ev=[], seen={};
+    (gens||[]).forEach(function(g){
+      var hist=(g.history&&g.history.length)?g.history:[{date:g.date,hours:g.hours,technician:g.technician}];
+      hist.forEach(function(h){
+        if(!h || !h.technician) return;
+        var key=g.dg+'|'+h.date+'|'+h.technician;
+        if(seen[key]) return; seen[key]=1;
+        ev.push({dg:g.dg, date:h.date, hours:h.hours, tech:h.technician});
+      });
+    });
+    return ev;
+  }
+
+  function aggregate(){
+    var map={};
+    EVENTS.forEach(function(e){
+      names(e.tech, MODE).forEach(function(nm){
+        var a=map[nm]||(map[nm]={name:nm, all:[], week:0, month:0, last:null});
+        a.all.push(e);
+        var d=daysAgo(e.date);
+        if(d<=7) a.week++;
+        if(d<=30) a.month++;
+        if(!a.last || e.date>a.last) a.last=e.date;
+      });
+    });
+    var arr=Object.keys(map).map(function(k){ var a=map[k]; a.all.sort(function(x,y){return (y.date||'').localeCompare(x.date||'');}); a.win=(WIN>=9999)?a.all.length:a.all.filter(function(e){return daysAgo(e.date)<=WIN;}).length; return a; });
+    arr.sort(function(x,y){ return y.win-x.win || (y.last||'').localeCompare(x.last||''); });
+    return arr;
+  }
+
+  function render(){
+    var arr=aggregate();
+    // today's activity
+    var todays=EVENTS.filter(function(e){ return daysAgo(e.date)===0; });
+    if(todays.length){
+      var byName={}; todays.forEach(function(e){ names(e.tech,MODE).forEach(function(n){ (byName[n]=byName[n]||[]).push(e.dg); }); });
+      $('today').style.display='block';
+      $('today').innerHTML='✅ <b>Today ('+todays.length+' service'+(todays.length===1?'':'s')+'):</b> '+Object.keys(byName).map(function(n){ return esc(n)+' — '+byName[n].map(esc).join(', '); }).join(' &nbsp;·&nbsp; ');
+    } else { $('today').style.display='none'; }
+
+    if(!arr.length){ $('empty').style.display='block'; $('empty').textContent='No service records with a technician name yet.'; $('list').innerHTML=''; return; }
+    $('empty').style.display='none';
+    var max=Math.max.apply(null, arr.map(function(a){return a.win;}).concat([1]));
+    var winLbl=(WIN>=9999)?'all time':((WIN===7)?'this week':'this month');
+    $('list').innerHTML=arr.map(function(a,i){
+      var recent=a.all.slice(0,8).map(function(e){ return '<span>'+esc(e.dg)+' · '+fmt(e.date)+'</span>'; }).join('');
+      var la=daysAgo(a.last); var lastTxt=(la===0)?'today':(la===1?'yesterday':(la+' days ago'));
+      return '<div class="card"><div class="top"><div><span class="rank">#'+(i+1)+'</span><span class="name">'+esc(a.name)+'</span><div class="meta">last active '+lastTxt+' ('+fmt(a.last)+') · '+a.all.length+' total logged</div></div>'
+        +'<div style="text-align:right;"><div class="bignum">'+a.win+' <span>'+winLbl+'</span></div></div></div>'
+        +'<div class="bar"><div style="width:'+Math.round(a.win/max*100)+'%;"></div></div>'
+        +'<div class="jobs">'+recent+(a.all.length>8?('<span style="background:none;border:none;">+'+(a.all.length-8)+' more</span>'):'')+'</div>'
+      +'</div>';
+    }).join('');
+  }
+
+  function shareMsg(){
+    var arr=aggregate(); var winLbl=(WIN>=9999)?'all time':((WIN===7)?'this week':'this month');
+    var m='*DELUXE — Technician activity* ('+winLbl+', '+ (MODE==='team'?'by team':'per person') +')\n\n';
+    arr.slice(0,15).forEach(function(a,i){ m+=(i+1)+'. '+a.name+' — '+a.win+' services (last: '+fmt(a.last)+')\n'; });
+    return m;
+  }
+
+  $('modeSeg').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return; MODE=b.getAttribute('data-mode'); [].forEach.call(this.children,function(x){x.classList.toggle('on',x===b);}); render(); });
+  $('winSeg').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return; WIN=parseInt(b.getAttribute('data-win'),10); [].forEach.call(this.children,function(x){x.classList.toggle('on',x===b);}); render(); });
+  $('waBtn').addEventListener('click',function(){ var t=shareMsg(); if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } });
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; boot(); }
+  async function doLogin(){
+    $('loginErr').textContent='';
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('loginEmail').value.trim(),password:$('loginPass').value})});
+      var d=await r.json(); if(!r.ok||!d.token){ $('loginErr').textContent=d.error||'Wrong email or password'; return; }
+      TOKEN=d.token; try{ localStorage.setItem(LS,TOKEN); }catch(e){} hideLogin();
+    }catch(e){ $('loginErr').textContent='Could not sign in.'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+
+  async function boot(){
+    $('empty').style.display='block'; $('empty').textContent='Loading…';
+    try{
+      var r=await fetch('/api/service/status',{cache:'no-store',headers:authH()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json();
+      EVENTS=collect(d.generators||[]);
+      render();
+    }catch(e){ $('empty').textContent='Could not load technician data.'; }
+  }
+  if(TOKEN){ boot(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>

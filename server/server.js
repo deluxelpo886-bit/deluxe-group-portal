@@ -67,7 +67,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-08-29b');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-08-31a');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -1062,6 +1062,16 @@ app.get('/strategy', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'strategy.html'), { cacheControl: false });
+});
+
+app.get('/technicians', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'technicians.html'), { cacheControl: false });
 });
 
 app.get('/breakdowns', (req, res) => {
