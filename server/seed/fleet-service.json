@@ -1757,5 +1757,16 @@
   "airFilter": false,
   "nextService": 8331,
   "nextServiceDate": "2026-08-18"
+ },
+ {
+  "dg": "DG-505",
+  "hours": 17884,
+  "date": "2026-08-31",
+  "technician": "LK/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 18234
  }
 ]
