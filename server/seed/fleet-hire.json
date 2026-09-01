@@ -190,5 +190,11 @@
   "offHire": false,
   "since": "2026-08-26",
   "note": "On hire - ROCK STAR SCRAP TRADING LLC SPC (replaced DG-811)"
+ },
+ {
+  "dg": "DG-484",
+  "offHire": true,
+  "since": "2026-09-01",
+  "note": "COURT CASE (AL SAFAKH) - service paused"
  }
 ]
