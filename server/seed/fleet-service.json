@@ -1408,19 +1408,6 @@
   "nextServiceDate": "2026-09-05"
  },
  {
-  "dg": "DG-537",
-  "hours": 8391,
-  "date": "2026-08-15",
-  "technician": "IMRAN&JAIRAZ",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 15.19,
-  "nextService": 8741,
-  "nextServiceDate": "2026-09-10"
- },
- {
   "dg": "DG-842",
   "hours": 3978,
   "date": "2026-08-15",
@@ -1779,5 +1766,17 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 36363
+ },
+ {
+  "dg": "DG-537",
+  "hours": 8391,
+  "date": "2026-08-15",
+  "technician": "LK",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 8741,
+  "nextServiceDate": "2026-09-16"
  }
 ]
