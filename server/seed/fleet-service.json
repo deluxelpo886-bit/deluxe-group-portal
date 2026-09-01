@@ -1791,5 +1791,18 @@
   "airFilter": false,
   "nextService": 5798,
   "nextServiceDate": "2026-09-29"
+ },
+ {
+  "dg": "DG-844",
+  "hours": 30703,
+  "date": "2026-09-01",
+  "technician": "",
+  "notes": "On hire 01/09/2026 - meter 30703, 350h clock set leaving yard",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 31053,
+  "nextServiceDate": "2026-09-30"
  }
 ]
