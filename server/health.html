@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Health Check</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:820px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .link{color:var(--blue);text-decoration:none;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:9px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;}
+  .tile .big{font-size:26px;font-weight:800;font-family:var(--mono);}
+  .tile .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;}
+  .overall{border-radius:12px;padding:12px 14px;margin-bottom:16px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .overall.ok{background:#12241c;color:var(--green);border:1px solid #2a5c40;}
+  .overall.warn{background:#2e2410;color:var(--gold);border:1px solid #5a4a1e;}
+  .check{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;}
+  .check .hd{display:flex;align-items:center;gap:9px;}
+  .check .st{font-size:12px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+  .st.pass{background:#12241c;color:var(--green);}
+  .st.warn{background:#2e2410;color:var(--gold);}
+  .st.info{background:#20262c;color:var(--muted);}
+  .check .nm{font-weight:700;font-size:14px;}
+  .check .ds{color:var(--muted);font-size:12.5px;margin-top:3px;}
+  .detail{margin-top:8px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:5px;}
+  .detail span{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:2px 8px;font-family:var(--mono);}
+  #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;}
+  .field{margin-bottom:13px;} .err{color:var(--red);font-size:13px;min-height:18px;}
+</style>
+<link rel="stylesheet" href="/theme.css">
+<link rel="manifest" href="/manifest-portal.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deluxe Ops">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+<script src="/alarm.js?v=4" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/strategy" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧠 Strategy</a><a href="/health" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🩺 Health</a><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">☰ Menu</a></nav>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:44px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:40px;width:auto;"></div>
+
+  <div class="eyebrow">Deluxe Operations</div>
+  <h1>Portal Health Check</h1>
+  <p class="sub">One-tap cross-check of the whole portal — fleet totals, on-hire / off-hire, paused units, the service plan, and data gaps. Run it any time you update. <a href="/dashboard" class="link">Dashboard</a> · <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+    <button class="btn" id="runBtn">🩺 Run health check</button>
+    <button class="btn sec" id="waBtn">📱 Share result</button>
+  </div>
+
+  <div id="tiles" class="tiles" style="display:none;"></div>
+  <div id="overall"></div>
+  <div id="checks"></div>
+  <div id="empty" class="sub" style="display:none;">Loading…</div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Health Check — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to run the portal health check.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=(function(){ try{ return localStorage.getItem(LS)||''; }catch(e){ return ''; } })();
+  var $=function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function authH(){ return {'Authorization':'Bearer '+TOKEN}; }
+  var RESULT=null;
+
+  function today(){ return new Date().toLocaleDateString('en-CA'); }
+  function daysTo(d){ if(!d) return null; return Math.round((new Date(d+'T00:00:00')-new Date(today()+'T00:00:00'))/86400000); }
+  function isYardText(r){ var l=String(r.location||'').toUpperCase(),c=String(r.customer||'').toUpperCase(); return l==='YARD'||c.indexOf('WORK SHOP')>=0||c.indexOf('WORKSHOP')>=0; }
+
+  function build(gens, dir){
+    var onH=gens.filter(function(x){return !x.offHire;}), offH=gens.filter(function(x){return x.offHire;});
+    var checks=[];
+    function add(name, status, desc, items){ checks.push({name:name,status:status,desc:desc,items:items||[]}); }
+
+    // 1. count balance
+    add('Fleet totals add up', (onH.length+offH.length===gens.length)?'pass':'warn',
+      gens.length+' tracked = '+onH.length+' on hire + '+offH.length+' in yard (off-hire)');
+
+    // 2. yard leaks (on-hire tagged yard)
+    var leaks=onH.filter(function(x){ var r=dir[String(x.dg).toUpperCase()]||{}; return isYardText(r); }).map(function(x){return x.dg;});
+    add('No on-hire units stuck in the yard', leaks.length?'warn':'pass',
+      leaks.length?(leaks.length+' on-hire units are still tagged YARD / WORK SHOP'):'Every on-hire unit is at a real site', leaks);
+
+    // 3. off-hire correctly paused (would be overdue but paused)
+    var pausedDue=offH.filter(function(x){ var d=daysTo(x.nextServiceDate); return d!=null&&d<0; }).map(function(x){return x.dg;});
+    add('Off-hire units are paused', 'info',
+      pausedDue.length+' yard units are past their date but PAUSED (correctly kept out of the service plan)', pausedDue.slice(0,40));
+
+    // 4. on-hire missing map location
+    var noLoc=onH.filter(function(x){ var r=dir[String(x.dg).toUpperCase()]||{}; return r.lat==null||r.lon==null; }).map(function(x){return x.dg;});
+    add('On-hire units have a map pin', noLoc.length?'warn':'pass',
+      noLoc.length?(noLoc.length+' on-hire units have no map location'):'All on-hire units are on the map', noLoc);
+
+    // 5. on-hire missing next-service date
+    var noDate=onH.filter(function(x){ return !x.nextServiceDate; }).map(function(x){return x.dg;});
+    add('On-hire units have a next-service date', noDate.length?'warn':'pass',
+      noDate.length?(noDate.length+' on-hire units have no next-service date'):'All on-hire units have a service schedule', noDate);
+
+    // 6. on-hire missing customer
+    var noCust=onH.filter(function(x){ var r=dir[String(x.dg).toUpperCase()]||{}; var c=(r.customer||'').trim().toUpperCase(); return !c||c==='WORK SHOP'; }).map(function(x){return x.dg;});
+    add('On-hire units have a customer name', noCust.length?'warn':'pass',
+      noCust.length?(noCust.length+' on-hire units have no customer name'):'All on-hire units show a customer', noCust);
+
+    // 7. duplicate DGs
+    var seen={},dups=[]; gens.forEach(function(x){ var k=String(x.dg).toUpperCase(); if(seen[k])dups.push(x.dg); else seen[k]=1; });
+    add('No duplicate generators', dups.length?'warn':'pass', dups.length?(dups.length+' duplicate DG numbers'):'Every generator appears once', dups);
+
+    // service plan summary (info)
+    var over=0,soon=0,mon=0; onH.forEach(function(x){var d=daysTo(x.nextServiceDate); if(d==null)return; if(d<0)over++; else if(d<=7)soon++; else if(d<=30)mon++;});
+    add('Service plan (on-hire)', 'info', over+' overdue · '+soon+' due within 7 days · '+mon+' due in 8–30 days');
+
+    var warns=checks.filter(function(c){return c.status==='warn';}).length;
+    return {onH:onH.length, offH:offH.length, total:gens.length, over:over, soon:soon, mon:mon, checks:checks, warns:warns};
+  }
+
+  function render(R){
+    RESULT=R;
+    $('tiles').style.display='grid';
+    $('tiles').innerHTML=
+      '<div class="tile"><div class="big" style="color:var(--green);">'+R.onH+'</div><div class="lbl">On hire</div></div>'
+      +'<div class="tile"><div class="big" style="color:var(--muted);">'+R.offH+'</div><div class="lbl">In yard (paused)</div></div>'
+      +'<div class="tile"><div class="big" style="color:var(--red);">'+R.over+'</div><div class="lbl">Overdue</div></div>';
+    $('overall').className='overall '+(R.warns?'warn':'ok');
+    $('overall').innerHTML=(R.warns?('⚠ '+R.warns+' thing'+(R.warns===1?'':'s')+' to look at'):'✓ All clear — portal is consistent')+' &nbsp;·&nbsp; checked '+new Date().toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'});
+    $('checks').innerHTML=R.checks.map(function(c){
+      var items=c.items&&c.items.length?('<div class="detail">'+c.items.slice(0,50).map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+(c.items.length>50?('<span>+'+(c.items.length-50)+' more</span>'):'')+'</div>'):'';
+      return '<div class="check"><div class="hd"><span class="st '+c.status+'">'+(c.status==='pass'?'✓ PASS':(c.status==='warn'?'⚠ CHECK':'ℹ INFO'))+'</span><span class="nm">'+esc(c.name)+'</span></div><div class="ds">'+esc(c.desc)+'</div>'+items+'</div>';
+    }).join('');
+    $('empty').style.display='none';
+  }
+
+  async function run(){
+    $('empty').style.display='block'; $('empty').textContent='Running checks…';
+    try{
+      var res=await Promise.all([ fetch('/api/service/status',{cache:'no-store',headers:authH()}), fetch('/api/fleet/directory',{cache:'no-store',headers:authH()}) ]);
+      if(res.some(function(r){return r.status===401;})){ showLogin(); return; }
+      var svc=await res[0].json(); var dir=await res[1].json();
+      render(build(svc.generators||[], dir.directory||{}));
+    }catch(e){ $('empty').textContent='Could not run the health check.'; }
+  }
+  $('runBtn').addEventListener('click', run);
+  $('waBtn').addEventListener('click',function(){
+    if(!RESULT){ return; }
+    var m='*DELUXE — Portal Health Check* ('+new Date().toLocaleDateString('en-GB')+')\n\n';
+    m+=(RESULT.warns?('⚠ '+RESULT.warns+' to check'):'✓ All clear')+'\n';
+    m+=RESULT.onH+' on hire · '+RESULT.offH+' in yard · '+RESULT.over+' overdue\n\n';
+    RESULT.checks.forEach(function(c){ m+=(c.status==='pass'?'✓':(c.status==='warn'?'⚠':'ℹ'))+' '+c.name+' — '+c.desc+'\n'; });
+    if(navigator.share){ navigator.share({text:m}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank'); }
+  });
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; run(); }
+  async function doLogin(){
+    $('loginErr').textContent='';
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('loginEmail').value.trim(),password:$('loginPass').value})});
+      var d=await r.json(); if(!r.ok||!d.token){ $('loginErr').textContent=d.error||'Wrong email or password'; return; }
+      TOKEN=d.token; try{ localStorage.setItem(LS,TOKEN); }catch(e){} hideLogin();
+    }catch(e){ $('loginErr').textContent='Could not sign in.'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+
+  if(TOKEN){ run(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
