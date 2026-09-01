@@ -1778,5 +1778,18 @@
   "airFilter": false,
   "nextService": 8741,
   "nextServiceDate": "2026-09-16"
+ },
+ {
+  "dg": "DG-488",
+  "hours": 5448,
+  "date": "2026-08-26",
+  "technician": "",
+  "notes": "Re-hired 26/08/2026 - service clock reset (+350h)",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 5798,
+  "nextServiceDate": "2026-09-29"
  }
 ]
