@@ -1635,7 +1635,8 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 9893,
-  "nextServiceDate": "2026-09-25"
+  "nextServiceDate": "2026-09-13",
+  "notes": "157h balance -> due ~12 days (13 Sep), date set manually"
  },
  {
   "dg": "DG-832",
