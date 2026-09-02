@@ -38,6 +38,9 @@ const ZONE_ALIASES = {
   'AL REEM ISLAND': 'Al Reem',
   'AL REEM': 'Al Reem',
   'ABU DHABI (SPORTS HOTEL)': 'Abu Dhabi',
+  'BANIYAS': 'Baniyas',
+  'BANIYAS EAST': 'Baniyas',
+  'BANIYAS WEST': 'Baniyas',
 };
 
 function titleCase(s) {
