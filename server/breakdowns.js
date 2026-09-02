@@ -31,12 +31,30 @@ function persist() {
   } catch (_) { /* best-effort */ }
 }
 
+// Allowed values. A breakdown moves Open -> Assigned -> On the way -> On site
+// -> Resolved. Anything that is not "Resolved" is still an ACTIVE job that the
+// office should be chasing. Priority decides which active job is chased first.
+const STATUSES = ['Open', 'Assigned', 'On the way', 'On site', 'Resolved'];
+const PRIORITIES = ['Critical', 'High', 'Normal'];
+const PRIORITY_RANK = { Critical: 0, High: 1, Normal: 2 };
+
+function normStatus(v) {
+  const s = String(v || '').trim();
+  return STATUSES.find((x) => x.toLowerCase() === s.toLowerCase()) || null;
+}
+function normPriority(v) {
+  const p = String(v || '').trim();
+  return PRIORITIES.find((x) => x.toLowerCase() === p.toLowerCase()) || null;
+}
+
 function add(rec) {
   const dg = String((rec && rec.dg) || '').trim().toUpperCase();
   if (!dg) throw new Error('Generator (DG) number is required');
   const it = {
     id: 'BD' + Date.now().toString(36) + Math.floor(Math.random() * 1000),
     dg,
+    // How urgent: Critical (down, on-hire customer) / High / Normal.
+    priority: normPriority(rec && rec.priority) || 'Normal',
     location: String((rec && rec.location) || '').trim(),
     truck: String((rec && rec.truck) || '').trim(),
     notes: String((rec && rec.notes) || '').trim(),
@@ -90,6 +108,22 @@ function update(id, fields) {
     if (fields && fields[k] != null) it[k] = String(fields[k]).trim();
   });
   if (fields && fields.dg) it.dg = String(fields.dg).trim().toUpperCase();
+  // Priority change (Critical / High / Normal).
+  if (fields && fields.priority != null) {
+    const p = normPriority(fields.priority);
+    if (p) it.priority = p;
+  }
+  // Status change along the dispatch flow. Moving to Resolved stamps the
+  // resolved time (and clears it if the job is moved back to an active state)
+  // so the response-time stats stay correct.
+  if (fields && fields.status != null) {
+    const s = normStatus(fields.status);
+    if (s) {
+      it.status = s;
+      if (s === 'Resolved') { it.resolvedAt = it.resolvedAt || new Date().toISOString(); }
+      else { it.resolvedAt = null; }
+    }
+  }
   it.updatedAt = new Date().toISOString();
   persist();
   return it;
@@ -100,19 +134,22 @@ function remove(id) {
   persist();
 }
 
-// Open breakdowns first (oldest open at top so they're chased), then resolved
-// history most-recent first.
+// Active breakdowns first (anything not yet Resolved), ranked by priority then
+// oldest-first so the most urgent, longest-waiting job is chased first. Then
+// resolved history, most-recent first.
 function getAll() {
-  const open = items.filter((x) => x.status === 'Open')
-    .sort((a, b) => String(a.reportedAt).localeCompare(String(b.reportedAt)));
-  const done = items.filter((x) => x.status !== 'Open')
+  const rank = (x) => (PRIORITY_RANK[x.priority] != null ? PRIORITY_RANK[x.priority] : 2);
+  const active = items.filter((x) => x.status !== 'Resolved')
+    .sort((a, b) => (rank(a) - rank(b)) || String(a.reportedAt).localeCompare(String(b.reportedAt)));
+  const done = items.filter((x) => x.status === 'Resolved')
     .sort((a, b) => String(b.reportedAt).localeCompare(String(a.reportedAt)));
-  return open.concat(done);
+  return active.concat(done);
 }
 
 function stats() {
-  const open = items.filter((x) => x.status === 'Open');
+  const open = items.filter((x) => x.status !== 'Resolved');
   const resolved = items.filter((x) => x.status === 'Resolved' && x.resolvedAt);
+  const critical = open.filter((x) => x.priority === 'Critical').length;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
   const thisMonth = items.filter((x) => String(x.reportedAt) >= monthStart).length;
@@ -138,7 +175,7 @@ function stats() {
     .map((k) => ({ category: k, count: cat[k] }))
     .sort((a, b) => b.count - a.count);
 
-  return { total: items.length, open: open.length, resolved: resolved.length, thisMonth, avgHours, repeat, byCategory };
+  return { total: items.length, open: open.length, critical, resolved: resolved.length, thisMonth, avgHours, repeat, byCategory };
 }
 
-module.exports = { add, resolve, reopen, update, remove, getAll, stats };
+module.exports = { add, resolve, reopen, update, remove, getAll, stats, STATUSES, PRIORITIES };
