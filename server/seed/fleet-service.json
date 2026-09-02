@@ -842,6 +842,19 @@
   "nextServiceDate": "2026-08-28"
  },
  {
+  "dg": "DG-36",
+  "hours": 4330,
+  "date": "2026-09-02",
+  "technician": "METER BASELINE",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 4680,
+  "nextServiceDate": "2026-09-20",
+  "notes": "Meter reset to 4330h leaving yard - next service +350h at 4680h"
+ },
+ {
   "dg": "DG-375",
   "hours": 30395,
   "date": "2026-07-27",
