@@ -42,6 +42,8 @@ const ZONE_ALIASES = {
   'BANIYAS EAST': 'Baniyas',
   'BANIYAS WEST': 'Baniyas',
   'BANIYAS (AL NAHDHAH SCHOOL)': 'Baniyas',
+  'DUBAI (JVC)': 'Dubai',
+  'JUMEIRAH VILLAGE CIRCLE - DUBAI': 'Dubai',
 };
 
 function titleCase(s) {
