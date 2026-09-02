@@ -881,6 +881,18 @@
   "nextServiceDate": "2026-08-25"
  },
  {
+  "dg": "DG-489",
+  "hours": 6564,
+  "date": "2026-09-02",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 6914,
+  "nextServiceDate": "2026-10-01"
+ },
+ {
   "dg": "DG-852",
   "hours": 2371,
   "date": "2026-07-27",
