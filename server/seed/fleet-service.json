@@ -259,6 +259,19 @@
   "nextServiceDate": "2026-08-28"
  },
  {
+  "dg": "DG-476",
+  "hours": 4412,
+  "date": "2026-09-02",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 4762,
+  "nextServiceDate": "2026-10-01",
+  "notes": "Repaired (engine over heat) & serviced, out on hire to Joseph Industries LLC"
+ },
+ {
   "dg": "DG-483",
   "hours": 14266,
   "date": "2026-03-13",
