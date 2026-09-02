@@ -1354,6 +1354,19 @@
   "nextServiceDate": "2026-08-30"
  },
  {
+  "dg": "DG-802",
+  "hours": 23226,
+  "date": "2026-09-03",
+  "technician": "LK/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "interval": 450,
+  "nextService": 23676,
+  "nextServiceDate": "2026-12-20"
+ },
+ {
   "dg": "DG-803",
   "hours": 11235,
   "date": "2026-08-12",
