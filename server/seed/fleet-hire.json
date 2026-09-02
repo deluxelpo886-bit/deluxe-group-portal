@@ -35,7 +35,9 @@
  },
  {
   "dg": "DG-476",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-03",
+  "note": "On hire — JOSEPH INDUSTRIES LLC, Dubai (HPP1-000192)"
  },
  {
   "dg": "DG-478",
