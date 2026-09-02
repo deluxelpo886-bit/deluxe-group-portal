@@ -1418,6 +1418,20 @@
   "nextServiceDate": "2026-08-30"
  },
  {
+  "dg": "DG-854",
+  "hours": 28364,
+  "date": "2026-09-02",
+  "technician": "LK/JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "interval": 450,
+  "nextService": 28810,
+  "nextServiceDate": "2026-10-02",
+  "notes": "Night service (Bright Accord office, after 3pm access). Air filter not changed."
+ },
+ {
   "dg": "DG-863",
   "hours": 11373,
   "date": "2026-08-12",
