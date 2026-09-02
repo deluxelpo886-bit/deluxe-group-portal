@@ -41,6 +41,7 @@ const ZONE_ALIASES = {
   'BANIYAS': 'Baniyas',
   'BANIYAS EAST': 'Baniyas',
   'BANIYAS WEST': 'Baniyas',
+  'BANIYAS (AL NAHDHAH SCHOOL)': 'Baniyas',
 };
 
 function titleCase(s) {
