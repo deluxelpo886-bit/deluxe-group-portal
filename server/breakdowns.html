@@ -40,6 +40,9 @@
   .muted{color:var(--muted);}
   .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;}
   .b-Open{background:#3a1414;color:#ff8a75;}
+  .b-Assigned{background:#2e2410;color:#e8c168;}
+  .b-On-the-way{background:#17273a;color:#8ec5f0;}
+  .b-On-site{background:#132b25;color:#5fd3a0;}
   .b-Resolved{background:var(--green-bg);color:var(--green);}
   .chip{display:inline-block;background:#2e2410;color:var(--gold);border-radius:20px;padding:2px 9px;font-size:11.5px;font-weight:700;margin:0 6px 6px 0;}
   .x{color:var(--red);cursor:pointer;border:none;background:transparent;font-size:15px;padding:2px 6px;}
@@ -110,6 +113,13 @@
       <div class="field" style="flex:2;"><label>Location / site</label><input type="text" id="location" placeholder="e.g. Mussafah ICAD-2" autocomplete="off"></div>
     </div>
     <div class="row">
+      <div class="field"><label>Priority</label>
+        <select id="priority" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;">
+          <option value="Normal">🟢 Normal — 8 h target</option>
+          <option value="High">🟠 High — 4 h target</option>
+          <option value="Critical">🔴 Critical — 2 h target</option>
+        </select>
+      </div>
       <div class="field"><label>Fault category</label>
         <select id="category" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;">
           <option value="">— (pick from helper above)</option>
@@ -326,8 +336,8 @@
           +'<div class="lbl" style="color:#ff9a86;margin:0 0 4px;">🔴 Customers down right now</div>'
           +'<div style="font-size:14px;font-weight:700;">'+RISK.down+' generator'+(RISK.down!==1?'s':'')+' on hire are broken · about <span style="color:#ffb4a0;">AED '+RISK.daily.toLocaleString()+'/day</span> of rental at risk</div>'
           +'<div class="muted" style="font-size:12px;margin-top:3px;">Fix these first — they’re costing money and customer trust.</div></div>'):'')
-      +'<div class="stat '+(s.open?'alert':'')+'"><div class="big">'+(s.open||0)+'</div><div class="lbl">Open now</div></div>'
-      +'<div class="stat"><div class="big">'+(s.thisMonth||0)+'</div><div class="lbl">This month</div></div>'
+      +'<div class="stat '+(s.open?'alert':'')+'"><div class="big">'+(s.open||0)+'</div><div class="lbl">Active now</div></div>'
+      +'<div class="stat'+(s.critical?' alert':'')+'"><div class="big"'+(s.critical?' style="color:#e0644a;"':'')+'>'+(s.critical||0)+'</div><div class="lbl">🔴 Critical</div></div>'
       +'<div class="stat"><div class="big">'+(s.avgHours!=null?s.avgHours+'h':'—')+'</div><div class="lbl">Avg fix time</div></div>'
       +'<div class="stat"><div class="big">'+(s.total||0)+'</div><div class="lbl">Total logged</div></div>'
       +((s.byCategory&&s.byCategory.length)?('<div class="stat" style="grid-column:1/-1;"><div class="lbl" style="margin:0 0 8px;">📊 Breakdowns by cause</div>'
@@ -336,14 +346,23 @@
          +s.repeat.map(function(r){return '<span class="chip">'+esc(r.dg)+' · '+r.count+'×</span>';}).join('')+'</div>'):'');
   }
 
-  // Priority from customer impact: an on-hire unit that's broken = a customer
-  // with no power right now (critical). A yard/off-hire unit is standby work.
-  function priorityOf(it){
-    if(it.status!=='Open') return {rank:9,label:'',color:''};
-    var oh=ONHIRE[String(it.dg).toUpperCase()];
-    if(oh===true) return {rank:0,label:'🔴 CUSTOMER DOWN',color:'#e0644a'};
-    if(oh===false) return {rank:2,label:'🟡 In yard',color:'#8b95a1'};
-    return {rank:1,label:'🟠 Attend',color:'#e8a13a'};
+  // Priority + response-time target. Critical must be attended within 2h, High
+  // 4h, Normal 8h. Set on the job; defaults to Normal.
+  var PRIO={ Critical:{rank:0,label:'🔴 CRITICAL',color:'#e0644a',target:2},
+             High:{rank:1,label:'🟠 HIGH',color:'#e8a13a',target:4},
+             Normal:{rank:2,label:'🟢 Normal',color:'#4caf7d',target:8} };
+  var FLOW=['Open','Assigned','On the way','On site','Resolved'];
+  function nextStatus(s){ var i=FLOW.indexOf(s); return (i>=0 && i<FLOW.length-1)?FLOW[i+1]:null; }
+  function priorityOf(it){ return PRIO[it.priority]||PRIO.Normal; }
+  // Live "open for Xh Ym" + whether it has blown its target. Recomputed on every
+  // render (a timer re-renders the list every 30s so this stays live).
+  function openClock(it){
+    var mins=Math.max(0,Math.round((Date.now()-new Date(it.reportedAt).getTime())/60000));
+    var h=Math.floor(mins/60), m=mins%60;
+    var txt=(h>0?(h+'h '):'')+m+'m';
+    var target=(priorityOf(it).target||8);
+    var over=mins>target*60;
+    return { txt:txt, over:over, target:target };
   }
   // WhatsApp dispatch message for the team: what, where, the problem, and a
   // Google Maps link straight to the site.
@@ -360,23 +379,29 @@
     return m;
   }
   function render(list){
-    // Rank the open ones by customer impact (down first, then by rate, then
-    // oldest); keep resolved history after, newest first.
-    var open=list.filter(function(x){return x.status==='Open';}).map(function(it){ return {it:it,p:priorityOf(it),rate:RATE[String(it.dg).toUpperCase()]||0}; })
+    window.__bdList=list;
+    // Active jobs (anything not Resolved) first, ranked by priority, then by
+    // rental at risk, then oldest-waiting. Resolved history after, newest first.
+    var active=list.filter(function(x){return x.status!=='Resolved';}).map(function(it){ return {it:it,p:priorityOf(it),rate:RATE[String(it.dg).toUpperCase()]||0}; })
       .sort(function(a,b){ return a.p.rank-b.p.rank || b.rate-a.rate || String(a.it.reportedAt).localeCompare(String(b.it.reportedAt)); }).map(function(x){return x.it;});
-    var done=list.filter(function(x){return x.status!=='Open';});
-    var ordered=open.concat(done);
+    var done=list.filter(function(x){return x.status==='Resolved';});
+    var ordered=active.concat(done);
     window.__bd=ordered;
     $('body').innerHTML = ordered.length ? ordered.map(function(it){
-      var isOpen=it.status==='Open'; var pr=priorityOf(it);
-      var action = isOpen
-        ? '<button class="mini" data-wa="'+esc(it.id)+'" style="background:#25D36622;border-color:#25D36655;color:#4fe08a;">📲 Send team</button> <button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
+      var isActive=it.status!=='Resolved'; var pr=priorityOf(it);
+      var oh=ONHIRE[String(it.dg).toUpperCase()];
+      var nxt=nextStatus(it.status);
+      var stepBtn = (isActive && nxt) ? '<button class="mini" data-step="'+esc(it.id)+'" data-to="'+esc(nxt)+'" style="background:#5b9bd522;border-color:#5b9bd555;color:#8ec5f0;">▶ '+esc(nxt)+'</button> ' : '';
+      var action = isActive
+        ? stepBtn+'<button class="mini" data-wa="'+esc(it.id)+'" style="background:#25D36622;border-color:#25D36655;color:#4fe08a;">📲 Send team</button> <button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
         : '<button class="mini" data-reopen="'+esc(it.id)+'">Reopen</button>';
-      return '<tr'+(isOpen?'':' style="opacity:.7;"')+'>'
+      var clk = isActive ? openClock(it) : null;
+      var timer = isActive ? ('<div style="font-size:11px;margin-top:3px;font-weight:700;color:'+(clk.over?'#e0644a':'#8b95a1')+';">'+(clk.over?'⏰ ':'⏱ ')+'open '+clk.txt+(clk.over?(' · over '+clk.target+'h target'):(' / '+clk.target+'h'))+'</div>') : '';
+      return '<tr'+(isActive?'':' style="opacity:.7;"')+'>'
         +'<td class="dg">'+esc(it.dg)+(it.location?'<div class="muted" style="font-size:12px;">'+esc(it.location)+'</div>':'')+'</td>'
-        +'<td><span class="badge b-'+esc(it.status)+'">'+esc(it.status)+'</span>'
-          +(isOpen&&pr.label?('<div style="font-size:11px;font-weight:700;color:'+pr.color+';margin-top:4px;">'+pr.label+'</div>'):'')
-          +(isOpen?'<div class="muted" style="font-size:11px;margin-top:3px;">open '+since(it.reportedAt,new Date().toISOString())+'</div>':'')+'</td>'
+        +'<td><span class="badge b-'+esc(String(it.status).replace(/ /g,"-"))+'">'+esc(it.status)+'</span>'
+          +(isActive?('<div style="font-size:11px;font-weight:700;color:'+pr.color+';margin-top:4px;">'+pr.label+(oh===true?' · 🔴 customer down':'')+'</div>'):'')
+          +timer+'</td>'
         +'<td class="muted">'+fmt(it.reportedAt)+(it.reportedBy?'<br>by '+esc(it.reportedBy):'')+'</td>'
         +'<td class="muted">'+(it.truck?esc(it.truck):'—')+'</td>'
         +'<td class="muted">'+(it.category?('<span class="badge" style="background:'+((CATCOL[it.category]||"#8b95a1"))+'22;color:'+((CATCOL[it.category]||"#8b95a1"))+';margin-bottom:4px;">'+esc(it.category)+'</span><br>'):'')+(it.notes?esc(it.notes):'—')+(it.cause?'<div style="font-size:11.5px;margin-top:3px;">✔ cause: '+esc(it.cause)+'</div>':'')+'</td>'
@@ -385,10 +410,13 @@
         +'</tr>';
     }).join('') : '<tr><td colspan="7" class="muted" style="padding:14px;">No breakdowns logged yet. 👍</td></tr>';
     $('body').querySelectorAll('button[data-wa]').forEach(function(b){ b.addEventListener('click',function(){ var it=(window.__bd||[]).filter(function(x){return x.id===b.getAttribute('data-wa');})[0]; if(it){ var t=dispatchMsg(it); if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } } }); });
+    $('body').querySelectorAll('button[data-step]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/update',{id:b.getAttribute('data-step'),status:b.getAttribute('data-to')}); }); });
     $('body').querySelectorAll('button[data-resolve]').forEach(function(b){ b.addEventListener('click',function(){ var cause=prompt('What was actually wrong? (root cause — helps spot patterns)\\nLeave blank to skip.'); if(cause===null){ post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve')}); } else { post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve'),cause:cause}); } }); });
     $('body').querySelectorAll('button[data-reopen]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/reopen',{id:b.getAttribute('data-reopen')}); }); });
     $('body').querySelectorAll('button[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Delete this breakdown record?')) post('/api/breakdowns/remove',{id:b.getAttribute('data-rm')}); }); });
   }
+  // Keep the "open for Xh Ym" timers live without hitting the network.
+  setInterval(function(){ if(window.__bdList && document.getElementById('body') && (window.__bdList.some(function(x){return x.status!=='Resolved';}))) render(window.__bdList); }, 30000);
 
   async function post(url,body){
     try{
@@ -414,7 +442,7 @@
       }catch(e){}
       try{ DIR=(await (await fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()})).json()).directory||{}; }catch(e){}
       // Revenue at risk: on-hire units with an open breakdown = customers down now.
-      var openOnHire=(d.breakdowns||[]).filter(function(it){ return it.status==='Open' && ONHIRE[String(it.dg).toUpperCase()]; });
+      var openOnHire=(d.breakdowns||[]).filter(function(it){ return it.status!=='Resolved' && ONHIRE[String(it.dg).toUpperCase()]; });
       RISK={ down:openOnHire.length, daily:Math.round(openOnHire.reduce(function(sum,it){ return sum+((RATE[String(it.dg).toUpperCase()]||0)/30); },0)) };
       renderStats(d.stats); render(d.breakdowns||[]);
     }catch(e){ $('body').innerHTML='<tr><td colspan="7" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
@@ -424,12 +452,12 @@
     $('err').textContent='';
     if(!$('dg').value.trim()){ $('err').textContent='Generator (DG) number is required'; return; }
     $('add').disabled=true;
-    var body={dg:$('dg').value,location:$('location').value,truck:$('truck').value,reportedBy:$('reportedBy').value,notes:$('notes').value,category:$('category').value,symptom:$('symptom').value};
+    var body={dg:$('dg').value,priority:$('priority').value,location:$('location').value,truck:$('truck').value,reportedBy:$('reportedBy').value,notes:$('notes').value,category:$('category').value,symptom:$('symptom').value};
     if($('reportedAt').value) body.reportedAt=new Date($('reportedAt').value).toISOString();
     var d=await post('/api/breakdowns/add',body);
     $('add').disabled=false;
     if(d && d.error){ $('err').textContent=d.error; return; }
-    if(d && d.ok){ $('dg').value=''; $('location').value=''; $('truck').value=''; $('notes').value=''; $('reportedAt').value=''; $('category').value=''; $('symptom').value=''; }
+    if(d && d.ok){ $('dg').value=''; $('location').value=''; $('truck').value=''; $('notes').value=''; $('reportedAt').value=''; $('category').value=''; $('symptom').value=''; $('priority').value='Normal'; }
   });
 
   // ---- Control-panel photo diagnosis (AI vision) ----
