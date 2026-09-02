@@ -194,6 +194,19 @@
   "nextServiceDate": "2026-09-10"
  },
  {
+  "dg": "DG-457",
+  "hours": 3345,
+  "date": "2026-09-01",
+  "technician": "WORK SHOP",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 3695,
+  "nextServiceDate": "2026-09-30",
+  "notes": "Full service in workshop before going on hire to Gulf Contracting"
+ },
+ {
   "dg": "DG-827",
   "hours": 3434,
   "date": "2026-01-29",
