@@ -1,5 +1,11 @@
 [
  {
+  "dg": "DG-818",
+  "offHire": true,
+  "since": "2026-08-16",
+  "note": "Off hire - returned to yard 16/08/2026 (was Gulf Contracting, Masdar City)"
+ },
+ {
   "dg": "DG-404",
   "offHire": true
  },
