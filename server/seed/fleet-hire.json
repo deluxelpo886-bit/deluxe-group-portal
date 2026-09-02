@@ -21,7 +21,15 @@
  },
  {
   "dg": "DG-457",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-09-02",
+  "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000220)"
+ },
+ {
+  "dg": "DG-36",
+  "offHire": false,
+  "since": "2026-09-02",
+  "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
  },
  {
   "dg": "DG-470",
