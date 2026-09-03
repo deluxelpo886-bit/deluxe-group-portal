@@ -1497,16 +1497,16 @@
  },
  {
   "dg": "DG-860",
-  "hours": 17691,
+  "hours": 17694,
   "date": "2026-08-13",
-  "technician": "SATNAM&HUSAIN",
+  "technician": "SONU&HUSSAIN",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 19.8,
-  "nextService": 18041,
-  "nextServiceDate": "2026-08-28"
+  "nextService": 18044,
+  "nextServiceDate": "2026-09-12"
  },
  {
   "dg": "DG-850",
