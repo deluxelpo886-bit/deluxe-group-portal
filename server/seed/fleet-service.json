@@ -1944,5 +1944,44 @@
   "nextService": 350,
   "nextServiceDate": "2027-01-01",
   "notes": "Yard - available for hire (added from physical count); no service history yet"
+ },
+ {
+  "dg": "DG-470",
+  "hours": 0,
+  "date": "2026-05-10",
+  "technician": "HUSAIN&GAGAN",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 350,
+  "nextServiceDate": "2027-01-01",
+  "notes": "Yard - available for hire (returned 28/07 from Genesis Cabinets); added to fleet count"
+ },
+ {
+  "dg": "DG-855",
+  "hours": 0,
+  "date": "2026-09-03",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 350,
+  "nextServiceDate": "2027-01-01",
+  "notes": "Workshop - block damage (under repair); added to fleet count"
+ },
+ {
+  "dg": "DG-862",
+  "hours": 0,
+  "date": "2026-09-03",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "nextService": 350,
+  "nextServiceDate": "2027-01-01",
+  "notes": "Workshop - engine overhauling (under repair); added to fleet count"
  }
 ]
