@@ -687,16 +687,16 @@
  },
  {
   "dg": "DG-836",
-  "hours": 2307,
+  "hours": 1957,
   "date": "2026-09-03",
   "technician": "SERVICE 2 (DELUXE ENERGY)",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "nextService": 2657,
-  "nextServiceDate": "2026-10-03",
-  "notes": "Re-hired to Stolway (ICAD II) 27/08; serviced 03/09 (Netsonic SER2-000133). Next +350h due ~03 Oct - CONFIRM METER (present hrs estimated)"
+  "nextService": 2307,
+  "nextServiceDate": "2026-10-31",
+  "notes": "Re-hired to Stolway (ICAD II) 27/08. Base = last reading 1957h; next +350h = 2307h. Due date from hire contract 27/08 at ~5.4h/day (~31 Oct) - confirm meter on site."
  },
  {
   "dg": "DG-518",
