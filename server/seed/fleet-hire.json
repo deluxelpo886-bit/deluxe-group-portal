@@ -1,5 +1,11 @@
 [
  {
+  "dg": "DG-544",
+  "offHire": true,
+  "since": "2026-09-03",
+  "note": "Yard - available for hire (added from physical count)"
+ },
+ {
   "dg": "DG-833",
   "offHire": true,
   "since": "2026-08-19",
@@ -123,7 +129,9 @@
  },
  {
   "dg": "DG-560",
-  "offHire": true
+  "offHire": false,
+  "note": "On hire - X Dom, Yas Island",
+  "since": "2026-08-24"
  },
  {
   "dg": "DG-NO",
@@ -149,7 +157,9 @@
  },
  {
   "dg": "DG-822",
-  "offHire": true
+  "offHire": false,
+  "note": "On hire - City Const, Al Faya",
+  "since": "2026-08-24"
  },
  {
   "dg": "DG-823",
@@ -165,11 +175,15 @@
  },
  {
   "dg": "DG-829",
-  "offHire": true
+  "offHire": false,
+  "note": "On hire - Al Reef, Sila",
+  "since": "2026-08-24"
  },
  {
   "dg": "DG-832",
-  "offHire": true
+  "offHire": false,
+  "note": "On hire - City Const, Baniyas",
+  "since": "2026-08-24"
  },
  {
   "dg": "DG-836",
@@ -191,7 +205,9 @@
  },
  {
   "dg": "DG-859",
-  "offHire": true
+  "offHire": false,
+  "note": "On hire - Trojan, Al Bahia",
+  "since": "2026-08-24"
  },
  {
   "dg": "DG-860",
