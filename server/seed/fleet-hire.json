@@ -211,7 +211,9 @@
  },
  {
   "dg": "DG-860",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-02",
+  "note": "On hire - City Construction, Gayathi (HPP1-000191)"
  },
  {
   "dg": "DG-862",
