@@ -1987,5 +1987,29 @@
   "nextService": 350,
   "nextServiceDate": "2027-01-01",
   "notes": "Workshop - engine overhauling (under repair); added to fleet count"
+ },
+ {
+  "dg": "DG-861",
+  "hours": 4051,
+  "date": "2026-09-03",
+  "technician": "LK/SABIR",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 4401,
+  "nextServiceDate": "2026-09-27"
+ },
+ {
+  "dg": "DG-819",
+  "hours": 22291,
+  "date": "2026-09-03",
+  "technician": "ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 22691,
+  "nextServiceDate": "2026-09-24"
  }
 ]
