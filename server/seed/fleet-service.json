@@ -686,6 +686,19 @@
   "nextServiceDate": "2026-09-10"
  },
  {
+  "dg": "DG-836",
+  "hours": 2307,
+  "date": "2026-09-03",
+  "technician": "SERVICE 2 (DELUXE ENERGY)",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 2657,
+  "nextServiceDate": "2026-10-03",
+  "notes": "Re-hired to Stolway (ICAD II) 27/08; serviced 03/09 (Netsonic SER2-000133). Next +350h due ~03 Oct - CONFIRM METER (present hrs estimated)"
+ },
+ {
   "dg": "DG-518",
   "hours": 5765,
   "date": "2026-07-21",
@@ -1175,15 +1188,14 @@
  {
   "dg": "DG-456",
   "hours": 3195,
-  "date": "2026-08-08",
+  "date": "2026-08-09",
   "technician": "GAGAN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 0.01,
   "nextService": 3545,
-  "nextServiceDate": "2026-09-08"
+  "nextServiceDate": "2026-09-10"
  },
  {
   "dg": "DG-558",
