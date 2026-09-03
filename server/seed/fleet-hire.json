@@ -85,7 +85,9 @@
  },
  {
   "dg": "DG-506",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-11",
+  "note": "On hire - Hashim Contracting, Al Bahia (HPP1-000203)"
  },
  {
   "dg": "DG-507",
