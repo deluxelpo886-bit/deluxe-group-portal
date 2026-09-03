@@ -465,7 +465,8 @@
   "airFilter": false,
   "dailyHours": 2.5,
   "nextService": 21185,
-  "nextServiceDate": "2026-08-28"
+  "nextServiceDate": "2027-01-01",
+  "notes": "On hire 2026-08-14; next service = hire date + 350h (~2027-01-01)"
  },
  {
   "dg": "DG-859",
@@ -554,7 +555,8 @@
   "airFilter": true,
   "dailyHours": 17.83,
   "nextService": 4288,
-  "nextServiceDate": "2026-08-28"
+  "nextServiceDate": "2026-09-11",
+  "notes": "On hire 2026-08-22; next service = hire date + 350h (~2026-09-11)"
  },
  {
   "dg": "DG-553",
@@ -632,7 +634,8 @@
   "airFilter": false,
   "dailyHours": 4.04,
   "nextService": 13192,
-  "nextServiceDate": "2026-09-10"
+  "nextServiceDate": "2026-11-08",
+  "notes": "On hire 2026-08-13; next service = hire date + 350h (~2026-11-08)"
  },
  {
   "dg": "DG-844",
