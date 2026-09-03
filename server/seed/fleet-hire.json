@@ -69,7 +69,9 @@
  },
  {
   "dg": "DG-485",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-22",
+  "note": "On hire - Hashim Contracting, Al Bahia (HPP1-000209)"
  },
  {
   "dg": "DG-496",
@@ -81,7 +83,15 @@
  },
  {
   "dg": "DG-507",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-08-14",
+  "note": "On hire - Silver Screen General Contracting, Al Ain (HPP2-000051)"
+ },
+ {
+  "dg": "DG-830",
+  "offHire": true,
+  "since": "2026-09-03",
+  "note": "Off hire - returned to yard (physical count)"
  },
  {
   "dg": "DG-515",
