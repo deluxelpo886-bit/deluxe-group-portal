@@ -2024,5 +2024,30 @@
   "nextService": 12660,
   "nextServiceDate": "2026-10-01",
   "notes": "Air filter not changed"
+ },
+ {
+  "dg": "DG-35",
+  "hours": 9150,
+  "date": "2026-09-05",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 9500,
+  "nextServiceDate": "2026-10-06"
+ },
+ {
+  "dg": "DG-554",
+  "hours": 5295,
+  "date": "2026-09-05",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 5645,
+  "nextServiceDate": "2026-10-04",
+  "notes": "Air filter not changed"
  }
 ]
