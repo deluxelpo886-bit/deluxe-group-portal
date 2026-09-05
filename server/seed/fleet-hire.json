@@ -51,7 +51,9 @@
  },
  {
   "dg": "DG-470",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-07-28",
+  "note": "On hire - Genesis Cabinets & Decoration, Mussafah (same customer)"
  },
  {
   "dg": "DG-473",
