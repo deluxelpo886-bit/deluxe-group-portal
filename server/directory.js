@@ -30,6 +30,8 @@ const ZONE_ALIASES = {
   'MUSSAFAH (NEAR MUFRAQ IND. AREA)': 'Mussafah',
   'MUSSAFAH': 'Mussafah',
   'MUSSAFAH M-33': 'Mussafah',
+  'MUSSAFAH-37': 'Mussafah',
+  'MUSSAFAH-38': 'Mussafah',
   'MUSSAFAH M33': 'Mussafah',
   'MUSSAFAH-33': 'Mussafah',
   'MASDER CITY': 'Masdar City',
