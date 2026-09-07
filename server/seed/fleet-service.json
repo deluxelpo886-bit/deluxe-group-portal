@@ -400,7 +400,7 @@
   "airFilter": false,
   "dailyHours": 6.64,
   "nextService": 5160,
-  "nextServiceDate": "2026-08-25"
+  "nextServiceDate": "2026-11-01"
  },
  {
   "dg": "DG-531",
@@ -2073,5 +2073,17 @@
   "airFilter": false,
   "nextService": 36678,
   "nextServiceDate": "2026-10-13"
+ },
+ {
+  "dg": "DG-851",
+  "hours": 2836,
+  "date": "2026-09-07",
+  "technician": "IK&JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 3186,
+  "nextServiceDate": "2026-10-21"
  }
 ]
