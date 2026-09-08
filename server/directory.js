@@ -28,6 +28,7 @@ const ZONE_ALIASES = {
   'SAKHBOUT CITY': 'Shakhbout City',
   'SHAKHBUTH CITY': 'Shakhbout City',
   'SHAKHBOUT CITY - MSH29': 'Shakhbout City',
+  'SHAKHBOUT CITY - MSH27': 'Shakhbout City',
   'MUSSAFAH (NEAR MUFRAQ IND. AREA)': 'Mussafah',
   'MUSSAFAH': 'Mussafah',
   'MUSSAFAH M-33': 'Mussafah',
