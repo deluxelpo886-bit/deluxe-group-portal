@@ -42,6 +42,8 @@ const ZONE_ALIASES = {
   'AL REEM ISLAND': 'Al Reem',
   'AL REEM': 'Al Reem',
   'ABU DHABI (SPORTS HOTEL)': 'Abu Dhabi',
+  'AL BAHIA': 'Al Bahia',
+  'AL BAHIA (LANE 212)': 'Al Bahia',
   'BANIYAS': 'Baniyas',
   'BANIYAS EAST': 'Baniyas',
   'BANIYAS WEST': 'Baniyas',
