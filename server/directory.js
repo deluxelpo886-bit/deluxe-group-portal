@@ -44,6 +44,8 @@ const ZONE_ALIASES = {
   'ABU DHABI (SPORTS HOTEL)': 'Abu Dhabi',
   'AL BAHIA': 'Al Bahia',
   'AL BAHIA (LANE 212)': 'Al Bahia',
+  'AL BAHYAH (AL SAFARJAL ST)': 'Al Bahia',
+  'AL BAHYAH': 'Al Bahia',
   'BANIYAS': 'Baniyas',
   'BANIYAS EAST': 'Baniyas',
   'BANIYAS WEST': 'Baniyas',

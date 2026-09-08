@@ -1307,15 +1307,15 @@
  },
  {
   "dg": "DG-857",
-  "hours": 965,
+  "hours": 16989,
   "date": "2026-08-11",
   "technician": "SATNAM&HUSAIN",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 13.11,
-  "nextService": 1315,
+  "dailyHours": 15.11,
+  "nextService": 17439,
   "nextServiceDate": "2026-09-10"
  },
  {
