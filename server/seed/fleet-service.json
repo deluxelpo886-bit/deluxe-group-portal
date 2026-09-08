@@ -777,8 +777,8 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 9.32,
-  "nextService": 17339,
-  "nextServiceDate": "2026-09-05"
+  "nextService": 17439,
+  "nextServiceDate": "2026-09-11"
  },
  {
   "dg": "DG-450",
@@ -1307,15 +1307,15 @@
  },
  {
   "dg": "DG-857",
-  "hours": 16989,
+  "hours": 965,
   "date": "2026-08-11",
   "technician": "SATNAM&HUSAIN",
   "oil": true,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 15.11,
-  "nextService": 17439,
+  "dailyHours": 13.11,
+  "nextService": 1315,
   "nextServiceDate": "2026-09-10"
  },
  {
@@ -2098,5 +2098,17 @@
   "airFilter": false,
   "nextService": 31270,
   "nextServiceDate": "2026-10-22"
+ },
+ {
+  "dg": "DG-529",
+  "hours": 29314,
+  "date": "2026-09-08",
+  "technician": "IK&JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 29664,
+  "nextServiceDate": "2026-10-02"
  }
 ]
