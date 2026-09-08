@@ -1,0 +1,156 @@
+[
+ {
+  "dg": "DG-38",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "100kVA JET - MIRFAQ (RUWAISH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-456",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "62.5kVA CUMMINS - HYDROPOWER ENERGY & GENERAL CONSTRUCTION LLC (ABU DHABI). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-467",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "100kVA WEBER - DAFOOS FIRE (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-470",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "220kVA IVECO - CLASSIC NAAZ REAL ESTATE & GENERAL MAINTENANCE LLC (MUSSAFAH-37). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-480",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "250kVA KIRLOSKER - NOV (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-502",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "50kVA PERKINS - HYDRO POWER (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-518",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "30kVA PERKINS - TOTAL (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-538",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "160kVA KIRLOSKER - ASWAR (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-545",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "150kVA CUMMINS - HASHIM CONTRACTING & GENERAL MAINTENANCE LLC (ABU DHABI). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-548",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "100kVA CATERPILLER - SIX SIGMA (JUBAIL ISLAND). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-800",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "350kVA CATERPILLER - TROJAN GENERAL CONTRACTING LLC (ABU DHABI (Sports Hotel)). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-836",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "500kVA CUMMINS - STOLWAY MANUFACTURING SOLE PROPRIETORSHIP LLC (ICAD II ABU DHABI). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-842",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "200kVA KIRLOSKER - BASUNDHARA (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-845",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "320kVA CATERPILLER - ROYAL TECH (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-847",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "375kVA WEICHAI - FANTASTIC (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-848",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "125kVA WEICHAI - SIX SIGMA (JUBAIL ISLAND). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-854",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "250kVA KIRLOSKER - BRIGHT ACCORD (JUBAIL ISLAND). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-857",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "250kVA KIRLOSKER - HOTEL (BHUWASA). On the map only at the area centre; needs an exact pin from the field."
+ },
+ {
+  "dg": "DG-857",
+  "type": "meter-confirm",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Portal shows 965h but a controller nearby read ~17,400h. Confirm DG-857 actual meter - the 965 may be a bad entry."
+ },
+ {
+  "dg": "DG-470",
+  "type": "meter-confirm",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "No meter reading on record (only unit in the fleet without one). Get a first hour-meter reading."
+ },
+ {
+  "dg": "DG-843",
+  "type": "location-missing",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Pin was estimated next to DG-473 (Madinat Shakhbout MSH29). Confirm the exact spot when the team is on site."
+ },
+ {
+  "dg": "DG-853",
+  "type": "customer-confirm",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Now physically at Al Bahyah (Al Safarjal St) - confirm hirer/contract (portal shows Trojan)."
+ }
+]
