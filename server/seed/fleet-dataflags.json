@@ -152,5 +152,173 @@
   "severity": "low",
   "source": "cross-check",
   "message": "Now physically at Al Bahyah (Al Safarjal St) - confirm hirer/contract (portal shows Trojan)."
+ },
+ {
+  "dg": "DG-518",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-20 (19 days ago) - TOTAL, MUSSAFAH. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-821",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-20 (19 days ago) - AL REEF, RUWAISH. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-477",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-25 (14 days ago) - OSAI, KIZAD. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-482",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-25 (14 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-491",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-25 (14 days ago) - HYDRO POWER, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-826",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-25 (14 days ago) - EMDAD, KIZAD. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-839",
+  "type": "service-due",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-08-25 (14 days ago) - TROJAN, HUDRIYAT. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-37",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - TROJAN, YAS ISLAND. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-531",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - RAMAH, WATHBA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-542",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - TROJAN, YAS ISLAND. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-801",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - MAWAAD, AL FAYA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-823",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - NOOR AL SAHARA READY MIX, JUMEIRAH ISLANDS - DUBAI. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-829",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - AL REEF, SILA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-858",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-01 (7 days ago) - RAMAH, RAZEEM -AL FAYA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-835",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-02 (6 days ago) - TROJAN, AL REEM. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-479",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - HYDRO POWER, AL FALAH. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-481",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - SIX SIGMA, AL NAHYAN - ABU DHABI. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-508",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-553",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - SMART HOME, AL AIN. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-558",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-848",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - SIX SIGMA, JUBAIL ISLAND. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-850",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - AL MASRIYA, KIZAD. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-859",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
+ },
+ {
+  "dg": "DG-864",
+  "type": "service-due",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Plan shows service due 2026-09-05 (3 days ago) - GULF CONTRACTING, AL AIN. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
  }
 ]
