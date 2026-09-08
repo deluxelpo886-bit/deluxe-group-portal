@@ -1187,7 +1187,8 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 12,
-  "nextService": 3378
+  "nextService": 3378,
+  "nextServiceDate": "2026-09-14"
  },
  {
   "dg": "DG-456",
