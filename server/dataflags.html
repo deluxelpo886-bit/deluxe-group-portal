@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Data Flags</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14181c">
+<style>
+  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
+    --amber:#e8a13a; --green:#4caf7d; --green-bg:#1a2e24; --red:#e0644a; --blue:#5b9bd5; --gold:#e8c168;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:22px 16px 60px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px;line-height:1.5;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+  label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 5px;}
+  input[type=text],select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+  input:focus,select:focus,textarea:focus{border-color:var(--amber);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:130px;}
+  .field{margin-bottom:12px;}
+  .btn{background:var(--amber);color:#1a1300;border:none;padding:11px 14px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+  .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .btn.sm{padding:7px 11px;font-size:12.5px;}
+  .btn.green{background:var(--green);color:#04120b;}
+  .err{color:var(--red);font-size:13px;min-height:18px;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .stat .big{font-size:26px;font-weight:800;font-family:var(--mono);line-height:1;}
+  .stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
+  .stat.alert .big{color:var(--red);}
+  .stat.ok .big{color:var(--green);}
+  .flag{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:10px;padding:13px 15px;margin-bottom:10px;}
+  .flag.high{border-left-color:var(--red);}
+  .flag.medium{border-left-color:var(--amber);}
+  .flag.low{border-left-color:var(--blue);}
+  .flag.done{opacity:.6;border-left-color:var(--green);}
+  .flag .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .dg{font-family:var(--mono);font-weight:700;font-size:15px;}
+  .tag{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);}
+  .tag.high{color:var(--red);border-color:var(--red);}
+  .tag.medium{color:var(--amber);border-color:var(--amber);}
+  .tag.low{color:var(--blue);border-color:var(--blue);}
+  .msg{font-size:13.5px;color:var(--text);margin:8px 0 10px;line-height:1.5;}
+  .meta{font-size:11.5px;color:var(--muted);}
+  .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .link{color:var(--blue);text-decoration:none;}
+  .empty{color:var(--muted);text-align:center;padding:26px;font-size:14px;}
+  h2{font-size:15px;margin:20px 0 10px;}
+  #overlay{position:fixed;inset:0;background:rgba(10,13,16,.86);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;max-width:360px;width:100%;}
+</style>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<div class="wrap">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-family:Inter,-apple-system,Segoe UI,sans-serif;"><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🔧 Service</a><a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🧭 Plan</a><a href="/breakdowns" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🚨 Breakdowns</a><a href="/flags" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🔔 Data Flags</a></nav>
+
+  <div class="toolbar">
+    <div>
+      <div class="eyebrow">Deluxe Operations</div>
+      <h1>Data Flags — things to resolve 🔔</h1>
+    </div>
+    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+  </div>
+  <p class="sub">Every cross-check finding lands here — a missing map pin, a meter to confirm, an hours mismatch, a filter still pending. Clear each one once it's sorted so nothing slips through. New flags are added automatically when data is cross-checked, and you can add your own below.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="panel">
+    <label style="font-size:12px;color:var(--text);margin-bottom:10px;">➕ Add a flag</label>
+    <div class="row">
+      <div style="max-width:130px;"><label>DG No.</label><input type="text" id="fDg" placeholder="DG-000"></div>
+      <div style="max-width:170px;"><label>Type</label><select id="fType">
+        <option value="location-missing">Location / pin missing</option>
+        <option value="meter-confirm">Meter to confirm</option>
+        <option value="hours-mismatch">Hours mismatch</option>
+        <option value="filter-pending">Filter pending</option>
+        <option value="customer-confirm">Customer / contract</option>
+        <option value="service-due">Service due</option>
+        <option value="other">Other</option>
+      </select></div>
+      <div style="max-width:130px;"><label>Priority</label><select id="fSev">
+        <option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option>
+      </select></div>
+    </div>
+    <div class="field" style="margin-top:12px;"><label>What needs resolving?</label><textarea id="fMsg" rows="2" placeholder="e.g. confirm actual hour-meter reading"></textarea></div>
+    <div class="err" id="addErr"></div>
+    <button class="btn" id="addBtn">Add flag</button>
+  </div>
+
+  <h2>🔴 Open</h2>
+  <div id="openList"></div>
+
+  <h2 style="margin-top:24px;">✅ Resolved <span class="meta" id="resToggle" style="cursor:pointer;color:var(--blue);">(show)</span></h2>
+  <div id="doneList" style="display:none;"></div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <div class="eyebrow">Deluxe Operations</div>
+    <h1 style="font-size:19px;margin:0 0 4px;">Data Flags — Sign in</h1>
+    <p class="sub" style="margin-bottom:16px;">Sign in to view and resolve data flags.</p>
+    <div class="field"><label>Email</label><input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  var TYPE_LABEL={'location-missing':'📍 Location','meter-confirm':'🔢 Meter','hours-mismatch':'⚠️ Hours','filter-pending':'🧴 Filter','customer-confirm':'🤝 Customer','service-due':'🔧 Service','other':'📌 Other'};
+  function fmtDate(s){ try{ return new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }catch(e){ return ''; } }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; $('signOut').style.display='none'; }
+  function hideLogin(){ $('overlay').style.display='none'; $('signOut').style.display=''; load(); }
+
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value;
+    $('loginErr').textContent='';
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json();
+      if(!r.ok){ $('loginErr').textContent=d.message||'Sign in failed'; return; }
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent='Network error'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('loginPass').addEventListener('keydown',function(e){ if(e.key==='Enter')doLogin(); });
+  $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  async function post(url,body){
+    try{
+      var r=await fetch(url,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify(body||{})});
+      if(r.status===401){ showLogin('Please sign in again.'); return null; }
+      return await r.json();
+    }catch(e){ return {ok:false,message:'Network error'}; }
+  }
+
+  function flagCard(f){
+    var sev=f.severity||'medium';
+    var done=f.status==='resolved';
+    var h='<div class="flag '+(done?'done':sev)+'">';
+    h+='<div class="top"><span class="dg">'+esc(f.dg||'—')+'</span>';
+    h+='<span><span class="tag">'+esc(TYPE_LABEL[f.type]||f.type)+'</span> <span class="tag '+sev+'">'+esc(sev)+'</span></span></div>';
+    h+='<div class="msg">'+esc(f.message||'')+'</div>';
+    h+='<div class="meta">Raised '+fmtDate(f.createdAt)+' · '+esc(f.source||'')+(done?(' · <b style="color:var(--green)">resolved '+fmtDate(f.resolvedAt)+'</b>'+(f.resolvedNote?(' — '+esc(f.resolvedNote)):'')):'')+'</div>';
+    h+='<div class="acts">';
+    if(f.dg) h+='<a class="btn sec sm" href="/fleet?dg='+encodeURIComponent(f.dg)+'" title="Open on map">🗺️ Map</a>';
+    if(!done){ h+='<button class="btn green sm" data-resolve="'+f.id+'">✓ Resolve</button>'; }
+    else { h+='<button class="btn sec sm" data-reopen="'+f.id+'">↩︎ Reopen</button>'; }
+    h+='<button class="btn sec sm" data-remove="'+f.id+'">🗑</button>';
+    h+='</div></div>';
+    return h;
+  }
+
+  function renderStats(s){
+    var loc=(s.byType&&s.byType['location-missing'])||0;
+    $('stats').innerHTML=
+      '<div class="stat alert"><div class="big">'+(s.open||0)+'</div><div class="lbl">Open</div></div>'
+      +'<div class="stat"><div class="big">'+(s.high||0)+'</div><div class="lbl">High priority</div></div>'
+      +'<div class="stat"><div class="big">'+loc+'</div><div class="lbl">Pins needed</div></div>'
+      +'<div class="stat ok"><div class="big">'+(s.resolved||0)+'</div><div class="lbl">Resolved</div></div>';
+  }
+
+  function wire(){
+    document.querySelectorAll('[data-resolve]').forEach(function(b){ b.addEventListener('click',async function(){
+      var note=prompt('Optional note — what did you do to resolve it?')||'';
+      var d=await post('/api/dataflags/resolve',{id:b.getAttribute('data-resolve'),note:note}); if(d&&d.ok)load(); }); });
+    document.querySelectorAll('[data-reopen]').forEach(function(b){ b.addEventListener('click',async function(){
+      var d=await post('/api/dataflags/reopen',{id:b.getAttribute('data-reopen')}); if(d&&d.ok)load(); }); });
+    document.querySelectorAll('[data-remove]').forEach(function(b){ b.addEventListener('click',async function(){
+      if(!confirm('Remove this flag permanently?'))return;
+      var d=await post('/api/dataflags/remove',{id:b.getAttribute('data-remove')}); if(d&&d.ok)load(); }); });
+  }
+
+  async function load(){
+    try{
+      var r=await fetch('/api/dataflags',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json();
+      var flags=d.flags||[];
+      renderStats(d.stats||{});
+      var open=flags.filter(function(f){return f.status!=='resolved';});
+      var done=flags.filter(function(f){return f.status==='resolved';});
+      $('openList').innerHTML=open.length?open.map(flagCard).join(''):'<div class="empty">🎉 Nothing to resolve — all clear.</div>';
+      $('doneList').innerHTML=done.length?done.map(flagCard).join(''):'<div class="empty">No resolved flags yet.</div>';
+      wire();
+    }catch(e){}
+  }
+
+  $('addBtn').addEventListener('click',async function(){
+    $('addErr').textContent='';
+    var dg=$('fDg').value.trim(), msg=$('fMsg').value.trim();
+    if(!msg){ $('addErr').textContent='Say what needs resolving.'; return; }
+    var d=await post('/api/dataflags/add',{dg:dg,type:$('fType').value,severity:$('fSev').value,message:msg,source:'manual'});
+    if(d&&d.ok){ $('fDg').value=''; $('fMsg').value=''; load(); }
+    else if(d){ $('addErr').textContent=d.message||'Could not add.'; }
+  });
+
+  $('resToggle').addEventListener('click',function(){
+    var el=$('doneList'); var show=el.style.display==='none';
+    el.style.display=show?'':'none'; $('resToggle').textContent=show?'(hide)':'(show)';
+  });
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@ const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
 const directory = require('./directory');
+const dataflags = require('./dataflags');
 
 const fs = require('fs');
 // Uploaded PDFs are stored on the persistent disk next to the database, keyed
@@ -83,6 +84,18 @@ try {
     if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
+
+// One-time import of known data flags (cross-check findings to resolve) into
+// the in-app notification list. Idempotent per version and never wipes flags
+// already resolved in the app. See server/dataflags.js.
+try {
+  const flagSeedPath = path.join(__dirname, 'seed', 'fleet-dataflags.json');
+  if (fs.existsSync(flagSeedPath)) {
+    const fseed = JSON.parse(fs.readFileSync(flagSeedPath, 'utf8'));
+    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-08a');
+    if (r && r.applied) console.log('[seed] added ' + r.applied + ' data flags to resolve');
+  }
+} catch (e) { console.warn('[seed] data-flags import skipped:', e && e.message); }
 
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
@@ -883,6 +896,32 @@ app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
   breakdowns.remove((req.body || {}).id);
   res.json({ ok: true });
 });
+
+// ---------- Data flags (in-app "to resolve" notifications) ----------
+// Cross-check findings (missing map pins, meter/hours to confirm, filters
+// pending, contract to confirm) that the office clears from the app once
+// sorted. Same fleet login. See server/dataflags.js.
+app.get('/api/dataflags', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ flags: dataflags.getAll(), stats: dataflags.stats() });
+});
+app.post('/api/dataflags/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: dataflags.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ ok: false, message: e && e.message }); }
+});
+app.post('/api/dataflags/resolve', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  try { res.json({ ok: true, item: dataflags.resolve(b.id, b.note) }); }
+  catch (e) { res.status(400).json({ ok: false, message: e && e.message }); }
+});
+app.post('/api/dataflags/reopen', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: dataflags.reopen((req.body || {}).id) }); }
+  catch (e) { res.status(400).json({ ok: false, message: e && e.message }); }
+});
+app.post('/api/dataflags/remove', fleetProtect, (req, res) => {
+  dataflags.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
 // Diagnose a control-panel photo. Accepts the raw image bytes (Content-Type
 // image/jpeg|png|webp). Optional ?dg= and ?location= add context. Always
 // responds 200 with { ok, diagnosis } or { ok:false, message } so the page can
@@ -1092,6 +1131,16 @@ app.get('/breakdowns', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'breakdowns.html'), { cacheControl: false });
+});
+
+app.get('/flags', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'dataflags.html'), { cacheControl: false });
 });
 
 // Operations dashboard: at-a-glance counts (fleet, service due, spares, sites)
