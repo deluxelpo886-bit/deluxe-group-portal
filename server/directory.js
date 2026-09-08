@@ -45,6 +45,7 @@ const ZONE_ALIASES = {
   'BANIYAS EAST': 'Baniyas',
   'BANIYAS WEST': 'Baniyas',
   'BANIYAS (AL NAHDHAH SCHOOL)': 'Baniyas',
+  'BANIYAS WEST (JARN YAFOUR)': 'Baniyas',
   'MAFRAQ (JARN YAFOUR)': 'Mafraq',
   'MAFRAQ INDUSTRIAL AREA': 'Mafraq',
   'DUBAI (JVC)': 'Dubai',
