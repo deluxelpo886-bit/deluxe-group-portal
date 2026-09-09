@@ -804,6 +804,16 @@ app.get('/plan', (req, res) => {
   res.sendFile(path.join(__dirname, 'plan.html'), { cacheControl: false });
 });
 
+app.get('/serviceplan', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'serviceplan.html'), { cacheControl: false });
+});
+
 // ---------- Spare-parts issue tracking ----------
 app.get('/api/spares', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
