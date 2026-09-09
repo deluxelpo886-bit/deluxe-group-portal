@@ -245,13 +245,6 @@
   "message": "Plan shows service due 2026-09-01 (7 days ago) - RAMAH, RAZEEM -AL FAYA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
  },
  {
-  "dg": "DG-835",
-  "type": "service-due",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "Plan shows service due 2026-09-02 (6 days ago) - TROJAN, AL REEM. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
- },
- {
   "dg": "DG-479",
   "type": "service-due",
   "severity": "medium",
