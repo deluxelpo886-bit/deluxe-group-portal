@@ -126,13 +126,6 @@
   "message": "250kVA KIRLOSKER - HOTEL (BHUWASA). On the map only at the area centre; needs an exact pin from the field."
  },
  {
-  "dg": "DG-857",
-  "type": "meter-confirm",
-  "severity": "high",
-  "source": "cross-check",
-  "message": "Portal shows 965h but a controller nearby read ~17,400h. Confirm DG-857 actual meter - the 965 may be a bad entry."
- },
- {
   "dg": "DG-470",
   "type": "meter-confirm",
   "severity": "medium",
