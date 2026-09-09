@@ -55,6 +55,7 @@ const ZONE_ALIASES = {
   'MAFRAQ (JARN YAFOUR)': 'Mafraq',
   'MAFRAQ INDUSTRIAL AREA': 'Mafraq',
   'DUBAI (JVC)': 'Dubai',
+  'DUBAI (BUSINESS BAY)': 'Dubai',
   'AL JUBAIL ISLAND - JS': 'Jubail Island',
   'JUBAIL ISLAND': 'Jubail Island',
   'JUMEIRAH VILLAGE CIRCLE - DUBAI': 'Dubai',
