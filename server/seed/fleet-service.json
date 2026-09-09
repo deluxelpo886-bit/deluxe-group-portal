@@ -2110,5 +2110,41 @@
   "airFilter": false,
   "nextService": 29664,
   "nextServiceDate": "2026-10-02"
+ },
+ {
+  "dg": "DG-481",
+  "hours": 23608,
+  "date": "2026-09-09",
+  "technician": "IK&JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 23958,
+  "nextServiceDate": "2026-10-11"
+ },
+ {
+  "dg": "DG-548",
+  "hours": 5103,
+  "date": "2026-09-09",
+  "technician": "ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 5453,
+  "nextServiceDate": "2026-10-06"
+ },
+ {
+  "dg": "DG-848",
+  "hours": 13435,
+  "date": "2026-09-09",
+  "technician": "ADEEL&MIR",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 13785,
+  "nextServiceDate": "2026-10-11"
  }
 ]
