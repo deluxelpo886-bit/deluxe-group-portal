@@ -63,13 +63,6 @@
   "message": "150kVA CUMMINS - HASHIM CONTRACTING & GENERAL MAINTENANCE LLC (ABU DHABI). On the map only at the area centre; needs an exact pin from the field."
  },
  {
-  "dg": "DG-548",
-  "type": "location-missing",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "100kVA CATERPILLER - SIX SIGMA (JUBAIL ISLAND). On the map only at the area centre; needs an exact pin from the field."
- },
- {
   "dg": "DG-800",
   "type": "location-missing",
   "severity": "medium",
@@ -103,13 +96,6 @@
   "severity": "medium",
   "source": "cross-check",
   "message": "375kVA WEICHAI - FANTASTIC (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
- },
- {
-  "dg": "DG-848",
-  "type": "location-missing",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "125kVA WEICHAI - SIX SIGMA (JUBAIL ISLAND). On the map only at the area centre; needs an exact pin from the field."
  },
  {
   "dg": "DG-854",
