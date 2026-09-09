@@ -57,6 +57,7 @@ const ZONE_ALIASES = {
   'BANIYAS WEST (JARN YAFOUR)': 'Baniyas',
   'AL SHAWAMEKH - SHM11': 'Baniyas',
   'AL AIN (AIN AL FAYDA)': 'Al Ain',
+  'ABU DHABI UNIVERSITY': 'MBZ City',
   'MAFRAQ (JARN YAFOUR)': 'Mafraq',
   'MAFRAQ INDUSTRIAL AREA': 'Mafraq',
   'DUBAI (JVC)': 'Dubai',
