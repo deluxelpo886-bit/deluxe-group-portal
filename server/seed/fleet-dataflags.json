@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-833",
+  "type": "location-missing",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "New hire to Dreams Cricket Academy, Abu Dhabi University - pinned approximately; get an exact pin from the field."
+ },
+ {
   "dg": "DG-38",
   "type": "location-missing",
   "severity": "medium",

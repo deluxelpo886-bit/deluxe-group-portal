@@ -1161,8 +1161,9 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "nextService": 2523,
-  "nextServiceDate": "2026-09-01"
+  "nextService": 2686,
+  "nextServiceDate": "2026-10-23",
+  "notes": "Next = hire date (09/09) + 350h; current meter 2336h at handover"
  },
  {
   "dg": "DG-858",
