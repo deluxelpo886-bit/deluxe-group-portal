@@ -18,6 +18,13 @@ const DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 'data
 const FILE = path.join(DIR, 'service.json');
 const DEFAULT_INTERVAL = 350;
 
+// Portal rule: service interval depends on generator size. 250 kVA and above
+// run 450 hours between services; anything below 250 kVA runs 350 hours.
+function intervalForKva(kva) {
+  const n = Number(kva);
+  return (isFinite(n) && n >= 250) ? 450 : 350;
+}
+
 let store = {}; // DG (upper) -> latest record
 try {
   if (fs.existsSync(FILE)) store = JSON.parse(fs.readFileSync(FILE, 'utf8')) || {};
@@ -38,7 +45,10 @@ function logService(rec) {
   const hours = Number(rec.hours);
   if (!isFinite(hours) || hours < 0) throw new Error('A valid current hours reading is required');
 
-  const interval = Number(rec.interval) > 0 ? Number(rec.interval) : DEFAULT_INTERVAL;
+  // Interval: an explicit value wins; otherwise the kVA-based portal rule
+  // (450h for >=250 kVA, 350h below) when the size is known; else the default.
+  const interval = Number(rec.interval) > 0 ? Number(rec.interval)
+    : (rec.kva != null ? intervalForKva(rec.kva) : DEFAULT_INTERVAL);
   // Next-service hours: use an explicit value when given (e.g. from an imported
   // asset list), otherwise current hours + interval.
   const nextService = Number(rec.nextService) > 0 ? Number(rec.nextService) : hours + interval;
@@ -284,4 +294,4 @@ function classifyDue(g, todayStr, opts) {
   return { state: 'ok', send: false, confirmed: false, label: 'Not due' };
 }
 
-module.exports = { logService, logReading, getAll, getPhoto, remove, applySeed, classifyDue, DEFAULT_INTERVAL };
+module.exports = { logService, logReading, getAll, getPhoto, remove, applySeed, classifyDue, DEFAULT_INTERVAL, intervalForKva };
