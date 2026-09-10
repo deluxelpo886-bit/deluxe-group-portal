@@ -238,13 +238,6 @@
   "message": "Plan shows service due 2026-09-05 (3 days ago) - HYDRO POWER, AL FALAH. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
  },
  {
-  "dg": "DG-508",
-  "type": "service-due",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "Plan shows service due 2026-09-05 (3 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
- },
- {
   "dg": "DG-553",
   "type": "service-due",
   "severity": "medium",
