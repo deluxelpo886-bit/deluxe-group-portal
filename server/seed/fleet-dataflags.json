@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-520",
+  "type": "filter-pending",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Serviced 17/08/2026 at 11894h - Air Filter NOT changed (marked X). Carry an air filter for the next service (due 12244h). Live reading 12095h on 10/09."
+ },
+ {
   "dg": "DG-833",
   "type": "location-missing",
   "severity": "low",
