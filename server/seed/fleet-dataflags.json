@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-836",
+  "type": "meter-confirm",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "New service (Netsonic SER1-000486, 10/09) - STOLWAY MANUFACTURING, ICAD II. Hours meter PENDING: office to provide the real reading tomorrow. Record currently carries an old 1957h estimate; next service +450h. Update hours when the meter comes in."
+ },
+ {
   "dg": "DG-520",
   "type": "filter-pending",
   "severity": "low",
