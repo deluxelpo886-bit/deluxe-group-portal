@@ -14,7 +14,7 @@
 
 const Anthropic = require('@anthropic-ai/sdk');
 
-const MODEL = 'claude-sonnet-4-6';
+const MODEL = 'claude-sonnet-5';
 
 const LPO_TOOL = {
   name: 'record_lpo_fields',
@@ -83,25 +83,36 @@ async function extractServiceCard(imageBuffer, mediaType) {
     ? mediaType : 'image/jpeg';
   const b64 = imageBuffer.toString('base64');
 
-  const resp = await client.messages.create({
-    model: MODEL,
-    max_tokens: 1024,
-    tools: [SERVICE_CARD_TOOL],
-    tool_choice: { type: 'tool', name: SERVICE_CARD_TOOL.name },
-    messages: [{
-      role: 'user',
-      content: [
-        { type: 'image', source: { type: 'base64', media_type: mt, data: b64 } },
-        {
-          type: 'text',
-          text: 'This is a photo of a generator service card with handwritten entries. Read it and record the fields with the ' +
-            SERVICE_CARD_TOOL.name + ' tool. Pay careful attention to the four filter boxes (Oil, Oil Filter, Fuel Filter, ' +
-            'Air Filter): a tick/check means true, a cross (X) or blank means false. For any field you cannot confidently ' +
-            'read, set it to null - do not guess. The date must be YYYY-MM-DD.'
-        }
-      ]
-    }]
-  });
+  let resp;
+  try {
+    resp = await client.messages.create({
+      model: MODEL,
+      max_tokens: 1024,
+      tools: [SERVICE_CARD_TOOL],
+      tool_choice: { type: 'tool', name: SERVICE_CARD_TOOL.name },
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: mt, data: b64 } },
+          {
+            type: 'text',
+            text: 'This is a photo of a generator service card with handwritten entries. Read it and record the fields with the ' +
+              SERVICE_CARD_TOOL.name + ' tool. Pay careful attention to the four filter boxes (Oil, Oil Filter, Fuel Filter, ' +
+              'Air Filter): a tick/check means true, a cross (X) or blank means false. For any field you cannot confidently ' +
+              'read, set it to null - do not guess. The date must be YYYY-MM-DD.'
+          }
+        ]
+      }]
+    });
+  } catch (e) {
+    // Surface the real reason (bad key, no credit, model access, etc.) so the
+    // office can see what to fix, instead of a generic failure.
+    const status = e && e.status ? (' [' + e.status + ']') : '';
+    const detail = (e && e.error && e.error.error && e.error.error.message)
+      || (e && e.message) || 'unknown error';
+    console.error('Service card AI call failed:', status, detail);
+    return { ok: false, fields: {}, message: 'AI read error' + status + ': ' + detail };
+  }
 
   const block = (resp.content || []).find(function (b) { return b.type === 'tool_use'; });
   const raw = (block && block.input) || {};
