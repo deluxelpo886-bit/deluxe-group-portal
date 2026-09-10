@@ -26,10 +26,6 @@
   "offHire": true
  },
  {
-  "dg": "DG-430",
-  "offHire": true
- },
- {
   "dg": "DG-452",
   "offHire": true
  },
@@ -102,10 +98,6 @@
   "offHire": true,
   "since": "2026-09-03",
   "note": "Off hire - returned to yard (physical count)"
- },
- {
-  "dg": "DG-515",
-  "offHire": true
  },
  {
   "dg": "DG-536",
@@ -201,10 +193,6 @@
  },
  {
   "dg": "DG-840",
-  "offHire": true
- },
- {
-  "dg": "DG-855",
   "offHire": true
  },
  {
