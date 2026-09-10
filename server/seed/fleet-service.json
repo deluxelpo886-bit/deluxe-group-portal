@@ -42,20 +42,6 @@
   "interval": 350
  },
  {
-  "dg": "DG-430",
-  "hours": 35480,
-  "date": "2025-09-12",
-  "technician": "SATNAM&ROLAND",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 3.75,
-  "nextService": 35830,
-  "nextServiceDate": "2026-09-10",
-  "interval": 350
- },
- {
   "dg": "DG-418",
   "hours": 4274,
   "date": "2025-10-02",
@@ -345,20 +331,6 @@
   "dailyHours": 11.28,
   "nextService": 19470,
   "nextServiceDate": "2026-09-19",
-  "interval": 450
- },
- {
-  "dg": "DG-515",
-  "hours": 6876,
-  "date": "2026-04-02",
-  "technician": "ROLAND&BAKHTAMAL",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 10.82,
-  "nextService": 7326,
-  "nextServiceDate": "2026-09-24",
   "interval": 450
  },
  {
@@ -2078,20 +2050,6 @@
   "nextServiceDate": "2027-01-01",
   "notes": "Yard - available for hire (returned 28/07 from Genesis Cabinets); added to fleet count",
   "interval": 350
- },
- {
-  "dg": "DG-855",
-  "hours": 0,
-  "date": "2026-09-03",
-  "technician": "",
-  "oil": false,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "nextService": 450,
-  "nextServiceDate": "2027-01-01",
-  "notes": "Workshop - block damage (under repair); added to fleet count",
-  "interval": 450
  },
  {
   "dg": "DG-862",
