@@ -1,10 +1,10 @@
 [
  {
   "dg": "DG-836",
-  "type": "meter-confirm",
-  "severity": "medium",
+  "type": "filter-pending",
+  "severity": "low",
   "source": "cross-check",
-  "message": "New service (Netsonic SER1-000486, 10/09) - STOLWAY MANUFACTURING, ICAD II. Hours meter PENDING: office to provide the real reading tomorrow. Record currently carries an old 1957h estimate; next service +450h. Update hours when the meter comes in."
+  "message": "Serviced 10/09 at 32h (standby, meter confirmed from DSE controller) - AIR FILTER not changed (X). Carry an air filter next visit. Oil, oil filter, fuel filter done."
  },
  {
   "dg": "DG-520",
