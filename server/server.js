@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus } = require('./db');
-const { extractFields } = require('./extract');
+const { extractFields, extractServiceCard } = require('./extract');
 const { diagnosePanel } = require('./diagnose');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
@@ -347,6 +347,26 @@ app.post('/api/extract/:type', authRequired, express.raw({ type: 'application/pd
   } catch (e) {
     console.error('PDF extraction failed:', e && e.message);
     res.json({ ok: false, fields: {}, attId: attId, message: 'Extraction failed - please enter the details manually' });
+  }
+});
+
+// ---------- Service card auto-read (photo -> fields) ----------
+// Accepts a raw service-card photo (Content-Type: image/*) and returns the
+// fields read by Claude so the frontend can pre-fill the "Log a service" form.
+// Never auto-saves - the office reviews and taps Save. Always 200 on non-fatal
+// paths (empty fields => manual entry). Fleet-authenticated like the rest of the
+// service API. Lights up as soon as ANTHROPIC_API_KEY is set on the server.
+app.post('/api/service/extract-card', fleetProtect, express.raw({ type: ['image/*'], limit: '12mb' }), async (req, res) => {
+  if (!req.body || !req.body.length) {
+    return res.status(400).json({ ok: false, fields: {}, message: 'No image received' });
+  }
+  try {
+    const mt = (req.get('content-type') || 'image/jpeg').split(';')[0].trim();
+    const result = await extractServiceCard(req.body, mt);
+    res.json(result);
+  } catch (e) {
+    console.error('Service card extraction failed:', e && e.message);
+    res.json({ ok: false, fields: {}, message: 'Auto-read failed - please enter the details manually' });
   }
 });
 

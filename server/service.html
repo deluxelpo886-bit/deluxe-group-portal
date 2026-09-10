@@ -132,9 +132,11 @@
       <div id="photoWrap" style="display:none;margin-top:10px;">
         <img id="photoPreview" alt="preview" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--line);display:block;">
         <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <button type="button" class="btn sec" id="ocrBtn" style="width:auto;padding:8px 12px;font-size:13px;">🔍 Auto-read hours</button>
+          <button type="button" class="btn" id="cardReadBtn" style="width:auto;padding:8px 12px;font-size:13px;">🤖 Auto-fill from card</button>
+          <button type="button" class="btn sec" id="ocrBtn" style="width:auto;padding:8px 12px;font-size:13px;">🔍 Hours only</button>
           <span id="ocrMsg" class="muted" style="font-size:12.5px;"></span>
         </div>
+        <div id="cardMsg" class="muted" style="font-size:12.5px;margin-top:6px;"></div>
       </div>
     </div>
     <div class="field" style="margin-bottom:14px;">
@@ -243,6 +245,37 @@
         else { $('ocrMsg').textContent='Could not read a number — please type the hours.'; }
       }catch(e){ $('ocrMsg').textContent='Auto-read unavailable here — please type the hours.'; }
       finally{ ocrBtn.disabled=false; }
+    });
+  })();
+  // Turn the resized JPEG data URL into a Blob we can POST as a raw image body.
+  function dataUrlToBlob(u){ var parts=u.split(','); var mime=(parts[0].match(/data:([^;]+)/)||[])[1]||'image/jpeg';
+    var bin=atob(parts[1]); var arr=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+    return new Blob([arr],{type:mime}); }
+  (function(){ var btn=$('cardReadBtn'); if(!btn) return;
+    btn.addEventListener('click',async function(){
+      if(!photoData){ $('cardMsg').textContent='Take a photo of the service card first.'; return; }
+      $('cardMsg').textContent='🤖 Reading the card…'; btn.disabled=true;
+      try{
+        var blob=dataUrlToBlob(photoData);
+        var r=await fetch('/api/service/extract-card',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN,'Content-Type':blob.type},body:blob});
+        var d=await r.json().catch(function(){return{};});
+        var f=(d&&d.fields)||{};
+        if(!r.ok){ $('cardMsg').textContent=(d&&d.message)||'Auto-read failed — please enter manually.'; return; }
+        if(d.ok===false && (!f||!Object.keys(f).length)){ $('cardMsg').textContent=(d.message||'Auto-read not available — please enter manually.'); return; }
+        var filled=[];
+        if(f.dg){ $('dg').value=f.dg; filled.push('DG'); }
+        if(f.hours!=null){ $('hours').value=f.hours; filled.push('hours'); }
+        if(f.date){ $('date').value=String(f.date).slice(0,10); filled.push('date'); }
+        if(f.technician){ $('technician').value=f.technician; filled.push('technician'); }
+        if(typeof f.oil==='boolean'){ $('oil').checked=f.oil; }
+        if(typeof f.oilFilter==='boolean'){ $('oilFilter').checked=f.oilFilter; }
+        if(typeof f.fuelFilter==='boolean'){ $('fuelFilter').checked=f.fuelFilter; }
+        if(typeof f.airFilter==='boolean'){ $('airFilter').checked=f.airFilter; }
+        if(f.oil!=null||f.oilFilter!=null||f.fuelFilter!=null||f.airFilter!=null) filled.push('filters');
+        updateNextPreview();
+        $('cardMsg').textContent=filled.length ? ('✅ Read '+filled.join(', ')+' — please check against the card, then Save.') : 'Could not read the card clearly — please enter the details.';
+      }catch(e){ $('cardMsg').textContent='Auto-read unavailable — please enter the details manually.'; }
+      finally{ btn.disabled=false; }
     });
   })();
   var photoModal=document.createElement('div');
