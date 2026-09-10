@@ -63,13 +63,6 @@
   "message": "160kVA KIRLOSKER - ASWAR (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
  },
  {
-  "dg": "DG-800",
-  "type": "location-missing",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "350kVA CATERPILLER - TROJAN GENERAL CONTRACTING LLC (ABU DHABI (Sports Hotel)). On the map only at the area centre; needs an exact pin from the field."
- },
- {
   "dg": "DG-836",
   "type": "location-missing",
   "severity": "medium",

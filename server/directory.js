@@ -39,6 +39,7 @@ const ZONE_ALIASES = {
   'MASDER CITY': 'Masdar City',
   'MASDAR CITY': 'Masdar City',
   'AL REEM ISLAND - RS3': 'Al Reem',
+  'AL REEM ISLAND - RR8': 'Al Reem',
   'AL REEM ISLAND': 'Al Reem',
   'AL REEM': 'Al Reem',
   'ABU DHABI (SPORTS HOTEL)': 'Abu Dhabi',
