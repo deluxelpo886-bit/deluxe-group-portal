@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-520",
+  "type": "filter-pending",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Serviced 17/08/2026 at 11894h - Air Filter NOT changed (marked X). Carry an air filter for the next service (due 12244h). Live reading 12095h on 10/09."
+ },
+ {
   "dg": "DG-833",
   "type": "location-missing",
   "severity": "low",
@@ -250,13 +257,6 @@
   "severity": "medium",
   "source": "cross-check",
   "message": "Plan shows service due 2026-09-05 (3 days ago) - AL MASRIYA, KIZAD. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
- },
- {
-  "dg": "DG-859",
-  "type": "service-due",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "Plan shows service due 2026-09-05 (3 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
  },
  {
   "dg": "DG-864",

@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus } = require('./db');
-const { extractFields } = require('./extract');
+const { extractFields, extractServiceCard } = require('./extract');
 const { diagnosePanel } = require('./diagnose');
 const { sendWhatsApp } = require('./whatsapp');
 const { sendEmail } = require('./email');
@@ -68,7 +68,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-10c');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-10f');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -92,7 +92,7 @@ try {
   const flagSeedPath = path.join(__dirname, 'seed', 'fleet-dataflags.json');
   if (fs.existsSync(flagSeedPath)) {
     const fseed = JSON.parse(fs.readFileSync(flagSeedPath, 'utf8'));
-    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-10a');
+    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-10c');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' data flags to resolve');
   }
 } catch (e) { console.warn('[seed] data-flags import skipped:', e && e.message); }
@@ -350,6 +350,26 @@ app.post('/api/extract/:type', authRequired, express.raw({ type: 'application/pd
   }
 });
 
+// ---------- Service card auto-read (photo -> fields) ----------
+// Accepts a raw service-card photo (Content-Type: image/*) and returns the
+// fields read by Claude so the frontend can pre-fill the "Log a service" form.
+// Never auto-saves - the office reviews and taps Save. Always 200 on non-fatal
+// paths (empty fields => manual entry). Fleet-authenticated like the rest of the
+// service API. Lights up as soon as ANTHROPIC_API_KEY is set on the server.
+app.post('/api/service/extract-card', fleetProtect, express.raw({ type: ['image/*'], limit: '12mb' }), async (req, res) => {
+  if (!req.body || !req.body.length) {
+    return res.status(400).json({ ok: false, fields: {}, message: 'No image received' });
+  }
+  try {
+    const mt = (req.get('content-type') || 'image/jpeg').split(';')[0].trim();
+    const result = await extractServiceCard(req.body, mt);
+    res.json(result);
+  } catch (e) {
+    console.error('Service card extraction failed:', e && e.message);
+    res.json({ ok: false, fields: {}, message: 'Auto-read failed - please enter the details manually' });
+  }
+});
+
 // ---------- Serve a stored PDF attachment ----------
 // Streams a previously-uploaded PDF inline. The id is validated to a strict
 // 32-hex pattern so it can't escape the attachments directory.
@@ -461,7 +481,7 @@ app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, re
 app.use('/api/ops', createOpsRouter({ authRequired }));
 
 // ---------- Health check ----------
-app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString(), storagePersistent: STORAGE_PERSISTENT }));
+app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString(), storagePersistent: STORAGE_PERSISTENT, aiConfigured: !!process.env.ANTHROPIC_API_KEY }));
 
 // ---------- Live fleet: login + vehicle positions (Total Secure / Traccar) ----
 // The /fleet map link is protected by a dedicated "Deluxe Operations" login.

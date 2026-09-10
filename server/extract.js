@@ -46,9 +46,72 @@ const INVOICE_TOOL = {
   }
 };
 
+const SERVICE_CARD_TOOL = {
+  name: 'record_service_card',
+  description: 'Record the structured fields read from a photographed generator SERVICE CARD (Deluxe Heavy Equipment / Deluxe Energy). The card has handwritten values.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      dg: { type: ['string', 'null'], description: 'The equipment / generator number, e.g. "DG-520". Normalise to the form DG-<number> in uppercase.' },
+      date: { type: ['string', 'null'], description: 'The maintenance/service date in YYYY-MM-DD format. Cards often write it as D.M.YY or D/M/26 - interpret 2-digit years in the 2020s.' },
+      hours: { type: ['number', 'null'], description: 'The current running-hours reading at service, as a plain number (the big handwritten hours figure, not the "+350").' },
+      technician: { type: ['string', 'null'], description: 'The name(s) written after "Maintained by", e.g. "IK & JAYARAJ".' },
+      oil: { type: ['boolean', 'null'], description: 'true if the Oil box is ticked/checked, false if crossed (X) or blank.' },
+      oilFilter: { type: ['boolean', 'null'], description: 'true if the Oil Filter box is ticked, false if crossed (X) or blank.' },
+      fuelFilter: { type: ['boolean', 'null'], description: 'true if the Fuel Filter box is ticked, false if crossed (X) or blank.' },
+      airFilter: { type: ['boolean', 'null'], description: 'true if the Air Filter box is ticked, false if crossed (X) or blank.' },
+      nextService: { type: ['number', 'null'], description: 'The "Next Service due on" hours figure if written, as a plain number.' }
+    }
+  }
+};
+
 function getClient() {
   if (!process.env.ANTHROPIC_API_KEY) return null;
   return new Anthropic(); // reads ANTHROPIC_API_KEY from the environment
+}
+
+// Read a photographed service card (JPEG/PNG image buffer) and return the
+// structured fields for the frontend to pre-fill. Same graceful-degradation
+// contract as extractFields: { ok, fields, message? }. A tick vs an X on the
+// four filters is exactly what the office otherwise re-types by hand.
+async function extractServiceCard(imageBuffer, mediaType) {
+  const client = getClient();
+  if (!client) {
+    return { ok: false, fields: {}, message: 'AI extraction not configured (ANTHROPIC_API_KEY is not set)' };
+  }
+  const mt = (mediaType === 'image/png' || mediaType === 'image/webp' || mediaType === 'image/gif')
+    ? mediaType : 'image/jpeg';
+  const b64 = imageBuffer.toString('base64');
+
+  const resp = await client.messages.create({
+    model: MODEL,
+    max_tokens: 1024,
+    tools: [SERVICE_CARD_TOOL],
+    tool_choice: { type: 'tool', name: SERVICE_CARD_TOOL.name },
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: mt, data: b64 } },
+        {
+          type: 'text',
+          text: 'This is a photo of a generator service card with handwritten entries. Read it and record the fields with the ' +
+            SERVICE_CARD_TOOL.name + ' tool. Pay careful attention to the four filter boxes (Oil, Oil Filter, Fuel Filter, ' +
+            'Air Filter): a tick/check means true, a cross (X) or blank means false. For any field you cannot confidently ' +
+            'read, set it to null - do not guess. The date must be YYYY-MM-DD.'
+        }
+      ]
+    }]
+  });
+
+  const block = (resp.content || []).find(function (b) { return b.type === 'tool_use'; });
+  const raw = (block && block.input) || {};
+  const fields = {};
+  Object.keys(raw).forEach(function (k) {
+    const v = raw[k];
+    // Keep booleans (including false) and real values; drop only null/undefined/''.
+    if (v !== null && v !== undefined && v !== '') fields[k] = v;
+  });
+  return { ok: true, fields: fields };
 }
 
 // Returns { ok: boolean, fields: {...}, message?: string }.
@@ -98,4 +161,4 @@ async function extractFields(type, pdfBuffer) {
   return { ok: true, fields: fields };
 }
 
-module.exports = { extractFields };
+module.exports = { extractFields, extractServiceCard };
