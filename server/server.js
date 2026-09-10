@@ -481,7 +481,7 @@ app.post('/api/send-alerts/:company', authRequired, validCompany, async (req, re
 app.use('/api/ops', createOpsRouter({ authRequired }));
 
 // ---------- Health check ----------
-app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString(), storagePersistent: STORAGE_PERSISTENT }));
+app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString(), storagePersistent: STORAGE_PERSISTENT, aiConfigured: !!process.env.ANTHROPIC_API_KEY }));
 
 // ---------- Live fleet: login + vehicle positions (Total Secure / Traccar) ----
 // The /fleet map link is protected by a dedicated "Deluxe Operations" login.
