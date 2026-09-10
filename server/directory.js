@@ -47,6 +47,7 @@ const ZONE_ALIASES = {
   'AL BAHIA (LANE 212)': 'Al Bahia',
   'AL BAHYAH (AL SAFARJAL ST)': 'Al Bahia',
   'AL BAHYAH': 'Al Bahia',
+  'AL BAHYAH FARMS (LANE 601)': 'Al Bahia',
   'MOHAMED BIN ZAYED CITY - Z27': 'MBZ City',
   'MOHAMED BIN ZAYED CITY - ME15': 'MBZ City',
   'AL FAYA NORTH (AL ASHEESH)': 'Al Faya',
