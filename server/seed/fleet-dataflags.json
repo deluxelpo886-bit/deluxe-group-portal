@@ -259,13 +259,6 @@
   "message": "Plan shows service due 2026-09-05 (3 days ago) - AL MASRIYA, KIZAD. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
  },
  {
-  "dg": "DG-859",
-  "type": "service-due",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "Plan shows service due 2026-09-05 (3 days ago) - TROJAN, AL BAHIA. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
- },
- {
   "dg": "DG-864",
   "type": "service-due",
   "severity": "medium",
