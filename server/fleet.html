@@ -174,11 +174,11 @@
   <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
     <div class="eyebrow">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy — Machinery Operations</div>
   <h1>Fleet Master &amp; Live Dispatch <span id="liveBadge" style="font-size:11px; padding:4px 10px; border-radius:20px; background:#2e2410; color:#e8c168; vertical-align:middle;">● vehicle GPS not connected yet</span></h1>
-  <p class="sub">143 generators from asset register · brand, technician, division &amp; 18 with exact GPS via Google Maps links</p>
+  <p class="sub"><span id="hdrCount">140</span> generators from asset register · brand, technician, division &amp; <span id="hdrGps">49</span> with exact GPS via Google Maps links</p>
   <div class="warn">
     ⚠ Source: your Asset List (Feb-26). KVA/status/technician/customer are real. <b>Company split confirmed:</b>
-    Division = "MOTOR" → Deluxe Energy (23 units), Division = "HEAVY"/"WORKSHOP" → Deluxe Heavy (120 units).
-    Only 18 generators have an exact GPS pin (📍 in the GPS column) — the rest are area-center approximations.
+    Division = "MOTOR" → Deluxe Energy (<span id="hdrEnergy">24</span> units), Division = "HEAVY"/"WORKSHOP" → Deluxe Heavy (<span id="hdrHeavy">115</span> units).
+    Only <span id="hdrGps2">49</span> generators have an exact GPS pin (📍 in the GPS column) — the rest are area-center approximations.
   </div>
 
   <div class="topbar">
@@ -2008,6 +2008,22 @@ if('serviceWorker' in navigator){
   });
 }
 
+// Keep the header counts (total / exact-GPS / company split) in sync with the
+// live DATA so they never go stale as pins and units change.
+(function(){
+  try{
+    var real = DATA.filter(function(g){ return g && g.dg && g.dg !== 'DG-NO'; });
+    var gps = real.filter(function(g){ return g.maps_link && /maps/.test(g.maps_link); });
+    var energy = real.filter(function(g){ return (g.division||'') === 'MOTOR'; });
+    var heavy = real.filter(function(g){ return ['HEAVY','WORKSHOP'].indexOf(g.division||'') >= 0; });
+    var set = function(id,n){ var el=document.getElementById(id); if(el) el.textContent=n; };
+    set('hdrCount', real.length);
+    set('hdrGps', gps.length);
+    set('hdrGps2', gps.length);
+    set('hdrEnergy', energy.length);
+    set('hdrHeavy', heavy.length);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
