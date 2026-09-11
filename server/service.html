@@ -166,10 +166,10 @@
     <div style="overflow-x:auto;">
       <table>
         <thead><tr>
-          <th>Generator</th><th>Status</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
+          <th>Generator</th><th>Machine</th><th>Status</th><th class="n">Last hrs</th><th class="n">Next (hrs)</th>
           <th>Due (by hours)</th><th class="n">Usage</th><th>Serviced</th><th>By</th><th></th>
         </tr></thead>
-        <tbody id="statusBody"><tr><td colspan="9" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
+        <tbody id="statusBody"><tr><td colspan="10" class="muted" style="padding:14px;">Loading…</td></tr></tbody>
       </table>
     </div>
     <div style="margin-top:10px;display:flex;justify-content:space-between;"><span class="muted" id="statusCount"></span><a href="#" class="link" id="refresh">↻ Refresh</a></div>
@@ -383,7 +383,7 @@
       lastGens=d.generators||[];
       renderAlarm(lastGens);
       renderStatusTable();
-    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="9" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="10" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
 
   function statusDays(g){
@@ -452,17 +452,19 @@
           : '<span style="display:inline-block;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:700;">🟢 ON HIRE</span>';
         var toggleLbl = off ? 'Set On-hire' : 'Set Off-hire';
         var rowStyle = off ? ' style="opacity:.55;"' : '';
+        var machine=((g.kva!=null&&g.kva!=='')?(g.kva+' kVA'):'')+(g.brand?(' · '+g.brand):'');
         return '<tr'+rowStyle+'><td class="dg">'+g.dg+'</td>'
+          +'<td style="white-space:nowrap;font-size:12px;">'+(machine||'<span class="muted">-</span>')+'</td>'
           +'<td style="white-space:nowrap;">'+statusCell+'<br><button data-hire="'+g.dg+'" data-off="'+(off?'0':'1')+'" style="margin-top:5px;background:transparent;color:#8b95a1;border:1px solid #2c333a;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">'+toggleLbl+'</button></td>'
           +'<td class="n">'+g.hours+readingCell(g)+'</td><td class="n">'+g.nextService+'</td><td>'+dueCell(g)+'</td><td class="n">'+(off?'<span class="muted">off</span>':((g.effectiveDailyHours||'-')+' h/d'))+'</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
           +'<td style="white-space:nowrap;"><button data-edit="'+g.dg+'" style="background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;">Edit</button> <button data-del="'+g.dg+'" style="background:transparent;color:#e0644a;border:1px solid #5a2a22;border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;">Delete</button></td></tr>';
-      }).join('') : ('<tr><td colspan="9" class="muted" style="padding:14px;">'+(lastGens.length?'No generators match.':'No services logged yet.')+'</td></tr>');
+      }).join('') : ('<tr><td colspan="10" class="muted" style="padding:14px;">'+(lastGens.length?'No generators match.':'No services logged yet.')+'</td></tr>');
       $('statusBody').querySelectorAll('a.photo-link').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); viewPhoto(a.getAttribute('data-dg')); }); });
       $('statusBody').querySelectorAll('button[data-edit]').forEach(function(b){ b.addEventListener('click',function(){ editEntry(b.getAttribute('data-edit')); }); });
       $('statusBody').querySelectorAll('button[data-del]').forEach(function(b){ b.addEventListener('click',function(){ deleteEntry(b.getAttribute('data-del')); }); });
       $('statusBody').querySelectorAll('button[data-hire]').forEach(function(b){ b.addEventListener('click',function(){ setHire(b.getAttribute('data-hire'), b.getAttribute('data-off')==='1'); }); });
       $('statusBody').querySelectorAll('button[data-confirm]').forEach(function(b){ b.addEventListener('click',function(){ confirmHours(b.getAttribute('data-confirm')); }); });
-    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="9" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
+    }catch(e){ $('statusBody').innerHTML='<tr><td colspan="10" class="muted" style="padding:14px;">Could not load.</td></tr>'; }
   }
   document.getElementById('statusSearch').addEventListener('input',renderStatusTable);
   document.getElementById('statusFilter').addEventListener('change',renderStatusTable);
