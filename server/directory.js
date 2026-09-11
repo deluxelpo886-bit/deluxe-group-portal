@@ -67,6 +67,9 @@ const ZONE_ALIASES = {
   'AL JUBAIL ISLAND - JS': 'Jubail Island',
   'JUBAIL ISLAND': 'Jubail Island',
   'JUMEIRAH VILLAGE CIRCLE - DUBAI': 'Dubai',
+  'KHALIFA INDUSTRIAL CITY B': 'KIZAD',
+  'KHALIFA INDUSTRIAL CITY': 'KIZAD',
+  'KIZAD': 'KIZAD',
 };
 
 function titleCase(s) {
