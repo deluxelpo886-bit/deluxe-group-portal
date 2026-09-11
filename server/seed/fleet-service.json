@@ -502,21 +502,6 @@
   "interval": 350
  },
  {
-  "dg": "DG-750",
-  "hours": 22458,
-  "date": "2026-09-11",
-  "technician": "ADEEL&MJ.K",
-  "oil": true,
-  "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 11.15,
-  "nextService": 22908,
-  "nextServiceDate": "2026-10-21",
-  "interval": 450,
-  "notes": "New unit - not previously in the fleet. Serviced at Khalifa Industrial City B (co-located with DG-473, El Masria Cement). CONFIRM kVA / brand / customer. Air filter pending (X)."
- },
- {
   "dg": "DG-453",
   "hours": 35796,
   "date": "2026-08-24",
@@ -1587,16 +1572,16 @@
  },
  {
   "dg": "DG-850",
-  "hours": 1941,
-  "date": "2026-08-14",
-  "technician": "IMRAN&JAIRAZ",
+  "hours": 2245,
+  "date": "2026-09-11",
+  "technician": "ADEEL&MJ.K",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 19.05,
-  "nextService": 2391,
-  "nextServiceDate": "2026-09-10",
+  "dailyHours": 11.15,
+  "nextService": 2695,
+  "nextServiceDate": "2026-10-21",
   "interval": 450
  },
  {
