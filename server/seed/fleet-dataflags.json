@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-561",
+  "type": "location-missing",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "NEW unit added from the Heavy asset register: 1250kVA CUMMINS, purchased 09/09/2026. Currently in the YARD (Available). Set customer, site and exact pin when it goes on hire."
+ },
+ {
   "dg": "DG-866",
   "type": "location-missing",
   "severity": "low",
