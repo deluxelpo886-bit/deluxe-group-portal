@@ -1,5 +1,26 @@
 [
  {
+  "dg": "DG-750",
+  "type": "customer-confirm",
+  "severity": "high",
+  "source": "cross-check",
+  "message": "DG-750 was NOT in the fleet - added from a service card (11/09, 22458h, 450h interval so >=250kVA) at Khalifa Industrial City B, co-located with DG-473. CONFIRM its kVA, brand and customer so the record is complete."
+ },
+ {
+  "dg": "DG-750",
+  "type": "filter-pending",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Serviced 11/09 at 22458h by Adeel & MJ.K - AIR FILTER not changed (X). Carry an air filter next visit. Oil, oil filter, fuel filter done."
+ },
+ {
+  "dg": "DG-473",
+  "type": "filter-pending",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Serviced 10/09 at 10344h by Adeel & MJ.K - AIR FILTER not changed (X). Carry an air filter next visit. Oil, oil filter, fuel filter done. (Also moved to Khalifa Industrial City B.)"
+ },
+ {
   "dg": "DG-836",
   "type": "filter-pending",
   "severity": "low",
