@@ -215,7 +215,14 @@
       <button class="btn" id="bdBtn" style="width:100%;">Find nearest vehicle &amp; nearby units</button>
       <div class="dispatch-result" id="dispatchResult"></div>
 
-      <h2>Vehicles / technician teams</h2>
+      <h2>Service teams &amp; vehicles</h2>
+      <div style="font-size:12px; color:var(--muted); line-height:1.7; margin:0 0 8px;">
+        <b style="color:var(--text)">Team 1</b> · Sonu &amp; Hussain — Veh <b style="color:var(--text)">6692</b><br>
+        <b style="color:var(--text)">Team 2</b> · Adil &amp; Sabir <span style="color:var(--amber)">(Electrical)</span> — veh to update<br>
+        <b style="color:var(--text)">Team 3</b> · Imran &amp; Jayaraj — veh to update<br>
+        <span style="color:var(--muted)">Substitutes: Velu / Imran Khan · Hafeez (procurement) — hidden for now</span><br>
+        <span style="color:var(--amber)">📍 Drag a team's marker to set its base. Live driving routes appear once the Total Secure GPS trackers are connected.</span>
+      </div>
       <div id="vehList" style="font-size:12.5px; color:var(--muted); line-height:1.9;"></div>
 
       <h2>Home base</h2>
@@ -450,7 +457,11 @@ const OFFICE = {lat:24.3462062, lon:54.4998379, name:"Deluxe Heavy Equipment Ren
 // Live vehicles are supplied by the server's /api/positions feed (Total Secure /
 // Traccar), which requires a fleet login. Starts empty; filled/updated by the
 // live tracker at the bottom of this script once the user is signed in.
-let VEHICLES = [];
+let VEHICLES = [
+  {id:'6692',  name:'Team 1 · Sonu & Hussain · Veh 6692 (Service)', lat:24.34700, lon:54.50050},
+  {id:'VEH-2', name:'Team 2 · Adil & Sabir (Electrical) · Veh to update', lat:24.34620, lon:54.49984},
+  {id:'VEH-3', name:'Team 3 · Imran & Jayaraj · Veh to update (Service)', lat:24.34540, lon:54.49920}
+];
 
 function parseDMY(s){
   if(!s) return null;
