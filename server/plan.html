@@ -203,7 +203,7 @@
     if(team) m+='👷 Team: '+team+'\n';
     m+='\n';
     zg.units.forEach(function(u){
-      m+='• '+u.dg+(u.customer?(' — '+u.customer):'')+'  ['+badgeText(u.daysTo)+']';
+      m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+'  ['+badgeText(u.daysTo)+']';
       if(u.nextHours) m+=' · next '+u.nextHours+'h';
       m+='\n';
     });
@@ -218,7 +218,7 @@
     LAST.forEach(function(zg){
       var team=(loadTeams()[zg.zone]||'').trim();
       m+='\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'\n';
-      zg.units.forEach(function(u){ m+='• '+u.dg+(u.customer?(' — '+u.customer):'')+' ['+badgeText(u.daysTo)+']\n'; });
+      zg.units.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+' ['+badgeText(u.daysTo)+']\n'; });
       m+='🗺️ '+mapsRoute(zg.units,zg.zone)+'\n';
     });
     return m;
@@ -299,9 +299,10 @@
       html+='<div class="zbody">';
       zg.units.forEach(function(u){
         var kva=u.kva?(' · '+u.kva+' kVA'):'';
+        var brand=u.brand?(' · '+esc(u.brand)):'';
         html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
           +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
-          +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+'</span>'
+          +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+brand+'</span>'
           +overBadge(u.daysTo)+'</div>';
       });
       html+=manyHint;
