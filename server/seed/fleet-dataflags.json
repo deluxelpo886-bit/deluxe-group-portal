@@ -1,5 +1,19 @@
 [
  {
+  "dg": "DG-502",
+  "type": "filter-pending",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Serviced 19/08 at 15791h - AIR FILTER marked X on the card (not changed). Carry an air filter next visit. Live controller reading 16043h on 11/09 (approaching next service 16141h - due ~15/09). Now pinned at Musaffah MN1."
+ },
+ {
+  "dg": "DG-503",
+  "type": "filter-pending",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "Serviced 19/08 at 6191h - AIR FILTER marked X on the card (not changed). Carry an air filter next visit. Live controller reading ~6489h on 11/09 (approaching next service 6541h - due ~15/09). Now pinned at Musaffah MN1."
+ },
+ {
   "dg": "DG-850",
   "type": "filter-pending",
   "severity": "low",
@@ -68,13 +82,6 @@
   "severity": "medium",
   "source": "cross-check",
   "message": "250kVA KIRLOSKER - NOV (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
- },
- {
-  "dg": "DG-502",
-  "type": "location-missing",
-  "severity": "medium",
-  "source": "cross-check",
-  "message": "50kVA PERKINS - HYDRO POWER (MUSSAFAH). On the map only at the area centre; needs an exact pin from the field."
  },
  {
   "dg": "DG-518",
