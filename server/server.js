@@ -718,6 +718,12 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
     // alarms everywhere at once.
     const d = dirMap[String(g.dg || '').toUpperCase()];
     if (d) {
+      // Surface the asset details (brand, kVA, location, customer) so the
+      // service list can show them alongside the hours.
+      g.brand = d.brand || '';
+      g.kva = (d.kva != null ? d.kva : null);
+      g.location = d.location || '';
+      g.customer = d.customer || '';
       const loc = String(d.location || '').toUpperCase();
       const cust = String(d.customer || '').toUpperCase();
       if (loc === 'YARD' || cust.indexOf('WORK SHOP') >= 0 || cust.indexOf('WORKSHOP') >= 0) {
