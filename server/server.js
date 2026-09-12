@@ -97,6 +97,17 @@ try {
   }
 } catch (e) { console.warn('[seed] data-flags import skipped:', e && e.message); }
 
+// One-time import of office-known spare-part requests (e.g. a filter a service
+// card recorded as not fitted) so they show on the parts list after a deploy.
+try {
+  const spareSeedPath = path.join(__dirname, 'seed', 'fleet-spares.json');
+  if (fs.existsSync(spareSeedPath)) {
+    const sseed = JSON.parse(fs.readFileSync(spareSeedPath, 'utf8'));
+    const r = spares.applySeed(sseed, 'fleet-spares-2026-09-12a');
+    if (r && r.applied) console.log('[seed] added ' + r.applied + ' spare-part requests');
+  }
+} catch (e) { console.warn('[seed] spares import skipped:', e && e.message); }
+
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
 // monthly income instead of zero. On/off-hire status still decides earning vs
