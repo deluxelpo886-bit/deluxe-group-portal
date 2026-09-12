@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-842",
+  "type": "other",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "Service card on the Basundhara unit is mislabeled 'DG-843' but the hours (3979->4328, 15/08) are DG-842's. Real DG-843 is a 125kVA at Shakhbout (24559h). Ask the team to correct the physical card to DG-842. Next service adjusted +2 days to 16/09."
+ },
+ {
   "dg": "DG-561",
   "type": "location-missing",
   "severity": "low",
