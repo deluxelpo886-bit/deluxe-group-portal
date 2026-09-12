@@ -230,11 +230,6 @@
     <div class="eyebrow">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy — Machinery Operations</div>
   <h1>Fleet Master &amp; Live Dispatch <span id="liveBadge" style="font-size:11px; padding:4px 10px; border-radius:20px; background:#2e2410; color:#e8c168; vertical-align:middle;">● vehicle GPS not connected yet</span></h1>
   <p class="sub"><span id="hdrCount">140</span> generators from asset register · brand, technician, division &amp; <span id="hdrGps">49</span> with exact GPS via Google Maps links</p>
-  <div class="warn">
-    ⚠ Source: your Asset List (Feb-26). KVA/status/technician/customer are real. <b>Company split confirmed:</b>
-    Division = "MOTOR" → Deluxe Energy (<span id="hdrEnergy">24</span> units), Division = "HEAVY"/"WORKSHOP" → Deluxe Heavy (<span id="hdrHeavy">115</span> units).
-    Only <span id="hdrGps2">49</span> generators have an exact GPS pin (📍 in the GPS column) — the rest are area-center approximations.
-  </div>
 
   <div class="topbar">
     <select id="companyFilter">
@@ -243,9 +238,6 @@
       <option value="Energy">🔵 Deluxe Energy</option>
     </select>
     <button class="btn" id="addBtn">+ Add generator</button>
-    <button class="btn secondary" id="importBtn">⬆ Import data (JSON)</button>
-    <input type="file" id="importFile" accept=".json" style="display:none;">
-    <button class="btn secondary" id="exportBtn">⬇ Export all data (JSON)</button>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -1124,31 +1116,41 @@ document.getElementById('modalSave').addEventListener('click', ()=>{
   refreshAll();
 });
 
-/* ---------- IMPORT / EXPORT ---------- */
-document.getElementById('exportBtn').addEventListener('click', ()=>{
-  const out = { generators: DATA, vehicles: VEHICLES, exported_at: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(out,null,2)], {type:'application/json'});
-  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='deluxe_fleet_data.json'; a.click();
-});
-document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
-document.getElementById('importFile').addEventListener('change', (e)=>{
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev)=>{
-    try{
-      const parsed = JSON.parse(ev.target.result);
-      const gens = parsed.generators || parsed;
-      if(!Array.isArray(gens)) throw new Error('bad format');
-      if(confirm(`Import ${gens.length} generator records? This will REPLACE current data.`)){
-        DATA = gens;
-        recalcDates();
-        refreshAll();
-      }
-    } catch(err){ alert('Could not read that file: '+err.message); }
-  };
-  reader.readAsText(file);
-  e.target.value='';
-});
+/* ---------- IMPORT / EXPORT ----------
+   The Import / Export JSON buttons were removed from the toolbar (developer
+   tools the office does not use). Listeners are bound only if the buttons are
+   present, so the rest of the script is unaffected either way. */
+(function(){
+  var exportBtn=document.getElementById('exportBtn');
+  if(exportBtn){ exportBtn.addEventListener('click', ()=>{
+    const out = { generators: DATA, vehicles: VEHICLES, exported_at: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(out,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='deluxe_fleet_data.json'; a.click();
+  }); }
+  var importBtn=document.getElementById('importBtn');
+  var importFile=document.getElementById('importFile');
+  if(importBtn && importFile){
+    importBtn.addEventListener('click', ()=>importFile.click());
+    importFile.addEventListener('change', (e)=>{
+      const file = e.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        try{
+          const parsed = JSON.parse(ev.target.result);
+          const gens = parsed.generators || parsed;
+          if(!Array.isArray(gens)) throw new Error('bad format');
+          if(confirm(`Import ${gens.length} generator records? This will REPLACE current data.`)){
+            DATA = gens;
+            recalcDates();
+            refreshAll();
+          }
+        } catch(err){ alert('Could not read that file: '+err.message); }
+      };
+      reader.readAsText(file);
+      e.target.value='';
+    });
+  }
+})();
 
 /* ---------- MASTER REFRESH ---------- */
 /* ---------- WORKSHOP / REPAIR TRACKING ---------- */
