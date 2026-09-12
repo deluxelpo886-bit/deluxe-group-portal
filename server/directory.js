@@ -75,6 +75,8 @@ const ZONE_ALIASES = {
   'ICAD I': 'Icad',
   'ICAD II': 'Icad',
   'ICAD III': 'Icad',
+  'HUDRIYAT': 'Hudriyat',
+  'HUDAYRIYAT': 'Hudriyat',
 };
 
 function titleCase(s) {
