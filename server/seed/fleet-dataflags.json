@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-457",
+  "type": "air-filter-pending",
+  "severity": "low",
+  "source": "service-card",
+  "message": "Service 12/09/2026 (Team 3, Imran & Jayaraj) at 3463h: oil, oil filter and fuel filter changed but AIR FILTER NOT done (marked X on the card). Fit the air filter on the next visit to DG-457 (Al Hisn W6, Gulf Contracting)."
+ },
+ {
   "dg": "DG-867",
   "type": "customer-confirm",
   "severity": "medium",

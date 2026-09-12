@@ -209,6 +209,21 @@
   "interval": 350
  },
  {
+  "dg": "DG-457",
+  "hours": 3463,
+  "date": "2026-09-12",
+  "technician": "IMRAN&JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 1.131,
+  "nextService": 3813,
+  "nextServiceDate": "2027-07-19",
+  "interval": 350,
+  "notes": "Service 12/09/2026 by Team 3 (Imran & Jayaraj) at 3463h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE - pending. Next at 3813h."
+ },
+ {
   "dg": "DG-827",
   "hours": 3434,
   "date": "2026-01-29",
