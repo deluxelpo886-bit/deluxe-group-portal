@@ -1501,6 +1501,20 @@ refreshAll();
   }
   function upsert(d){
     const key='T'+d.id;
+    // Only our three tracked team trucks belong on the map. A GPS device counts
+    // as one of them when its name/plate carries one of the tracked vehicle
+    // numbers. Every other device the feed reports (Hafeez / procurement /
+    // substitute trucks) is dropped here — no marker, no trail, no dispatch
+    // entry — so the map shows only Sonu 6692, Adil 44137 and Imran 44107.
+    var _nm = String(d.name || '');
+    var _tracked = ['6692','44137','44107'].some(function(p){ return _nm.indexOf(p) !== -1; });
+    if(!_tracked){
+      if(vehMarkers[key]){ map.removeLayer(vehMarkers[key]); delete vehMarkers[key]; }
+      if(TRAILS[key]){ delete TRAILS[key]; }
+      var _rm = VEHICLES.findIndex(function(x){ return x.id===key; });
+      if(_rm >= 0){ VEHICLES.splice(_rm,1); }
+      return;
+    }
     let v=VEHICLES.find(function(x){ return x.id===key; });
     if(!v){ v={id:key}; VEHICLES.push(v); }
     v.name=d.name||v.name||('Device '+d.id);
