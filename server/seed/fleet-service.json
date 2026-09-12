@@ -2322,5 +2322,20 @@
   "nextService": 21291,
   "nextServiceDate": "2026-10-31",
   "interval": 350
+ },
+ {
+  "dg": "DG-867",
+  "hours": 0,
+  "date": "2026-09-12",
+  "technician": "SERVICE 2",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 0,
+  "nextService": 450,
+  "nextServiceDate": "2026-10-19",
+  "interval": 450,
+  "notes": "New unit purchased 12/09/2026 - Malik Al Ghabah Weddings, Madinat Zayed. First service at 450h."
  }
 ]
