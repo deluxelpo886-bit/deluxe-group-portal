@@ -1306,6 +1306,20 @@
   "nextServiceDate": "2026-09-12"
  },
  {
+  "dg": "DG-812",
+  "hours": 10527,
+  "date": "2026-09-12",
+  "technician": "ADIL&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 19.7,
+  "nextService": 10877,
+  "nextServiceDate": "2026-09-30",
+  "interval": 350
+ },
+ {
   "dg": "DG-35",
   "hours": 8858,
   "date": "2026-08-10",
@@ -2008,13 +2022,14 @@
   "hours": 5448,
   "date": "2026-07-27",
   "technician": "VELU&IMRAN",
-  "notes": "Re-hired 26/08/2026 - service clock reset (+350h)",
+  "notes": "Re-hired 26/08 - service clock +350h. Controller reading 5695h on 12/09 (103h to next 5798). At ~5.3h/day -> due ~02/10.",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
+  "dailyHours": 5.3,
   "nextService": 5798,
-  "nextServiceDate": "2026-09-15",
+  "nextServiceDate": "2026-10-02",
   "interval": 350
  },
  {
