@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-867",
+  "type": "location-missing",
+  "severity": "low",
+  "source": "cross-check",
+  "message": "NEW unit on hire from 12/09: 125kVA Kirlosker, Malik Al Ghabah Weddings, MADINAT ZAYED (far west ~250km). Pinned at Madinat Zayed town centre - get an exact WhatsApp location from the field."
+ },
+ {
   "dg": "DG-842",
   "type": "other",
   "severity": "medium",
