@@ -1,6 +1,13 @@
 [
  {
   "dg": "DG-867",
+  "type": "customer-confirm",
+  "severity": "medium",
+  "source": "cross-check",
+  "message": "MAG-PO-26-143 (12/09, Malik Al Ghabah Weddings): OUR unit is the 150kVA = DG-867 (Kirlosker, rate 4500/mo). The 250kVA on the same job (5500/mo, with drip tray) is CROSS-HIRE - rented from another supplier, NOT our asset; do not add it as our generator. Bill MAG for both; pay the cross-hire supplier for the 250kVA. (Note: Netsonic spec on DG-867 is 125kVA vs PO 150kVA - confirm.)"
+ },
+ {
+  "dg": "DG-867",
   "type": "location-missing",
   "severity": "low",
   "source": "cross-check",
