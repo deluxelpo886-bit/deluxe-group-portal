@@ -71,6 +71,10 @@ const ZONE_ALIASES = {
   'KHALIFA INDUSTRIAL CITY': 'KIZAD',
   'KIZAD': 'KIZAD',
   'DUBAI (HESSYAN FIRST)': 'Dubai',
+  'ICAD': 'Icad',
+  'ICAD I': 'Icad',
+  'ICAD II': 'Icad',
+  'ICAD III': 'Icad',
 };
 
 function titleCase(s) {
