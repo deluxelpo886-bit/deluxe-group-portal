@@ -69,6 +69,19 @@
     .assign label{color:#000;}
     .assign::after{content:attr(data-team);font-weight:700;}
   }
+
+  /* Slim, single-line app tab bar — consistent with the app home & map */
+  nav{
+    flex-wrap:nowrap!important; overflow-x:auto; overflow-y:hidden;
+    -webkit-overflow-scrolling:touch; gap:7px!important;
+    padding:8px!important; margin:0 -6px 18px!important;
+    background:linear-gradient(180deg,rgba(30,36,43,.66),rgba(20,24,28,.4));
+    border:1px solid var(--line); border-radius:15px;
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none;}
+  nav>a{flex:0 0 auto!important; white-space:nowrap;}
 </style>
 <link rel="stylesheet" href="/theme.css">
 <link rel="manifest" href="/manifest-portal.json">
@@ -82,7 +95,7 @@
 </head>
 <body>
 <div class="wrap">
-  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;">
+  <nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;"><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">🏠 Home</a>
     <a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📊 Dashboard</a>
     <a href="/plan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a;">🧭 Morning Plan</a>
     <a href="/schedule" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a;">📅 Schedule</a>
