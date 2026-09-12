@@ -93,8 +93,8 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 12,
-  "nextService": 12879,
-  "interval": 350,
+  "nextService": 12979,
+  "interval": 450,
   "nextServiceDate": "2026-09-15"
  },
  {
@@ -107,9 +107,9 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 8.53,
-  "nextService": 5664,
+  "nextService": 5764,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-555",
@@ -746,9 +746,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 12.37,
-  "nextService": 2554,
+  "nextService": 2654,
   "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-538",
@@ -1137,9 +1137,9 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 13.39,
-  "nextService": 1151,
+  "nextService": 1251,
   "nextServiceDate": "2026-09-13",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-828",
@@ -1233,9 +1233,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 15.2,
-  "nextService": 16209,
+  "nextService": 16309,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-500",
@@ -1380,9 +1380,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 13.11,
-  "nextService": 1315,
+  "nextService": 1415,
   "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-861",
@@ -1583,9 +1583,9 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 19.8,
-  "nextService": 18041,
+  "nextService": 18141,
   "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-850",
@@ -1667,9 +1667,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 11.82,
-  "nextService": 6095,
+  "nextService": 6195,
   "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-548",
@@ -1694,9 +1694,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 14.04,
-  "nextService": 8391,
+  "nextService": 8491,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-865",
@@ -1708,9 +1708,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 9.93,
-  "nextService": 3295,
+  "nextService": 3395,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-502",
@@ -1792,9 +1792,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 13.17,
-  "nextService": 608,
+  "nextService": 508,
   "nextServiceDate": "2026-09-12",
-  "interval": 450
+  "interval": 350
  },
  {
   "dg": "DG-822",
