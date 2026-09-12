@@ -2,175 +2,306 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Deluxe Operations — Menu</title>
+<title>Deluxe Operations</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14181c">
+<meta name="theme-color" content="#0e1216">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<style>
-  :root{ --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a; --text:#e8ecef; --muted:#8b95a1;
-    --amber:#e8a13a; --green:#4caf7d; --blue:#5b9bd5; --purple:#a78bda; --gold:#e8c168;
-    --sans:'Inter',-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono','SF Mono',Consolas,monospace; }
-  *{box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:var(--sans);margin:0;padding:34px 18px 60px;}
-  .wrap{max-width:760px;margin:0 auto;}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
-  h1{font-size:26px;margin:0 0 6px;}
-  .sub{color:var(--muted);font-size:14px;margin:0 0 26px;}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  @media(max-width:560px){.grid{grid-template-columns:1fr;}}
-  a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;
-    padding:20px;color:var(--text);transition:border-color .15s, transform .06s;}
-  a.card:hover{border-color:var(--amber);transform:translateY(-1px);}
-  a.card:active{transform:translateY(0);}
-  .ico{font-size:30px;line-height:1;margin-bottom:12px;}
-  .title{font-size:17px;font-weight:700;margin-bottom:4px;}
-  .desc{color:var(--muted);font-size:12.8px;line-height:1.5;}
-  .bar{height:3px;border-radius:3px;margin-top:14px;}
-  .login{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:13px;color:var(--muted);}
-  .login b{color:var(--text);font-family:var(--mono);}
-  footer{margin-top:22px;color:var(--muted);font-size:12px;line-height:1.6;}
-</style>
-<link rel="stylesheet" href="/theme.css">
 <link rel="manifest" href="/manifest-portal.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Deluxe Ops">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{
+    --bg:#0e1216; --bg2:#11161b;
+    --card:rgba(28,34,41,.72); --card-solid:#181e24;
+    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+    --text:#eef2f5; --muted:#9aa5b1; --faint:#6c7783;
+    --amber:#f0a93b; --green:#43c088; --blue:#5aa2e6; --purple:#b18be6;
+    --gold:#e8c168; --red:#ec6a52; --teal:#38c6c0;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+    --shadow:0 10px 30px -12px rgba(0,0,0,.55);
+    --radius:20px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;color:var(--text);font-family:var(--sans);
+    background:var(--bg);
+    background-image:
+      radial-gradient(120% 90% at 88% -8%, rgba(240,169,59,.16), transparent 46%),
+      radial-gradient(120% 90% at -8% 4%, rgba(90,162,230,.14), transparent 44%),
+      linear-gradient(180deg,var(--bg2),var(--bg) 320px);
+    background-attachment:fixed;
+    padding:0 0 calc(96px + env(safe-area-inset-bottom));
+    min-height:100vh;letter-spacing:-.01em;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 16px;}
+
+  /* ---------- App header ---------- */
+  .appbar{
+    position:sticky;top:0;z-index:40;
+    padding:calc(env(safe-area-inset-top) + 14px) 16px 12px;
+    background:linear-gradient(180deg,rgba(14,18,22,.92),rgba(14,18,22,.62) 70%,transparent);
+    backdrop-filter:saturate(150%) blur(14px);-webkit-backdrop-filter:saturate(150%) blur(14px);
+  }
+  .appbar-in{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+  .logos{display:flex;align-items:center;gap:9px;}
+  .logos img{height:34px;width:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
+  .appbar .spacer{flex:1;}
+  .status-pill{
+    display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+    color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--line);
+    padding:7px 12px;border-radius:999px;white-space:nowrap;
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(67,192,136,.18);}
+  .dot.warn{background:var(--amber);box-shadow:0 0 0 3px rgba(240,169,59,.18);}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:14px 0 6px;}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;}
+  .hello{font-size:29px;font-weight:800;margin:7px 0 3px;letter-spacing:-.02em;line-height:1.1;}
+  .hello span{background:linear-gradient(90deg,#fff,#c9d2db);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .today{color:var(--muted);font-size:13.5px;}
+
+  /* ---------- KPI tiles ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 6px;}
+  @media(max-width:620px){.kpis{grid-template-columns:1fr 1fr;}}
+  .kpi{
+    position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:14px 14px 13px;box-shadow:var(--shadow);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--amber));}
+  .kpi .k-num{font-size:27px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+  .kpi .k-lbl{color:var(--muted);font-size:11.5px;font-weight:600;margin-top:7px;text-transform:uppercase;letter-spacing:.05em;}
+  .kpi.due{--accent:var(--red);} .kpi.plan{--accent:var(--gold);}
+  .kpi.hire{--accent:var(--green);} .kpi.fleet{--accent:var(--blue);}
+  .kpi .k-num.dash{color:var(--faint);}
+
+  /* ---------- section headings ---------- */
+  .sec-h{display:flex;align-items:center;gap:10px;margin:30px 2px 13px;}
+  .sec-h h2{font-size:14px;font-weight:700;margin:0;letter-spacing:.02em;color:var(--text);}
+  .sec-h .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent);}
+
+  /* ---------- primary quick actions ---------- */
+  .primary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media(max-width:620px){.primary{grid-template-columns:1fr;}}
+  a.big{
+    position:relative;overflow:hidden;text-decoration:none;color:var(--text);
+    border-radius:var(--radius);padding:18px;min-height:118px;display:flex;flex-direction:column;
+    justify-content:space-between;border:1px solid var(--line2);box-shadow:var(--shadow);
+    background:var(--card-solid);transition:transform .12s ease,border-color .15s,box-shadow .15s;
+  }
+  a.big .glow{position:absolute;inset:0;opacity:.9;background:
+     radial-gradient(120% 120% at 100% 0%, var(--g1), transparent 60%);pointer-events:none;}
+  a.big .b-ico{font-size:26px;position:relative;}
+  a.big .b-t{position:relative;}
+  a.big .b-title{font-size:17px;font-weight:800;letter-spacing:-.01em;}
+  a.big .b-sub{position:relative;color:var(--muted);font-size:12.5px;margin-top:2px;}
+  a.big:active{transform:scale(.985);}
+  a.big:hover{border-color:var(--line2);transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(0,0,0,.6);}
+  a.map{--g1:rgba(90,162,230,.28);}
+  a.svc{--g1:rgba(67,192,136,.26);}
+  a.plan{--g1:rgba(240,169,59,.26);}
+
+  /* ---------- tool grid ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  @media(min-width:640px){.grid{grid-template-columns:1fr 1fr 1fr;}}
+  a.card{
+    display:flex;gap:12px;align-items:flex-start;text-decoration:none;color:var(--text);
+    background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;
+    transition:transform .1s ease,border-color .15s,background .15s;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  a.card:hover{border-color:var(--line2);background:rgba(38,46,54,.8);transform:translateY(-1px);}
+  a.card:active{transform:scale(.99);}
+  a.card .chip{
+    flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    font-size:20px;background:var(--cbg,rgba(255,255,255,.06));border:1px solid var(--line);
+  }
+  a.card .c-body{min-width:0;}
+  a.card .c-title{font-size:14.5px;font-weight:700;letter-spacing:-.01em;}
+  a.card .c-desc{color:var(--muted);font-size:12px;line-height:1.45;margin-top:3px;}
+
+  /* ---------- login note ---------- */
+  .login{
+    margin-top:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:linear-gradient(180deg,rgba(28,34,41,.7),rgba(24,30,36,.7));
+    border:1px solid var(--line);border-radius:16px;padding:15px 17px;font-size:13px;color:var(--muted);
+  }
+  .login .key{font-size:18px;}
+  .login b{color:var(--text);}
+  .login code{font-family:var(--mono);color:var(--amber);background:rgba(240,169,59,.1);padding:2px 7px;border-radius:6px;font-size:12.5px;}
+  footer{margin-top:20px;color:var(--faint);font-size:12px;line-height:1.6;text-align:center;}
+
+  /* ---------- bottom tab bar (mobile) ---------- */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(14,18,22,.6),rgba(12,15,19,.96) 40%);
+    backdrop-filter:saturate(160%) blur(16px);-webkit-backdrop-filter:saturate(160%) blur(16px);
+    border-top:1px solid var(--line);
+  }
+  .tabbar-in{max-width:920px;margin:0 auto;display:flex;justify-content:space-around;align-items:stretch;}
+  .tabbar a{
+    flex:1;text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;
+    gap:3px;padding:6px 2px;font-size:10.5px;font-weight:600;border-radius:12px;transition:color .15s,background .15s;
+  }
+  .tabbar a .t-ico{font-size:20px;line-height:1;}
+  .tabbar a.active{color:var(--amber);}
+  .tabbar a:active{background:rgba(255,255,255,.05);}
+  @media(max-width:720px){.tabbar{display:block;}}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
 <script src="/alarm.js?v=4" defer></script>
 </head>
 <body>
-<div class="wrap">
-  <div style="display:flex;align-items:center;gap:12px;margin:2px 0 16px;flex-wrap:wrap;"><img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC" style="height:46px;width:auto;"><img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC" style="height:42px;width:auto;"></div>
-  <div class="eyebrow">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy Solutions</div>
-  <h1>Operations Menu</h1>
-  <p class="sub">Tap a tool to open it. Sign in once with the operations login below — it's remembered on your device.</p>
 
-  <div class="grid">
-    <a class="card" href="/dashboard">
-      <div class="ico">📊</div>
-      <div class="title">Dashboard</div>
-      <div class="desc">One screen: fleet counts, services overdue/due soon, spares pending, and sites at a glance.</div>
-      <div class="bar" style="background:var(--amber);"></div>
-    </a>
-    <a class="card" href="/fleet">
-      <div class="ico">🗺️</div>
-      <div class="title">Live Fleet Map</div>
-      <div class="desc">Real-time vehicle tracking, breakdown dispatch, and generator service alerts on the map.</div>
-      <div class="bar" style="background:var(--blue);"></div>
-    </a>
-    <a class="card" href="/service">
-      <div class="ico">🔧</div>
-      <div class="title">Service Log</div>
-      <div class="desc">Technicians enter running hours after a service — next service is worked out automatically.</div>
-      <div class="bar" style="background:var(--green);"></div>
-    </a>
-    <a class="card" href="/servicecard">
-      <div class="ico">🃏</div>
-      <div class="title">Service Card</div>
-      <div class="desc">Pick a generator and print a pre-filled service card — next-service target calculated, plus the exact filters and oil to load for that unit.</div>
-      <div class="bar" style="background:var(--amber);"></div>
-    </a>
-    <a class="card" href="/technicians">
-      <div class="ico">👷</div>
-      <div class="title">Technicians &amp; Teams</div>
-      <div class="desc">Who serviced what — jobs per technician or team, this week / month / all time, who's active today, from the service log.</div>
-      <div class="bar" style="background:var(--gold);"></div>
-    </a>
-    <a class="card" href="/health">
-      <div class="ico">🩺</div>
-      <div class="title">Health Check</div>
-      <div class="desc">One-tap cross-check of the whole portal — fleet totals, on-hire / off-hire, paused units, the service plan and any data gaps. Run it after every update.</div>
-      <div class="bar" style="background:var(--green);"></div>
-    </a>
-    <a class="card" href="/strategy">
-      <div class="ico">🧠</div>
-      <div class="title">Service Strategy</div>
-      <div class="desc">The dispatch brain — every on-hire unit grouped by area and ranked go-now / this-week / hold-and-combine, with distance from the yard so far trips get batched.</div>
-      <div class="bar" style="background:var(--red);"></div>
-    </a>
-    <a class="card" href="/plan">
-      <div class="ico">🧭</div>
-      <div class="title">Morning Route Plan</div>
-      <div class="desc">Each morning's servicing grouped by area — worst-overdue first, a Google Maps route per zone, and a box to assign each team. Print it as the daily hand-out.</div>
-      <div class="bar" style="background:var(--blue);"></div>
-    </a>
-    <a class="card" href="/serviceplan">
-      <div class="ico">📋</div>
-      <div class="title">Service Plan (print / PDF)</div>
-      <div class="desc">A clean, branded service plan for the day — grouped by area with team boxes, routes and a print-to-PDF sheet to hand to the service team.</div>
-      <div class="bar" style="background:#0d3b66;"></div>
-    </a>
-    <a class="card" href="/schedule">
-      <div class="ico">📅</div>
-      <div class="title">Daily Schedule</div>
-      <div class="desc">Plan each day's servicing across Team 1 and Team 2, and tick jobs off as done.</div>
-      <div class="bar" style="background:var(--gold);"></div>
-    </a>
-    <a class="card" href="/spares">
-      <div class="ico">🧰</div>
-      <div class="title">Spare Parts</div>
-      <div class="desc">Log the parts a generator needs and track Needed → Ordered → Received → Fitted.</div>
-      <div class="bar" style="background:var(--purple);"></div>
-    </a>
-    <a class="card" href="/sites">
-      <div class="ico">📋</div>
-      <div class="title">Customer Sites</div>
-      <div class="desc">Record each site — location, dust level, gate-pass access, rate, and a review after delivery.</div>
-      <div class="bar" style="background:var(--amber);"></div>
-    </a>
-    <a class="card" href="/breakdowns">
-      <div class="ico">🚨</div>
-      <div class="title">Breakdown Log</div>
-      <div class="desc">Log every breakdown and resolve it — track response times and repeat-offender generators.</div>
-      <div class="bar" style="background:#e0644a;"></div>
-    </a>
-    <a class="card" href="/flags">
-      <div class="ico">🔔</div>
-      <div class="title">Data Flags</div>
-      <div class="desc">Cross-check findings to resolve — missing map pins, meters to confirm, filters pending. Clear each once sorted.</div>
-      <div class="bar" style="background:#e8a13a;"></div>
-    </a>
-    <a class="card" href="/rentals">
-      <div class="ico">💰</div>
-      <div class="title">Rental Income</div>
-      <div class="desc">Record customer + monthly rate per generator — see total income, earning vs idle, and by customer.</div>
-      <div class="bar" style="background:var(--green);"></div>
-    </a>
-    <a class="card" href="/delivery">
-      <div class="ico">📦</div>
-      <div class="title">Delivery Note</div>
-      <div class="desc">Raise a numbered on-hire hand-over note when a generator leaves the yard — print it, and flip it on-hire with its meter reading in one step.</div>
-      <div class="bar" style="background:#5b9bd5;"></div>
-    </a>
-    <a class="card" href="/return">
-      <div class="ico">↩️</div>
-      <div class="title">Return Note</div>
-      <div class="desc">Raise a numbered off-hire return note when a generator comes back — record its condition, print it, and flip it off-hire with its final meter reading in one step.</div>
-      <div class="bar" style="background:#4caf7d;"></div>
-    </a>
-    <a class="card" href="/contract">
-      <div class="ico">🗂️</div>
-      <div class="title">Contract File</div>
-      <div class="desc">One page per generator — its customer &amp; rate, hire status, service, and every delivery &amp; return note filed together in one place.</div>
-      <div class="bar" style="background:var(--amber);"></div>
-    </a>
-    <a class="card" href="/specs">
-      <div class="ico">🧰</div>
-      <div class="title">Service Parts &amp; Oil</div>
-      <div class="desc">Record each generator's air / oil / fuel filter and engine oil capacity — then send the exact parts to the service team on WhatsApp before they go.</div>
-      <div class="bar" style="background:var(--gold);"></div>
-    </a>
+<header class="appbar">
+  <div class="appbar-in">
+    <div class="logos">
+      <img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental">
+      <img src="/logo-energy.png" alt="Deluxe Energy Solutions">
+    </div>
+    <div class="spacer"></div>
+    <div class="status-pill" id="statusPill"><span class="dot" id="statusDot"></span><span id="statusTxt">System online</span></div>
   </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Deluxe Heavy Equipment &amp; Energy Solutions</div>
+    <div class="hello"><span id="greet">Operations Console</span></div>
+    <div class="today" id="today">—</div>
+  </section>
+
+  <!-- Live KPIs -->
+  <section class="kpis" id="kpis">
+    <div class="kpi fleet"><div class="k-num dash" id="kFleet">—</div><div class="k-lbl">Generators</div></div>
+    <div class="kpi hire"><div class="k-num dash" id="kHire">—</div><div class="k-lbl">On hire</div></div>
+    <div class="kpi due"><div class="k-num dash" id="kDue">—</div><div class="k-lbl">Service due</div></div>
+    <div class="kpi plan"><div class="k-num dash" id="kPlan">—</div><div class="k-lbl">Plan soon</div></div>
+  </section>
+
+  <!-- Primary quick actions -->
+  <div class="sec-h"><h2>Quick actions</h2><span class="rule"></span></div>
+  <section class="primary">
+    <a class="big map" href="/fleet">
+      <span class="glow"></span>
+      <span class="b-ico">🗺️</span>
+      <span class="b-t"><div class="b-title">Live Fleet Map</div><div class="b-sub">Pins, teams &amp; alerts</div></span>
+    </a>
+    <a class="big svc" href="/service">
+      <span class="glow"></span>
+      <span class="b-ico">🔧</span>
+      <span class="b-t"><div class="b-title">Log a Service</div><div class="b-sub">Enter hours after a job</div></span>
+    </a>
+    <a class="big plan" href="/plan">
+      <span class="glow"></span>
+      <span class="b-ico">🧭</span>
+      <span class="b-t"><div class="b-title">Morning Plan</div><div class="b-sub">Today's route by area</div></span>
+    </a>
+  </section>
+
+  <!-- Operations -->
+  <div class="sec-h"><h2>Operations</h2><span class="rule"></span></div>
+  <section class="grid">
+    <a class="card" href="/dashboard" style="--cbg:rgba(240,169,59,.12)"><div class="chip">📊</div><div class="c-body"><div class="c-title">Dashboard</div><div class="c-desc">Fleet, services, spares &amp; sites at a glance.</div></div></a>
+    <a class="card" href="/health" style="--cbg:rgba(67,192,136,.12)"><div class="chip">🩺</div><div class="c-body"><div class="c-title">Health Check</div><div class="c-desc">One-tap cross-check of the whole portal.</div></div></a>
+    <a class="card" href="/strategy" style="--cbg:rgba(236,106,82,.12)"><div class="chip">🧠</div><div class="c-body"><div class="c-title">Service Strategy</div><div class="c-desc">Dispatch brain — go-now / this-week / hold.</div></div></a>
+    <a class="card" href="/technicians" style="--cbg:rgba(232,193,104,.12)"><div class="chip">👷</div><div class="c-body"><div class="c-title">Technicians &amp; Teams</div><div class="c-desc">Who serviced what, by team &amp; period.</div></div></a>
+  </section>
+
+  <!-- Service & planning -->
+  <div class="sec-h"><h2>Service &amp; planning</h2><span class="rule"></span></div>
+  <section class="grid">
+    <a class="card" href="/servicecard" style="--cbg:rgba(240,169,59,.12)"><div class="chip">🃏</div><div class="c-body"><div class="c-title">Service Card</div><div class="c-desc">Pre-filled card with the exact parts to load.</div></div></a>
+    <a class="card" href="/serviceplan" style="--cbg:rgba(90,162,230,.12)"><div class="chip">📋</div><div class="c-body"><div class="c-title">Service Plan (PDF)</div><div class="c-desc">Branded, print-ready plan for the team.</div></div></a>
+    <a class="card" href="/schedule" style="--cbg:rgba(232,193,104,.12)"><div class="chip">📅</div><div class="c-body"><div class="c-title">Daily Schedule</div><div class="c-desc">Plan &amp; tick off jobs across the teams.</div></div></a>
+    <a class="card" href="/specs" style="--cbg:rgba(56,198,192,.12)"><div class="chip">🧰</div><div class="c-body"><div class="c-title">Parts &amp; Oil</div><div class="c-desc">Filters &amp; oil per unit — send on WhatsApp.</div></div></a>
+  </section>
+
+  <!-- Hire & contracts -->
+  <div class="sec-h"><h2>Hire &amp; contracts</h2><span class="rule"></span></div>
+  <section class="grid">
+    <a class="card" href="/delivery" style="--cbg:rgba(90,162,230,.12)"><div class="chip">📦</div><div class="c-body"><div class="c-title">Delivery Note</div><div class="c-desc">On-hire hand-over note &amp; flip to on-hire.</div></div></a>
+    <a class="card" href="/return" style="--cbg:rgba(67,192,136,.12)"><div class="chip">↩️</div><div class="c-body"><div class="c-title">Return Note</div><div class="c-desc">Off-hire return note with final meter.</div></div></a>
+    <a class="card" href="/contract" style="--cbg:rgba(240,169,59,.12)"><div class="chip">🗂️</div><div class="c-body"><div class="c-title">Contract File</div><div class="c-desc">One page per unit — customer, rate &amp; notes.</div></div></a>
+    <a class="card" href="/rentals" style="--cbg:rgba(67,192,136,.12)"><div class="chip">💰</div><div class="c-body"><div class="c-title">Rental Income</div><div class="c-desc">Rates, total income, earning vs idle.</div></div></a>
+    <a class="card" href="/sites" style="--cbg:rgba(177,139,230,.12)"><div class="chip">📍</div><div class="c-body"><div class="c-title">Customer Sites</div><div class="c-desc">Location, access, rate &amp; delivery review.</div></div></a>
+  </section>
+
+  <!-- Fleet care -->
+  <div class="sec-h"><h2>Fleet care</h2><span class="rule"></span></div>
+  <section class="grid">
+    <a class="card" href="/spares" style="--cbg:rgba(177,139,230,.12)"><div class="chip">🧩</div><div class="c-body"><div class="c-title">Spare Parts</div><div class="c-desc">Needed → Ordered → Received → Fitted.</div></div></a>
+    <a class="card" href="/breakdowns" style="--cbg:rgba(236,106,82,.12)"><div class="chip">🚨</div><div class="c-body"><div class="c-title">Breakdown Log</div><div class="c-desc">Log &amp; resolve — response &amp; repeat offenders.</div></div></a>
+    <a class="card" href="/flags" style="--cbg:rgba(240,169,59,.12)"><div class="chip">🔔</div><div class="c-body"><div class="c-title">Data Flags</div><div class="c-desc">Findings to clear — pins, meters, filters.</div></div></a>
+  </section>
 
   <div class="login">
-    🔑 <b>Login for all tools</b> — email <b>deluxeoperationhead</b> · password <b>Deluxe123</b>
+    <span class="key">🔑</span>
+    <div><b>One login for every tool</b> — email <code>deluxeoperationhead</code> · password <code>Deluxe123</code>. Remembered on this device.</div>
   </div>
 
-  <footer>
-    Tip: add this page to your phone's home screen for one-tap access. All tools share the same sign-in.
-  </footer>
+  <footer>Add to your Home Screen for a full-screen app. All tools share one sign-in.</footer>
 </div>
+
+<!-- Mobile bottom tab bar -->
+<nav class="tabbar">
+  <div class="tabbar-in">
+    <a href="/menu" class="active"><span class="t-ico">🏠</span>Home</a>
+    <a href="/fleet"><span class="t-ico">🗺️</span>Map</a>
+    <a href="/service"><span class="t-ico">🔧</span>Service</a>
+    <a href="/plan"><span class="t-ico">🧭</span>Plan</a>
+    <a href="/dashboard"><span class="t-ico">📊</span>More</a>
+  </div>
+</nav>
+
+<script>
+(function(){
+  // --- greeting + date (Dubai time) ---
+  try{
+    var now=new Date();
+    var parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',weekday:'long',day:'numeric',month:'long',hour:'numeric',minute:'2-digit',hour12:true}).formatToParts(now);
+    var get=function(t){var p=parts.find(function(x){return x.type===t;});return p?p.value:'';};
+    var hourStr=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',hour:'numeric',hour12:false}).format(now);
+    var h=parseInt(hourStr,10);
+    var g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+    document.getElementById('greet').textContent=g;
+    var dstr=get('weekday')+', '+get('day')+' '+get('month')+' · '+get('hour')+':'+get('minute')+' '+((get('dayPeriod')||'').toLowerCase());
+    document.getElementById('today').textContent=dstr;
+  }catch(e){}
+
+  // --- live KPIs (only if signed in on this device) ---
+  var tok=null; try{ tok=localStorage.getItem('deluxeFleetToken'); }catch(e){}
+  function setNum(id,v){ var el=document.getElementById(id); if(!el)return; el.textContent=String(v); el.classList.remove('dash'); }
+  if(tok){
+    fetch('/api/service/status',{headers:{'Authorization':'Bearer '+tok}})
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        var gens=(d&&d.generators)||[];
+        var onhire=0,due=0,plan=0;
+        gens.forEach(function(g){
+          var off=g.offHire;
+          if(!off) onhire++;
+          var st=g.due&&g.due.state;
+          if(st==='due') due++;
+          else if(st==='plan') plan++;
+        });
+        setNum('kFleet',gens.length);
+        setNum('kHire',onhire);
+        setNum('kDue',due);
+        setNum('kPlan',plan);
+      })
+      .catch(function(){ /* leave dashes if not authorised */ });
+  }
+})();
+</script>
 </body>
 </html>
