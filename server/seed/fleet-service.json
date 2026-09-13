@@ -1157,6 +1157,21 @@
   "interval": 450
  },
  {
+  "dg": "DG-826",
+  "hours": 1297,
+  "date": "2026-09-13",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 11.27,
+  "nextService": 1747,
+  "nextServiceDate": "2026-10-23",
+  "interval": 450,
+  "notes": "Service 13/09/2026 by Team 1 (Sonu & Hussain) at 1297h. All filters done (oil, oil filter, fuel filter, air filter). Next at 1747h. 725 kVA Caterpillar, KIZAD (EMDAD). Exact KIZAD pin set (same as DG-448)."
+ },
+ {
   "dg": "DG-828",
   "hours": 4524,
   "date": "2026-07-31",
