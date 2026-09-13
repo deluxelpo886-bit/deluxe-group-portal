@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-448",
+  "type": "air-filter-pending",
+  "severity": "medium",
+  "source": "service-card",
+  "message": "Service 13/09/2026 (Team 1, Sonu & Hussain) at 8243h: oil, oil filter and fuel filter changed but AIR FILTER NOT done (marked X). This is the 2nd service in a row it was skipped (also 24/08). Carry an air filter on the next visit to DG-448 (KIZAD, MAWAAD) and fit it. 60 kVA Kirlosker."
+ },
+ {
   "dg": "DG-457",
   "type": "air-filter-pending",
   "severity": "low",

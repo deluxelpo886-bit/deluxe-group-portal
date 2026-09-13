@@ -1983,6 +1983,21 @@
   "interval": 350
  },
  {
+  "dg": "DG-448",
+  "hours": 8243,
+  "date": "2026-09-13",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 16.5,
+  "nextService": 8593,
+  "nextServiceDate": "2026-10-04",
+  "interval": 350,
+  "notes": "Service 13/09/2026 by Team 1 (Sonu & Hussain) at 8243h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE (2nd time - also skipped on 24/08). Next at 8593h. Exact KIZAD pin set."
+ },
+ {
   "dg": "DG-537",
   "hours": 7981,
   "date": "2026-07-19",
