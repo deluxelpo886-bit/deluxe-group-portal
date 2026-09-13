@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-448",
+  "part": "Air filter",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Service card 13/09/2026 (Team 1, Sonu & Hussain)",
+  "notes": "Air filter NOT changed at the 8243h service on 13/09/2026 (marked X) - and also skipped on 24/08. Carry it on the next visit to DG-448 (KIZAD, MAWAAD) and fit it. Unit: 60 kVA Kirlosker."
+ },
+ {
   "dg": "DG-457",
   "part": "Air filter",
   "qty": 1,
