@@ -80,7 +80,7 @@ try {
   const hireSeedPath = path.join(__dirname, 'seed', 'fleet-hire.json');
   if (fs.existsSync(hireSeedPath)) {
     const hs = JSON.parse(fs.readFileSync(hireSeedPath, 'utf8'));
-    const r = hire.applySeed(hs, 'fleet-hire-2026-09-10a');
+    const r = hire.applySeed(hs, 'fleet-hire-2026-09-14a');
     if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
@@ -92,7 +92,7 @@ try {
   const flagSeedPath = path.join(__dirname, 'seed', 'fleet-dataflags.json');
   if (fs.existsSync(flagSeedPath)) {
     const fseed = JSON.parse(fs.readFileSync(flagSeedPath, 'utf8'));
-    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-14c');
+    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-14d');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' data flags to resolve');
   }
 } catch (e) { console.warn('[seed] data-flags import skipped:', e && e.message); }
