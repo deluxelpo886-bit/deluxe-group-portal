@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-818",
+  "type": "location-missing",
+  "severity": "medium",
+  "source": "office",
+  "message": "DG-818 (20 kVA) went ON HIRE 14/09/2026 to TECTRONICS LLC - hour meter 7531 at hire-out. Exact site location/pin coming from the office soon; pinned at the yard for now. Update the pin and location when it arrives. Next service at 7881h (est. ~14/10)."
+ },
+ {
   "dg": "DG-479",
   "type": "air-filter-pending",
   "severity": "medium",
