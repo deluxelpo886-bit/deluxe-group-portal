@@ -15,6 +15,7 @@ const path = require('path');
 // (a plain app-folder path is wiped on every Render deploy).
 const DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 'data', 'deluxe.db'));
 const FILE = path.join(DIR, 'breakdowns.json');
+const SEED_MARKER = path.join(DIR, 'breakdowns-seed-applied.json');
 
 let items = [];
 try {
@@ -178,4 +179,54 @@ function stats() {
   return { total: items.length, open: open.length, critical, resolved: resolved.length, thisMonth, avgHours, repeat, byCategory };
 }
 
-module.exports = { add, resolve, reopen, update, remove, getAll, stats, STATUSES, PRIORITIES };
+// One-time, versioned import of breakdowns reported to the office (e.g. by
+// WhatsApp) so they land in the log durably even on Render's ephemeral disk.
+// Mirrors the other modules' applySeed: each version string is applied at most
+// once, and a record is de-duplicated by its stable `key` (or DG + reportedAt).
+function applySeed(records, version) {
+  if (!Array.isArray(records) || !version) return { skipped: true };
+  let applied = {};
+  try {
+    if (fs.existsSync(SEED_MARKER)) applied = JSON.parse(fs.readFileSync(SEED_MARKER, 'utf8')) || {};
+  } catch (_) { applied = {}; }
+  if (applied[version]) return { skipped: true, version };
+
+  const existing = new Set(items.map((x) => x.seedKey).filter(Boolean));
+  let n = 0;
+  for (const r of records) {
+    const dg = String((r && r.dg) || '').trim().toUpperCase();
+    if (!dg) continue;
+    const reportedAt = (r && r.reportedAt) ? new Date(r.reportedAt).toISOString() : new Date().toISOString();
+    const sk = String((r && r.key) || (dg + '|' + reportedAt)).trim();
+    if (existing.has(sk)) continue;
+    existing.add(sk);
+    items.unshift({
+      id: 'BD' + Date.now().toString(36) + Math.floor(Math.random() * 1000) + n,
+      seedKey: sk,
+      dg,
+      priority: normPriority(r && r.priority) || 'Normal',
+      location: String((r && r.location) || '').trim(),
+      truck: String((r && r.truck) || '').trim(),
+      notes: String((r && r.notes) || '').trim(),
+      symptom: String((r && r.symptom) || '').trim(),
+      category: String((r && r.category) || '').trim(),
+      cause: String((r && r.cause) || '').trim(),
+      reportedBy: String((r && r.reportedBy) || '').trim(),
+      reportedAt,
+      status: normStatus(r && r.status) || 'Open',
+      resolvedAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    n += 1;
+  }
+  if (n) persist();
+  applied[version] = { at: new Date().toISOString(), count: n };
+  try {
+    if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
+    fs.writeFileSync(SEED_MARKER, JSON.stringify(applied, null, 2));
+  } catch (_) { /* best-effort */ }
+  return { applied: n, version };
+}
+
+module.exports = { add, resolve, reopen, update, remove, getAll, stats, applySeed, STATUSES, PRIORITIES };

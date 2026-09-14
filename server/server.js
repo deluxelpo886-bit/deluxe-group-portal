@@ -108,6 +108,17 @@ try {
   }
 } catch (e) { console.warn('[seed] spares import skipped:', e && e.message); }
 
+// One-time import of breakdowns reported to the office (e.g. by WhatsApp) so
+// they land in the breakdown log durably even after a deploy.
+try {
+  const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
+  if (fs.existsSync(bdSeedPath)) {
+    const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-14a');
+    if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
+  }
+} catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
+
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
 // monthly income instead of zero. On/off-hire status still decides earning vs
