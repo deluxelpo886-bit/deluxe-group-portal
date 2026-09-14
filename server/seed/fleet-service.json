@@ -885,10 +885,11 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": true,
-  "dailyHours": 18.33,
+  "dailyHours": 6.73,
   "nextService": 3151,
-  "nextServiceDate": "2026-09-28",
-  "interval": 450
+  "nextServiceDate": "2026-09-30",
+  "interval": 450,
+  "notes": "Current reading 3044h as of 14/09/2026 (office) - 107h left to next service (target 3151h). Actual run rate since last service ~6.7 h/day, so next service ~30/09/2026. 500 kVA, Noor Al Shahra, Al Faya (same site as DG-831)."
  },
  {
   "dg": "DG-856",
