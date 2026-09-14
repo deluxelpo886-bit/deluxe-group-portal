@@ -4,7 +4,7 @@
   "type": "location-missing",
   "severity": "medium",
   "source": "office",
-  "message": "DG-818 (20 kVA) went ON HIRE 14/09/2026 to TECTRONICS LLC - hour meter 7531 at hire-out. Exact site location/pin coming from the office soon; pinned at the yard for now. Update the pin and location when it arrives. Next service at 7881h (est. ~14/10)."
+  "message": "DG-818 (20 kVA) went ON HIRE 14/09/2026 to TECHNICAL METAL INDUSTRIAL CO. LLC (ICAD, Al Nafila St) - hour meter 7531 at hire-out, next service 7881h (+350). Pin is APPROXIMATE (ICAD ~24.3145, 54.529); team can find it by the business name. Drop an exact pin to refine if needed."
  },
  {
   "dg": "DG-479",
