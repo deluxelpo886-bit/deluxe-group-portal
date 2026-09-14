@@ -92,7 +92,7 @@ try {
   const flagSeedPath = path.join(__dirname, 'seed', 'fleet-dataflags.json');
   if (fs.existsSync(flagSeedPath)) {
     const fseed = JSON.parse(fs.readFileSync(flagSeedPath, 'utf8'));
-    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-13a');
+    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-14a');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' data flags to resolve');
   }
 } catch (e) { console.warn('[seed] data-flags import skipped:', e && e.message); }
@@ -103,7 +103,7 @@ try {
   const spareSeedPath = path.join(__dirname, 'seed', 'fleet-spares.json');
   if (fs.existsSync(spareSeedPath)) {
     const sseed = JSON.parse(fs.readFileSync(spareSeedPath, 'utf8'));
-    const r = spares.applySeed(sseed, 'fleet-spares-2026-09-13a');
+    const r = spares.applySeed(sseed, 'fleet-spares-2026-09-14a');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' spare-part requests');
   }
 } catch (e) { console.warn('[seed] spares import skipped:', e && e.message); }
@@ -114,7 +114,7 @@ try {
   const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
   if (fs.existsSync(bdSeedPath)) {
     const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-14a');
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-14b');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }

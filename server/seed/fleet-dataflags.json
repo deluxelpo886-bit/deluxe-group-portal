@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-481",
+  "type": "air-filter-pending",
+  "severity": "high",
+  "source": "service-card",
+  "message": "DG-481 (100 kVA Weber, SIX SIGMA, Al Nahyan) BROKE DOWN 14/09/2026. Its air filter was NOT changed at the last TWO services (13/08 and 09/09, both marked X). A clogged/blocked air filter is a likely cause - fit a new air filter as part of the breakdown fix. Current hours 23655h."
+ },
+ {
   "dg": "DG-448",
   "type": "air-filter-pending",
   "severity": "medium",
