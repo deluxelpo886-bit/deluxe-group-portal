@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-479",
+  "type": "air-filter-pending",
+  "severity": "medium",
+  "source": "service-card",
+  "message": "Service 14/09/2026 (Team 3, Imran & Jayaraj) at 985h: oil, oil filter and fuel filter changed but AIR FILTER NOT done (marked X). Carry an air filter on the next visit to DG-479 (Al Falah FA1, Hydro Power) and fit it. 250 kVA Kirlosker."
+ },
+ {
   "dg": "DG-860",
   "type": "location-missing",
   "severity": "low",

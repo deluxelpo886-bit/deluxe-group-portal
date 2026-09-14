@@ -1470,6 +1470,21 @@
   "interval": 450
  },
  {
+  "dg": "DG-479",
+  "hours": 985,
+  "date": "2026-09-14",
+  "technician": "IMRAN&JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 15.67,
+  "nextService": 1435,
+  "nextServiceDate": "2026-10-13",
+  "interval": 450,
+  "notes": "Service 14/09/2026 by Team 3 (Imran & Jayaraj) at 985h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE. Next at 1435h. 250 kVA Kirlosker, Hydro Power, Al Falah."
+ },
+ {
   "dg": "DG-802",
   "hours": 22838,
   "date": "2026-08-12",

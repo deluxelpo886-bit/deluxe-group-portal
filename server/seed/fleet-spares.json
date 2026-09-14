@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-479",
+  "part": "Air filter",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Service card 14/09/2026 (Team 3, Imran & Jayaraj)",
+  "notes": "Air filter NOT changed at the 985h service on 14/09/2026 (marked X). Carry it to Al Falah FA1 and fit it. 250 kVA Kirlosker, Hydro Power."
+ },
+ {
   "dg": "DG-481",
   "part": "Air filter",
   "qty": 1,
