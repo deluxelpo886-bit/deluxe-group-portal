@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-846",
+  "type": "air-filter-pending",
+  "severity": "medium",
+  "source": "service-card",
+  "message": "Service 17/08/2026 (Team 3) at 5745h: oil, oil filter and fuel filter done but AIR FILTER NOT done (card marked X). Carry an air filter on the next visit to DG-846 (Yas Island, Al Farjhan) and fit it. 375 kVA. Current reading 6088h, next service 6195h (~23/09)."
+ },
+ {
   "dg": "DG-818",
   "type": "location-missing",
   "severity": "medium",
