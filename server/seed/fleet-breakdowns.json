@@ -31,7 +31,7 @@
   "status": "Assigned",
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-14",
-  "notes": "Breakdown reported 14/09/2026. Assigned to Team 1 - Sonu & Hussain (Veh 6692). 250 kVA, MAWAAD, Al Faya."
+  "notes": "Breakdown reported 14/09/2026. Assigned to Team 1 - Sonu & Hussain (Veh 6692). Current controller reading 3044h as of 14/09 - NOTE: this is far BELOW the last recorded service hours (11190h on 11/07/2026), so the controller / hour-meter was very likely reset or replaced. Confirm before using this reading for the service schedule (do not treat it as a real drop in hours). 250 kVA, MAWAAD, Al Faya."
  },
  {
   "key": "DG-835-bd-2026-09-14",
