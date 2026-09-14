@@ -1305,8 +1305,9 @@
   "airFilter": false,
   "dailyHours": 8.89,
   "nextService": 8295,
-  "nextServiceDate": "2026-09-05",
-  "interval": 350
+  "nextServiceDate": "2026-09-27",
+  "interval": 350,
+  "notes": "As of 10/09/2026 (office update) ~150h still remaining to next service (current ~8145h, target 8295h). Next service ~27/09/2026. Trojan, Al Bahia, 200 kVA."
  },
  {
   "dg": "DG-804",
@@ -2062,7 +2063,9 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 36363,
-  "interval": 350
+  "nextServiceDate": "2026-10-03",
+  "interval": 350,
+  "notes": "As of 10/09/2026 (office update) ~250h still remaining to next service (current ~36113h, target 36363h). Next service ~03/10/2026. Trojan, Al Bahia, 200 kVA."
  },
  {
   "dg": "DG-537",
