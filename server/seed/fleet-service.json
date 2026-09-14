@@ -746,10 +746,11 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 5.39,
+  "dailyHours": 6.2,
   "nextService": 6115,
-  "nextServiceDate": "2026-09-10",
-  "interval": 350
+  "nextServiceDate": "2026-09-15",
+  "interval": 350,
+  "notes": "Current controller reading 6106h as of 14/09/2026 (2243 starts) - only 9h left to next service (target 6115h). DUE NOW / ~15/09. 30 kVA, TOTAL, Mussafah (can batch with DG-502/503 in Mussafah)."
  },
  {
   "dg": "DG-839",
