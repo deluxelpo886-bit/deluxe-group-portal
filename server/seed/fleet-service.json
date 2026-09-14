@@ -1277,10 +1277,11 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 12,
+  "dailyHours": 18.3,
   "nextService": 3378,
-  "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "nextServiceDate": "2026-09-15",
+  "interval": 350,
+  "notes": "Current controller reading 3357h as of 14/09/2026 - only 21h left to next service (target 3378h). At ~18 h/day it is DUE ~15/09/2026 (tomorrow). 50 kVA Kohler, MAWAAD, Al Faya North (Al Asheesh)."
  },
  {
   "dg": "DG-456",
