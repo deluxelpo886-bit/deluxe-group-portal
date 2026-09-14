@@ -81,6 +81,10 @@ const ZONE_ALIASES = {
   'HUDAYRIYAT': 'Hudriyat',
   'ICAD-1': 'Icad',
   'ICAD 1': 'Icad',
+  'ICAD II ABU DHABI': 'Icad',
+  'RAZEEM -AL FAYA': 'Al Faya',
+  'JUMEIRAH ISLANDS - DUBAI': 'Dubai',
+  'AL NAHYAN - ABU DHABI': 'Al Nahyan',
 };
 
 function titleCase(s) {

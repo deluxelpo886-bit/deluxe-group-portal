@@ -823,6 +823,21 @@
   "interval": 450
  },
  {
+  "dg": "DG-853",
+  "hours": 17462,
+  "date": "2026-09-13",
+  "technician": "IMRAN&JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 9.27,
+  "nextService": 17912,
+  "nextServiceDate": "2026-10-31",
+  "interval": 450,
+  "notes": "Service 13/09/2026 by Team 3 (Imran & Jayaraj) at 17462h. All filters done (oil, oil filter, fuel filter, air filter). Next at 17912h. 250 kVA, Trojan, Al Bahia."
+ },
+ {
   "dg": "DG-450",
   "hours": 35655,
   "date": "2026-07-25",
