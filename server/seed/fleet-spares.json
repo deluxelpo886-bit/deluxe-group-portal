@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-846",
+  "part": "Air filter",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Service card 17/08/2026 (Team 3)",
+  "notes": "Air filter NOT changed at the 5745h service (card marked X). Carry it to Yas Island (Al Farjhan) and fit it. 375 kVA."
+ },
+ {
   "dg": "DG-479",
   "part": "Air filter",
   "qty": 1,

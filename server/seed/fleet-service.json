@@ -1739,15 +1739,16 @@
   "dg": "DG-846",
   "hours": 5745,
   "date": "2026-08-17",
-  "technician": "IMRAN&JAIRAZ",
+  "technician": "IMRAN&JAYARAJ",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.82,
+  "dailyHours": 12.25,
   "nextService": 6195,
-  "nextServiceDate": "2026-09-15",
-  "interval": 450
+  "nextServiceDate": "2026-09-23",
+  "interval": 450,
+  "notes": "Service 17/08/2026 at 5745h - oil, oil filter, fuel filter done; AIR FILTER NOT done (card marked X). Current controller reading 6088h as of 14/09 (1653 starts) - 107h to next service (6195h). We use our 450h rule for this 375 kVA unit; card shows 6095 on a 350h basis. Next ~23/09. Al Farjhan, Yas Island."
  },
  {
   "dg": "DG-548",
