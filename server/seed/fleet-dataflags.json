@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-860",
+  "type": "location-missing",
+  "severity": "low",
+  "source": "office",
+  "message": "DG-860 (400 kVA, CITY CONST) moved to RUWAIS (was recorded at Gayathi). Pinned at Ruwais town approx for now - exact Google Maps location coming from the office tomorrow (15/09). Update the pin when it arrives. Due for service 15/09."
+ },
+ {
   "dg": "DG-481",
   "type": "air-filter-pending",
   "severity": "high",
