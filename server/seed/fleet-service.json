@@ -1260,7 +1260,7 @@
  {
   "dg": "DG-818",
   "hours": 7531,
-  "date": "2026-08-04",
+  "date": "2026-09-14",
   "technician": "IMRAN&VELU",
   "oil": true,
   "oilFilter": false,
@@ -1268,7 +1268,7 @@
   "airFilter": false,
   "dailyHours": 2.01,
   "nextService": 7881,
-  "nextServiceDate": "2026-09-01",
+  "nextServiceDate": "2027-03-07",
   "interval": 350
  },
  {
