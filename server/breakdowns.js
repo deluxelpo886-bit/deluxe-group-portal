@@ -35,7 +35,7 @@ function persist() {
 // Allowed values. A breakdown moves Open -> Assigned -> On the way -> On site
 // -> Resolved. Anything that is not "Resolved" is still an ACTIVE job that the
 // office should be chasing. Priority decides which active job is chased first.
-const STATUSES = ['Open', 'Assigned', 'On the way', 'On site', 'Resolved'];
+const STATUSES = ['Open', 'Assigned', 'On the way', 'On site', 'Waiting parts', 'Resolved'];
 const PRIORITIES = ['Critical', 'High', 'Normal'];
 const PRIORITY_RANK = { Critical: 0, High: 1, Normal: 2 };
 
@@ -66,6 +66,9 @@ function add(rec) {
     category: String((rec && rec.category) || '').trim(),
     // Confirmed root cause, filled when the breakdown is resolved.
     cause: String((rec && rec.cause) || '').trim(),
+    // Next-service info the technician reports when closing the job (free text,
+    // e.g. "next 9559h" or "next 20/10"). Kept with the breakdown for the record.
+    nextService: String((rec && rec.nextService) || '').trim(),
     reportedBy: String((rec && rec.reportedBy) || '').trim(),
     reportedAt: (rec && rec.reportedAt) ? new Date(rec.reportedAt).toISOString() : new Date().toISOString(),
     status: 'Open',
@@ -105,7 +108,7 @@ function reopen(id) {
 function update(id, fields) {
   const it = items.find((x) => x.id === id);
   if (!it) throw new Error('Breakdown not found');
-  ['location', 'truck', 'notes', 'reportedBy'].forEach((k) => {
+  ['location', 'truck', 'notes', 'reportedBy', 'symptom', 'category', 'cause', 'nextService'].forEach((k) => {
     if (fields && fields[k] != null) it[k] = String(fields[k]).trim();
   });
   if (fields && fields.dg) it.dg = String(fields.dg).trim().toUpperCase();
@@ -211,6 +214,7 @@ function applySeed(records, version) {
       symptom: String((r && r.symptom) || '').trim(),
       category: String((r && r.category) || '').trim(),
       cause: String((r && r.cause) || '').trim(),
+      nextService: String((r && r.nextService) || '').trim(),
       reportedBy: String((r && r.reportedBy) || '').trim(),
       reportedAt,
       status: normStatus(r && r.status) || 'Open',

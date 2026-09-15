@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Morning Command</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1216">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest-portal.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Deluxe Ops">
+<style>
+  :root{
+    --bg:#0e1216;--bg2:#11161b;--card:#171d24;--card2:#1c232b;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);
+    --text:#eef2f5;--muted:#9aa5b1;--faint:#6c7783;
+    --amber:#f0a93b;--green:#43c088;--blue:#5aa2e6;--red:#ec6a52;--purple:#b18be6;--gold:#e8c168;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;color:var(--text);font-family:var(--sans);background:var(--bg);
+    background-image:radial-gradient(120% 90% at 90% -8%,rgba(236,106,82,.14),transparent 46%),radial-gradient(120% 90% at -8% 4%,rgba(90,162,230,.12),transparent 44%),linear-gradient(180deg,var(--bg2),var(--bg) 320px);
+    background-attachment:fixed;padding:0 0 60px;min-height:100vh;letter-spacing:-.01em;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 15px;}
+  .appbar{position:sticky;top:0;z-index:40;padding:calc(env(safe-area-inset-top) + 12px) 15px 10px;
+    background:linear-gradient(180deg,rgba(14,18,22,.94),rgba(14,18,22,.6) 75%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+  .appbar-in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .appbar img{height:30px;}
+  .appbar .sp{flex:1;}
+  .btn{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+  .btn:active{transform:scale(.97);}
+  .btn.amber{background:var(--amber);color:#231500;border-color:var(--amber);}
+  nav{display:flex;gap:7px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none;}
+  nav::-webkit-scrollbar{display:none;}
+  nav a{flex:0 0 auto;text-decoration:none;font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--text);white-space:nowrap;}
+  nav a.active{background:var(--amber);color:#231500;border-color:var(--amber);}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-top:8px;}
+  h1{font-size:24px;font-weight:800;margin:5px 0 2px;}
+  .today{color:var(--muted);font-size:13px;margin-bottom:6px;}
+  .step{display:flex;align-items:center;gap:10px;margin:26px 2px 12px;}
+  .step .n{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--accent);color:#0e1216;}
+  .step h2{font-size:16px;margin:0;font-weight:800;}
+  .step .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent);}
+  .step .cnt{font-size:12px;color:var(--muted);font-weight:700;}
+  .grp-h{font-size:12px;font-weight:800;letter-spacing:.03em;margin:14px 2px 8px;display:flex;align-items:center;gap:8px;}
+  .grp-h .pill{background:rgba(255,255,255,.08);border-radius:20px;padding:1px 9px;font-size:11px;color:var(--muted);}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  @media(max-width:720px){.cards{grid-template-columns:1fr;}}
+  .bd{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;position:relative;overflow:hidden;}
+  .bd::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--pc,var(--faint));}
+  .bd.pri-High::before,.bd.pri-Critical::before{background:var(--red);}
+  .bd.st-Resolved{opacity:.62;}
+  .bd .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .bd .dg{font-family:var(--mono);font-weight:800;font-size:16px;}
+  .bd .kva{font-family:var(--mono);color:var(--amber);font-size:12.5px;}
+  .bd .pri{margin-left:auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:rgba(236,106,82,.16);color:var(--red);}
+  .bd .pri.Normal{background:rgba(255,255,255,.08);color:var(--muted);}
+  .bd .meta{color:var(--muted);font-size:12.5px;margin:5px 0 2px;line-height:1.5;}
+  .bd .days{color:var(--red);font-weight:700;}
+  .bd .note{color:var(--faint);font-size:11.5px;margin-top:4px;line-height:1.45;}
+  .bd .parts{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px;}
+  .bd .part{font-size:11px;background:rgba(177,139,230,.14);color:var(--purple);border:1px solid rgba(177,139,230,.3);border-radius:20px;padding:2px 9px;}
+  .bd .part.Fitted{background:rgba(67,192,136,.14);color:var(--green);border-color:rgba(67,192,136,.3);}
+  .row{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;align-items:center;}
+  select{background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:7px 9px;font-size:12px;font-family:var(--sans);max-width:100%;}
+  .mini{padding:6px 10px;font-size:11.5px;border-radius:9px;}
+  .mini.parts{background:rgba(177,139,230,.15);color:var(--purple);border:1px solid rgba(177,139,230,.35);}
+  .mini.res{background:rgba(67,192,136,.15);color:var(--green);border:1px solid rgba(67,192,136,.35);}
+  .svc-area{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+  .svc-area .ah{font-weight:800;font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .svc-area .combine{font-size:10.5px;font-weight:800;color:var(--amber);background:rgba(240,169,59,.14);border:1px solid rgba(240,169,59,.3);border-radius:20px;padding:1px 8px;}
+  .svc{display:flex;align-items:center;gap:9px;padding:6px 0;border-top:1px solid var(--line);font-size:12.5px;}
+  .svc:first-of-type{border-top:none;}
+  .svc .sdg{font-family:var(--mono);font-weight:700;width:64px;}
+  .svc .skva{font-family:var(--mono);color:var(--muted);width:56px;font-size:11.5px;}
+  .svc .stag{margin-left:auto;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:20px;}
+  .stag.OVERDUE{background:rgba(236,106,82,.16);color:var(--red);}
+  .stag.DUE{background:rgba(240,169,59,.16);color:var(--gold);}
+  .stag.soon{background:rgba(255,255,255,.07);color:var(--muted);}
+  .disp{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:10px;}
+  .disp h3{margin:0 0 8px;font-size:14px;}
+  .disp .line{font-size:12.5px;color:var(--muted);padding:3px 0;}
+  .disp .line b{color:var(--text);font-family:var(--mono);}
+  .empty{color:var(--faint);font-size:13px;padding:10px 2px;}
+  .msg{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1c232b;border:1px solid var(--line2);color:var(--text);padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);z-index:80;display:none;}
+  .signin{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px;font-size:13.5px;color:var(--muted);}
+  .signin input{display:block;width:100%;margin:8px 0;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:14px;}
+</style>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar-in">
+    <img src="/logo-heavy.png" alt="Deluxe Heavy"><img src="/logo-energy.png" alt="Deluxe Energy">
+    <span class="sp"></span>
+    <button class="btn" onclick="location.href='/menu'">☰ Menu</button>
+    <button class="btn amber" id="refreshBtn" onclick="loadAll()">↻ Refresh</button>
+  </div>
+</header>
+<div class="wrap">
+  <nav>
+    <a href="/command" class="active">🌅 Command</a>
+    <a href="/fleet">🗺️ Map</a>
+    <a href="/breakdowns">🚨 Breakdowns</a>
+    <a href="/service">🔧 Service</a>
+    <a href="/plan">🧭 Plan</a>
+    <a href="/spares">🧰 Spares</a>
+  </nav>
+  <div class="eyebrow">Deluxe Operations</div>
+  <h1>Morning Command</h1>
+  <div class="today" id="today">Breakdowns first → parts → services. Handle top to bottom.</div>
+
+  <div id="app" hidden>
+    <!-- STEP 1: BREAKDOWNS -->
+    <div class="step" style="--accent:var(--red)"><div class="n">1</div><h2>🚨 Breakdowns — handle first</h2><span class="rule"></span><span class="cnt" id="bdCount"></span></div>
+    <div id="bdBoard"></div>
+
+    <!-- STEP 2: SERVICES -->
+    <div class="step" style="--accent:var(--green)"><div class="n">2</div><h2>🔧 Services — check next</h2><span class="rule"></span><span class="cnt" id="svcCount"></span></div>
+    <div id="svcList"></div>
+
+    <!-- STEP 3: DISPATCH -->
+    <div class="step" style="--accent:var(--blue)"><div class="n">3</div><h2>📋 Today's dispatch</h2><span class="rule"></span></div>
+    <div id="dispatch"></div>
+  </div>
+
+  <div id="signin" class="signin" hidden>
+    <b style="color:var(--text)">Sign in to load the command centre</b>
+    <input id="email" placeholder="Email" autocomplete="username">
+    <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="btn amber" onclick="doLogin()" style="width:100%;padding:11px;">Sign in</button>
+    <div id="loginErr" style="color:var(--red);margin-top:8px;"></div>
+  </div>
+</div>
+<div class="msg" id="msg"></div>
+
+<script>
+var TEAMS=[{id:'6692',name:'Team 1 · Sonu & Hussain'},{id:'44137',name:'Team 2 · Adil & Sabir'},{id:'44107',name:'Team 3 · Imran & Jayaraj'}];
+var STATUSES=['Open','Assigned','On the way','On site','Waiting parts','Resolved'];
+var tok=null; try{tok=localStorage.getItem('deluxeFleetToken');}catch(e){}
+var DATA={bd:[],gens:[],spares:[]};
+
+function toast(t){var m=document.getElementById('msg');m.textContent=t;m.style.display='block';clearTimeout(m._t);m._t=setTimeout(function(){m.style.display='none';},2200);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function hdrs(){return {'Authorization':'Bearer '+tok,'Content-Type':'application/json'};}
+function apiGet(u){return fetch(u,{headers:hdrs()}).then(function(r){if(r.status===401){throw {auth:1};}if(!r.ok)throw 0;return r.json();});}
+function apiPost(u,b){return fetch(u,{method:'POST',headers:hdrs(),body:JSON.stringify(b||{})}).then(function(r){if(!r.ok)throw 0;return r.json();});}
+
+function daysSince(iso){if(!iso)return null;var d=Math.floor((Date.now()-new Date(iso).getTime())/86400000);return d;}
+function areaKey(loc){return String(loc||'').toUpperCase().replace(/\(.*$/,'').replace(/[-–].*$/,'').replace(/\b(NORTH|SOUTH|EAST|WEST|CITY|ISLAND|INDUSTRIAL|AREA|M[0-9]+)\b/g,'').replace(/[^A-Z ]/g,'').trim().split(' ')[0]||'';}
+
+function loadAll(){
+  if(!tok){document.getElementById('signin').hidden=false;document.getElementById('app').hidden=true;return;}
+  var rb=document.getElementById('refreshBtn');rb.textContent='…';
+  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares')])
+   .then(function(res){
+     DATA.bd=(res[0]&&res[0].breakdowns)||[];
+     DATA.gens=(res[1]&&res[1].generators)||[];
+     DATA.spares=(res[2]&&res[2].items)||[];
+     document.getElementById('signin').hidden=true;document.getElementById('app').hidden=false;
+     render();rb.textContent='↻ Refresh';
+   })
+   .catch(function(e){rb.textContent='↻ Refresh';if(e&&e.auth){try{localStorage.removeItem('deluxeFleetToken');}catch(_){}tok=null;document.getElementById('signin').hidden=false;document.getElementById('app').hidden=true;}else{toast('Load failed — check connection');}});
+}
+function doLogin(){
+  var em=document.getElementById('email').value.trim(),pw=document.getElementById('pass').value;
+  fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})})
+   .then(function(r){return r.json();}).then(function(d){if(d&&d.token){tok=d.token;try{localStorage.setItem('deluxeFleetToken',tok);}catch(_){}loadAll();}else{document.getElementById('loginErr').textContent='Wrong login';}})
+   .catch(function(){document.getElementById('loginErr').textContent='Login failed';});
+}
+
+function genFor(dg){return DATA.gens.find(function(g){return String(g.dg).toUpperCase()===String(dg).toUpperCase();})||{};}
+function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
+
+function render(){renderBreakdowns();renderServices();renderDispatch();}
+
+function renderBreakdowns(){
+  var open=DATA.bd.filter(function(b){return b.status!=='Resolved';});
+  var resolvedToday=DATA.bd.filter(function(b){return b.status==='Resolved'&&b.resolvedAt&&daysSince(b.resolvedAt)===0;});
+  document.getElementById('bdCount').textContent=open.length+' open';
+  var groups=[
+    ['🔴 Open',open.filter(function(b){return b.status==='Open';})],
+    ['🟡 In progress',open.filter(function(b){return ['Assigned','On the way','On site'].indexOf(b.status)>=0;})],
+    ['🔩 Waiting for parts',open.filter(function(b){return b.status==='Waiting parts';})],
+    ['✅ Resolved today',resolvedToday]
+  ];
+  var html='';
+  if(!open.length&&!resolvedToday.length){html='<div class="empty">No breakdowns. 🎉 Straight to services.</div>';}
+  groups.forEach(function(g){
+    if(!g[1].length)return;
+    html+='<div class="grp-h">'+g[0]+'<span class="pill">'+g[1].length+'</span></div><div class="cards">';
+    g[1].forEach(function(b){html+=bdCard(b);});
+    html+='</div>';
+  });
+  document.getElementById('bdBoard').innerHTML=html;
+}
+function bdCard(b){
+  var g=genFor(b.dg);
+  var kva=g.kva!=null?g.kva:'';
+  var cust=b.customer||g.customer||'';
+  var loc=b.location||g.location||'';
+  var dd=daysSince(b.reportedAt);
+  var parts=partsFor(b.dg);
+  var teamOpts=TEAMS.map(function(t){return '<option value="'+t.id+'"'+(b.truck===t.id?' selected':'')+'>'+esc(t.name)+'</option>';}).join('');
+  var statusOpts=STATUSES.map(function(s){return '<option value="'+s+'"'+(b.status===s?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  var partsHtml=parts.length?('<div class="parts">'+parts.map(function(p){return '<span class="part '+esc(p.status)+'">🔩 '+esc(p.part)+' · '+esc(p.status)+'</span>';}).join('')+'</div>'):'';
+  var nextSvc=b.nextService?('<div class="note">🔧 Next service: '+esc(b.nextService)+'</div>'):'';
+  var cause=b.cause?('<div class="note">✅ Cause: '+esc(b.cause)+'</div>'):'';
+  return '<div class="bd pri-'+esc(b.priority||'Normal')+' st-'+esc((b.status||'').replace(/ /g,''))+'">'+
+    '<div class="top"><span class="dg">'+esc(b.dg)+'</span>'+(kva!==''?'<span class="kva">'+esc(kva)+' kVA</span>':'')+'<span class="pri '+esc(b.priority||'Normal')+'">'+esc(b.priority||'Normal')+'</span></div>'+
+    '<div class="meta">'+esc(cust)+(loc?' · '+esc(loc):'')+(dd!=null?' · <span class="days">'+dd+'d down</span>':'')+'</div>'+
+    (b.notes?'<div class="note">'+esc(b.notes)+'</div>':'')+
+    partsHtml+cause+nextSvc+
+    '<div class="row">'+
+      '<select onchange="setStatus(\''+b.id+'\',this.value)">'+statusOpts+'</select>'+
+      '<select onchange="setTeam(\''+b.id+'\',this.value)"><option value="">— team —</option>'+teamOpts+'</select>'+
+    '</div>'+
+    '<div class="row">'+
+      '<button class="btn mini parts" onclick="addPart(\''+b.id+'\',\''+esc(b.dg)+'\')">🔩 Need part</button>'+
+      (b.status!=='Resolved'?'<button class="btn mini res" onclick="resolveBd(\''+b.id+'\')">✅ Resolve</button>':'<button class="btn mini" onclick="reopenBd(\''+b.id+'\')">↩ Reopen</button>')+
+    '</div>'+
+  '</div>';
+}
+function setStatus(id,st){apiPost('/api/breakdowns/update',{id:id,status:st}).then(function(){var b=DATA.bd.find(function(x){return x.id===id;});if(b)b.status=st;toast('Status → '+st);render();}).catch(function(){toast('Failed');});}
+function setTeam(id,truck){if(!truck)return;var extra=truck&&['Assigned'].indexOf((DATA.bd.find(function(x){return x.id===id;})||{}).status)<0?{}:{};apiPost('/api/breakdowns/update',{id:id,truck:truck,status:'Assigned'}).then(function(){var b=DATA.bd.find(function(x){return x.id===id;});if(b){b.truck=truck;if(b.status==='Open')b.status='Assigned';}toast('Assigned');render();}).catch(function(){toast('Failed');});}
+function addPart(id,dg){
+  var part=prompt('Part needed for '+dg+' (e.g. alternator, injector, radiator):');
+  if(!part)return;
+  apiPost('/api/spares/add',{dg:dg,part:part,notes:'Breakdown '+dg+' — waiting for this part'})
+   .then(function(){return apiPost('/api/breakdowns/update',{id:id,status:'Waiting parts'});})
+   .then(function(){toast('Part added · marked Waiting parts');loadAll();}).catch(function(){toast('Failed');});
+}
+function resolveBd(id){
+  var cause=prompt('What was the fault / cause? (optional)')||'';
+  var next=prompt('Next service the technician gave (e.g. "9559h" or "20/10") — optional:')||'';
+  apiPost('/api/breakdowns/resolve',{id:id,cause:cause,nextService:next})
+   .then(function(){toast('Resolved ✅');loadAll();}).catch(function(){toast('Failed');});
+}
+function reopenBd(id){apiPost('/api/breakdowns/reopen',{id:id}).then(function(){toast('Reopened');loadAll();}).catch(function(){toast('Failed');});}
+
+function renderServices(){
+  // due = on-hire units flagged due/plan/confirm/overdue (not ok/paused)
+  var due=DATA.gens.filter(function(g){
+    if(g.offHire)return false;
+    var st=g.due&&g.due.state;
+    return st&&st!=='ok'&&st!=='paused';
+  });
+  document.getElementById('svcCount').textContent=due.length+' due';
+  // active breakdown areas (for combine tags)
+  var bdAreas={};DATA.bd.filter(function(b){return b.status!=='Resolved';}).forEach(function(b){var a=areaKey(b.location||genFor(b.dg).location);if(a)bdAreas[a]=true;});
+  // group by area
+  var byArea={};
+  due.forEach(function(g){var a=areaKey(g.location);(byArea[a]=byArea[a]||[]).push(g);});
+  var areas=Object.keys(byArea).sort(function(a,b){return byArea[b].length-byArea[a].length;});
+  var html='';
+  if(!due.length){html='<div class="empty">No services due right now. ✅</div>';}
+  areas.forEach(function(a){
+    var list=byArea[a];var label=list[0].location||a;
+    var combine=bdAreas[a]?'<span class="combine">🔗 breakdown here — combine trip</span>':'';
+    html+='<div class="svc-area"><div class="ah">📍 '+esc(label)+' <span class="pill" style="background:rgba(255,255,255,.08);border-radius:20px;padding:1px 9px;font-size:11px;color:var(--muted)">'+list.length+'</span>'+combine+'</div>';
+    list.forEach(function(g){
+      var st=g.due&&g.due.state;var lab=(g.due&&g.due.label)||'';
+      var tagcls='soon',tagtxt=lab;
+      if(st==='due'){tagcls='OVERDUE';tagtxt=(g.due.hoursLeft!=null&&g.due.hoursLeft<0)?Math.abs(g.due.hoursLeft)+'h over':'DUE';}
+      else if(st==='plan'||st==='confirm'){tagcls='DUE';tagtxt=(g.due.hoursLeft!=null?g.due.hoursLeft+'h left':'due soon');}
+      html+='<div class="svc"><span class="sdg">'+esc(g.dg)+'</span><span class="skva">'+esc(g.kva||'?')+'kVA</span><span style="color:var(--muted)">'+esc((g.customer||'').slice(0,16))+'</span><span class="stag '+tagcls+'">'+esc(tagtxt)+'</span></div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('svcList').innerHTML=html;
+}
+
+function renderDispatch(){
+  var html='';
+  TEAMS.forEach(function(t){
+    var bds=DATA.bd.filter(function(b){return b.truck===t.id&&b.status!=='Resolved';});
+    if(!bds.length)return;
+    html+='<div class="disp"><h3>🚚 '+esc(t.name)+'</h3>';
+    bds.forEach(function(b){var g=genFor(b.dg);html+='<div class="line">🚨 <b>'+esc(b.dg)+'</b> '+esc(b.status)+' · '+esc(b.location||g.location||'')+(b.status==='Waiting parts'?' · 🔩 parts':'')+'</div>';});
+    html+='</div>';
+  });
+  var unassigned=DATA.bd.filter(function(b){return !b.truck&&b.status!=='Resolved';});
+  if(unassigned.length){html+='<div class="disp"><h3>⚠️ Not assigned yet</h3>';unassigned.forEach(function(b){html+='<div class="line">🚨 <b>'+esc(b.dg)+'</b> · '+esc(b.location||'')+'</div>';});html+='</div>';}
+  if(!html)html='<div class="empty">No breakdowns assigned to teams yet. Assign a team on each card above.</div>';
+  document.getElementById('dispatch').innerHTML=html;
+}
+
+loadAll();
+</script>
+</body>
+</html>
