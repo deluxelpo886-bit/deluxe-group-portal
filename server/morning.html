@@ -93,6 +93,30 @@
   .near-item .dist{margin-left:auto;font-family:var(--mono);color:var(--amber);font-size:12px;font-weight:700;}
   .near-item .nst{font-size:10px;padding:1px 7px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--muted);}
   .msg{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1c232b;border:1px solid var(--line2);color:var(--text);padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);z-index:80;display:none;}
+  /* ===== Advanced polish ===== */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:16px 0 4px;}
+  @media(max-width:560px){.kpis{grid-template-columns:1fr 1fr;}}
+  .kpi{position:relative;overflow:hidden;background:linear-gradient(168deg,rgba(255,255,255,.05),rgba(255,255,255,.01) 60%),var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 12px 26px -20px rgba(0,0,0,.85);}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--kc,var(--amber));}
+  .kpi .kn{font-size:25px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+  .kpi .kl{font-size:10.5px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .kpi.open{--kc:var(--red);} .kpi.prog{--kc:var(--blue);} .kpi.wparts{--kc:var(--gold);} .kpi.done{--kc:var(--green);} .kpi.svc{--kc:var(--amber);}
+  .kpi.open .kn{color:var(--red);} .kpi.wparts .kn{color:var(--gold);} .kpi.done .kn{color:var(--green);} .kpi.svc .kn{color:var(--amber);}
+  .spill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 9px;border-radius:20px;white-space:nowrap;}
+  .spill.Open{background:rgba(236,106,82,.18);color:var(--red);}
+  .spill.Assigned{background:rgba(240,169,59,.18);color:var(--amber);}
+  .spill.Ontheway{background:rgba(90,162,230,.18);color:var(--blue);}
+  .spill.Onsite{background:rgba(177,139,230,.18);color:var(--purple);}
+  .spill.Waitingparts{background:rgba(232,193,104,.2);color:var(--gold);}
+  .spill.Resolved{background:rgba(67,192,136,.18);color:var(--green);}
+  .bd::before{background:var(--sc,var(--faint));}
+  .bd.s-Open{--sc:var(--red);} .bd.s-Assigned{--sc:var(--amber);} .bd.s-Ontheway{--sc:var(--blue);} .bd.s-Onsite{--sc:var(--purple);} .bd.s-Waitingparts{--sc:var(--gold);} .bd.s-Resolved{--sc:var(--green);}
+  .stepper{display:flex;gap:4px;margin:10px 0 3px;}
+  .stepper .dt{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.09);}
+  .stepper .dt.on{background:var(--sc,var(--amber));}
+  .bd .teamchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--blue);background:rgba(90,162,230,.13);border:1px solid rgba(90,162,230,.28);border-radius:20px;padding:2px 9px;margin-top:8px;}
+  .actbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;}
+  .actbar select{flex:1;min-width:120px;}
   .signin{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px;font-size:13.5px;color:var(--muted);}
   .signin input{display:block;width:100%;margin:8px 0;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:14px;}
 </style>
@@ -121,6 +145,7 @@
   <div class="today" id="today">Breakdowns first → parts → services. Handle top to bottom.</div>
 
   <div id="app" hidden>
+    <div class="kpis" id="kpis"></div>
     <!-- STEP 1: BREAKDOWNS -->
     <div class="step" style="--accent:var(--red)"><div class="n">1</div><h2>🚨 Breakdowns — handle first</h2><span class="rule"></span><span class="cnt" id="bdCount"></span></div>
     <div class="nearby-box">
@@ -188,7 +213,21 @@ function doLogin(){
 function genFor(dg){return DATA.gens.find(function(g){return String(g.dg).toUpperCase()===String(dg).toUpperCase();})||{};}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
-function render(){fillDgList();renderBreakdowns();renderServices();renderDispatch();}
+function render(){fillDgList();renderKpis();renderBreakdowns();renderServices();renderDispatch();}
+
+function renderKpis(){
+  var open=DATA.bd.filter(function(b){return b.status!=='Resolved';});
+  var prog=open.filter(function(b){return ['Assigned','On the way','On site'].indexOf(b.status)>=0;}).length;
+  var wparts=open.filter(function(b){return b.status==='Waiting parts';}).length;
+  var done=DATA.bd.filter(function(b){return b.status==='Resolved'&&b.resolvedAt&&daysSince(b.resolvedAt)===0;}).length;
+  var svc=DATA.gens.filter(function(g){var st=g.due&&g.due.state;return !g.offHire&&st&&st!=='ok'&&st!=='paused';}).length;
+  var el=document.getElementById('kpis');
+  el.innerHTML=
+    '<div class="kpi open"><div class="kn">'+open.length+'</div><div class="kl">Breakdowns open</div></div>'+
+    '<div class="kpi wparts"><div class="kn">'+wparts+'</div><div class="kl">Waiting parts</div></div>'+
+    '<div class="kpi done"><div class="kn">'+done+'</div><div class="kl">Resolved today</div></div>'+
+    '<div class="kpi svc"><div class="kn">'+svc+'</div><div class="kl">Services due</div></div>';
+}
 
 function haversine(a,b,c,d){var R=6371,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180,s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));}
 function fillDgList(){var dl=document.getElementById('dgList');if(!dl)return;dl.innerHTML=DATA.gens.map(function(g){return '<option value="'+esc(g.dg)+'">';}).join('');}
@@ -243,21 +282,29 @@ function bdCard(b){
   var loc=b.location||g.location||'';
   var dd=daysSince(b.reportedAt);
   var parts=partsFor(b.dg);
+  var scls=(b.status||'').replace(/ /g,'');
   var teamOpts=TEAMS.map(function(t){return '<option value="'+t.id+'"'+(b.truck===t.id?' selected':'')+'>'+esc(t.name)+'</option>';}).join('');
   var statusOpts=STATUSES.map(function(s){return '<option value="'+s+'"'+(b.status===s?' selected':'')+'>'+esc(s)+'</option>';}).join('');
+  // progress stepper: fill up to current status
+  var idx=STATUSES.indexOf(b.status);if(idx<0)idx=0;
+  var steps='';for(var i=0;i<STATUSES.length;i++){steps+='<div class="dt'+(i<=idx?' on':'')+'"></div>';}
   var partsHtml=parts.length?('<div class="parts">'+parts.map(function(p){return '<span class="part '+esc(p.status)+'">🔩 '+esc(p.part)+' · '+esc(p.status)+'</span>';}).join('')+'</div>'):'';
   var nextSvc=b.nextService?('<div class="note">🔧 Next service: '+esc(b.nextService)+'</div>'):'';
   var cause=b.cause?('<div class="note">✅ Cause: '+esc(b.cause)+'</div>'):'';
-  return '<div class="bd pri-'+esc(b.priority||'Normal')+' st-'+esc((b.status||'').replace(/ /g,''))+'">'+
-    '<div class="top"><span class="dg">'+esc(b.dg)+'</span>'+(kva!==''?'<span class="kva">'+esc(kva)+' kVA</span>':'')+'<span class="pri '+esc(b.priority||'Normal')+'">'+esc(b.priority||'Normal')+'</span></div>'+
-    '<div class="meta">'+esc(cust)+(loc?' · '+esc(loc):'')+(dd!=null?' · <span class="days">'+dd+'d down</span>':'')+'</div>'+
+  var team=TEAMS.filter(function(t){return t.id===b.truck;})[0];
+  var teamChip=team?('<span class="teamchip">🚚 '+esc(team.name)+'</span>'):'';
+  var priHtml=(b.priority&&b.priority!=='Normal')?'<span class="pri '+esc(b.priority)+'">'+esc(b.priority)+'</span>':'';
+  return '<div class="bd s-'+esc(scls)+' pri-'+esc(b.priority||'Normal')+'">'+
+    '<div class="top"><span class="dg">'+esc(b.dg)+'</span>'+(kva!==''?'<span class="kva">'+esc(kva)+' kVA</span>':'')+'<span class="spill '+esc(scls)+'" style="margin-left:auto">'+esc(b.status||'Open')+'</span></div>'+
+    '<div class="stepper">'+steps+'</div>'+
+    '<div class="meta">'+esc(cust)+(loc?' · '+esc(loc):'')+(dd!=null?' · <span class="days">'+dd+'d down</span>':'')+' '+priHtml+'</div>'+
     (b.notes?'<div class="note">'+esc(b.notes)+'</div>':'')+
-    partsHtml+cause+nextSvc+
-    '<div class="row">'+
-      '<select onchange="setStatus(\''+b.id+'\',this.value)">'+statusOpts+'</select>'+
-      '<select onchange="setTeam(\''+b.id+'\',this.value)"><option value="">— team —</option>'+teamOpts+'</select>'+
+    teamChip+partsHtml+cause+nextSvc+
+    '<div class="actbar">'+
+      '<select onchange="setStatus(\''+b.id+'\',this.value)" title="Status">'+statusOpts+'</select>'+
+      '<select onchange="setTeam(\''+b.id+'\',this.value)" title="Assign team"><option value="">— team —</option>'+teamOpts+'</select>'+
     '</div>'+
-    '<div class="row">'+
+    '<div class="actbar">'+
       '<button class="btn mini parts" onclick="addPart(\''+b.id+'\',\''+esc(b.dg)+'\')">🔩 Need part</button>'+
       (b.status!=='Resolved'?'<button class="btn mini res" onclick="resolveBd(\''+b.id+'\')">✅ Resolve</button>':'<button class="btn mini" onclick="reopenBd(\''+b.id+'\')">↩ Reopen</button>')+
     '</div>'+
