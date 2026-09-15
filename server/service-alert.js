@@ -18,8 +18,11 @@
 
 const serviceLog = require('./service');
 const hire = require('./hire');
+const breakdowns = require('./breakdowns');
 const whatsapp = require('./whatsapp');
 const email = require('./email');
+let directory = null;
+try { directory = require('./directory'); } catch (_) { directory = null; }
 
 const PUBLIC_URL = (process.env.KEEPALIVE_URL || process.env.RENDER_EXTERNAL_URL
   || 'https://deluxe-group-portal.onrender.com').replace(/\/+$/, '');
@@ -81,12 +84,35 @@ function buildDigest() {
   send.sort((a, b) => (a.hoursLeft || 0) - (b.hoursLeft || 0));
   confirm.sort((a, b) => (a.days || 0) - (b.days || 0));
 
+  // Breakdowns first — the manager checks these before services every morning.
+  const PRANK = { Critical: 0, High: 1, Normal: 2 };
+  const dirMap = (directory && directory.getMap) ? directory.getMap() : {};
+  const openBd = breakdowns.getAll()
+    .filter((b) => b.status !== 'Resolved')
+    .map((b) => {
+      const d = dirMap[String(b.dg || '').toUpperCase()] || {};
+      return { dg: b.dg, status: b.status, priority: b.priority || 'Normal', location: (b.location || d.location || '').trim() };
+    })
+    .sort((a, b) => (PRANK[a.priority] != null ? PRANK[a.priority] : 2) - (PRANK[b.priority] != null ? PRANK[b.priority] : 2));
+
   const count = send.length + confirm.length;
   const MAX = 20; // keep the WhatsApp message a sensible length
+  const BDMAX = 12;
 
-  let text = '🔧 Deluxe — Service check (' + prettyDate(todayStr) + ')\n';
+  let text = '🌅 Deluxe — Morning briefing (' + prettyDate(todayStr) + ')\n';
+  text += 'Breakdowns: ' + openBd.length + ' open · Service: ' + send.length + ' to send, ' + confirm.length + ' to confirm\n';
+
+  // 1) Breakdowns
+  if (openBd.length) {
+    text += '\n🚨 BREAKDOWNS — handle first (' + openBd.length + '):\n'
+      + openBd.slice(0, BDMAX).map((b) => '• ' + b.dg + ' — ' + b.status + (b.location ? ' · ' + b.location : '') + (b.priority && b.priority !== 'Normal' ? ' [' + b.priority + ']' : '')).join('\n') + '\n';
+    if (openBd.length > BDMAX) text += '…and ' + (openBd.length - BDMAX) + ' more.\n';
+  }
+
+  // 2) Services
+  text += '\n🔧 SERVICE CHECK (' + prettyDate(todayStr) + ')\n';
   if (!count) {
-    text += '\nNothing due in the next ' + win + ' days. 👍';
+    text += 'Nothing due in the next ' + win + ' days. 👍';
   } else {
     if (send.length) {
       text += '\n🔴 SEND TEAM — confirmed due by hours (' + send.length + '):\n'
@@ -100,8 +126,8 @@ function buildDigest() {
         }).join('\n') + '\n';
       text += '\nCheck the real running hours before sending anyone — low-usage units may not be due.\n';
     }
-    text += '\nOpen the schedule: ' + PUBLIC_URL + '/schedule';
   }
+  text += '\nOpen Morning Command: ' + PUBLIC_URL + '/command';
 
   return {
     date: todayStr,
@@ -109,6 +135,8 @@ function buildDigest() {
     count,
     sendCount: send.length,
     confirmCount: confirm.length,
+    bdCount: openBd.length,
+    breakdowns: openBd,
     send,
     confirm,
     // kept for the email HTML / backward compatibility: a flat "due" list
@@ -150,9 +178,14 @@ function buildHtml(digest) {
       + '<td style="padding:6px 10px;border-bottom:1px solid #eee;color:#1a6fd6;font-weight:600;">' + esc(when) + '</td>'
       + '<td style="padding:6px 10px;border-bottom:1px solid #eee;">next @ ' + esc(x.nextService) + 'h</td></tr>';
   }).join('');
+  const bdRows = (digest.breakdowns || []).map((b) => '<tr>'
+    + '<td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-weight:700;">' + esc(b.dg) + '</td>'
+    + '<td style="padding:6px 10px;border-bottom:1px solid #eee;font-weight:600;">' + esc(b.status) + '</td>'
+    + '<td style="padding:6px 10px;border-bottom:1px solid #eee;color:#555;">' + esc(b.location || '') + (b.priority && b.priority !== 'Normal' ? ' &middot; ' + esc(b.priority) : '') + '</td></tr>').join('');
   return '<div style="font-family:Arial,Helvetica,sans-serif;color:#111;max-width:640px;">'
-    + '<h2 style="margin:0 0 4px;">🔧 Service check</h2>'
-    + '<div style="color:#666;margin-bottom:8px;">' + esc(prettyDate(digest.date)) + ' &middot; next ' + esc(digest.windowDays) + ' days</div>'
+    + '<h2 style="margin:0 0 4px;">🌅 Morning briefing</h2>'
+    + '<div style="color:#666;margin-bottom:8px;">' + esc(prettyDate(digest.date)) + ' &middot; ' + esc(digest.bdCount || 0) + ' breakdowns open &middot; service next ' + esc(digest.windowDays) + ' days</div>'
+    + ((digest.breakdowns && digest.breakdowns.length) ? section('🚨 Breakdowns — handle first (' + digest.breakdowns.length + ')', '#c0392b', '', bdRows) : '')
     + (digest.count
       ? ((digest.sendCount ? section('🔴 Send the team — confirmed due by hours (' + digest.sendCount + ')', '#c0392b', '', sendRows) : '')
         + (digest.confirmCount ? section('🔵 Confirm hours first — flagged by date estimate (' + digest.confirmCount + ')', '#1a6fd6', 'Check the real running hours before sending anyone — low-usage units may not be due.', confirmRows) : ''))
@@ -183,7 +216,7 @@ function preview() {
 async function sendDigest(opts) {
   opts = opts || {};
   const digest = buildDigest();
-  if (!digest.count && !opts.force) return { sent: false, reason: 'nothing-due', digest };
+  if (!digest.count && !digest.bdCount && !opts.force) return { sent: false, reason: 'nothing-due', digest };
 
   const waTo = recipients();
   const emTo = emailRecipients();
