@@ -85,6 +85,17 @@ try {
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
 
+// Prune non-fleet units the office does not track. We only record DG- units, so
+// any stray non-DG asset (e.g. DC-804, G-54) is removed from the service and
+// hire stores on every boot. remove() is idempotent, so this guarantees they can
+// never reappear from an older persisted record on the ephemeral disk.
+try {
+  const PRUNE = ['DC-804', 'G-54'];
+  let pruned = 0;
+  PRUNE.forEach((dg) => { if (serviceLog.remove(dg)) pruned += 1; hire.remove(dg); });
+  if (pruned) console.log('[prune] removed ' + pruned + ' non-DG unit(s) from the service store');
+} catch (e) { console.warn('[prune] skipped:', e && e.message); }
+
 // One-time import of known data flags (cross-check findings to resolve) into
 // the in-app notification list. Idempotent per version and never wipes flags
 // already resolved in the app. See server/dataflags.js.
