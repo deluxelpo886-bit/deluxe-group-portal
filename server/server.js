@@ -746,6 +746,9 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
       g.kva = (d.kva != null ? d.kva : null);
       g.location = d.location || '';
       g.customer = d.customer || '';
+      // Coordinates too, so views can compute "nearby units" around a breakdown.
+      g.lat = (typeof d.lat === 'number' ? d.lat : null);
+      g.lon = (typeof d.lon === 'number' ? d.lon : null);
       const loc = String(d.location || '').toUpperCase();
       const cust = String(d.customer || '').toUpperCase();
       if (loc === 'YARD' || cust.indexOf('WORK SHOP') >= 0 || cust.indexOf('WORKSHOP') >= 0) {
