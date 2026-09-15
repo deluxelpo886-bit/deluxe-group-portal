@@ -1621,8 +1621,9 @@
   "airFilter": false,
   "dailyHours": 12,
   "nextService": 9162,
-  "nextServiceDate": "2026-09-10",
-  "interval": 350
+  "nextServiceDate": "2026-09-15",
+  "interval": 350,
+  "notes": "Hour meter 9209h as of 15/09/2026 (from Sonu) - 47h OVERDUE (service target was 9162h). Due now; being covered on the Ruwais run. Tech's note: next service +350 = 9559h after it is serviced (awaiting the service card for filters). 100 kVA, Mirfaq, Ruwais / Al Dhannah."
  },
  {
   "dg": "DG-481",
