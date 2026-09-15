@@ -1191,6 +1191,17 @@ app.get('/breakdowns', (req, res) => {
   res.sendFile(path.join(__dirname, 'breakdowns.html'), { cacheControl: false });
 });
 
+// Morning Command Centre — breakdowns-first daily workflow (then services).
+app.get(['/command', '/morning'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'morning.html'), { cacheControl: false });
+});
+
 app.get('/flags', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
