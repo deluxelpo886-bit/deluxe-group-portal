@@ -94,6 +94,9 @@
   .btn.red{background:var(--red);color:#2a0c04;border-color:var(--red);}
   .btn.ghost{background:transparent;color:var(--muted);}
   .btn.wide{flex:1;padding:11px;font-size:13.5px;}
+  .btn.mini.near{background:rgba(90,162,230,.14);color:var(--blue);border-color:rgba(90,162,230,.3);}
+  .cardnear:empty{display:none;}
+  .cardnear .near-res{margin:11px 0 0;background:var(--card2);}
   .nearby-box{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap;}
   .nearby-box input{flex:1;min-width:220px;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;font-size:13.5px;font-family:var(--sans);}
   .near-res{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 14px;}
@@ -260,13 +263,12 @@ function fillDgList(){var dl=document.getElementById('dgList');if(dl)dl.innerHTM
 function toggleBdForm(){var f=document.getElementById('bdForm');f.hidden=!f.hidden;if(!f.hidden){var d=document.getElementById('fDg');if(d)d.focus();}}
 function onFdg(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();var info=document.getElementById('fInfo');var loc=document.getElementById('fLoc');var g=genFor(dg);if(g&&g.dg){info.innerHTML='✔ '+esc(g.dg)+(g.kva!=null?' · '+esc(g.kva)+' kVA':'')+(g.customer?' · '+esc(g.customer):'')+(g.location?' · '+esc(g.location):'');info.className='finfo ok';if(!loc.value&&g.location)loc.value=g.location;}else if(dg){info.textContent='New / unlisted DG — it will still open';info.className='finfo warn';}else{info.textContent='';info.className='finfo';}}
 function submitBd(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();if(!dg){toast('Enter a DG number');return;}var payload={dg:dg,priority:document.getElementById('fPriority').value,symptom:document.getElementById('fSymptom').value,location:document.getElementById('fLoc').value};var team=document.getElementById('fTeam').value;apiPost('/api/breakdowns/add',payload).then(function(r){if(team&&r&&r.item&&r.item.id){return apiPost('/api/breakdowns/update',{id:r.item.id,truck:team,status:'Assigned'});}}).then(function(){toast('Breakdown opened 🚨');['fDg','fSymptom','fLoc'].forEach(function(k){document.getElementById(k).value='';});document.getElementById('fInfo').textContent='';document.getElementById('fInfo').className='finfo';document.getElementById('fPriority').value='Normal';document.getElementById('fTeam').value='';document.getElementById('bdForm').hidden=true;loadAll();}).catch(function(){toast('Failed to open');});}
-function showNearby(){
-  var q=(document.getElementById('nearDg').value||'').trim().toUpperCase();
-  var res=document.getElementById('nearbyResult');
-  if(!q){res.innerHTML='';return;}
+function nearbyHtml(q){
+  q=String(q||'').trim().toUpperCase();
+  if(!q)return '';
   var target=DATA.gens.find(function(g){return String(g.dg).toUpperCase()===q;});
-  if(!target){res.innerHTML='<div class="near-res">DG "'+esc(q)+'" not found.</div>';return;}
-  if(target.lat==null||target.lon==null){res.innerHTML='<div class="near-res">'+esc(target.dg)+' has no exact pin yet — can\'t compute nearby units. Send its location first.</div>';return;}
+  if(!target)return '<div class="near-res">DG "'+esc(q)+'" not found.</div>';
+  if(target.lat==null||target.lon==null)return '<div class="near-res">'+esc(target.dg)+' has no exact pin yet — can\'t compute nearby units. Send its location first.</div>';
   var list=DATA.gens.filter(function(g){return g.lat!=null&&g.lon!=null&&String(g.dg).toUpperCase()!==q;})
     .map(function(g){return {g:g,d:haversine(target.lat,target.lon,g.lat,g.lon)};})
     .sort(function(a,b){return a.d-b.d;}).slice(0,8);
@@ -281,7 +283,14 @@ function showNearby(){
       '<span class="dist">'+x.d.toFixed(x.d<10?1:0)+' km</span></div>';
   });
   html+='</div>';
-  res.innerHTML=html;
+  return html;
+}
+function showNearby(){document.getElementById('nearbyResult').innerHTML=nearbyHtml(document.getElementById('nearDg').value);}
+function cardNearby(id,dg){
+  var box=document.getElementById('cn-'+id);if(!box)return;
+  if(box.innerHTML){box.innerHTML='';return;}
+  box.innerHTML=nearbyHtml(dg);
+  if(box.scrollIntoView)box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function renderBreakdowns(){
@@ -334,9 +343,11 @@ function bdCard(b){
       '<select onchange="setTeam(\''+b.id+'\',this.value)" title="Assign team"><option value="">— team —</option>'+teamOpts+'</select>'+
     '</div>'+
     '<div class="actbar">'+
+      '<button class="btn mini near" onclick="cardNearby(\''+b.id+'\',\''+esc(b.dg)+'\')">📍 Nearby</button>'+
       '<button class="btn mini parts" onclick="addPart(\''+b.id+'\',\''+esc(b.dg)+'\')">🔩 Need part</button>'+
       (b.status!=='Resolved'?'<button class="btn mini res" onclick="resolveBd(\''+b.id+'\')">✅ Resolve</button>':'<button class="btn mini" onclick="reopenBd(\''+b.id+'\')">↩ Reopen</button>')+
     '</div>'+
+    '<div class="cardnear" id="cn-'+b.id+'"></div>'+
   '</div>';
 }
 function setStatus(id,st){apiPost('/api/breakdowns/update',{id:id,status:st}).then(function(){var b=DATA.bd.find(function(x){return x.id===id;});if(b)b.status=st;toast('Status → '+st);render();}).catch(function(){toast('Failed');});}
