@@ -42,6 +42,18 @@
   #overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
   #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
   .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
+
+  /* --- app bottom tab bar (added for consistent mobile app UX) --- */
+  body{padding-bottom:calc(78px + env(safe-area-inset-bottom));}
+  .apptabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:space-around;
+    padding:7px 6px calc(7px + env(safe-area-inset-bottom));
+    background:rgba(14,17,20,.94);backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);
+    border-top:1px solid rgba(255,255,255,.08);}
+  .apptabbar a{flex:1;text-decoration:none;color:#8b95a1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10px;font-weight:600;padding:5px 2px;border-radius:12px;-webkit-tap-highlight-color:transparent;}
+  .apptabbar a .ti{font-size:20px;line-height:1;}
+  .apptabbar a.active{color:#e8a13a;}
+  .apptabbar a:active{background:rgba(255,255,255,.06);}
 </style>
 <link rel="stylesheet" href="/theme.css">
 <link rel="manifest" href="/manifest-portal.json">
@@ -177,5 +189,6 @@
   if(TOKEN){ hideLogin(); } else { showLogin(); }
 })();
 </script>
+<nav class="apptabbar"><a href="/menu"><span class="ti">🏠</span>Home</a><a href="/breakdowns"><span class="ti">🚨</span>Breakdowns</a><a href="/service"><span class="ti">🔧</span>Service</a><a href="/spares" class="active"><span class="ti">🧩</span>Spares</a><a href="/schedule"><span class="ti">📅</span>Schedule</a></nav>
 </body>
 </html>
