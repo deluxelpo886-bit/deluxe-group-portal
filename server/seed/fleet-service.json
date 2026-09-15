@@ -182,6 +182,21 @@
   "interval": 350
  },
  {
+  "dg": "DG-547",
+  "hours": 2700,
+  "date": "2026-07-25",
+  "technician": "ROLAND&BAKHTAMAL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 8.31,
+  "nextService": 3050,
+  "nextServiceDate": "2026-09-15",
+  "interval": 350,
+  "notes": "Service 25/07/2026 at 2700h (Roland/Bakhtamal). Current controller reading 3058h (540 starts) - 8h OVERDUE (target 3050h). NOTE: portal shows this unit as Yard/Under Service but it is running on hire (3058h) - confirm its customer/site. 60 kVA."
+ },
+ {
   "dg": "DG-457",
   "hours": 3204,
   "date": "2026-01-26",
@@ -905,7 +920,7 @@
   "nextService": 3151,
   "nextServiceDate": "2026-09-30",
   "interval": 450,
-  "notes": "Current reading 3044h as of 14/09/2026 (office) - 107h left to next service (target 3151h). Actual run rate since last service ~6.7 h/day, so next service ~30/09/2026. 500 kVA, Noor Al Shahra, Al Faya (same site as DG-831)."
+  "notes": "Current reading ~3051h as of 15/09/2026 (office) - 100h balance to next service (target 3151h). Run rate ~6.7 h/day, next service ~30/09/2026. 500 kVA, Noor Al Shahra, Al Faya (same site as DG-831)."
  },
  {
   "dg": "DG-856",
@@ -1300,6 +1315,21 @@
   "notes": "Current controller reading 3357h as of 14/09/2026 - only 21h left to next service (target 3378h). At ~18 h/day it is DUE ~15/09/2026 (tomorrow). 50 kVA Kohler, MAWAAD, Al Faya North (Al Asheesh)."
  },
  {
+  "dg": "DG-500",
+  "hours": 3375,
+  "date": "2026-09-15",
+  "technician": "IMRAN&SABIR",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 18.3,
+  "nextService": 3725,
+  "nextServiceDate": "2026-10-04",
+  "interval": 350,
+  "notes": "Serviced 15/09/2026 at 3375h by Imran & Sabir - all filters done. Next at 3725h. 50 kVA Kohler, MAWAAD (Mawaad Environmental Services), Al Faya."
+ },
+ {
   "dg": "DG-456",
   "hours": 3195,
   "date": "2026-08-09",
@@ -1644,13 +1674,14 @@
   "date": "2026-08-13",
   "technician": "SABIR&ADIL",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
   "dailyHours": 11.81,
   "nextService": 4413,
   "nextServiceDate": "2026-09-18",
-  "interval": 450
+  "interval": 450,
+  "notes": "Service 13/08/2026 at 3963h (Sabir & Adil) - all filters done. Current controller reading 4369h (1424 starts) as of 15/09 - 44h balance to next service (4413h). Breakdown unit being attended by Team 2 (Sabir). 810 kVA, Noor Al Shahra, Al Faya."
  },
  {
   "dg": "DG-860",

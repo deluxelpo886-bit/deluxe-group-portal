@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-547",
+  "type": "other",
+  "severity": "medium",
+  "source": "service-card",
+  "message": "DG-547 (60 kVA) is marked Yard / Under Service in the portal but its controller reads 3058h and running (serviced 25/07 @ 2700h, 540 starts) - so it is actually ON HIRE somewhere and 8h overdue for service. Confirm its customer and site so it can be set on-hire with the correct pin."
+ },
+ {
   "dg": "DG-846",
   "type": "air-filter-pending",
   "severity": "medium",
