@@ -2481,35 +2481,5 @@
   "nextServiceDate": null,
   "interval": 450,
   "notes": "In yard (workshop) - available. Confirm hours before it goes back on hire."
- },
- {
-  "dg": "DC-804",
-  "hours": 1122,
-  "date": "2026-01-03",
-  "technician": "SERVICE",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 0,
-  "nextService": 1572,
-  "nextServiceDate": null,
-  "interval": 450,
-  "notes": "Available (HMS, Ruwais). Confirm hours before next service."
- },
- {
-  "dg": "G-54",
-  "hours": 7192,
-  "date": "2026-05-06",
-  "technician": "SERVICE",
-  "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 0,
-  "nextService": 7542,
-  "nextServiceDate": null,
-  "interval": 350,
-  "notes": "Available (OSAI, KIZAD). Confirm hours before next service."
  }
 ]
