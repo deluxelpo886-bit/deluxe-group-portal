@@ -126,6 +126,22 @@
   a.card .c-title{font-size:14.5px;font-weight:700;letter-spacing:-.01em;}
   a.card .c-desc{color:var(--muted);font-size:12px;line-height:1.45;margin-top:3px;}
 
+  /* ---------- install banner ---------- */
+  .install{
+    display:none;align-items:center;gap:12px;margin:16px 0 2px;padding:14px 15px;border-radius:16px;
+    background:linear-gradient(135deg,rgba(240,169,59,.18),rgba(90,162,230,.13));
+    border:1px solid var(--line2);box-shadow:var(--shadow);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  .install .ic{flex:0 0 auto;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:23px;background:rgba(255,255,255,.07);border:1px solid var(--line);}
+  .install .it{flex:1;min-width:0;line-height:1.35;}
+  .install .it b{display:block;font-size:14.5px;letter-spacing:-.01em;}
+  .install .it span{color:var(--muted);font-size:12.5px;}
+  .install .it .shr{color:var(--amber);font-weight:700;white-space:nowrap;}
+  .install .btn{flex:0 0 auto;background:var(--amber);color:#231500;border:none;border-radius:11px;padding:10px 15px;font-size:13px;font-weight:800;font-family:var(--sans);cursor:pointer;}
+  .install .btn:active{transform:scale(.97);}
+  .install .x{flex:0 0 auto;background:transparent;border:none;color:var(--faint);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;align-self:flex-start;}
+
   /* ---------- login note ---------- */
   .login{
     margin-top:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
@@ -179,6 +195,14 @@
     <div class="eyebrow">Deluxe Heavy Equipment &amp; Energy Solutions</div>
     <div class="hello"><span id="greet">Operations Console</span></div>
     <div class="today" id="today">—</div>
+  </section>
+
+  <!-- Install app banner (hidden unless installable & not yet installed) -->
+  <section class="install" id="installBanner">
+    <div class="ic" id="installIco">📲</div>
+    <div class="it" id="installTxt"><b>Install the app</b><span>Add Deluxe Ops to your Home Screen for a full-screen app.</span></div>
+    <button class="btn" id="installBtn" hidden>Install</button>
+    <button class="x" id="installX" aria-label="Dismiss">×</button>
   </section>
 
   <!-- Live KPIs -->
@@ -271,6 +295,28 @@
 
 <script>
 (function(){
+  // --- install banner (Add to Home Screen) ---
+  var banner=document.getElementById('installBanner');
+  if(banner){
+    var btn=document.getElementById('installBtn'), txt=document.getElementById('installTxt'), x=document.getElementById('installX');
+    var standalone=false;
+    try{standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;}catch(e){}
+    var dismissed=false;try{dismissed=localStorage.getItem('deluxeInstallDismissed')==='1';}catch(e){}
+    if(!standalone&&!dismissed){
+      var ua=navigator.userAgent||'';
+      var isiOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+      x.addEventListener('click',function(){banner.style.display='none';try{localStorage.setItem('deluxeInstallDismissed','1');}catch(e){}});
+      var deferred=null;
+      window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;btn.hidden=false;txt.innerHTML='<b>Install the app</b><span>One tap to add Deluxe Ops to your device.</span>';banner.style.display='flex';});
+      btn.addEventListener('click',function(){if(!deferred)return;deferred.prompt();(deferred.userChoice||Promise.resolve()).then(function(){}).catch(function(){}).then(function(){deferred=null;btn.hidden=true;banner.style.display='none';});});
+      window.addEventListener('appinstalled',function(){banner.style.display='none';try{localStorage.setItem('deluxeInstallDismissed','1');}catch(e){}});
+      if(isiOS){
+        txt.innerHTML='<b>Install on your iPhone</b><span>Tap <span class="shr">Share ⬆</span>, then <span class="shr">Add to Home Screen</span>.</span>';
+        banner.style.display='flex';
+      }
+    }
+  }
+
   // --- greeting + date (Dubai time) ---
   try{
     var now=new Date();
