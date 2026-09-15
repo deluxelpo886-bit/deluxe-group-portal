@@ -97,6 +97,8 @@
   .btn.mini.near{background:rgba(90,162,230,.14);color:var(--blue);border-color:rgba(90,162,230,.3);}
   .cardnear:empty{display:none;}
   .cardnear .near-res{margin:11px 0 0;background:var(--card2);}
+  #fNear:empty{display:none;}
+  .bdform .fnear{margin:2px 0;background:var(--bg2);}
   .nearby-box{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap;}
   .nearby-box input{flex:1;min-width:220px;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;font-size:13.5px;font-family:var(--sans);}
   .near-res{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 14px;}
@@ -166,6 +168,7 @@
     <div id="bdForm" class="bdform" hidden>
       <input id="fDg" list="dgList" placeholder="DG number *   e.g. DG-844" oninput="onFdg()" autocomplete="off">
       <div id="fInfo" class="finfo"></div>
+      <div id="fNear"></div>
       <input id="fSymptom" placeholder="Problem / symptom   e.g. not starting, tripping on load">
       <input id="fLoc" placeholder="Location (auto-fills from DG — editable)">
       <div class="frow">
@@ -261,7 +264,28 @@ function renderKpis(){
 function haversine(a,b,c,d){var R=6371,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180,s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));}
 function fillDgList(){var dl=document.getElementById('dgList');if(dl)dl.innerHTML=DATA.gens.map(function(g){return '<option value="'+esc(g.dg)+'">';}).join('');var ft=document.getElementById('fTeam');if(ft&&ft.options.length<=1){ft.innerHTML='<option value="">— assign team —</option>'+TEAMS.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join('');}}
 function toggleBdForm(){var f=document.getElementById('bdForm');f.hidden=!f.hidden;if(!f.hidden){var d=document.getElementById('fDg');if(d)d.focus();}}
-function onFdg(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();var info=document.getElementById('fInfo');var loc=document.getElementById('fLoc');var g=genFor(dg);if(g&&g.dg){info.innerHTML='✔ '+esc(g.dg)+(g.kva!=null?' · '+esc(g.kva)+' kVA':'')+(g.customer?' · '+esc(g.customer):'')+(g.location?' · '+esc(g.location):'');info.className='finfo ok';if(!loc.value&&g.location)loc.value=g.location;}else if(dg){info.textContent='New / unlisted DG — it will still open';info.className='finfo warn';}else{info.textContent='';info.className='finfo';}}
+function onFdg(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();var info=document.getElementById('fInfo');var loc=document.getElementById('fLoc');var near=document.getElementById('fNear');var g=genFor(dg);if(g&&g.dg){info.innerHTML='✔ '+esc(g.dg)+(g.kva!=null?' · '+esc(g.kva)+' kVA':'')+(g.customer?' · '+esc(g.customer):'')+(g.location?' · '+esc(g.location):'');info.className='finfo ok';if(!loc.value&&g.location)loc.value=g.location;if(near)near.innerHTML=nearbyServiceHtml(dg);}else{if(dg){info.textContent='New / unlisted DG — it will still open';info.className='finfo warn';}else{info.textContent='';info.className='finfo';}if(near)near.innerHTML='';}}
+function nearbyServiceHtml(dg){
+  dg=String(dg||'').trim().toUpperCase();
+  var t=genFor(dg);
+  if(!t||!t.dg)return '';
+  if(t.lat==null||t.lon==null)return '<div class="near-res fnear"><div class="nh">🔧 Nearby service</div><div class="empty">No pin for '+esc(t.dg)+' yet — send its location to see nearby units to service.</div></div>';
+  var list=DATA.gens.filter(function(g){return g.lat!=null&&g.lon!=null&&String(g.dg).toUpperCase()!==dg;})
+    .map(function(g){return {g:g,d:haversine(t.lat,t.lon,g.lat,g.lon)};})
+    .sort(function(a,b){return a.d-b.d;}).slice(0,6);
+  if(!list.length)return '';
+  var dueN=list.filter(function(x){var s=x.g.due&&x.g.due.state;return s==='due'||s==='plan'||s==='confirm';}).length;
+  var html='<div class="near-res fnear"><div class="nh">🔧 Nearby — combine service on this trip'+(dueN?' · <span style="color:var(--gold)">'+dueN+' due/soon</span>':'')+'</div>';
+  list.forEach(function(x){
+    var g=x.g;var s=g.due&&g.due.state;
+    var tag=(s==='due')?'<span class="nst" style="color:var(--red)">SERVICE DUE</span>':((s==='plan'||s==='confirm')?'<span class="nst" style="color:var(--gold)">svc soon</span>':(g.offHire?'<span class="nst">yard/off</span>':''));
+    html+='<div class="near-item"><span class="nd">'+esc(g.dg)+'</span>'+
+      '<span style="color:var(--muted)">'+esc(g.kva||'?')+'kVA · '+esc((g.customer||'').slice(0,14))+'</span>'+
+      tag+'<span class="dist">'+x.d.toFixed(x.d<10?1:0)+' km</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
 function submitBd(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();if(!dg){toast('Enter a DG number');return;}var payload={dg:dg,priority:document.getElementById('fPriority').value,symptom:document.getElementById('fSymptom').value,location:document.getElementById('fLoc').value};var team=document.getElementById('fTeam').value;apiPost('/api/breakdowns/add',payload).then(function(r){if(team&&r&&r.item&&r.item.id){return apiPost('/api/breakdowns/update',{id:r.item.id,truck:team,status:'Assigned'});}}).then(function(){toast('Breakdown opened 🚨');['fDg','fSymptom','fLoc'].forEach(function(k){document.getElementById(k).value='';});document.getElementById('fInfo').textContent='';document.getElementById('fInfo').className='finfo';document.getElementById('fPriority').value='Normal';document.getElementById('fTeam').value='';document.getElementById('bdForm').hidden=true;loadAll();}).catch(function(){toast('Failed to open');});}
 function nearbyHtml(q){
   q=String(q||'').trim().toUpperCase();
