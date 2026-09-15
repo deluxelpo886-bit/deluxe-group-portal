@@ -83,6 +83,15 @@
   .disp .line{font-size:12.5px;color:var(--muted);padding:3px 0;}
   .disp .line b{color:var(--text);font-family:var(--mono);}
   .empty{color:var(--faint);font-size:13px;padding:10px 2px;}
+  .nearby-box{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap;}
+  .nearby-box input{flex:1;min-width:220px;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;font-size:13.5px;font-family:var(--sans);}
+  .near-res{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 14px;}
+  .near-res .nh{font-weight:800;font-size:13px;margin-bottom:8px;}
+  .near-item{display:flex;align-items:center;gap:9px;padding:6px 0;border-top:1px solid var(--line);font-size:12.5px;}
+  .near-item:first-of-type{border-top:none;}
+  .near-item .nd{font-family:var(--mono);font-weight:700;width:64px;}
+  .near-item .dist{margin-left:auto;font-family:var(--mono);color:var(--amber);font-size:12px;font-weight:700;}
+  .near-item .nst{font-size:10px;padding:1px 7px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--muted);}
   .msg{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1c232b;border:1px solid var(--line2);color:var(--text);padding:10px 16px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px -8px rgba(0,0,0,.6);z-index:80;display:none;}
   .signin{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px;font-size:13.5px;color:var(--muted);}
   .signin input{display:block;width:100%;margin:8px 0;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:14px;}
@@ -114,6 +123,12 @@
   <div id="app" hidden>
     <!-- STEP 1: BREAKDOWNS -->
     <div class="step" style="--accent:var(--red)"><div class="n">1</div><h2>🚨 Breakdowns — handle first</h2><span class="rule"></span><span class="cnt" id="bdCount"></span></div>
+    <div class="nearby-box">
+      <input id="nearDg" list="dgList" placeholder="Enter a DG number → see nearby generators… e.g. DG-831" onkeydown="if(event.key==='Enter')showNearby()">
+      <datalist id="dgList"></datalist>
+      <button class="btn amber" onclick="showNearby()">🔎 Nearby</button>
+    </div>
+    <div id="nearbyResult"></div>
     <div id="bdBoard"></div>
 
     <!-- STEP 2: SERVICES -->
@@ -173,7 +188,33 @@ function doLogin(){
 function genFor(dg){return DATA.gens.find(function(g){return String(g.dg).toUpperCase()===String(dg).toUpperCase();})||{};}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
-function render(){renderBreakdowns();renderServices();renderDispatch();}
+function render(){fillDgList();renderBreakdowns();renderServices();renderDispatch();}
+
+function haversine(a,b,c,d){var R=6371,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180,s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));}
+function fillDgList(){var dl=document.getElementById('dgList');if(!dl)return;dl.innerHTML=DATA.gens.map(function(g){return '<option value="'+esc(g.dg)+'">';}).join('');}
+function showNearby(){
+  var q=(document.getElementById('nearDg').value||'').trim().toUpperCase();
+  var res=document.getElementById('nearbyResult');
+  if(!q){res.innerHTML='';return;}
+  var target=DATA.gens.find(function(g){return String(g.dg).toUpperCase()===q;});
+  if(!target){res.innerHTML='<div class="near-res">DG "'+esc(q)+'" not found.</div>';return;}
+  if(target.lat==null||target.lon==null){res.innerHTML='<div class="near-res">'+esc(target.dg)+' has no exact pin yet — can\'t compute nearby units. Send its location first.</div>';return;}
+  var list=DATA.gens.filter(function(g){return g.lat!=null&&g.lon!=null&&String(g.dg).toUpperCase()!==q;})
+    .map(function(g){return {g:g,d:haversine(target.lat,target.lon,g.lat,g.lon)};})
+    .sort(function(a,b){return a.d-b.d;}).slice(0,8);
+  var html='<div class="near-res"><div class="nh">📍 Nearest to '+esc(target.dg)+' — '+esc(target.location||'')+' ('+esc(target.customer||'')+')</div>';
+  if(!list.length){html+='<div class="empty">No other pinned units to compare.</div>';}
+  list.forEach(function(x){
+    var g=x.g;var st=g.due&&g.due.state;var duetag=(st==='due')?'svc due':((st==='plan'||st==='confirm')?'svc soon':'');
+    html+='<div class="near-item"><span class="nd">'+esc(g.dg)+'</span>'+
+      '<span style="color:var(--muted)">'+esc(g.kva||'?')+'kVA · '+esc((g.customer||'').slice(0,16))+'</span>'+
+      (g.offHire?'<span class="nst">yard/off</span>':'')+
+      (duetag?'<span class="nst" style="color:var(--gold)">'+duetag+'</span>':'')+
+      '<span class="dist">'+x.d.toFixed(x.d<10?1:0)+' km</span></div>';
+  });
+  html+='</div>';
+  res.innerHTML=html;
+}
 
 function renderBreakdowns(){
   var open=DATA.bd.filter(function(b){return b.status!=='Resolved';});
