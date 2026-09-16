@@ -383,13 +383,5 @@
   "severity": "medium",
   "source": "cross-check",
   "message": "Plan shows service due 2026-09-05 (3 days ago) - GULF CONTRACTING, AL AIN. Get a live hour-meter reading to confirm real-overdue vs stale estimate, then service or re-date."
- },
- {
-  "dg": "DG-473",
-  "key": "DG-473-replace-2026-09-16",
-  "type": "other",
-  "severity": "high",
-  "source": "operations",
-  "message": "ACTION: DG-473 (100 kVA, El Masria Cement, Khalifa Industrial City B) - consider REPLACING the generator. Running very hard (~18.7 h/day, 10456h). To be decided after discussing with the customer."
  }
 ]

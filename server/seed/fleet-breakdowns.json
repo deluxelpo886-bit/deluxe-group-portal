@@ -50,5 +50,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-16",
   "notes": "Note (16/09): DG-541 OIL LEAK. Team to bring a STARTER MOTOR. 500 kVA Noor Al Shahra, Al Faya."
+ },
+ {
+  "key": "DG-473-replace-2026-09-16",
+  "dg": "DG-473",
+  "priority": "Normal",
+  "location": "KHALIFA INDUSTRIAL CITY B",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Consider replacing — discuss with customer",
+  "category": "Other",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-16",
+  "notes": "Note (16/09): DG-473 running very hard (~18.7 h/day, 10456h). Consider REPLACING the generator - to be decided after discussing with the customer. 100 kVA, El Masria Cement."
  }
 ]
