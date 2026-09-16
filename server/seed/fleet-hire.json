@@ -100,10 +100,6 @@
   "note": "Off hire - returned to yard (physical count)"
  },
  {
-  "dg": "DG-536",
-  "offHire": true
- },
- {
   "dg": "DG-543",
   "offHire": true
  },

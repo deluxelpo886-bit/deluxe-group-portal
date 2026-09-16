@@ -102,5 +102,18 @@
   "reportedBy": "Sonu",
   "reportedAt": "2026-09-16",
   "notes": "Note from site (Sonu, 16/09): batteries MISSING at the unit. 63 kVA Trojan, Yas Island. Arrange/replace batteries."
+ },
+ {
+  "key": "DG-826-startermotor-2026-09-16",
+  "dg": "DG-826",
+  "priority": "High",
+  "location": "KIZAD",
+  "truck": "",
+  "status": "Waiting parts",
+  "symptom": "Needs starter motor",
+  "category": "Electrical",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-16",
+  "notes": "Note (16/09): DG-826 needs a STARTER MOTOR. 725 kVA Emdad, KIZAD. Arrange/order the starter motor."
  }
 ]
