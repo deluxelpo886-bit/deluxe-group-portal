@@ -530,10 +530,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.15,
+  "dailyHours": 18.7,
   "nextService": 10694,
-  "nextServiceDate": "2026-10-11",
-  "interval": 350
+  "nextServiceDate": "2026-09-29",
+  "interval": 350,
+  "currentHours": 10456,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-453",
