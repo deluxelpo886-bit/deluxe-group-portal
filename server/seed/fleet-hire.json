@@ -238,5 +238,11 @@
   "offHire": true,
   "since": "2026-09-01",
   "note": "COURT CASE (AL SAFAKH) - service paused"
+ },
+ {
+  "dg": "DG-529",
+  "offHire": true,
+  "since": "2026-09-16",
+  "note": "Returned to yard 16/09 at meter 29403h"
  }
 ]
