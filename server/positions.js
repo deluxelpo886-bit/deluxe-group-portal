@@ -49,6 +49,28 @@ function isConfigured() {
   return !!(URL_BASE && USER && PASS);
 }
 
+// Last-known vehicle positions from the daily GPS trails (seed file). Used as a
+// fallback so the map still shows where each team van last was when the live
+// Total Secure feed isn't connected (or is briefly empty). Read fresh each call
+// so an updated trail file is picked up without a restart.
+const LASTKNOWN_FILE = path.join(__dirname, 'seed', 'fleet-vehicles.json');
+function loadLastKnown() {
+  try {
+    const j = JSON.parse(fs.readFileSync(LASTKNOWN_FILE, 'utf8'));
+    const vehicles = (j.vehicles || [])
+      .filter((v) => typeof v.lat === 'number' && typeof v.lon === 'number')
+      .map((v) => ({
+        id: v.id, name: v.name, plate: v.plate, team: v.team, driver: v.driver,
+        lat: v.lat, lon: v.lon, area: v.area || '',
+        speed: 0, course: null, status: 'lastknown',
+        lastUpdate: v.lastUpdate || j.updatedAt || null,
+      }));
+    return { vehicles, updatedAt: j.updatedAt || null, source: 'last-known-trail', note: j.note || '' };
+  } catch (_) {
+    return { vehicles: [], updatedAt: null, source: 'last-known-trail' };
+  }
+}
+
 function persist() {
   try {
     if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
@@ -152,7 +174,24 @@ function startPolling() {
 }
 
 function getSnapshot() {
+  // If the live feed has vehicles, use them. Otherwise fall back to the
+  // last-known positions from the uploaded GPS trails so the map still shows
+  // each team van (clearly flagged as "last known", not live).
+  if (snapshot && Array.isArray(snapshot.vehicles) && snapshot.vehicles.length) {
+    return snapshot;
+  }
+  const lk = loadLastKnown();
+  if (lk.vehicles.length) {
+    return {
+      vehicles: lk.vehicles,
+      updatedAt: lk.updatedAt,
+      source: 'last-known-trail',
+      live: false,
+      note: lk.note || 'Last-known positions from the daily GPS trails (live feed not connected).',
+      error: snapshot && snapshot.error ? snapshot.error : null,
+    };
+  }
   return snapshot;
 }
 
-module.exports = { startPolling, getSnapshot, isConfigured };
+module.exports = { startPolling, getSnapshot, isConfigured, loadLastKnown };
