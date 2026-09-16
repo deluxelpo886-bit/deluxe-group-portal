@@ -2360,7 +2360,10 @@
   "airFilter": false,
   "nextService": 29664,
   "nextServiceDate": "2026-10-02",
-  "interval": 350
+  "interval": 350,
+  "currentHours": 29403,
+  "currentHoursDate": "2026-09-16",
+  "notes": "Returned to yard 16/09/2026 at meter 29403h (off-hire)."
  },
  {
   "dg": "DG-481",
