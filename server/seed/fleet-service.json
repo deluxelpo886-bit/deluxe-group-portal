@@ -1233,16 +1233,18 @@
  {
   "dg": "DG-542",
   "hours": 1679,
-  "date": "2026-08-04",
-  "technician": "SABIR&BAKHTAMAL",
+  "date": "2026-08-11",
+  "technician": "SONU&HUSSAIN",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 3.9,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 7.5,
   "nextService": 2029,
-  "nextServiceDate": "2026-09-01",
-  "interval": 350
+  "nextServiceDate": "2026-09-27",
+  "interval": 350,
+  "currentHours": 1949,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-811",

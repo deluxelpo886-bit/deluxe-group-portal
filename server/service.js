@@ -105,6 +105,17 @@ function logService(rec) {
     updatedAt: new Date().toISOString(),
   };
 
+  // Optional confirmed current-hours reading carried on the same record (e.g. a
+  // service card plus a later "hours check" from the controller). When present it
+  // lets the hours-first due engine treat the unit as confirmed, and it survives
+  // deploys because it travels in the seed rather than only in a live reading.
+  if (rec.currentHours != null && isFinite(Number(rec.currentHours)) && Number(rec.currentHours) >= 0) {
+    entry.currentHours = Number(rec.currentHours);
+    entry.currentHoursDate = (rec.currentHoursDate && /^\d{4}-\d\d-\d\d/.test(String(rec.currentHoursDate)))
+      ? String(rec.currentHoursDate).slice(0, 10) : entry.date;
+    entry.hoursToService = isFinite(entry.nextService) ? Math.round(Number(entry.nextService) - entry.currentHours) : null;
+  }
+
   const history = (prev && Array.isArray(prev.history) ? prev.history : []).concat([{
     date: entry.date,
     hours: entry.hours,
