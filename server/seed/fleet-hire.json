@@ -240,5 +240,11 @@
   "offHire": true,
   "since": "2026-09-16",
   "note": "Returned to yard 16/09 at meter 29403h"
+ },
+ {
+  "dg": "DG-450",
+  "offHire": true,
+  "since": "2026-09-16",
+  "note": "Returned to yard 16/09 (off-hire)"
  }
 ]

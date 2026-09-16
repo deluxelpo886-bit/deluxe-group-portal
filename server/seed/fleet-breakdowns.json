@@ -115,5 +115,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-16",
   "notes": "Note (16/09): DG-826 needs a STARTER MOTOR. 725 kVA Emdad, KIZAD. Arrange/order the starter motor."
+ },
+ {
+  "key": "DG-541-oilleak-2026-09-16",
+  "dg": "DG-541",
+  "priority": "High",
+  "location": "AL FAYA",
+  "truck": "",
+  "status": "Waiting parts",
+  "symptom": "Oil leak; needs starter motor",
+  "category": "Mechanical",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-16",
+  "notes": "Note (16/09): DG-541 OIL LEAK. Team to bring a STARTER MOTOR. 500 kVA Noor Al Shahra, Al Faya."
  }
 ]
