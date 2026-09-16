@@ -534,15 +534,19 @@
  },
  {
   "dg": "DG-453",
-  "hours": 35796,
-  "date": "2026-08-24",
-  "technician": "VELU&IMRAN",
+  "hours": 36328,
+  "date": "2026-09-07",
+  "technician": "SONU&HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 12,
-  "nextService": 36146
+  "dailyHours": 11.3,
+  "nextService": 36678,
+  "nextServiceDate": "2026-10-08",
+  "interval": 350,
+  "currentHours": 36430,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-543",
@@ -999,9 +1003,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 10.23,
+  "dailyHours": 5.6,
   "nextService": 5798,
-  "nextServiceDate": "2026-08-25"
+  "nextServiceDate": "2026-09-27",
+  "interval": 350,
+  "currentHours": 5734,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-489",
@@ -2140,15 +2147,17 @@
   "hours": 5448,
   "date": "2026-07-27",
   "technician": "VELU&IMRAN",
-  "notes": "Re-hired 26/08 - service clock +350h. Controller reading 5695h on 12/09 (103h to next 5798). At ~5.3h/day -> due ~02/10.",
+  "notes": "Re-hired 26/08 - service clock +350h. Controller reading 5734h on 16/09 (64h to next 5798). At ~5.6h/day -> due ~27/09.",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 5.3,
+  "dailyHours": 5.6,
   "nextService": 5798,
-  "nextServiceDate": "2026-10-02",
-  "interval": 350
+  "nextServiceDate": "2026-09-27",
+  "interval": 350,
+  "currentHours": 5734,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-844",
@@ -2306,10 +2315,13 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
+  "airFilter": true,
+  "dailyHours": 11.3,
   "nextService": 36678,
-  "nextServiceDate": "2026-10-13",
-  "interval": 350
+  "nextServiceDate": "2026-10-08",
+  "interval": 350,
+  "currentHours": 36430,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-851",
