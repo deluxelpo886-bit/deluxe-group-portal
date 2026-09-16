@@ -52,6 +52,26 @@
   #overlay .card{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;}
   .link{color:var(--blue);font-size:12.5px;text-decoration:none;}
 
+  /* --- printable breakdown sheet --- */
+  #printArea{display:none;}
+  #printArea .p-head{display:flex;align-items:center;gap:12px;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:12px;}
+  #printArea .p-head img{height:44px;width:auto;}
+  #printArea h2{margin:0;font-size:20px;color:#111;}
+  #printArea .p-meta{font-size:12px;color:#333;margin:2px 0 0;}
+  #printArea table{width:100%;border-collapse:collapse;font-size:12.5px;color:#111;}
+  #printArea th{text-align:left;border-bottom:1.5px solid #111;padding:7px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;}
+  #printArea td{border-bottom:1px solid #bbb;padding:7px 8px;vertical-align:top;}
+  #printArea .p-dg{font-weight:800;font-family:var(--mono);}
+  #printArea .p-foot{margin-top:14px;font-size:11px;color:#555;}
+  @media print{
+    @page{margin:14mm;}
+    body{background:#fff !important;color:#111 !important;padding:0 !important;}
+    body *{visibility:hidden !important;}
+    #printArea, #printArea *{visibility:visible !important;}
+    #printArea{display:block !important;position:absolute;left:0;top:0;width:100%;}
+    .apptabbar{display:none !important;}
+  }
+
   /* --- app bottom tab bar (added for consistent mobile app UX) --- */
   body{padding-bottom:calc(78px + env(safe-area-inset-bottom));}
   .apptabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:space-around;
@@ -83,9 +103,15 @@
       <div class="eyebrow">Deluxe Heavy Equipment &amp; Deluxe Energy</div>
       <h1>Breakdown Log</h1>
     </div>
-    <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" id="printBtn" title="Print the current open breakdowns">🖨️ Print</button>
+      <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
+    </div>
   </div>
   <p class="sub">Log every breakdown and resolve it when fixed. The portal tells you <b>which to fix first</b> (a generator on hire = a customer with no power), the <b>money at risk</b> while it's down, the <b>parts to carry</b>, and lets you <b>📲 send the team the job + map</b> on WhatsApp — plus response times and repeat-offenders. See also the <a href="/fleet" class="link">live map</a> or the <a href="/menu" class="link">☰ menu</a>.</p>
+
+  <!-- Printable sheet (only visible when printing) -->
+  <div id="printArea" aria-hidden="true"></div>
 
   <div class="stats" id="stats"></div>
 
@@ -331,6 +357,38 @@
   $('loginBtn').addEventListener('click',doLogin);
   $('overlay').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
   $('signOut').addEventListener('click',function(){ TOKEN=''; localStorage.removeItem(LS); showLogin('Signed out.'); });
+
+  // Build a clean printable sheet of the current OPEN breakdowns and print it.
+  function buildPrint(){
+    var list=(window.__bd||[]).filter(function(x){return x.status!=='Resolved';});
+    var now=new Date().toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    var rows=list.length ? list.map(function(it,i){
+      var pr=priorityOf(it);
+      return '<tr>'
+        +'<td>'+(i+1)+'</td>'
+        +'<td class="p-dg">'+esc(it.dg)+'</td>'
+        +'<td>'+esc(it.location||'')+'</td>'
+        +'<td>'+esc(it.status)+'</td>'
+        +'<td>'+esc(pr.label||it.priority||'')+'</td>'
+        +'<td>'+esc(it.symptom||it.notes||'')+'</td>'
+        +'<td>'+fmt(it.reportedAt)+(it.reportedBy?(' · '+esc(it.reportedBy)):'')+'</td>'
+        +'<td style="width:90px;">&nbsp;</td>'
+        +'</tr>';
+    }).join('') : '<tr><td colspan="8" style="padding:14px;text-align:center;">No open breakdowns. 🎉</td></tr>';
+    $('printArea').innerHTML =
+      '<div class="p-head">'
+      +'<img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental LLC">'
+      +'<img src="/logo-energy.png" alt="Deluxe Energy Solutions LLC">'
+      +'<div style="margin-left:auto;text-align:right;">'
+        +'<h2>Breakdown Log — Open</h2>'
+        +'<div class="p-meta">'+esc(now)+' · '+list.length+' open breakdown'+(list.length===1?'':'s')+'</div>'
+      +'</div></div>'
+      +'<table><thead><tr>'
+        +'<th>#</th><th>Generator</th><th>Location</th><th>Status</th><th>Priority</th><th>Problem</th><th>Reported</th><th>Action taken</th>'
+      +'</tr></thead><tbody>'+rows+'</tbody></table>'
+      +'<div class="p-foot">Deluxe Heavy Equipment Rental LLC &amp; Deluxe Energy Solutions LLC · Emergency 055 335 6428 / 02 554 5718 · Generated from the Deluxe Operations portal.</div>';
+  }
+  var _pb=$('printBtn'); if(_pb) _pb.addEventListener('click',function(){ buildPrint(); window.print(); });
 
   function fmt(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return iso; } }
   function since(a,b){ // hours between two ISO strings, human
