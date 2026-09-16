@@ -504,11 +504,12 @@ const OFFICE = {lat:24.3462062, lon:54.4998379, name:"Deluxe Heavy Equipment Ren
 // Live vehicles are supplied by the server's /api/positions feed (Total Secure /
 // Traccar), which requires a fleet login. Starts empty; filled/updated by the
 // live tracker at the bottom of this script once the user is signed in.
-let VEHICLES = [
-  {id:'6692',  name:'Team 1 · Sonu & Hussain · Veh 6692 (Service)', lat:24.34700, lon:54.50050},
-  {id:'44137', name:'Team 2 · Adil & Sabir (Electrical) · Veh 44137', lat:24.34620, lon:54.49984},
-  {id:'44107', name:'Team 3 · Imran & Jayaraj · Veh 44107 (Service)', lat:24.34540, lon:54.49920}
-];
+// Starts empty: the /api/positions feed (live Total Secure, or the last-known
+// trail fallback the server provides when the live feed isn't connected) fills
+// this in on the first poll after sign-in. No placeholder trucks, so the
+// "nearest vehicle" dispatch is never skewed by dummy positions.
+let VEHICLES = [];
+var FEED_LIVE = true; // set from the /api/positions "live" flag on each poll
 
 function parseDMY(s){
   if(!s) return null;
@@ -884,13 +885,16 @@ document.getElementById('locateInput').addEventListener('keydown', (e)=>{ if(e.k
 // Only our 3 tracked team vehicles belong in this list. Any other trackers the
 // GPS feed reports (Hafeez / procurement / substitute trucks) stay hidden, as
 // the office asked — the roster above already names the three teams.
-var TRACKED_TEAM_IDS = ['6692','44137','44107'];
 function renderVehList(){
-  document.getElementById('vehList').innerHTML = VEHICLES
-    .filter(v=> TRACKED_TEAM_IDS.indexOf(String(v.id))!==-1 && v.lat!=null && v.lon!=null)
-    .map(v=>
-      `<div><span class="badge veh">${v.id}</span> ${v.name} — <span style="font-family:var(--mono)">${v.lat.toFixed(4)}, ${v.lon.toFixed(4)}</span></div>`
-    ).join('');
+  // upsert() already keeps only the 3 tracked team vans, so just list whatever
+  // vehicles we currently hold (live or last-known), with their position.
+  var vs = VEHICLES.filter(function(v){ return v.lat!=null && v.lon!=null; });
+  var tag = FEED_LIVE ? '<span style="color:#4caf7d;">● live</span>'
+                      : '<span style="color:#e8a13a;">◍ last known (GPS trail)</span>';
+  var head = '<div style="font-size:11.5px;color:#8b95a1;margin-bottom:6px;">'+vs.length+' vehicle'+(vs.length===1?'':'s')+' · '+tag+'</div>';
+  document.getElementById('vehList').innerHTML = head + (vs.length ? vs.map(function(v){
+    return '<div><span class="badge veh">'+String(v.id).replace(/^T/,'')+'</span> '+v.name+' — <span style="font-family:var(--mono)">'+v.lat.toFixed(4)+', '+v.lon.toFixed(4)+'</span></div>';
+  }).join('') : '<div style="color:#8b95a1;font-size:12.5px;">No vehicle positions yet.</div>');
 }
 renderVehList();
 setInterval(renderVehList, 900);
@@ -1526,11 +1530,14 @@ refreshAll();
     const kmh=(d.speed!=null)?Math.round(d.speed*1.852):null; // Traccar speed is in knots
     const speeding=(kmh!=null && kmh>SPEED_LIMIT);
     const age=d.lastUpdate?(Date.now()-new Date(d.lastUpdate).getTime()):null;
-    const stale=(age!=null && age>STALE_MS);
+    // In last-known mode (live feed off) never treat a van as "stale/offline" -
+    // it is intentionally the last GPS-trail position, so show it clearly.
+    const stale=(FEED_LIVE && age!=null && age>STALE_MS);
     const popup='<b>'+v.name+'</b><br><small>'
-      + (kmh!=null?(kmh+' km/h &middot; '):'')
+      + (!FEED_LIVE?'<span style="color:#e8a13a">◍ Last known (GPS trail) — live feed not connected</span><br>':'')
+      + (FEED_LIVE && kmh!=null?(kmh+' km/h &middot; '):'')
       + 'GPS '+(d.lat!=null?d.lat.toFixed(5):'?')+', '+(d.lon!=null?d.lon.toFixed(5):'?')
-      + (d.lastUpdate?('<br>last fix: '+new Date(d.lastUpdate).toLocaleString()):'')
+      + (d.lastUpdate?('<br>'+(FEED_LIVE?'last fix: ':'last seen: ')+new Date(d.lastUpdate).toLocaleString()):'')
       + (speeding?('<br><b style="color:#ff5c4d">⚠ Speeding '+kmh+' km/h</b>'):'')
       + (stale?('<br><span style="color:#e0644a">offline '+Math.round(age/60000)+'m</span>'):'')
       + '</small>'
@@ -1578,6 +1585,7 @@ refreshAll();
       if(r.status===401){ logout(); return; }
       if(!r.ok) throw new Error('server '+r.status);
       const data=await r.json();
+      FEED_LIVE = (data.live !== false); // server sends live:false for the last-known trail fallback
       const list=(data.vehicles||data.positions||[]).filter(function(d){ return d.lat!=null && d.lon!=null; });
       const active=new Set();
       var moving=0, idle=0, offline=0;
@@ -1585,9 +1593,9 @@ refreshAll();
         upsert(d); active.add('T'+d.id);
         var age2 = d.lastUpdate ? (Date.now()-new Date(d.lastUpdate).getTime()) : null;
         var kmh2 = (d.speed!=null) ? d.speed*1.852 : 0;
-        if(age2!=null && age2>STALE_MS) offline++;
-        else if(kmh2>3) moving++;
-        else idle++;
+        if(FEED_LIVE && age2!=null && age2>STALE_MS) offline++;
+        else if(FEED_LIVE && kmh2>3) moving++;
+        else idle++; // last-known positions count as parked, not offline
       });
       removeStale(active);
       updateSummary(list.length, moving, idle, offline);
