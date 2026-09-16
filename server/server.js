@@ -130,6 +130,22 @@ try {
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
 
+// Prune the older seeded breakdowns the office asked to clear (the 14/09 batch),
+// keeping only the ones raised on 16/09. Removes them from the live store by
+// their stable seedKey; idempotent, so they stay gone across deploys.
+try {
+  const PRUNE_BD = [
+    'DG-481-bd-2026-09-14', 'DG-831-bd-2026-09-14', 'DG-801-bd-2026-09-14',
+    'DG-835-bd-2026-09-14', 'DG-505-bd-2026-09-14', 'DG-844-bd-2026-09-14',
+    'DG-477-bd-2026-09-14',
+  ];
+  let removed = 0;
+  breakdowns.getAll().forEach((b) => {
+    if (b && b.seedKey && PRUNE_BD.indexOf(b.seedKey) !== -1) { breakdowns.remove(b.id); removed += 1; }
+  });
+  if (removed) console.log('[prune] removed ' + removed + ' old (14/09) breakdown(s)');
+} catch (e) { console.warn('[prune] breakdowns skipped:', e && e.message); }
+
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
 // monthly income instead of zero. On/off-hire status still decides earning vs
