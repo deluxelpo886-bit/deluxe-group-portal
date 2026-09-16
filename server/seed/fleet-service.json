@@ -773,13 +773,15 @@
   "date": "2026-07-21",
   "technician": "ROLAND&BAKHTAMAL",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 12.37,
+  "dailyHours": 7.3,
   "nextService": 2654,
-  "nextServiceDate": "2026-09-15",
-  "interval": 450
+  "nextServiceDate": "2026-09-21",
+  "interval": 450,
+  "currentHours": 2618,
+  "currentHoursDate": "2026-09-16"
  },
  {
   "dg": "DG-538",
