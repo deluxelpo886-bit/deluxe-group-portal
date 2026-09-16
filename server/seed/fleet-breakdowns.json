@@ -76,5 +76,31 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-14",
   "notes": "Breakdown reported 14/09/2026. Assigned to Team 3 - Imran (Imran & Jayaraj, Veh 44107). 100 kVA, OSAI, KIZAD."
+ },
+ {
+  "key": "DG-37-battery-2026-09-16",
+  "dg": "DG-37",
+  "priority": "Normal",
+  "location": "YAS ISLAND",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Batteries missing in site",
+  "category": "Electrical",
+  "reportedBy": "Sonu",
+  "reportedAt": "2026-09-16",
+  "notes": "Note from site (Sonu, 16/09): batteries MISSING at the unit. 60 kVA Trojan, Yas Island. Arrange/replace batteries."
+ },
+ {
+  "key": "DG-809-battery-2026-09-16",
+  "dg": "DG-809",
+  "priority": "Normal",
+  "location": "YAS ISLAND",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Batteries missing in site",
+  "category": "Electrical",
+  "reportedBy": "Sonu",
+  "reportedAt": "2026-09-16",
+  "notes": "Note from site (Sonu, 16/09): batteries MISSING at the unit. 63 kVA Trojan, Yas Island. Arrange/replace batteries."
  }
 ]
