@@ -31,12 +31,13 @@
   "priority": "High",
   "location": "KIZAD",
   "truck": "",
-  "status": "Waiting parts",
+  "status": "Resolved",
   "symptom": "Needs starter motor",
   "category": "Electrical",
+  "cause": "New starter motor fitted (17/09) - unit back in service.",
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-16",
-  "notes": "Note (16/09): DG-826 needs a STARTER MOTOR. 725 kVA Emdad, KIZAD. Arrange/order the starter motor."
+  "notes": "Note (16/09): DG-826 needs a STARTER MOTOR. 725 kVA Emdad, KIZAD. RESOLVED 17/09: new starter motor fitted, unit back in service."
  },
  {
   "key": "DG-541-oilleak-2026-09-16",
@@ -107,13 +108,14 @@
   "key": "DG-837-radiator-2026-09-17",
   "dg": "DG-837",
   "priority": "High",
-  "location": "BANIYAS",
+  "location": "AL SHAWAMEKH SHM11",
   "truck": "",
-  "status": "Open",
-  "symptom": "Radiator problem",
+  "status": "Resolved",
+  "symptom": "Radiator problem; oil leak",
   "category": "Cooling",
+  "cause": "Radiator repaired and oil leak fixed (17/09) - unit back in service.",
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
-  "notes": "Breakdown 17/09: RADIATOR problem. 80 kVA, City Const, Baniyas. Current meter 9744h. Carry/repair radiator."
+  "notes": "Breakdown 17/09: RADIATOR problem + OIL LEAK. 80 kVA, City Const, Al Shawamekh SHM11 (8JGR+JGH). Current meter 9744h. RESOLVED 17/09: radiator repaired and oil leak fixed, back in service."
  }
 ]
