@@ -89,5 +89,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
   "notes": "Breakdown reported 17/09/2026. 125 kVA, Hasim, Shakhbout City (MSH29). Fault details to be added."
+ },
+ {
+  "key": "DG-857-bd-2026-09-17",
+  "dg": "DG-857",
+  "priority": "High",
+  "location": "DUBAI - BUSINESS BAY (TERRACES TOWER, MARASI DR)",
+  "truck": "",
+  "status": "Open",
+  "symptom": "",
+  "category": "",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-17",
+  "notes": "Breakdown reported 17/09/2026. 250 kVA, Gulf Contracting, Terraces Tower, Marasi Dr, Business Bay - DUBAI (out of the usual Abu Dhabi area). Fault details to be added."
  }
 ]
