@@ -76,5 +76,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
   "notes": "HIGH ALERT (17/09): DG-453 - the SOLENOID has to be CHANGED and the controller PROGRAM has to be CHANGED. 30 kVA, Khaliq Noor Scrap, Mussafah. Carry a replacement solenoid + programming."
+ },
+ {
+  "key": "DG-843-bd-2026-09-17",
+  "dg": "DG-843",
+  "priority": "High",
+  "location": "SHAKHBOUT CITY - MSH29",
+  "truck": "",
+  "status": "Open",
+  "symptom": "",
+  "category": "",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-17",
+  "notes": "Breakdown reported 17/09/2026. 125 kVA, Hasim, Shakhbout City (MSH29). Fault details to be added."
  }
 ]
