@@ -125,7 +125,7 @@ try {
   const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
   if (fs.existsSync(bdSeedPath)) {
     const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-16d');
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-17a');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
@@ -138,6 +138,8 @@ try {
     'DG-481-bd-2026-09-14', 'DG-831-bd-2026-09-14', 'DG-801-bd-2026-09-14',
     'DG-835-bd-2026-09-14', 'DG-505-bd-2026-09-14', 'DG-844-bd-2026-09-14',
     'DG-477-bd-2026-09-14',
+    // superseded DG-473 note (old Khalifa label) - replaced by the -09-17 key
+    'DG-473-replace-2026-09-16',
   ];
   let removed = 0;
   breakdowns.getAll().forEach((b) => {
