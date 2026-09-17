@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-09-16T19:59:00+04:00",
+  "updatedAt": "2026-09-17T19:59:00+04:00",
   "source": "last-known-trail",
-  "note": "Last-known positions from the daily GPS trails (Total Secure export). Shown on the map when the live feed is not connected.",
+  "note": "Last-known positions from the daily GPS trails (Total Secure export, 17 Sep 2026). Shown on the map when the live feed is not connected.",
   "vehicles": [
     {
       "id": "66912",
@@ -9,10 +9,10 @@
       "name": "Team 1 - Sonu & Hussain (66912)",
       "team": "Team 1",
       "driver": "Sonu & Hussain",
-      "lat": 24.672747,
-      "lon": 54.899060,
-      "area": "KIZAD",
-      "lastUpdate": "2026-09-16T19:59:00+04:00"
+      "lat": 24.618695,
+      "lon": 54.959797,
+      "area": "KIZAD / Al Samha (east)",
+      "lastUpdate": "2026-09-17T19:59:00+04:00"
     },
     {
       "id": "43137",
@@ -20,10 +20,10 @@
       "name": "Team 2 - Adil & Sabir / Bakhtamal (43137)",
       "team": "Team 2",
       "driver": "Adil & Sabir (Bakhtamal)",
-      "lat": 24.350855,
-      "lon": 54.925847,
-      "area": "AL FAYA",
-      "lastUpdate": "2026-09-16T19:59:00+04:00"
+      "lat": 24.324460,
+      "lon": 54.641308,
+      "area": "Baniyas",
+      "lastUpdate": "2026-09-17T19:59:00+04:00"
     },
     {
       "id": "44107",
@@ -31,10 +31,10 @@
       "name": "Team 3 - Imran & Jayaraj (44107)",
       "team": "Team 3",
       "driver": "Imran & Jayaraj",
-      "lat": 24.346638,
-      "lon": 54.513470,
-      "area": "ICAD",
-      "lastUpdate": "2026-09-16T19:59:00+04:00"
+      "lat": 24.156743,
+      "lon": 54.438845,
+      "area": "South of Mussafah (site)",
+      "lastUpdate": "2026-09-17T19:59:00+04:00"
     }
   ]
 }
