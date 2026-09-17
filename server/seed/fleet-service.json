@@ -1969,15 +1969,17 @@
   "dg": "DG-837",
   "hours": 9543,
   "date": "2026-08-27",
-  "technician": "LK/JAYARAJ",
+  "technician": "IK&JAYARAJ",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 9893,
-  "nextServiceDate": "2026-09-13",
-  "notes": "157h balance -> due ~12 days (13 Sep), date set manually",
-  "interval": 350
+  "nextServiceDate": "2026-09-20",
+  "notes": "Current reading 9744h on 17/09 -> 149h to next service (9893).",
+  "interval": 350,
+  "currentHours": 9744,
+  "currentHoursDate": "2026-09-17"
  },
  {
   "dg": "DG-832",

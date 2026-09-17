@@ -68,7 +68,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-17d');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-17e');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -125,7 +125,7 @@ try {
   const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
   if (fs.existsSync(bdSeedPath)) {
     const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-17d');
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-17e');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
