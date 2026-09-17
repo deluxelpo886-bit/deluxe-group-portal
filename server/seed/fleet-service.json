@@ -1919,9 +1919,10 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 13.17,
-  "nextService": 508,
+  "nextService": 608,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "notes": "New genset - first service on the 450h running-in interval.",
+  "interval": 450
  },
  {
   "dg": "DG-822",
