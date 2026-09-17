@@ -102,5 +102,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
   "notes": "Breakdown reported 17/09/2026. 250 kVA, Gulf Contracting, Terraces Tower, Marasi Dr, Business Bay - DUBAI (out of the usual Abu Dhabi area). Fault details to be added."
+ },
+ {
+  "key": "DG-837-radiator-2026-09-17",
+  "dg": "DG-837",
+  "priority": "High",
+  "location": "BANIYAS",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Radiator problem",
+  "category": "Cooling",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-17",
+  "notes": "Breakdown 17/09: RADIATOR problem. 80 kVA, City Const, Baniyas. Current meter 9744h. Carry/repair radiator."
  }
 ]
