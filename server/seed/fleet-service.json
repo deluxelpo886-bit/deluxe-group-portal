@@ -96,8 +96,8 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 12,
-  "nextService": 12879,
-  "interval": 350,
+  "nextService": 12979,
+  "interval": 450,
   "nextServiceDate": "2026-09-15"
  },
  {
@@ -110,9 +110,9 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 8.53,
-  "nextService": 5664,
+  "nextService": 5764,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-555",
@@ -1132,8 +1132,8 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 12,
-  "nextService": 6312,
-  "interval": 350
+  "nextService": 6412,
+  "interval": 450
  },
  {
   "dg": "DG-557",
@@ -1311,9 +1311,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 15.2,
-  "nextService": 16209,
+  "nextService": 16309,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-500",
@@ -1489,9 +1489,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 13.11,
-  "nextService": 1315,
+  "nextService": 1415,
   "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-861",
@@ -1793,9 +1793,9 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 12.25,
-  "nextService": 6095,
+  "nextService": 6195,
   "nextServiceDate": "2026-09-15",
-  "interval": 350,
+  "interval": 450,
   "notes": "Service 17/08/2026 at 5745h - oil, oil filter, fuel filter done; AIR FILTER NOT done (card marked X). Current controller reading 6088h as of 14/09 (1653 starts) - 107h to next service (6195h). We use our 450h rule for this 375 kVA unit; card shows 6095 on a 350h basis. Next ~23/09. Al Farjhan, Yas Island."
  },
  {
@@ -1835,9 +1835,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 9.93,
-  "nextService": 3295,
+  "nextService": 3395,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-502",
@@ -1919,9 +1919,9 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 13.17,
-  "nextService": 608,
+  "nextService": 508,
   "nextServiceDate": "2026-09-12",
-  "interval": 450
+  "interval": 350
  },
  {
   "dg": "DG-822",
@@ -1932,9 +1932,9 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "nextService": 6629,
+  "nextService": 6729,
   "nextServiceDate": "2026-09-20",
-  "interval": 350
+  "interval": 450
  },
  {
   "dg": "DG-492",
