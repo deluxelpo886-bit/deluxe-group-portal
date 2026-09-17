@@ -661,7 +661,8 @@
   "airFilter": false,
   "dailyHours": 9.67,
   "nextService": 9960,
-  "nextServiceDate": "2026-08-25",
+  "nextServiceDate": "2026-09-25",
+  "notes": "Service scheduled/held to 25 Sep 2026 (office suggestion).",
   "interval": 350
  },
  {
