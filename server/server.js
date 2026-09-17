@@ -148,6 +148,28 @@ try {
   if (removed) console.log('[prune] removed ' + removed + ' old (14/09) breakdown(s)');
 } catch (e) { console.warn('[prune] breakdowns skipped:', e && e.message); }
 
+// Breakdowns the office has confirmed FIXED. Mark them Resolved on boot (keeps
+// them in the history with a resolved time + real cause) so they clear off the
+// active list durably across deploys. Idempotent: once a record has a resolved
+// time, it is left alone. Matches by the stable seedKey.
+try {
+  const RESOLVE_BD = {
+    'DG-826-startermotor-2026-09-16': {
+      cause: 'New starter motor fitted (17/09) - unit back in service.', category: 'Electrical',
+    },
+    'DG-837-radiator-2026-09-17': {
+      cause: 'Radiator repaired and oil leak fixed (17/09) - unit back in service.', category: 'Cooling',
+    },
+  };
+  let closed = 0;
+  breakdowns.getAll().forEach((b) => {
+    if (b && b.seedKey && RESOLVE_BD[b.seedKey] && !b.resolvedAt) {
+      breakdowns.resolve(b.id, RESOLVE_BD[b.seedKey]); closed += 1;
+    }
+  });
+  if (closed) console.log('[breakdowns] marked ' + closed + ' confirmed-fixed breakdown(s) Resolved');
+} catch (e) { console.warn('[breakdowns] resolve-on-boot skipped:', e && e.message); }
+
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
 // monthly income instead of zero. On/off-hire status still decides earning vs
