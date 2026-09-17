@@ -1897,17 +1897,19 @@
  },
  {
   "dg": "DG-459",
-  "hours": 912,
-  "date": "2026-08-21",
-  "technician": "IMRAN&JAIRAZ",
+  "hours": 1224,
+  "date": "2026-09-17",
+  "technician": "IK&JAYARAJ",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 12.11,
-  "nextService": 1262,
-  "nextServiceDate": "2026-09-18",
-  "interval": 350
+  "nextService": 1574,
+  "nextServiceDate": "2026-10-16",
+  "interval": 350,
+  "currentHours": 1224,
+  "currentHoursDate": "2026-09-17"
  },
  {
   "dg": "DG-560",
