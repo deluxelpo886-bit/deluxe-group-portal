@@ -160,6 +160,7 @@
   }
 
   var LAST=[];
+  var BDMAP={};  // dg -> open-breakdown note, to flag broken units on the plan
   function zoneMsg(zg){
     var team=(loadTeams()[zg.zone]||'').trim();
     var m='🔧 *Deluxe Service Plan*\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'  ('+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+')\n';
@@ -206,6 +207,8 @@
           +'<td>'+(u.kva?esc(u.kva)+' kVA':'')+'<div class="flt">'+esc(u.brand||'')+'</div></td>'
           +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+'</div></td>'
           +'<td>'+pill(u.daysTo)+'</td></tr>';
+        var bd=BDMAP[String(u.dg).toUpperCase()];
+        if(bd) html+='<tr><td colspan="5" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
       });
       html+='</tbody></table>';
       html+='<div class="zfoot"><a class="maplink" href="'+esc(mapsRoute(zg.units,zg.zone))+'" target="_blank" rel="noopener">🗺️ Open route ('+zg.units.length+' stop'+(zg.units.length!==1?'s':'')+')</a>'
@@ -227,6 +230,9 @@
       if(sr.status===401){ showLogin(); return; }
       var sd=await sr.json();
       var dd=await (await fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()})).json();
+      BDMAP={};
+      try{ var bdj=await (await fetch('/api/breakdowns',{cache:'no-store',headers:authHeaders()})).json();
+        (bdj.breakdowns||[]).filter(function(b){return b.status!=='Resolved';}).forEach(function(b){ var dg=String(b.dg||'').toUpperCase(); if(!BDMAP[dg]) BDMAP[dg]=(b.symptom||b.notes||'breakdown'); }); }catch(e){}
       render(sd.generators||[], dd.directory||{});
     }catch(e){ $('out').innerHTML='<div class="empty">Could not load the plan.</div>'; }
   }

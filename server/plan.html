@@ -33,7 +33,8 @@
   .zhead .zn{font-size:16px;font-weight:700;}
   .zhead .zc{font-family:var(--mono);font-size:12px;color:var(--muted);}
   .zbody{padding:6px 16px 14px;}
-  .u{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .u{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .u .bdflag{flex-basis:100%;color:var(--red);background:var(--red-bg);border:1px solid #5a2a22;border-radius:6px;padding:4px 9px;font-size:11.5px;font-weight:700;margin-top:2px;}
   .u:last-child{border-bottom:none;}
   .u .dg{font-family:var(--mono);font-weight:700;min-width:74px;}
   .u .meta{color:var(--muted);font-size:12.5px;flex:1;min-width:0;}
@@ -206,6 +207,7 @@
 
   // ---- WhatsApp / share helpers ----
   var LAST=[];          // the zones currently rendered, for the share buttons
+  var BDMAP={};         // dg -> open-breakdown note, to flag broken units on the plan
   function badgeText(daysTo){ return daysTo<0 ? ('OVERDUE '+Math.abs(daysTo)+'d') : (daysTo===0 ? 'DUE TODAY' : ('due in '+daysTo+'d')); }
   function niceDate(){ try{ return new Date($('date').value+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return $('date').value; } }
   // Build the WhatsApp text for one area (reads the team name live).
@@ -313,10 +315,12 @@
       zg.units.forEach(function(u){
         var kva=u.kva?(' · '+u.kva+' kVA'):'';
         var brand=u.brand?(' · '+esc(u.brand)):'';
+        var bd=BDMAP[String(u.dg).toUpperCase()];
+        var bdFlag=bd?('<div class="bdflag">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</div>'):'';
         html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
           +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
           +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+brand+'</span>'
-          +overBadge(u.daysTo)+'</div>';
+          +overBadge(u.daysTo)+bdFlag+'</div>';
       });
       html+=manyHint;
       html+='</div>';
@@ -357,6 +361,11 @@
       var sd=await sr.json();
       var dr=await fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()});
       var dd=await dr.json();
+      // Pull open breakdowns so any unit that is broken down gets flagged on the
+      // plan (e.g. "no batteries") - the team must fix that before servicing.
+      BDMAP={};
+      try{ var br=await fetch('/api/breakdowns',{cache:'no-store',headers:authHeaders()}); var bdj=await br.json();
+        (bdj.breakdowns||[]).filter(function(b){return b.status!=='Resolved';}).forEach(function(b){ var dg=String(b.dg||'').toUpperCase(); if(!BDMAP[dg]) BDMAP[dg]=(b.symptom||b.notes||'breakdown'); }); }catch(e){}
       render(sd.generators||[], dd.directory||{});
     }catch(e){ $('out').innerHTML='<div class="empty">Could not load the plan. Check your connection and try again.</div>'; }
   }
