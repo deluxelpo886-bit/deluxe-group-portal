@@ -1094,9 +1094,9 @@
   "nextService": 8789,
   "nextServiceDate": "2026-12-14",
   "interval": 350,
-  "currentHours": 8543,
+  "currentHours": 8539,
   "currentHoursDate": "2026-09-17",
-  "notes": "Current reading 8543h on 17/09 (controller) -> 246h to next service (8789), projected mid-Dec 2026. Location: Khalifa Industrial City B, KIZAD (7HPPJX74+HR)."
+  "notes": "Current reading 8539h on 17/09 (controller) -> 250h to next service (8789), projected mid-Dec 2026. Location: Khalifa Industrial City B, KIZAD (7HPPJX74+HR)."
  },
  {
   "dg": "DG-817",
