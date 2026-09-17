@@ -1612,8 +1612,10 @@
   "airFilter": false,
   "dailyHours": 8.04,
   "nextService": 24909,
-  "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "nextServiceDate": "2026-09-20",
+  "interval": 350,
+  "currentHours": 24885,
+  "currentHoursDate": "2026-09-17"
  },
  {
   "dg": "DG-854",
