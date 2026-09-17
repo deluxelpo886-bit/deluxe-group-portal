@@ -63,5 +63,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-16",
   "notes": "Note (16/09): DG-473 running very hard (~18.7 h/day, 10456h). Consider REPLACING the generator - to be decided after discussing with the customer. 100 kVA, El Masria Cement."
+ },
+ {
+  "key": "DG-453-solenoid-2026-09-17",
+  "dg": "DG-453",
+  "priority": "High",
+  "location": "MUSSAFAH",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Solenoid needs replacing; controller program needs changing",
+  "category": "Control panel",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-17",
+  "notes": "HIGH ALERT (17/09): DG-453 - the SOLENOID has to be CHANGED and the controller PROGRAM has to be CHANGED. 30 kVA, Khaliq Noor Scrap, Mussafah. Carry a replacement solenoid + programming."
  }
 ]
