@@ -1,0 +1,9 @@
+[
+ {
+  "key": "DG-476-crosscheck-2026-09-19",
+  "dg": "DG-476",
+  "note": "Ran ~24h in the last run (heavy use). Cross-check the current hour-meter reading and update hours. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
+  "dueDate": "2026-09-19",
+  "createdBy": "Operations Head"
+ }
+]
