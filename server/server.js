@@ -23,6 +23,7 @@ const sites = require('./sites');
 const hire = require('./hire');
 const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
+const reminders = require('./reminders');
 const rentals = require('./rentals');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
@@ -169,6 +170,17 @@ try {
   });
   if (closed) console.log('[breakdowns] marked ' + closed + ' confirmed-fixed breakdown(s) Resolved');
 } catch (e) { console.warn('[breakdowns] resolve-on-boot skipped:', e && e.message); }
+
+// One-time import of reminders / follow-ups (dated nudges the office wants
+// surfaced in the app). Runs once per version, de-duplicated by seedKey.
+try {
+  const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
+  if (fs.existsSync(rmSeedPath)) {
+    const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-18a');
+    if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
+  }
+} catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
 
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
@@ -1006,6 +1018,31 @@ app.post('/api/breakdowns/update', fleetProtect, (req, res) => {
 });
 app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
   breakdowns.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+
+// ---------- Reminders / follow-ups (dated nudges shown in the app) ----------
+app.get('/api/reminders', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const todayStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: process.env.ALERT_TIMEZONE || 'Asia/Dubai', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+  res.json({ reminders: reminders.getAll(), stats: reminders.stats(todayStr), today: todayStr });
+});
+app.post('/api/reminders/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: reminders.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/reminders/resolve', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: reminders.resolve((req.body || {}).id) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/reminders/reopen', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: reminders.reopen((req.body || {}).id) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/reminders/remove', fleetProtect, (req, res) => {
+  reminders.remove((req.body || {}).id);
   res.json({ ok: true });
 });
 

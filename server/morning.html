@@ -162,6 +162,21 @@
 
   <div id="app" hidden>
     <div class="kpis" id="kpis"></div>
+
+    <!-- REMINDERS -->
+    <div class="step" style="--accent:var(--amber)"><div class="n">⏰</div><h2>Reminders</h2><span class="rule"></span><span class="cnt" id="remCount"></span></div>
+    <button class="openbd" onclick="toggleRemForm()">⏰ <b>＋ Add a reminder</b></button>
+    <div id="remForm" class="bdform" hidden>
+      <input id="rDg" list="dgList" placeholder="DG number (optional)   e.g. DG-476" autocomplete="off">
+      <input id="rNote" placeholder="Reminder *   e.g. cross-check hours, ran 24h">
+      <input id="rDate" type="date">
+      <div class="frow">
+        <button class="btn amber wide" onclick="submitRem()">⏰ Save reminder</button>
+        <button class="btn ghost" onclick="toggleRemForm()">Cancel</button>
+      </div>
+    </div>
+    <div id="remBoard"></div>
+
     <!-- STEP 1: BREAKDOWNS -->
     <div class="step" style="--accent:var(--red)"><div class="n">1</div><h2>🚨 Breakdowns — handle first</h2><span class="rule"></span><span class="cnt" id="bdCount"></span></div>
     <button class="openbd" onclick="toggleBdForm()">🚨 <b>＋ Open a breakdown</b></button>
@@ -211,7 +226,7 @@
 var TEAMS=[{id:'6692',name:'Team 1 · Sonu & Hussain'},{id:'44137',name:'Team 2 · Adil & Sabir'},{id:'44107',name:'Team 3 · Imran & Jayaraj'}];
 var STATUSES=['Open','Assigned','On the way','On site','Waiting parts','Resolved'];
 var tok=null; try{tok=localStorage.getItem('deluxeFleetToken');}catch(e){}
-var DATA={bd:[],gens:[],spares:[]};
+var DATA={bd:[],gens:[],spares:[],rem:[],remToday:null};
 
 function toast(t){var m=document.getElementById('msg');m.textContent=t;m.style.display='block';clearTimeout(m._t);m._t=setTimeout(function(){m.style.display='none';},2200);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -225,11 +240,13 @@ function areaKey(loc){return String(loc||'').toUpperCase().replace(/\(.*$/,'').r
 function loadAll(){
   if(!tok){document.getElementById('signin').hidden=false;document.getElementById('app').hidden=true;return;}
   var rb=document.getElementById('refreshBtn');rb.textContent='…';
-  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares')])
+  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares'),apiGet('/api/reminders')])
    .then(function(res){
      DATA.bd=(res[0]&&res[0].breakdowns)||[];
      DATA.gens=(res[1]&&res[1].generators)||[];
      DATA.spares=(res[2]&&res[2].items)||[];
+     DATA.rem=(res[3]&&res[3].reminders)||[];
+     DATA.remToday=(res[3]&&res[3].today)||new Date().toISOString().slice(0,10);
      document.getElementById('signin').hidden=true;document.getElementById('app').hidden=false;
      render();rb.textContent='↻ Refresh';
    })
@@ -245,7 +262,32 @@ function doLogin(){
 function genFor(dg){return DATA.gens.find(function(g){return String(g.dg).toUpperCase()===String(dg).toUpperCase();})||{};}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
-function render(){fillDgList();renderKpis();renderBreakdowns();renderServices();renderDispatch();}
+function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderDispatch();}
+
+function toggleRemForm(){var f=document.getElementById('remForm');f.hidden=!f.hidden;if(!f.hidden){var d=document.getElementById('rDate');if(d&&!d.value)d.value=DATA.remToday||new Date().toISOString().slice(0,10);var n=document.getElementById('rNote');if(n)n.focus();}}
+function submitRem(){var note=(document.getElementById('rNote').value||'').trim();if(!note){toast('Write the reminder first');return;}var body={dg:(document.getElementById('rDg').value||'').trim(),note:note,dueDate:(document.getElementById('rDate').value||'').trim(),createdBy:'Operations Head'};apiPost('/api/reminders/add',body).then(function(){document.getElementById('rNote').value='';document.getElementById('rDg').value='';toggleRemForm();toast('Reminder saved');loadAll();}).catch(function(){toast('Could not save reminder');});}
+function remDone(id){apiPost('/api/reminders/resolve',{id:id}).then(function(){toast('Done ✓');loadAll();}).catch(function(){toast('Failed');});}
+function remDel(id){apiPost('/api/reminders/remove',{id:id}).then(function(){toast('Removed');loadAll();}).catch(function(){toast('Failed');});}
+function renderReminders(){
+  var today=DATA.remToday||new Date().toISOString().slice(0,10);
+  var open=DATA.rem.filter(function(r){return r.status!=='done';});
+  var due=open.filter(function(r){return String(r.dueDate)<=today;});
+  var cnt=document.getElementById('remCount');if(cnt)cnt.textContent=due.length?(due.length+' due'):(open.length?(open.length+' upcoming'):'');
+  var el=document.getElementById('remBoard');if(!el)return;
+  if(!open.length){el.innerHTML='<div class="disp" style="color:var(--muted)">No reminders. Tap ＋ to add one.</div>';return;}
+  el.innerHTML=open.map(function(r){
+    var overdue=String(r.dueDate)<today, todayDue=String(r.dueDate)===today;
+    var when=overdue?('⚠ overdue · '+esc(r.dueDate)):(todayDue?'📌 due today':('📅 '+esc(r.dueDate)));
+    var col=overdue?'var(--red)':(todayDue?'var(--amber)':'var(--line2)');
+    return '<div class="disp" style="border-left:4px solid '+col+'">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">'
+      +'<div><b>'+(r.dg?esc(r.dg)+' · ':'')+when+'</b><div style="margin-top:5px;font-size:13.5px">'+esc(r.note)+'</div></div>'
+      +'<div style="display:flex;gap:6px;flex:0 0 auto">'
+      +'<button class="btn green" style="padding:6px 10px" onclick="remDone(\''+r.id+'\')">✓ Done</button>'
+      +'<button class="btn ghost" style="padding:6px 9px" onclick="remDel(\''+r.id+'\')">✕</button>'
+      +'</div></div></div>';
+  }).join('');
+}
 
 function renderKpis(){
   var open=DATA.bd.filter(function(b){return b.status!=='Resolved';});
