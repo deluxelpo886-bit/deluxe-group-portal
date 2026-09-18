@@ -134,7 +134,7 @@
   "notes": "Opened and resolved same day (18/09). CT coil / cable problem. 100 kVA Weber, Six Sigma, Al Nahyan (E25). Fixed on site by Sonu; unit back on hire."
  },
  {
-  "key": "DG-800-injpump-2026-09-18",
+  "key": "DG-800-injpump-2026-09-18-v2",
   "dg": "DG-800",
   "priority": "High",
   "location": "AL REEM ISLAND - RR8",
@@ -144,6 +144,6 @@
   "category": "Fuel",
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-18",
-  "notes": "Fault 18/09: FUEL leak at the CAT injection pump, currently patched with epoxy putty (temporary - will not hold, fuel/fire risk). Engine runs ~1509 RPM. Proper repair needed: reseal/replace the leaking fitting, or service the injection pump if the body/seal is cracked. 350 kVA Caterpillar, Trojan, Al Reem Island RR8."
+  "notes": "Fault 18/09: FUEL leak at the CAT injection pump, currently patched with epoxy putty (temporary - will not hold, fuel/fire risk). Engine speed 1509-1512 RPM (steady) - governor/speed control OK, so the fault is the leak, not the governor. Proper repair needed: reseal/replace the leaking fitting, or service the injection pump if the body/seal is cracked. 350 kVA Caterpillar, Trojan, Al Reem Island RR8."
  }
 ]
