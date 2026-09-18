@@ -122,6 +122,7 @@ function load() {
         contact: g.contact || '',
         kva: g.kva || null,
         brand: g.brand || '',
+        company: g.company || '',
         maps_link: g.maps_link || null,
       };
     });
