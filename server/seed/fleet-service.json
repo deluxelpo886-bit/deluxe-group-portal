@@ -1735,17 +1735,18 @@
  },
  {
   "dg": "DG-842",
-  "hours": 3978,
-  "date": "2026-08-15",
-  "technician": "SABIR&ADIL",
+  "hours": 4339,
+  "date": "2026-09-18",
+  "technician": "ADIL&BAKHTAMAL",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 11.33,
-  "nextService": 4328,
-  "nextServiceDate": "2026-09-16",
-  "interval": 350
+  "nextService": 4689,
+  "nextServiceDate": "2026-10-18",
+  "interval": 350,
+  "notes": "Serviced 18/09/2026 at 4339h by Adil & Bakhtamal (oil + oil filter + fuel filter; air filter NOT). Next service 4689h, projected ~18/10. TS Electromechanical camp, Mussafah M37 (9F2X+JH2)."
  },
  {
   "dg": "DG-471",
