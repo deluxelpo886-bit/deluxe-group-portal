@@ -143,6 +143,8 @@ try {
     'DG-473-replace-2026-09-16',
     // superseded DG-857 (empty fault) - replaced by the -leak-09-18 key
     'DG-857-bd-2026-09-17',
+    // DG-537 breakdown opened by mistake (meant DG-857) - remove it
+    'DG-537-bd-2026-09-18',
   ];
   let removed = 0;
   breakdowns.getAll().forEach((b) => {
