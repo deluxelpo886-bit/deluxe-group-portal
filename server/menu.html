@@ -213,6 +213,10 @@
     <div class="kpi plan"><div class="k-num dash" id="kPlan">—</div><div class="k-lbl">Plan soon</div></div>
   </section>
 
+  <!-- Reminders (shown only when there are open reminders) -->
+  <div class="sec-h" id="remHead" hidden><h2>⏰ Reminders</h2><span class="rule"></span><span id="remCount" style="color:var(--muted);font-size:12.5px;font-weight:700;"></span></div>
+  <section id="remList" hidden style="display:flex;flex-direction:column;gap:9px;margin-bottom:6px;"></section>
+
   <!-- Primary quick actions -->
   <div class="sec-h"><h2>Quick actions</h2><span class="rule"></span></div>
   <section class="primary">
@@ -351,6 +355,30 @@
         setNum('kPlan',plan);
       })
       .catch(function(){ /* leave dashes if not authorised */ });
+
+    // Reminders — show open/due nudges right on the home screen.
+    fetch('/api/reminders',{headers:{'Authorization':'Bearer '+tok}})
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        var rem=(d&&d.reminders)||[]; var today=(d&&d.today)||new Date().toISOString().slice(0,10);
+        var open=rem.filter(function(x){return x.status!=='done';});
+        if(!open.length) return;
+        var due=open.filter(function(x){return String(x.dueDate)<=today;});
+        var head=document.getElementById('remHead'); var list=document.getElementById('remList');
+        if(!head||!list) return;
+        head.hidden=false; list.hidden=false;
+        document.getElementById('remCount').textContent=due.length?(due.length+' due'):(open.length+' upcoming');
+        function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        list.innerHTML=open.map(function(x){
+          var overdue=String(x.dueDate)<today, todayDue=String(x.dueDate)===today;
+          var when=overdue?('⚠ overdue · '+esc(x.dueDate)):(todayDue?'📌 due today':('📅 '+esc(x.dueDate)));
+          var col=overdue?'var(--red)':(todayDue?'var(--gold)':'rgba(255,255,255,.18)');
+          return '<a href="/command" style="text-decoration:none;color:inherit;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-left:4px solid '+col+';border-radius:12px;padding:12px 14px;display:block;">'
+            +'<div style="font-weight:700;font-size:13px;">'+(x.dg?esc(x.dg)+' · ':'')+when+'</div>'
+            +'<div style="color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.35;">'+esc(x.note)+'</div></a>';
+        }).join('');
+      })
+      .catch(function(){ /* no reminders shown if unavailable */ });
   }
 })();
 </script>
