@@ -126,7 +126,7 @@ try {
   const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
   if (fs.existsSync(bdSeedPath)) {
     const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-18e');
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-18f');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
@@ -145,6 +145,8 @@ try {
     'DG-857-bd-2026-09-17',
     // DG-537 breakdown opened by mistake (meant DG-857) - remove it
     'DG-537-bd-2026-09-18',
+    // superseded DG-800 note (updated with exact RPM) - replaced by -v2 key
+    'DG-800-injpump-2026-09-18',
   ];
   let removed = 0;
   breakdowns.getAll().forEach((b) => {
