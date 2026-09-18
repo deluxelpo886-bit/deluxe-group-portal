@@ -145,5 +145,18 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-18",
   "notes": "Fault 18/09: FUEL leak at the CAT injection pump, currently patched with epoxy putty (temporary - will not hold, fuel/fire risk). Engine speed 1509-1512 RPM (steady) - governor/speed control OK, so the fault is the leak, not the governor. Proper repair needed: reseal/replace the leaking fitting, or service the injection pump if the body/seal is cracked. 350 kVA Caterpillar, Trojan, Al Reem Island RR8."
+ },
+ {
+  "key": "DG-548-display-2026-09-18",
+  "dg": "DG-548",
+  "priority": "High",
+  "location": "JUBAIL ISLAND (JS)",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Controller display damaged - needs replacing",
+  "category": "Control panel",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-18",
+  "notes": "Breakdown 18/09: controller DISPLAY damaged - needs to be changed (replace the controller/display module). 100 kVA Caterpillar, Six Sigma, Jubail Island (JS). Carry a replacement display/controller."
  }
 ]
