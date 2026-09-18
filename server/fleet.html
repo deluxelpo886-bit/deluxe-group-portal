@@ -758,6 +758,23 @@ function matchCat(r){
 }
 function availCount(){ return getFiltered().filter(isReadyToRent).length; }
 function repairCount(){ return getFiltered().filter(function(r){ return r.status!=='Off-Fleet' && isInRepair(r); }).length; }
+// Which Deluxe company owns the unit (from the Heavy/Energy division).
+function coName(r){ return (r && r.company==='Energy') ? 'Deluxe Energy Solutions L.L.C' : 'Deluxe Heavy Equipment Rental L.L.C'; }
+// Rich WhatsApp text for a generator: full details + a Google Maps location
+// link, not just the pin. Recipient is left blank (wa.me/?text=) so the sender
+// picks the customer/contact in WhatsApp.
+function genWaText(r){
+  var L=[];
+  L.push('*DELUXE — Generator details*');
+  L.push('*'+r.dg+'*'+(r.kva!=null?' · '+r.kva+' kVA':'')+(r.brand?' · '+r.brand:''));
+  L.push('Company: '+coName(r));
+  if(r.customer && r.customer!=='-') L.push('Customer: '+r.customer);
+  if(r.contact) L.push('Contact: '+r.contact);
+  if(r.status) L.push('Status: '+r.status);
+  if(r.location) L.push('Location: '+r.location);
+  if(r.lat!=null && r.lon!=null) L.push('📍 https://maps.google.com/?q='+r.lat+','+r.lon);
+  return L.join('\n');
+}
 function rebuildMap(){
   genLayer.clearLayers();
   for(const k in genMarkers) delete genMarkers[k];
@@ -768,7 +785,7 @@ function rebuildMap(){
     const hoursLine = hi ? `<br><small>${hi.overdue ? '⚠ overdue by '+Math.abs(hi.remaining)+'h' : '~'+hi.estRun+'h run / 350h ('+hi.pct+'%)'}</small>` : '';
     const genShare = '<div style="margin-top:8px;display:flex;gap:6px;">'
       +'<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
-      +'<a href="https://wa.me/?text='+encodeURIComponent(r.dg+' ('+(r.location||'')+') location: https://maps.google.com/?q='+r.lat+','+r.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
+      +'<a href="https://wa.me/?text='+encodeURIComponent(genWaText(r))+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
       +'</div>';
     const contractBtn = isReadyToRent(r) ? ('<button class="put-contract" data-dg="'+r.dg+'" data-kva="'+(r.kva||'')+'" style="width:100%;margin-top:8px;background:#e8a13a;color:#1a1300;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">📄 Put on contract</button>') : '';
     const endBtn = (!isAvailable(r) && r.status!=='Off-Fleet') ? ('<button class="end-contract" data-dg="'+r.dg+'" style="width:100%;margin-top:8px;background:#2b2f33;color:#b4bcc4;border:1px solid #3a4148;border-radius:6px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer;">⚪ End contract (return to yard)</button>') : '';
@@ -912,9 +929,12 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
   let html = `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Nearest vehicle to <b style="color:var(--text)">${gen.dg}</b> (${gen.location}) — office is ${officeD.toFixed(1)}km straight-line away:</div>`;
   // One-tap: send the breakdown job (location + Google Maps link) to a driver on WhatsApp.
   const nrst = vdist[0];
-  const waText = '🔧 BREAKDOWN — '+gen.dg+' ('+(gen.kva||'')+'KVA)'
-    + (gen.location&&gen.location!=='-' ? ' at '+gen.location : '')
-    + '\n📍 Location: https://www.google.com/maps?q='+gen.lat+','+gen.lon
+  const waText = '🔧 *BREAKDOWN* — '+gen.dg+(gen.kva!=null?' · '+gen.kva+' kVA':'')+(gen.brand?' · '+gen.brand:'')
+    + '\nCompany: '+coName(gen)
+    + (gen.customer&&gen.customer!=='-' ? '\nCustomer: '+gen.customer : '')
+    + (gen.contact ? '\nContact: '+gen.contact : '')
+    + (gen.location&&gen.location!=='-' ? '\nLocation: '+gen.location : '')
+    + '\n📍 https://www.google.com/maps?q='+gen.lat+','+gen.lon
     + (nrst ? '\n🚚 Nearest truck: '+nrst.name+' (~'+nrst.d.toFixed(1)+' km)' : '')
     + '\nPlease attend as soon as possible.';
   html += `<a href="https://wa.me/?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin:0 0 8px;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:11px;font-weight:700;text-decoration:none;">📲 Send job to driver on WhatsApp</a>`;

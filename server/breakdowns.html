@@ -438,9 +438,12 @@
   // Google Maps link straight to the site.
   function dispatchMsg(it){
     var dg=String(it.dg).toUpperCase(); var d=DIR[dg]||{};
-    var m='🚨 *DELUXE — Breakdown dispatch*\n'+it.dg+(d.kva?(' · '+d.kva+' kVA'):'')+'\n';
+    var co=(d.company==='Energy')?'Deluxe Energy Solutions L.L.C':'Deluxe Heavy Equipment Rental L.L.C';
+    var m='🚨 *DELUXE — Breakdown dispatch*\n'+it.dg+(d.kva?(' · '+d.kva+' kVA'):'')+(d.brand?(' · '+d.brand):'')+'\n';
+    m+='Company: '+co+'\n';
     var loc=it.location||d.location||''; if(loc) m+='📍 '+loc+'\n';
     if(d.customer) m+='👤 '+d.customer+'\n';
+    if(d.contact) m+='📞 '+d.contact+'\n';
     if(it.category) m+='Type: '+it.category+'\n';
     if(it.notes) m+='Problem: '+it.notes+'\n';
     m+='Reported: '+fmt(it.reportedAt)+'\n';
