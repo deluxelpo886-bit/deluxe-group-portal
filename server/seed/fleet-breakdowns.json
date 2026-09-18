@@ -92,17 +92,17 @@
   "notes": "Breakdown reported 17/09/2026. 125 kVA, Hasim, Shakhbout City (MSH29). Fault details to be added."
  },
  {
-  "key": "DG-857-bd-2026-09-17",
+  "key": "DG-857-leak-2026-09-18",
   "dg": "DG-857",
   "priority": "High",
   "location": "DUBAI - BUSINESS BAY (TERRACES TOWER, MARASI DR)",
   "truck": "",
   "status": "Open",
-  "symptom": "",
-  "category": "",
+  "symptom": "Leak at base skid (fuel/oil) - pooling under the unit",
+  "category": "Mechanical",
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
-  "notes": "Breakdown reported 17/09/2026. 250 kVA, Gulf Contracting, Terraces Tower, Marasi Dr, Business Bay - DUBAI (out of the usual Abu Dhabi area). Fault details to be added."
+  "notes": "Breakdown reported 17/09/2026. Fault (18/09): LEAK at the base skid - dark fluid (fuel/oil) pooling under the unit; confirm source and stop the leak. 250 kVA, Gulf Contracting, Terraces Tower, Marasi Dr, Business Bay - DUBAI (out of the usual Abu Dhabi area)."
  },
  {
   "key": "DG-837-radiator-2026-09-17",
