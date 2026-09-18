@@ -1619,12 +1619,12 @@
   "fuelFilter": false,
   "airFilter": false,
   "dailyHours": 8.04,
-  "nextService": 24885,
-  "nextServiceDate": "2026-09-17",
+  "nextService": 24909,
+  "nextServiceDate": null,
   "interval": 350,
   "currentHours": 24885,
   "currentHoursDate": "2026-09-17",
-  "notes": "Current running 24885h read 17/09 (yesterday). Service DUE NOW - to be done. Breakdown resolved 18/09. Shakhbout City MSH31, Al Hashim (same site as DG-540)."
+  "notes": "Current running 24885h read 17/09. ARRANGE SERVICE SOON - 24h to next (24909h). Breakdown resolved 18/09. Shakhbout City MSH31, Al Hashim (same site as DG-540)."
  },
  {
   "dg": "DG-854",
