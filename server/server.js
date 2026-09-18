@@ -820,6 +820,7 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
       g.kva = (d.kva != null ? d.kva : null);
       g.location = d.location || '';
       g.customer = d.customer || '';
+      g.contact = d.contact || '';
       // Coordinates too, so views can compute "nearby units" around a breakdown.
       g.lat = (typeof d.lat === 'number' ? d.lat : null);
       g.lon = (typeof d.lon === 'number' ? d.lon : null);

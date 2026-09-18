@@ -119,6 +119,7 @@ function load() {
         lat: (typeof g.lat === 'number') ? g.lat : null,
         lon: (typeof g.lon === 'number') ? g.lon : null,
         customer: g.customer || '',
+        contact: g.contact || '',
         kva: g.kva || null,
         brand: g.brand || '',
         maps_link: g.maps_link || null,

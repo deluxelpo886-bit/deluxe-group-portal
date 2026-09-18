@@ -260,6 +260,8 @@ function doLogin(){
 }
 
 function genFor(dg){return DATA.gens.find(function(g){return String(g.dg).toUpperCase()===String(dg).toUpperCase();})||{};}
+function contactOf(g){return (g&&g.contact&&String(g.contact).trim())?String(g.contact).trim():'';}
+function telHtml(num){var n=String(num).replace(/[^+0-9]/g,'');return '<a href="tel:'+n+'" style="color:var(--green);text-decoration:none;white-space:nowrap">📞 '+esc(num)+'</a>';}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
 function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderDispatch();}
@@ -306,7 +308,7 @@ function renderKpis(){
 function haversine(a,b,c,d){var R=6371,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180,s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));}
 function fillDgList(){var dl=document.getElementById('dgList');if(dl)dl.innerHTML=DATA.gens.map(function(g){return '<option value="'+esc(g.dg)+'">';}).join('');var ft=document.getElementById('fTeam');if(ft&&ft.options.length<=1){ft.innerHTML='<option value="">— assign team —</option>'+TEAMS.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join('');}}
 function toggleBdForm(){var f=document.getElementById('bdForm');f.hidden=!f.hidden;if(!f.hidden){var d=document.getElementById('fDg');if(d)d.focus();}}
-function onFdg(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();var info=document.getElementById('fInfo');var loc=document.getElementById('fLoc');var near=document.getElementById('fNear');var g=genFor(dg);if(g&&g.dg){info.innerHTML='✔ '+esc(g.dg)+(g.kva!=null?' · '+esc(g.kva)+' kVA':'')+(g.customer?' · '+esc(g.customer):'')+(g.location?' · '+esc(g.location):'');info.className='finfo ok';if(!loc.value&&g.location)loc.value=g.location;if(near)near.innerHTML=nearbyServiceHtml(dg);}else{if(dg){info.textContent='New / unlisted DG — it will still open';info.className='finfo warn';}else{info.textContent='';info.className='finfo';}if(near)near.innerHTML='';}}
+function onFdg(){var dg=(document.getElementById('fDg').value||'').trim().toUpperCase();var info=document.getElementById('fInfo');var loc=document.getElementById('fLoc');var near=document.getElementById('fNear');var g=genFor(dg);if(g&&g.dg){info.innerHTML='✔ '+esc(g.dg)+(g.kva!=null?' · '+esc(g.kva)+' kVA':'')+(g.customer?' · '+esc(g.customer):'')+(g.location?' · '+esc(g.location):'')+(contactOf(g)?' · '+telHtml(contactOf(g)):'');info.className='finfo ok';if(!loc.value&&g.location)loc.value=g.location;if(near)near.innerHTML=nearbyServiceHtml(dg);}else{if(dg){info.textContent='New / unlisted DG — it will still open';info.className='finfo warn';}else{info.textContent='';info.className='finfo';}if(near)near.innerHTML='';}}
 function nearbyServiceHtml(dg){
   dg=String(dg||'').trim().toUpperCase();
   var t=genFor(dg);
@@ -401,7 +403,7 @@ function bdCard(b){
   return '<div class="bd s-'+esc(scls)+' pri-'+esc(b.priority||'Normal')+'">'+
     '<div class="top"><span class="dg">'+esc(b.dg)+'</span>'+(kva!==''?'<span class="kva">'+esc(kva)+' kVA</span>':'')+'<span class="spill '+esc(scls)+'" style="margin-left:auto">'+esc(b.status||'Open')+'</span></div>'+
     '<div class="stepper">'+steps+'</div>'+
-    '<div class="meta">'+esc(cust)+(loc?' · '+esc(loc):'')+(dd!=null?' · <span class="days">'+dd+'d down</span>':'')+' '+priHtml+'</div>'+
+    '<div class="meta">'+esc(cust)+(loc?' · '+esc(loc):'')+(contactOf(g)?' · '+telHtml(contactOf(g)):'')+(dd!=null?' · <span class="days">'+dd+'d down</span>':'')+' '+priHtml+'</div>'+
     (b.notes?'<div class="note">'+esc(b.notes)+'</div>':'')+
     teamChip+partsHtml+cause+nextSvc+
     '<div class="actbar">'+
@@ -458,7 +460,7 @@ function renderServices(){
       var tagcls='soon',tagtxt=lab;
       if(st==='due'){tagcls='OVERDUE';tagtxt=(g.due.hoursLeft!=null&&g.due.hoursLeft<0)?Math.abs(g.due.hoursLeft)+'h over':'DUE';}
       else if(st==='plan'||st==='confirm'){tagcls='DUE';tagtxt=(g.due.hoursLeft!=null?g.due.hoursLeft+'h left':'due soon');}
-      html+='<div class="svc"><span class="sdg">'+esc(g.dg)+'</span><span class="skva">'+esc(g.kva||'?')+'kVA</span><span style="color:var(--muted)">'+esc((g.customer||'').slice(0,16))+'</span><span class="stag '+tagcls+'">'+esc(tagtxt)+'</span></div>';
+      html+='<div class="svc"><span class="sdg">'+esc(g.dg)+'</span><span class="skva">'+esc(g.kva||'?')+'kVA</span><span style="color:var(--muted)">'+esc((g.customer||'').slice(0,16))+'</span>'+(contactOf(g)?'<span>'+telHtml(contactOf(g))+'</span>':'')+'<span class="stag '+tagcls+'">'+esc(tagtxt)+'</span></div>';
     });
     html+='</div>';
   });
