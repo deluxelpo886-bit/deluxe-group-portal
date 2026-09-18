@@ -117,5 +117,19 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
   "notes": "Breakdown 17/09: RADIATOR problem + OIL LEAK. 80 kVA, City Const, Al Shawamekh SHM11 (8JGR+JGH). Current meter 9744h. RESOLVED 17/09: radiator repaired and oil leak fixed, back in service."
+ },
+ {
+  "key": "DG-481-ctcoil-2026-09-18",
+  "dg": "DG-481",
+  "priority": "High",
+  "location": "AL NAHYAN (E25) - ABU DHABI",
+  "truck": "",
+  "status": "Resolved",
+  "symptom": "CT coil / cable fault",
+  "category": "Electrical",
+  "cause": "CT coil / cable problem - repaired on site by Sonu. Unit back on hire.",
+  "reportedBy": "Sonu",
+  "reportedAt": "2026-09-18",
+  "notes": "Opened and resolved same day (18/09). CT coil / cable problem. 100 kVA Weber, Six Sigma, Al Nahyan (E25). Fixed on site by Sonu; unit back on hire."
  }
 ]
