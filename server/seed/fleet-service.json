@@ -447,8 +447,11 @@
   "airFilter": true,
   "dailyHours": 9.72,
   "nextService": 14474,
-  "nextServiceDate": "2026-09-01",
-  "interval": 350
+  "nextServiceDate": "2026-11-30",
+  "interval": 350,
+  "currentHours": 14278,
+  "currentHoursDate": "2026-09-18",
+  "notes": "Controller reading 14278h on 18/09 -> 196h to next service (14474). Low use (~1.4 h/day since the 30/05 service) - time-based service ~Nov recommended. Mushayrif U32, Ramah."
  },
  {
   "dg": "DG-490",
@@ -1307,17 +1310,18 @@
  },
  {
   "dg": "DG-858",
-  "hours": 15859,
-  "date": "2026-08-06",
-  "technician": "IMRAN&SABIR",
+  "hours": 16350,
+  "date": "2026-09-18",
+  "technician": "IK&JAGRAJ",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 15.2,
-  "nextService": 16309,
-  "nextServiceDate": "2026-09-12",
-  "interval": 450
+  "nextService": 16800,
+  "nextServiceDate": "2026-10-18",
+  "interval": 450,
+  "notes": "Serviced 18/09/2026 at 16350h by IK & Jagraj (oil + oil filter + fuel filter; air filter NOT). Next service 16800h, projected ~18/10. Mushayrif U32, Ramah."
  },
  {
   "dg": "DG-500",
