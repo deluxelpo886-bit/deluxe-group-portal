@@ -204,7 +204,7 @@
     <div id="bdBoard"></div>
 
     <!-- STEP 2: SERVICES -->
-    <div class="step" style="--accent:var(--green)"><div class="n">2</div><h2>🔧 Services — check next</h2><span class="rule"></span><span class="cnt" id="svcCount"></span></div>
+    <div id="services" class="step" style="--accent:var(--green)"><div class="n">2</div><h2>🔧 Services — check next</h2><span class="rule"></span><span class="cnt" id="svcCount"></span></div>
     <div id="svcList"></div>
 
     <!-- STEP 3: DISPATCH -->
@@ -249,6 +249,7 @@ function loadAll(){
      DATA.remToday=(res[3]&&res[3].today)||new Date().toISOString().slice(0,10);
      document.getElementById('signin').hidden=true;document.getElementById('app').hidden=false;
      render();rb.textContent='↻ Refresh';
+     if(location.hash==='#services'){ var _s=document.getElementById('services'); if(_s){ setTimeout(function(){ _s.scrollIntoView({behavior:'smooth',block:'start'}); },120); } }
    })
    .catch(function(e){rb.textContent='↻ Refresh';if(e&&e.auth){try{localStorage.removeItem('deluxeFleetToken');}catch(_){}tok=null;document.getElementById('signin').hidden=false;document.getElementById('app').hidden=true;}else{toast('Load failed — check connection');}});
 }
