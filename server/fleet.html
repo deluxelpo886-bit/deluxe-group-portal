@@ -923,75 +923,83 @@ document.getElementById('bdBtn').addEventListener('click', async ()=>{
   if(!gen) return;
   routeLayer.clearLayers();
 
-  const vdist = VEHICLES.map(v=>({...v, d:haversine(gen.lat,gen.lon,v.lat,v.lon)})).sort((a,b)=>a.d-b.d);
-  if(vdist[0]){ window.__fleetWatch = { dg: gen.dg, lat: gen.lat, lon: gen.lon, truckId: vdist[0].id, truckName: vdist[0].name, arrived:false }; }
-  const officeD = haversine(gen.lat,gen.lon,OFFICE.lat,OFFICE.lon);
-  let html = `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Nearest vehicle to <b style="color:var(--text)">${gen.dg}</b> (${gen.location}) — office is ${officeD.toFixed(1)}km straight-line away:</div>`;
-  // One-tap: send the breakdown job (location + Google Maps link) to a driver on WhatsApp.
-  const nrst = vdist[0];
-  const waText = '🔧 *BREAKDOWN* — '+gen.dg+(gen.kva!=null?' · '+gen.kva+' kVA':'')+(gen.brand?' · '+gen.brand:'')
+  // Team vans that actually have a GPS fix. Skip any without coordinates so a
+  // van with no position never silently defaults to the office/yard location.
+  var vlist = VEHICLES.filter(function(v){ return typeof v.lat==='number' && typeof v.lon==='number'; })
+    .map(function(v){ return Object.assign({}, v, { d: haversine(gen.lat,gen.lon,v.lat,v.lon) }); })
+    .sort(function(a,b){ return a.d-b.d; });
+  var nearestTruck = vlist[0] || null;
+  window.__fleetWatch = nearestTruck ? { dg: gen.dg, lat: gen.lat, lon: gen.lon, truckId: nearestTruck.id, truckName: nearestTruck.name, arrived:false } : null;
+  var officeD = haversine(gen.lat,gen.lon,OFFICE.lat,OFFICE.lon);
+
+  function vehRow(v,i,distHtml){
+    return '<div class="veh-line '+(i===0?'best':'other')+'" id="vehline-'+v.id+'">'
+      + '<span>'+(i===0?'★ ':'')+'<b>'+v.name+'</b></span>'
+      + '<span class="dist">'+distHtml+'</span></div>';
+  }
+  // WhatsApp job text (recipient left blank; nearest-truck line filled after routing).
+  var waTextBase = '🔧 *BREAKDOWN* — '+gen.dg+(gen.kva!=null?' · '+gen.kva+' kVA':'')+(gen.brand?' · '+gen.brand:'')
     + '\nCompany: '+coName(gen)
     + (gen.customer&&gen.customer!=='-' ? '\nCustomer: '+gen.customer : '')
     + (gen.contact ? '\nContact: '+gen.contact : '')
     + (gen.location&&gen.location!=='-' ? '\nLocation: '+gen.location : '')
-    + '\n📍 https://www.google.com/maps?q='+gen.lat+','+gen.lon
-    + (nrst ? '\n🚚 Nearest truck: '+nrst.name+' (~'+nrst.d.toFixed(1)+' km)' : '')
-    + '\nPlease attend as soon as possible.';
-  html += `<a href="https://wa.me/?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin:0 0 8px;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:11px;font-weight:700;text-decoration:none;">📲 Send job to driver on WhatsApp</a>`;
-  html += `<button id="logBdBtn" style="display:block;width:100%;text-align:center;margin:0 0 10px;background:#2e1c1a;color:#e0644a;border:1px solid #5a2a22;border-radius:8px;padding:11px;font-weight:700;font-size:13px;cursor:pointer;">🚨 Log this breakdown</button>`;
-  html += `<div id="routeStatus" style="font-size:12px;color:var(--amber);margin-bottom:8px;">⏳ Calculating real driving route...</div>`;
-  vdist.forEach((v,i)=>{
-    const eta = Math.round(v.d/45*60);
-    html += `<div class="veh-line ${i===0?'best':'other'}" id="vehline-${v.id}"><span>${i===0?'★ ':''}<b>${v.name}</b></span><span class="dist">${v.d.toFixed(1)} km straight-line · ~${eta} min est.</span></div>`;
-  });
-  const nearby = getFiltered().filter(r=>r.dg!==dg && r.status!=='Off-Fleet' && r.lat!=null)
-    .map(r=>({...r, d:haversine(gen.lat,gen.lon,r.lat,r.lon)})).filter(r=>r.d<=15).sort((a,b)=>a.d-b.d).slice(0,10);
-  html += `<div style="font-size:13px;color:var(--muted);margin:14px 0 4px;">Nearby generators (within 15km):</div>`;
-  html += nearby.length ? '<div class="near-list">' + nearby.map(r=>
-      `<div class="near-item"><span><b style="font-family:var(--mono)">${r.dg}</b> ${r.kva}KVA <span class="badge ${r.status==='On Hire'?'hire':(r.status==='Available'?'idle':(r.status==='Breakdown'?'breakdown':'service'))}">${r.status}</span></span><span class="d">${r.d.toFixed(1)} km</span></div>`).join('') + '</div>'
-    : `<div style="font-size:12.5px;color:var(--muted);">No other generators within 15km.</div>`;
+    + '\n📍 https://www.google.com/maps?q='+gen.lat+','+gen.lon;
+  function waFull(truckLine){ return waTextBase + (truckLine?('\n'+truckLine):'') + '\nPlease attend as soon as possible.'; }
+  var initTruckLine = nearestTruck ? ('🚚 Nearest truck: '+nearestTruck.name+' (~'+nearestTruck.d.toFixed(1)+' km straight-line)') : '';
+
+  var html = '<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Nearest vehicle to <b style="color:var(--text)">'+gen.dg+'</b> ('+(gen.location||'')+') — office is '+officeD.toFixed(1)+'km straight-line away:</div>';
+  html += '<a id="bdWaBtn" href="https://wa.me/?text='+encodeURIComponent(waFull(initTruckLine))+'" target="_blank" rel="noopener" style="display:block;text-align:center;margin:0 0 8px;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:8px;padding:11px;font-weight:700;text-decoration:none;">📲 Send job to driver on WhatsApp</a>';
+  html += '<button id="logBdBtn" style="display:block;width:100%;text-align:center;margin:0 0 10px;background:#2e1c1a;color:#e0644a;border:1px solid #5a2a22;border-radius:8px;padding:11px;font-weight:700;font-size:13px;cursor:pointer;">🚨 Log this breakdown</button>';
+  html += '<div id="routeStatus" style="font-size:12px;color:var(--amber);margin-bottom:8px;">'+(vlist.length?'⏳ Measuring real driving routes for all vans…':'')+'</div>';
+  html += '<div id="vehLines">' + (vlist.length
+      ? vlist.map(function(v,i){ return vehRow(v,i,'~'+v.d.toFixed(1)+' km · measuring road route…'); }).join('')
+      : '<div style="font-size:12.5px;color:var(--muted);">No team van has a live GPS fix right now — cannot rank by distance.</div>') + '</div>';
+  var nearby = getFiltered().filter(function(r){ return r.dg!==dg && r.status!=='Off-Fleet' && r.lat!=null; })
+    .map(function(r){ return Object.assign({}, r, { d: haversine(gen.lat,gen.lon,r.lat,r.lon) }); }).filter(function(r){ return r.d<=15; }).sort(function(a,b){ return a.d-b.d; }).slice(0,10);
+  html += '<div style="font-size:13px;color:var(--muted);margin:14px 0 4px;">Nearby generators (within 15km):</div>';
+  html += nearby.length ? '<div class="near-list">' + nearby.map(function(r){ return '<div class="near-item"><span><b style="font-family:var(--mono)">'+r.dg+'</b> '+r.kva+'KVA <span class="badge '+(r.status==='On Hire'?'hire':(r.status==='Available'?'idle':(r.status==='Breakdown'?'breakdown':'service')))+'">'+r.status+'</span></span><span class="d">'+r.d.toFixed(1)+' km</span></div>'; }).join('') + '</div>'
+    : '<div style="font-size:12.5px;color:var(--muted);">No other generators within 15km.</div>';
   document.getElementById('dispatchResult').innerHTML = html;
   map.flyTo([gen.lat, gen.lon], 12, {duration:0.6});
   if(genMarkers[dg]) genMarkers[dg].circle.openPopup();
 
-  // Log this breakdown straight into the breakdown log (DG, location, nearest truck).
+  // Log this breakdown (reads the current nearest truck at click time).
   var logBd = document.getElementById('logBdBtn');
   if(logBd){ logBd.addEventListener('click', async function(){
     logBd.disabled=true; logBd.textContent='Logging…';
     try{
       var tok = localStorage.getItem('deluxeFleetToken')||'';
       var r = await fetch('/api/breakdowns/add',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
-        body:JSON.stringify({dg:gen.dg, location:gen.location||'', truck:(nrst?nrst.name:'')})});
+        body:JSON.stringify({dg:gen.dg, location:gen.location||'', truck:(nearestTruck?nearestTruck.name:'')})});
       if(r.ok){ logBd.textContent='✓ Logged — open Breakdowns'; logBd.style.color='#4caf7d'; logBd.style.borderColor='#2a5c40'; logBd.style.background='#1a2e24';
         logBd.onclick=function(){ window.location.href='/breakdowns'; }; logBd.disabled=false; }
       else { logBd.textContent='🚨 Log this breakdown'; logBd.disabled=false; }
     }catch(e){ logBd.textContent='🚨 Log this breakdown'; logBd.disabled=false; }
   }); }
 
-  // Real driving route via our own server (same-origin) so it works even when
-  // the office network blocks the public routing host. Server falls back to a
-  // straight line if road routing is unavailable.
-  const nearest = vdist[0];
-  try{
-    const resp = await fetch(`/api/route?fromLat=${nearest.lat}&fromLon=${nearest.lon}&toLat=${gen.lat}&toLon=${gen.lon}`, {cache:'no-store'});
-    const data = await resp.json();
-    const statusEl = document.getElementById('routeStatus');
-    if(data && data.ok && data.geometry){
-      const km = (data.distance/1000).toFixed(1);
-      const mins = Math.round(data.duration/60);
-      const via = data.approx ? '(approx — straight line)' : '(via road network)';
-      if(statusEl) statusEl.innerHTML = `✓ Driving route: <b style="color:var(--text)">${km} km, ~${mins} min</b> ${via}`;
-      const line = L.geoJSON(data.geometry, {style:{color:'#e8a13a', weight:4, opacity:0.85, dashArray: data.approx?'8 8':null}});
-      line.addTo(routeLayer);
-      const vehLineEl = document.getElementById('vehline-'+nearest.id);
-      if(vehLineEl) vehLineEl.querySelector('.dist').innerHTML = `${km} km ${data.approx?'straight-line':'road route'} · ~${mins} min <span style="color:var(--green)">✓</span>`;
-      map.fitBounds(line.getBounds(), {padding:[40,40]});
-    } else {
-      if(statusEl) statusEl.textContent = '⚠ Could not calculate a route — using straight-line estimate above.';
-    }
-  } catch(e){
-    const statusEl = document.getElementById('routeStatus');
-    if(statusEl) statusEl.textContent = '⚠ Route service unreachable — using straight-line estimate above.';
+  // Rank the vans by REAL driving time (road route), not straight-line — a van
+  // that's close as the crow flies can be far by road (e.g. across water). Route
+  // every van in parallel, then re-order the list and star the true nearest.
+  if(vlist.length){
+    var statusEl = document.getElementById('routeStatus');
+    var routed = await Promise.all(vlist.map(async function(v){
+      try{
+        var resp = await fetch('/api/route?fromLat='+v.lat+'&fromLon='+v.lon+'&toLat='+gen.lat+'&toLon='+gen.lon, {cache:'no-store'});
+        var data = await resp.json();
+        if(data && data.ok){ return { v:v, km:(data.distance/1000), min:Math.round(data.duration/60), approx:!!data.approx, geometry:data.geometry }; }
+      }catch(e){}
+      return { v:v, km:v.d, min:Math.round(v.d/45*60), approx:true, geometry:null };
+    }));
+    routed.sort(function(a,b){ return a.min-b.min || a.km-b.km; });
+    nearestTruck = routed[0].v;
+    window.__fleetWatch = { dg: gen.dg, lat: gen.lat, lon: gen.lon, truckId: nearestTruck.id, truckName: nearestTruck.name, arrived:false };
+    var cont = document.getElementById('vehLines');
+    if(cont){ cont.innerHTML = routed.map(function(r,i){ return vehRow(r.v, i, r.km.toFixed(1)+' km '+(r.approx?'≈ straight-line':'by road')+' · ~'+r.min+' min'+(i===0?' <span style="color:var(--green)">✓ nearest</span>':'')); }).join(''); }
+    var best = routed[0];
+    if(statusEl){ statusEl.innerHTML = '✓ Nearest by road: <b style="color:var(--text)">'+best.v.name+'</b> — '+best.km.toFixed(1)+' km, ~'+best.min+' min '+(best.approx?'(approx — straight line)':'(via road network)'); }
+    var waBtn = document.getElementById('bdWaBtn');
+    if(waBtn){ waBtn.href='https://wa.me/?text='+encodeURIComponent(waFull('🚚 Nearest truck: '+best.v.name+' (~'+best.km.toFixed(1)+' km, ~'+best.min+' min by road)')); }
+    if(best.geometry){ var line=L.geoJSON(best.geometry,{style:{color:'#e8a13a',weight:4,opacity:0.85,dashArray:best.approx?'8 8':null}}); line.addTo(routeLayer); try{ map.fitBounds(line.getBounds(),{padding:[40,40]}); }catch(e){} }
   }
 });
 
