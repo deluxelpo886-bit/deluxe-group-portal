@@ -2396,7 +2396,10 @@
   "airFilter": false,
   "nextService": 23958,
   "nextServiceDate": "2026-10-11",
-  "interval": 350
+  "interval": 350,
+  "currentHours": 23705,
+  "currentHoursDate": "2026-09-18",
+  "notes": "Serviced 09/09 at 23608h (oil + oil filter + fuel filter; air filter NOT). Controller reading 23705h on 18/09 -> 253h to next service (23958), projected ~11/10. Al Nahyan (E25), Six Sigma."
  },
  {
   "dg": "DG-548",
