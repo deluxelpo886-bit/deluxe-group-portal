@@ -131,18 +131,5 @@
   "reportedBy": "Sonu",
   "reportedAt": "2026-09-18",
   "notes": "Opened and resolved same day (18/09). CT coil / cable problem. 100 kVA Weber, Six Sigma, Al Nahyan (E25). Fixed on site by Sonu; unit back on hire."
- },
- {
-  "key": "DG-537-bd-2026-09-18",
-  "dg": "DG-537",
-  "priority": "High",
-  "location": "KIZAD",
-  "truck": "",
-  "status": "Open",
-  "symptom": "",
-  "category": "",
-  "reportedBy": "Operations Head",
-  "reportedAt": "2026-09-18",
-  "notes": "Breakdown reported 18/09/2026. 40 kVA Kirloskar, OSAI, KIZAD. SERVICE ALSO DUE - carry the service kit and do the service on the same visit. Fault details to be added."
  }
 ]

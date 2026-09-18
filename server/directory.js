@@ -96,6 +96,9 @@ function zoneOf(location) {
   if (!raw) return 'Unknown';
   const up = raw.toUpperCase();
   if (ZONE_ALIASES[up]) return ZONE_ALIASES[up];
+  // Any Dubai sub-area (Business Bay, JVC, Jumeirah, Hessyan, …) plans as one
+  // "Dubai" zone — it's far and gets its own team for the day.
+  if (/\bDUBAI\b/.test(up)) return 'Dubai';
   return titleCase(raw);
 }
 
