@@ -2516,5 +2516,35 @@
   "nextServiceDate": null,
   "interval": 450,
   "notes": "In yard (workshop) - available. Confirm hours before it goes back on hire."
+ },
+ {
+  "dg": "DG-430",
+  "hours": 0,
+  "date": "2026-09-18",
+  "technician": "WORKSHOP",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 0,
+  "nextService": 350,
+  "nextServiceDate": null,
+  "interval": 350,
+  "notes": "Added to asset list 18/09/2026 from Netsonic - 150 kVA Kirloskar, purchased 08/05/2015. In yard (available for hire). Hours not yet recorded; confirm before it goes on hire."
+ },
+ {
+  "dg": "DG-868",
+  "hours": 0,
+  "date": "2026-09-18",
+  "technician": "WORKSHOP",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 0,
+  "nextService": 450,
+  "nextServiceDate": null,
+  "interval": 450,
+  "notes": "New genset added 18/09/2026 - 500 kVA CAT. In yard. New unit (450h service interval); confirm hours before first hire."
  }
 ]
