@@ -1,8 +1,8 @@
 [
  {
-  "key": "DG-476-crosscheck-2026-09-19",
+  "key": "DG-476-crosscheck-2026-09-19-v2",
   "dg": "DG-476",
-  "note": "Ran ~24h in the last run (heavy use). Cross-check the current hour-meter reading and update hours. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
+  "note": "Ran ~24h in the last run (heavy use). Cross-check the current hour-meter reading and update hours. 📞 Customer contact: 058 100 4641. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
   "dueDate": "2026-09-19",
   "createdBy": "Operations Head"
  }
