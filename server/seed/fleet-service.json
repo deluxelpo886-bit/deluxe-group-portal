@@ -2414,8 +2414,11 @@
   "fuelFilter": true,
   "airFilter": true,
   "nextService": 5453,
-  "nextServiceDate": "2026-10-06",
-  "interval": 350
+  "nextServiceDate": "2026-10-07",
+  "interval": 350,
+  "currentHours": 5217,
+  "currentHoursDate": "2026-09-18",
+  "notes": "Serviced at 5103h (oil + all three filters), next 5453h. Controller reading 5217h on 18/09 -> 236h to next service, projected ~07/10. Jubail Island (JS), Six Sigma."
  },
  {
   "dg": "DG-848",
