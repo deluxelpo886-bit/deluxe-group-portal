@@ -84,12 +84,13 @@
   "priority": "High",
   "location": "SHAKHBOUT CITY - MSH31",
   "truck": "",
-  "status": "Open",
+  "status": "Resolved",
   "symptom": "",
   "category": "",
+  "cause": "Repaired and back in service (18/09).",
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-17",
-  "notes": "Breakdown reported 17/09/2026. 125 kVA, Hasim, Shakhbout City (MSH29). Fault details to be added."
+  "notes": "Breakdown reported 17/09/2026. 125 kVA, Hasim, Shakhbout City (MSH31). RESOLVED 18/09: repaired, unit back in service."
  },
  {
   "key": "DG-857-leak-2026-09-18",

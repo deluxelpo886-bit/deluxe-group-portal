@@ -126,7 +126,7 @@ try {
   const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
   if (fs.existsSync(bdSeedPath)) {
     const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-18c');
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-18d');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
@@ -167,6 +167,9 @@ try {
     },
     'DG-481-ctcoil-2026-09-18': {
       cause: 'CT coil / cable problem - repaired on site by Sonu (18/09). Unit back on hire.', category: 'Electrical',
+    },
+    'DG-843-bd-2026-09-17': {
+      cause: 'Repaired and back in service (18/09).', category: 'Other',
     },
   };
   let closed = 0;
