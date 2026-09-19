@@ -318,11 +318,11 @@
   "technician": "SONU&HUSSAIN",
   "oil": true,
   "oilFilter": true,
-  "fuelFilter": true,
-  "airFilter": false,
+  "fuelFilter": false,
+  "airFilter": true,
   "nextService": 4762,
   "nextServiceDate": "2026-10-01",
-  "notes": "Repaired (engine over heat) & serviced, out on hire to Joseph Industries LLC",
+  "notes": "Serviced 02/09 at 4412h by Sonu & Hussain (oil + oil filter + air filter; fuel filter NOT). Repaired (engine over-heat) & out on hire to Joseph Industries, Dubai (JVC). Next 4762h.",
   "interval": 350
  },
  {
