@@ -1106,17 +1106,18 @@
  },
  {
   "dg": "DG-817",
-  "hours": 9623,
-  "date": "2026-07-28",
-  "technician": "IMRAN&VELU",
+  "hours": 10046,
+  "date": "2026-09-19",
+  "technician": "IK&MAINKHAN",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 18.22,
-  "nextService": 9973,
-  "nextServiceDate": "2026-09-17",
-  "interval": 350
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 8,
+  "nextService": 10396,
+  "nextServiceDate": "2026-11-02",
+  "interval": 350,
+  "notes": "Serviced 19/09/2026 at 10046h by IK & Main Khan (oil + all three filters). Controller ~10040h. Next service 10396h. Trojan, Al Reem."
  },
  {
   "dg": "DG-830",
