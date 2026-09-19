@@ -2281,9 +2281,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "nextService": 22641,
-  "nextServiceDate": "2026-09-21",
-  "interval": 350
+  "nextService": 22693,
+  "nextServiceDate": "2026-10-04",
+  "interval": 350,
+  "currentHours": 22563,
+  "currentHoursDate": "2026-09-19",
+  "notes": "Controller 22563h on 19/09 -> 130h to next service (22693). Next service date set to 04/10/2026 (office, ~15 days). Trojan, Al Reem."
  },
  {
   "dg": "DG-804",
