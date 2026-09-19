@@ -320,9 +320,12 @@
   "oilFilter": true,
   "fuelFilter": false,
   "airFilter": true,
+  "dailyHours": 19.2,
   "nextService": 4762,
-  "nextServiceDate": "2026-10-01",
-  "notes": "Serviced 02/09 at 4412h by Sonu & Hussain (oil + oil filter + air filter; fuel filter NOT). Repaired (engine over-heat) & out on hire to Joseph Industries, Dubai (JVC). Next 4762h.",
+  "nextServiceDate": "2026-09-20",
+  "currentHours": 4739,
+  "currentHoursDate": "2026-09-19",
+  "notes": "Serviced 02/09 at 4412h (oil + oil filter + air filter; fuel filter NOT). Controller 4739h on 19/09 -> 23h to next service (4762). HEAVY use ~19 h/day since service (327h in 17 days) - service due within ~1 day, arrange now. Joseph Industries, Dubai (JVC).",
   "interval": 350
  },
  {
