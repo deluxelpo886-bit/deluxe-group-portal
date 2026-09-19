@@ -5,5 +5,19 @@
   "note": "Ran ~24h in the last run (heavy use). Cross-check the current hour-meter reading and update hours. 📞 Customer contact: 058 100 4641. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
   "dueDate": "2026-09-19",
   "createdBy": "Operations Head"
+ },
+ {
+  "key": "hydropower-deliver-2026-09-19",
+  "dg": "",
+  "note": "Deliver the genset to HYDRO POWER today.",
+  "dueDate": "2026-09-19",
+  "createdBy": "Operations Head"
+ },
+ {
+  "key": "delcotech-40kva-ready-2026-09-19",
+  "dg": "",
+  "note": "Check whether the 40 kVA DELCOTECH genset is ready or not.",
+  "dueDate": "2026-09-19",
+  "createdBy": "Operations Head"
  }
 ]
