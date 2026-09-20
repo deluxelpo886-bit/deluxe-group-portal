@@ -179,6 +179,24 @@ try {
     'DG-809-battery-2026-09-16': {
       cause: 'New batteries fitted at site (20/09) - unit back in service.', category: 'Electrical',
     },
+    'DG-541-oilleak-2026-09-16': {
+      cause: 'Closed by Operations Head (20/09). Re-open if the oil leak / starter motor is still outstanding.', category: 'Mechanical',
+    },
+    'DG-857-leak-2026-09-18': {
+      cause: 'Closed by Operations Head (20/09). Re-open if the base-skid leak is still outstanding.', category: 'Mechanical',
+    },
+    'DG-453-solenoid-2026-09-17': {
+      cause: 'Closed by Operations Head (20/09). Re-open if the solenoid / controller program is still outstanding.', category: 'Control panel',
+    },
+    'DG-548-display-2026-09-18': {
+      cause: 'Closed by Operations Head (20/09). Re-open if the controller display still needs changing.', category: 'Control panel',
+    },
+    'DG-800-injpump-2026-09-18-v2': {
+      cause: 'Closed by Operations Head (20/09). Routine service done. Re-open if the injection-pump fuel leak returns.', category: 'Fuel',
+    },
+    'DG-473-replace-2026-09-17': {
+      cause: 'Closed by Operations Head (20/09). Replace-or-keep decision to be taken with the customer.', category: 'Other',
+    },
   };
   let closed = 0;
   breakdowns.getAll().forEach((b) => {
