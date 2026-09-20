@@ -101,6 +101,20 @@
   "nextServiceDate": "2026-09-15"
  },
  {
+  "dg": "DG-800",
+  "hours": 13086,
+  "date": "2026-09-19",
+  "technician": "IK & MAIN KHAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 13536,
+  "nextServiceDate": "2027-06-02",
+  "interval": 450,
+  "notes": "Serviced 19/09/2026 at 13086h by IK & Main Khan (oil + all three filters). Controller 27.6V. Next service 13536h. Light use (~1.8 h/day) - next DATE to be confirmed by office (not auto-projected). 350 kVA Caterpillar, Trojan, Al Reem RR8. NOTE: open fuel-leak breakdown at injection pump (18/09) - confirm if now fixed."
+ },
+ {
   "dg": "DG-823",
   "hours": 5314,
   "date": "2025-11-09",
@@ -313,19 +327,17 @@
  },
  {
   "dg": "DG-476",
-  "hours": 4412,
-  "date": "2026-09-02",
+  "hours": 4739,
+  "date": "2026-09-19",
   "technician": "SONU&HUSSAIN",
   "oil": true,
   "oilFilter": true,
-  "fuelFilter": false,
-  "airFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
   "dailyHours": 19.2,
-  "nextService": 4762,
-  "nextServiceDate": "2026-09-20",
-  "currentHours": 4739,
-  "currentHoursDate": "2026-09-19",
-  "notes": "Serviced 02/09 at 4412h (oil + oil filter + air filter; fuel filter NOT). Controller 4739h on 19/09 -> 23h to next service (4762). HEAVY use ~19 h/day since service (327h in 17 days) - service due within ~1 day, arrange now. Joseph Industries, Dubai (JVC).",
+  "nextService": 5089,
+  "nextServiceDate": "2026-10-07",
+  "notes": "Serviced 19/09/2026 at 4739h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT). Next service 5089h. Heavy use ~19 h/day. Joseph Industries, Dubai (JVC).",
   "interval": 350
  },
  {
@@ -1701,18 +1713,18 @@
  },
  {
   "dg": "DG-831",
-  "hours": 3963,
-  "date": "2026-08-13",
-  "technician": "SABIR&ADIL",
+  "hours": 4426,
+  "date": "2026-09-19",
+  "technician": "ADIL&JAYARAJ",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 11.81,
-  "nextService": 4413,
-  "nextServiceDate": "2026-09-18",
+  "nextService": 4876,
+  "nextServiceDate": "2026-10-27",
   "interval": 450,
-  "notes": "Service 13/08/2026 at 3963h (Sabir & Adil) - all filters done. Current controller reading 4369h (1424 starts) as of 15/09 - 44h balance to next service (4413h). Breakdown unit being attended by Team 2 (Sabir). 810 kVA, Noor Al Shahra, Al Faya."
+  "notes": "Serviced 19/09/2026 at 4426h by Adil & Jayaraj (oil + all three filters). Controller 4426h (1438 starts). Next service 4876h. 810 kVA, Noor Al Shahra, Al Faya."
  },
  {
   "dg": "DG-860",
@@ -2144,8 +2156,11 @@
   "fuelFilter": false,
   "airFilter": false,
   "nextService": 18234,
-  "nextServiceDate": "2026-09-20",
-  "interval": 350
+  "nextServiceDate": "2026-10-04",
+  "interval": 350,
+  "currentHours": 18154,
+  "currentHoursDate": "2026-09-19",
+  "notes": "Controller 18154h on 19/09 -> 80h to next service (18234). Next date ~04/10 (office). Trojan, Al Reem RT8 (same site as DG-835 & DG-819)."
  },
  {
   "dg": "DG-450",
@@ -2455,8 +2470,11 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 31379,
-  "nextServiceDate": "2026-10-07",
-  "interval": 450
+  "nextServiceDate": "2026-10-10",
+  "interval": 450,
+  "currentHours": 31039,
+  "currentHoursDate": "2026-09-19",
+  "notes": "Controller 31039h on 19/09 -> 340h to next service (31379). Next date ~10/10 (office). Trojan, Al Reem RT8 (same site as DG-505 & DG-819)."
  },
  {
   "dg": "DG-545",
