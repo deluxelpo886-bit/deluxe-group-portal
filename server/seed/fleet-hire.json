@@ -252,5 +252,11 @@
   "offHire": true,
   "since": "2026-09-19",
   "note": "Returned to yard 19/09 (off-hire). Was on hire to Hydropower Energy & General Construction."
+ },
+ {
+  "dg": "DG-430",
+  "offHire": false,
+  "since": "2026-09-20",
+  "note": "On hire 20/09 - Al Shuwaib (Shabiat Al Shuwaib). Customer, hours & rate pending (to update 21/09)."
  }
 ]
