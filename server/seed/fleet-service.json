@@ -110,9 +110,9 @@
   "fuelFilter": true,
   "airFilter": true,
   "nextService": 13536,
-  "nextServiceDate": "2027-06-02",
+  "nextServiceDate": "2026-10-25",
   "interval": 450,
-  "notes": "Serviced 19/09/2026 at 13086h by IK & Main Khan (oil + all three filters). Controller 27.6V. Next service 13536h. Light use (~1.8 h/day) - next DATE to be confirmed by office (not auto-projected). 350 kVA Caterpillar, Trojan, Al Reem RR8. NOTE: open fuel-leak breakdown at injection pump (18/09) - confirm if now fixed."
+  "notes": "Serviced 19/09/2026 at 13086h by IK & Main Khan (oil + all three filters). Controller 27.6V. Next service 13536h or 25/10/2026 (date set by office). 350 kVA Caterpillar, Trojan, Al Reem RR8. Routine service done - unit OK."
  },
  {
   "dg": "DG-823",

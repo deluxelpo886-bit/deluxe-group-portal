@@ -69,7 +69,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-20a');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-20b');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -172,6 +172,12 @@ try {
     },
     'DG-843-bd-2026-09-17': {
       cause: 'Repaired and back in service (18/09).', category: 'Other',
+    },
+    'DG-37-battery-2026-09-16': {
+      cause: 'New batteries fitted at site (20/09) - unit back in service.', category: 'Electrical',
+    },
+    'DG-809-battery-2026-09-16': {
+      cause: 'New batteries fitted at site (20/09) - unit back in service.', category: 'Electrical',
     },
   };
   let closed = 0;
