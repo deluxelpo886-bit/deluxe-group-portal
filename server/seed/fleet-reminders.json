@@ -19,5 +19,12 @@
   "note": "Check whether the 40 kVA DELCOTECH genset is ready or not.",
   "dueDate": "2026-09-19",
   "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-430-hire-details-2026-09-21",
+  "dg": "DG-430",
+  "note": "DG-430 hired out 20/09 (Al Shuwaib / Shabiat Al Shuwaib). Update the REMAINING details: current service hours, customer name & contact, rate/contract. 150 kVA Kirloskar.",
+  "dueDate": "2026-09-21",
+  "createdBy": "Operations Head"
  }
 ]
