@@ -147,7 +147,13 @@
   $('loginPass').addEventListener('keydown',function(e){ if(e.key==='Enter')doLogin(); });
 
   function dayDiff(from,to){ if(!to)return null; var a=new Date(from+'T00:00:00'),b=new Date(to+'T00:00:00'); return Math.round((b-a)/86400000); }
-  function pill(daysTo){ if(daysTo<0)return '<span class="pill over">OVERDUE '+(-daysTo)+'d</span>'; if(daysTo===0)return '<span class="pill soon">DUE</span>'; if(daysTo<=3)return '<span class="pill soon">due '+daysTo+'d</span>'; return '<span class="pill ok">due '+daysTo+'d</span>'; }
+  function pill(u){
+    // Confirmed hour-meter reading -> show real hours left (hours-first). Otherwise fall back to the date estimate.
+    if(u && u.confirmed && u.hoursLeft!=null){ var h=u.hoursLeft; if(h<=0)return '<span class="pill over">OVERDUE '+(-h)+'h</span>'; if(h<=50)return '<span class="pill soon">'+h+'h left</span>'; return '<span class="pill ok">'+h+'h left</span>'; }
+    var daysTo=(u&&typeof u==='object')?u.daysTo:u;
+    if(daysTo==null)return '<span class="pill ok">—</span>';
+    if(daysTo<0)return '<span class="pill over">OVERDUE '+(-daysTo)+'d</span>'; if(daysTo===0)return '<span class="pill soon">DUE</span>'; if(daysTo<=3)return '<span class="pill soon">due '+daysTo+'d</span>'; return '<span class="pill ok">due '+daysTo+'d</span>';
+  }
 
   function teamKey(){ return 'deluxePlanTeams'; }
   function loadTeams(){ try{return JSON.parse(localStorage.getItem(teamKey())||'{}');}catch(e){return {};} }
@@ -174,18 +180,29 @@
   function render(gens,dir){
     var when=$('date').value, win=parseInt($('window').value,10);
     var picked=[], paused=0;
+    var HRS_SOON=150; // confirmed units within this many hours of due always show, whatever the date window
     gens.forEach(function(g){
-      if(!g.nextServiceDate) return;
       var d=dir[String(g.dg).toUpperCase()]||{};
+      var due=g.due||{};
+      var hl=(due.confirmed && due.hoursLeft!=null)?due.hoursLeft:null;
+      if(!g.nextServiceDate && hl===null) return; // nothing to plan against
       if(g.offHire || d.zone==='Yard'){ paused++; return; }
-      var daysTo=dayDiff(when,g.nextServiceDate);
-      if(daysTo===null || daysTo>win) return;
-      picked.push({dg:g.dg,daysTo:daysTo,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
+      var daysTo=g.nextServiceDate?dayDiff(when,g.nextServiceDate):null;
+      var inWindow=(daysTo!==null && daysTo<=win);
+      var inHours=(hl!==null && hl<=HRS_SOON);
+      if(!inWindow && !inHours) return;
+      // Urgency in "days" so date-estimate and hours-confirmed units sort together:
+      // a confirmed reading is converted to days using the unit's real running rate.
+      var rate=g.effectiveDailyHours||g.observedDailyHours||12; if(!(rate>0))rate=12;
+      var urg=null;
+      if(inHours) urg=hl/rate;
+      if(inWindow) urg=(urg===null)?daysTo:Math.min(urg,daysTo);
+      picked.push({dg:g.dg,daysTo:daysTo,hoursLeft:hl,confirmed:!!(hl!==null),urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
     });
     if(!picked.length){ $('out').innerHTML='<div class="empty">✅ Nothing due in this window for on-hire units.'+(paused?'<br><small>'+paused+' off-hire units paused in the yard are not shown.</small>':'')+'</div>'; $('totBadge').textContent='0 units'; $('signRow').style.display='none'; return; }
     var zones={}; picked.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
-    var zoneList=Object.keys(zones).map(function(z){ var l=zones[z].sort(function(a,b){return a.daysTo-b.daysTo;}); return {zone:z,units:l,worst:l[0].daysTo}; }).sort(function(a,b){ return a.worst-b.worst || b.units.length-a.units.length; });
-    var over=picked.filter(function(u){return u.daysTo<0;}).length;
+    var zoneList=Object.keys(zones).map(function(z){ var l=zones[z].sort(function(a,b){return a.urg-b.urg;}); return {zone:z,units:l,worst:l[0].urg}; }).sort(function(a,b){ return a.worst-b.worst || b.units.length-a.units.length; });
+    var over=picked.filter(function(u){return u.confirmed?(u.hoursLeft<=0):(u.daysTo<0);}).length;
     LAST=zoneList;
     $('totBadge').textContent=picked.length+' unit'+(picked.length!==1?'s':'');
     var teams=loadTeams();
@@ -206,7 +223,7 @@
           +'<td>'+esc(u.customer||'—')+(u.gatePass?' <span style="display:inline-block;background:#8a6d1a;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:9px;">🎫 GATE PASS</span>':'')+'<div class="flt">'+esc(u.location||'')+'</div></td>'
           +'<td>'+(u.kva?esc(u.kva)+' kVA':'')+'<div class="flt">'+esc(u.brand||'')+'</div></td>'
           +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+'</div></td>'
-          +'<td>'+pill(u.daysTo)+'</td></tr>';
+          +'<td>'+pill(u)+'</td></tr>';
         var bd=BDMAP[String(u.dg).toUpperCase()];
         if(bd) html+='<tr><td colspan="5" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
       });
