@@ -63,12 +63,33 @@
   #overlay input{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:14px;}
   .navback{display:inline-block;margin-bottom:10px;color:var(--brand);text-decoration:none;font-size:13px;font-weight:700;}
   @media print{
-    body{background:#fff;padding:0;}
-    .sheet{border:none;box-shadow:none;max-width:none;border-radius:0;}
+    /* Compact single-page layout for the 3-day plan. */
+    @page{size:A4 portrait;margin:7mm;}
+    html,body{background:#fff;padding:0;margin:0;font-size:9px;}
+    .sheet{border:none;box-shadow:none;max-width:none;border-radius:0;padding:0;}
     .noprint{display:none !important;}
-    .head{background:var(--brand) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .head{background:var(--brand) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:7px 10px !important;}
+    .head h1{font-size:14px !important;margin:1px 0 !important;}
+    .head .co{font-size:8px !important;} .head .dt{font-size:9px !important;}
+    .body{padding:0 !important;}
     .zhead,.zfoot,th,.pill{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .zone{page-break-inside:avoid;}
+    /* Stat row: thin single line */
+    .sum{gap:8px;padding:5px 8px;margin:6px 0;}
+    .sum .n{font-size:14px;} .sum .l{font-size:8px;margin-top:1px;}
+    /* Zones: no page breaks, tight spacing */
+    .zone{page-break-inside:avoid;break-inside:avoid;margin-bottom:6px;border-radius:6px;}
+    .zhead{padding:4px 8px;gap:6px;}
+    .zhead .rt{width:16px;height:16px;border-radius:4px;font-size:9px;}
+    .zhead .zn{font-size:11px;} .zhead .zc{font-size:8.5px;}
+    .zhead .team input{padding:2px 5px;font-size:9px;min-width:90px;}
+    table{font-size:9px;}
+    th{padding:3px 8px;font-size:8px;}
+    td{padding:3px 8px;}
+    .flt{font-size:8px;}
+    .pill{font-size:8.5px;padding:1px 6px;}
+    .zfoot{padding:4px 8px;} .maplink{font-size:9px;}
+    .foot{margin-top:8px;padding-top:6px;font-size:8.5px;}
+    .sign{margin-top:12px;gap:24px;} .sign .s{font-size:9px;min-width:140px;}
   }
 </style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
