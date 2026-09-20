@@ -127,6 +127,7 @@ function load() {
         brand: g.brand || '',
         company: g.company || '',
         maps_link: g.maps_link || null,
+        gatePass: !!g.gatePass,
       };
     });
   } catch (_) {
