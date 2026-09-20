@@ -164,7 +164,7 @@
   function zoneMsg(zg){
     var team=(loadTeams()[zg.zone]||'').trim();
     var m='🔧 *Deluxe Service Plan*\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'  ('+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+')\n';
-    zg.units.forEach(function(u){ m+='• '+u.dg+' — '+(u.customer||u.location||'')+' — next @ '+(u.nextHours||'?')+'h'+(u.daysTo<0?(' (OVERDUE '+(-u.daysTo)+'d)'):'')+'\n'; });
+    zg.units.forEach(function(u){ m+='• '+u.dg+' — '+(u.customer||u.location||'')+' — next @ '+(u.nextHours||'?')+'h'+(u.daysTo<0?(' (OVERDUE '+(-u.daysTo)+'d)'):'')+(u.gatePass?' 🎫 GATE PASS REQUIRED':'')+'\n'; });
     m+='🗺️ Route: '+mapsRoute(zg.units,zg.zone);
     return m;
   }
@@ -180,7 +180,7 @@
       if(g.offHire || d.zone==='Yard'){ paused++; return; }
       var daysTo=dayDiff(when,g.nextServiceDate);
       if(daysTo===null || daysTo>win) return;
-      picked.push({dg:g.dg,daysTo:daysTo,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link)});
+      picked.push({dg:g.dg,daysTo:daysTo,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
     });
     if(!picked.length){ $('out').innerHTML='<div class="empty">✅ Nothing due in this window for on-hire units.'+(paused?'<br><small>'+paused+' off-hire units paused in the yard are not shown.</small>':'')+'</div>'; $('totBadge').textContent='0 units'; $('signRow').style.display='none'; return; }
     var zones={}; picked.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
@@ -203,7 +203,7 @@
       html+='<table><thead><tr><th>DG</th><th>Customer / site</th><th>Rating</th><th>Next service</th><th>Status</th></tr></thead><tbody>';
       zg.units.forEach(function(u){
         html+='<tr><td class="dg">'+esc(u.dg)+(u.noPin?' <span class="flt" title="no exact pin">📍?</span>':'')+'</td>'
-          +'<td>'+esc(u.customer||'—')+'<div class="flt">'+esc(u.location||'')+'</div></td>'
+          +'<td>'+esc(u.customer||'—')+(u.gatePass?' <span style="display:inline-block;background:#8a6d1a;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:9px;">🎫 GATE PASS</span>':'')+'<div class="flt">'+esc(u.location||'')+'</div></td>'
           +'<td>'+(u.kva?esc(u.kva)+' kVA':'')+'<div class="flt">'+esc(u.brand||'')+'</div></td>'
           +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+'</div></td>'
           +'<td>'+pill(u.daysTo)+'</td></tr>';

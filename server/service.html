@@ -478,7 +478,8 @@
         var toggleLbl = off ? 'Set On-hire' : 'Set Off-hire';
         var rowStyle = off ? ' style="opacity:.55;"' : '';
         var machine=((g.kva!=null&&g.kva!=='')?(g.kva+' kVA'):'')+(g.brand?(' · '+g.brand):'');
-        return '<tr'+rowStyle+'><td class="dg">'+g.dg+'</td>'
+        var gateBadge=g.gatePass?'<br><span style="display:inline-block;margin-top:4px;background:#8a6d1a;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;">🎫 GATE PASS</span>':'';
+        return '<tr'+rowStyle+'><td class="dg">'+g.dg+gateBadge+'</td>'
           +'<td style="white-space:nowrap;font-size:12px;">'+(machine||'<span class="muted">-</span>')+'</td>'
           +'<td style="white-space:nowrap;">'+statusCell+'<br><button data-hire="'+g.dg+'" data-off="'+(off?'0':'1')+'" style="margin-top:5px;background:transparent;color:#8b95a1;border:1px solid #2c333a;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">'+toggleLbl+'</button></td>'
           +'<td class="n">'+g.hours+readingCell(g)+'</td><td class="n">'+g.nextService+'</td><td>'+dueCell(g)+'</td><td class="n">'+(off?'<span class="muted">off</span>':((g.effectiveDailyHours||'-')+' h/d'))+'</td><td class="muted">'+(g.date||'-')+'</td><td>'+(g.technician||'-')+(g.hasPhoto?' <a href="#" class="photo-link" data-dg="'+g.dg+'" title="View photo">📷</a>':'')+'</td>'
