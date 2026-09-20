@@ -102,6 +102,10 @@ function logService(rec) {
     // Optional photo of the controller / service card, already resized to a small
     // JPEG data URL on the client. Rejected if not an image or unreasonably large.
     photo: (typeof rec.photo === 'string' && rec.photo.slice(0, 11) === 'data:image/' && rec.photo.length < 3000000) ? rec.photo : null,
+    // Who created this record: 'seed' when replayed from the asset-list seed on
+    // boot, 'manual' when a person entered it in the app. Manual entries are
+    // protected from being wiped by a later seed re-import (see applySeed).
+    source: (rec.source === 'seed') ? 'seed' : 'manual',
     updatedAt: new Date().toISOString(),
   };
 
@@ -194,6 +198,8 @@ function logReading(rec) {
   const target = Number(entry.nextService);
   entry.hoursToService = isFinite(target) ? Math.round(target - hours) : null;
   if (observed) entry.readingDailyHours = round1(observed);
+  // A person logged this hours reading in the app, so protect it from seed re-import.
+  if (rec.source !== 'seed') entry.source = 'manual';
   entry.updatedAt = new Date().toISOString();
 
   // Log the reading in history, tagged so it is distinguishable from a service.
@@ -252,22 +258,37 @@ function applySeed(records, version) {
   } catch (_) { applied = {}; }
   if (applied[version]) return { skipped: true, version };
 
-  // Clean rebuild of exactly the generators in this seed: wipe their existing
-  // records first so re-importing an updated report replaces the data instead of
-  // stacking duplicate history. Generators not in the seed are left untouched.
-  const seededDgs = new Set(records.map((r) => String((r && r.dg) || '').trim().toUpperCase()).filter(Boolean));
-  seededDgs.forEach((dg) => { if (store[dg]) delete store[dg]; });
-
+  // Re-import the seed, but NEVER silently destroy what a person typed in the app.
+  // A record entered manually (source 'manual') is preserved and the matching seed
+  // row(s) are skipped, UNLESS the seed row is genuinely newer (a later service
+  // date) - in which case the fresher office data wins. Seed-sourced records are
+  // rebuilt cleanly (existing history dropped) so an updated report replaces the
+  // old data instead of stacking duplicates. Generators not in the seed are left
+  // untouched. Records for the same DG are replayed in order so running-rate,
+  // next-service hours and dates compute exactly as if entered by hand.
+  const up = (r) => String((r && r.dg) || '').trim().toUpperCase();
+  const rebuilt = new Set(); // DGs already wiped-and-reset in this run
   let n = 0;
+  let kept = 0;
   for (const r of records) {
-    try { logService(r); n += 1; } catch (_) { /* skip an unparseable row */ }
+    const dg = up(r);
+    if (!dg) continue;
+    const cur = store[dg];
+    if (cur && cur.source === 'manual' && !rebuilt.has(dg)) {
+      const seedDate = String((r && r.date) || '').slice(0, 10);
+      const curDate = String((cur && cur.date) || '').slice(0, 10);
+      // Keep the operator's manual entry unless this seed row is strictly newer.
+      if (!seedDate || curDate >= seedDate) { kept += 1; continue; }
+    }
+    if (store[dg] && !rebuilt.has(dg)) { delete store[dg]; rebuilt.add(dg); }
+    try { logService(Object.assign({}, r, { source: 'seed' })); n += 1; } catch (_) { /* skip an unparseable row */ }
   }
-  applied[version] = { at: new Date().toISOString(), count: n };
+  applied[version] = { at: new Date().toISOString(), count: n, kept };
   try {
     if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
     fs.writeFileSync(marker, JSON.stringify(applied, null, 2));
   } catch (_) { /* best-effort */ }
-  return { applied: n, version };
+  return { applied: n, kept, version };
 }
 
 // Classify a generator's service urgency the way an operation head should read
