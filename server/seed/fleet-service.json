@@ -483,6 +483,20 @@
   "interval": 350
  },
  {
+  "dg": "DG-490",
+  "hours": 9308,
+  "date": "2026-09-21",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 9658,
+  "nextServiceDate": "2027-01-30",
+  "interval": 350,
+  "notes": "Serviced 21/09/2026 at 9308h by IK & Jayaraj (oil + oil filter + fuel filter; air filter NOT). Next service 9658h. Low use (~2.7 h/day) - next DATE to be confirmed by office. 83 kVA Kirloskar, KON, Al Dhannah City (Ruwais area)."
+ },
+ {
   "dg": "DG-829",
   "hours": 5579,
   "date": "2026-06-09",
