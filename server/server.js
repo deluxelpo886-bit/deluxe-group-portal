@@ -221,7 +221,7 @@ try {
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {
-  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19'];
+  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }
