@@ -1199,6 +1199,20 @@
   "interval": 350
  },
  {
+  "dg": "DG-477",
+  "hours": 28068,
+  "date": "2026-09-21",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 28418,
+  "nextServiceDate": "2026-11-09",
+  "interval": 350,
+  "notes": "Serviced 21/09/2026 at 28068h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT). Next service 28418h. 100 kVA Kirloskar, OSAI, Al Jarf (Ohana by the Sea). Back in service after breakdown."
+ },
+ {
   "dg": "DG-492",
   "hours": 6531,
   "date": "2026-07-31",
