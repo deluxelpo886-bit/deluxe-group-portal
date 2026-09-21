@@ -1723,8 +1723,21 @@
   "dailyHours": 12,
   "nextService": 9162,
   "nextServiceDate": "2026-09-15",
+  "interval": 350
+ },
+ {
+  "dg": "DG-38",
+  "hours": 9209,
+  "date": "2026-09-15",
+  "technician": "SONU",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 9559,
+  "nextServiceDate": "2026-10-17",
   "interval": 350,
-  "notes": "Hour meter 9209h as of 15/09/2026 (from Sonu) - 47h OVERDUE (service target was 9162h). Due now; being covered on the Ruwais run. Tech's note: next service +350 = 9559h after it is serviced (awaiting the service card for filters). 100 kVA, Mirfaq, Ruwais / Al Dhannah."
+  "notes": "Serviced 15/09/2026 at 9209h by Sonu (per Netsonic service list SER1-000497; oil + oil filter + fuel filter). Next service 9559h / 17/10/2026. 100 kVA, Mirfaq, Ruwais / Al Dhannah."
  },
  {
   "dg": "DG-481",
