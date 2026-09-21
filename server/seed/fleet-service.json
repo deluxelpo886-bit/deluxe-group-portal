@@ -1826,6 +1826,20 @@
   "interval": 450
  },
  {
+  "dg": "DG-841",
+  "hours": 13385,
+  "date": "2026-09-21",
+  "technician": "ADEEL & SAJID",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 13835,
+  "nextServiceDate": "2026-10-27",
+  "interval": 450,
+  "notes": "Serviced 21/09/2026 at 13385h by Adeel & Sajid (oil + oil filter + fuel filter; air filter NOT). Next service 13835h. 250 kVA Kirloskar, Trojan, Baniyas West."
+ },
+ {
   "dg": "DG-846",
   "hours": 5745,
   "date": "2026-08-17",
