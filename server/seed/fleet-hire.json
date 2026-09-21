@@ -37,13 +37,13 @@
   "dg": "DG-457",
   "offHire": false,
   "since": "2026-09-02",
-  "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000220)"
+  "note": "On hire \u2014 GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000220)"
  },
  {
   "dg": "DG-36",
   "offHire": false,
   "since": "2026-09-02",
-  "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
+  "note": "On hire \u2014 GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
  },
  {
   "dg": "DG-470",
@@ -55,13 +55,13 @@
   "dg": "DG-473",
   "offHire": false,
   "since": "2026-08-24",
-  "note": "On hire — EL MASRIA CEMENT INDUSTRIES"
+  "note": "On hire \u2014 EL MASRIA CEMENT INDUSTRIES"
  },
  {
   "dg": "DG-476",
   "offHire": false,
   "since": "2026-08-03",
-  "note": "On hire — JOSEPH INDUSTRIES LLC, Dubai (HPP1-000192)"
+  "note": "On hire \u2014 JOSEPH INDUSTRIES LLC, Dubai (HPP1-000192)"
  },
  {
   "dg": "DG-478",
@@ -133,7 +133,7 @@
   "dg": "DG-800",
   "offHire": false,
   "since": "2026-08-24",
-  "note": "On hire — TROJAN GENERAL CONTRACTING LLC"
+  "note": "On hire \u2014 TROJAN GENERAL CONTRACTING LLC"
  },
  {
   "dg": "DG-805",
@@ -179,9 +179,9 @@
  },
  {
   "dg": "DG-836",
-  "offHire": false,
-  "since": "2026-08-27",
-  "note": "On hire - STOLWAY MANUFACTURING (ICAD II Abu Dhabi)"
+  "offHire": true,
+  "since": "2026-09-21",
+  "note": "Off hire - returned to yard, available for hire (per Netsonic 21/09). Was on hire to Stolway Manufacturing (ICAD II)."
  },
  {
   "dg": "DG-838",
@@ -221,7 +221,7 @@
   "dg": "DG-453",
   "offHire": false,
   "since": "2026-08-24",
-  "note": "On hire — KHALIQ NOOR SCRAP LLC"
+  "note": "On hire \u2014 KHALIQ NOOR SCRAP LLC"
  },
  {
   "dg": "DG-488",
@@ -258,5 +258,11 @@
   "offHire": false,
   "since": "2026-09-20",
   "note": "On hire 20/09 - Al Shuwaib (Shabiat Al Shuwaib). Customer, hours & rate pending (to update 21/09)."
+ },
+ {
+  "dg": "DG-532",
+  "offHire": false,
+  "since": "2026-09-21",
+  "note": "On hire - deployed to Stolway Manufacturing (ICAD II), replacing DG-836. Per Netsonic SER1-000036."
  }
 ]
