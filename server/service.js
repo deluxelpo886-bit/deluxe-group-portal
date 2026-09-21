@@ -70,19 +70,21 @@ function logService(rec) {
   }
   const explicitDaily = Number(rec.dailyHours) > 0 ? Number(rec.dailyHours) : null;
   const effectiveDailyHours = explicitDaily || observedDailyHours || CONTRACT_DAILY_HOURS;
-  // Ops-head rule: a 450-hour service (the >=250 kVA machines) is scheduled on a
-  // fixed 12-DAY cycle - the next-service DATE is always 12 days after the
-  // service, regardless of the daily-hours estimate or any date in the record.
-  // Smaller (350-hour) machines keep the explicit-date-or-estimate behaviour.
-  const FIXED_DAYS_450 = 12;
+  // Ops-head rule: the 250+ kVA machines are serviced every 450 HOURS, and the
+  // contract runs them ~12-14 hours/day on average. So the next-service DATE is
+  // 450h / 13h-per-day = about 35 days after the service (not a fixed calendar
+  // gap). This is forced for 450-hour machines so the date always reflects the
+  // real 12-14 h/day contract. Smaller (350-hour) machines keep the
+  // explicit-date-or-observed-estimate behaviour.
+  const CONTRACT_DAILY_450 = 13; // 250+ kVA units: 12-14 h/day average -> use 13
   const daysToService = (interval === 450)
-    ? FIXED_DAYS_450
+    ? Math.round(450 / CONTRACT_DAILY_450)
     : Math.max(1, Math.round(interval / effectiveDailyHours));
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
-  // Next-service date: forced to service+12 for 450-hour machines; otherwise an
-  // explicit date wins (e.g. authoritative asset-list/Netsonic date), else the
-  // projected estimate.
+  // Next-service date: for 450-hour machines it is the contract 12-14 h/day
+  // projection (~35 days); otherwise an explicit date wins (authoritative
+  // asset-list / Netsonic date), else the observed-rate projection.
   const nextServiceDate = (interval === 450)
     ? nsd.toISOString().slice(0, 10)
     : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
