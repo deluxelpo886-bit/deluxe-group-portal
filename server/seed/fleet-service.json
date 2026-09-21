@@ -2092,7 +2092,10 @@
   "airFilter": false,
   "nextService": 7055,
   "nextServiceDate": "2026-09-23",
-  "interval": 350
+  "interval": 350,
+  "currentHours": 7339,
+  "currentHoursDate": "2026-09-21",
+  "notes": "Controller 7339h 52m on 21/09 (1583 starts) - OVERDUE by 284h. Customer KAT running 24 h/day (634h in 27 days = 23.5 h/day). Service immediately. Reading verified by Satnam Singh & Sonu. Al Jadaf, Dubai."
  },
  {
   "dg": "DG-549",
