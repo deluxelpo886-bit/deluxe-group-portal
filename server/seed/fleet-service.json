@@ -2019,14 +2019,15 @@
   "dg": "DG-822",
   "hours": 6279,
   "date": "2026-08-30",
-  "technician": "LK/SABIR",
+  "technician": "IK/SABIR",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 6729,
-  "nextServiceDate": "2026-09-20",
-  "interval": 450
+  "nextServiceDate": "2026-09-28",
+  "interval": 450,
+  "notes": "Per Netsonic service list SER1-000463: serviced 30/08 @6279h, next 6729h / 28/09/2026. 380 kVA, City Const, Al Faya."
  },
  {
   "dg": "DG-492",
@@ -2136,7 +2137,21 @@
   "interval": 350,
   "currentHours": 7339,
   "currentHoursDate": "2026-09-21",
-  "notes": "Controller 7339h 52m on 21/09 (1583 starts) - OVERDUE by 284h. Customer KAT running 24 h/day (634h in 27 days = 23.5 h/day). Service immediately. Reading verified by Satnam Singh & Sonu. Al Jadaf, Dubai."
+  "notes": "Controller 7339h 52m on 21/09 (1583 starts) - was OVERDUE by 284h. Customer KAT running 24 h/day. SERVICED 21/09 (see next record)."
+ },
+ {
+  "dg": "DG-494",
+  "hours": 7328,
+  "date": "2026-09-21",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 7678,
+  "nextServiceDate": "2026-10-06",
+  "interval": 350,
+  "notes": "Serviced 21/09/2026 at 7328h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT) - cleared the 24h-use overdue. Next service 7678h. Customer KAT runs ~24 h/day, so next service ~06/10. 160 kVA Kirloskar, Al Jadaf, Dubai."
  },
  {
   "dg": "DG-549",
