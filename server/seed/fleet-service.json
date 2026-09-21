@@ -753,6 +753,20 @@
   "interval": 450
  },
  {
+  "dg": "DG-532",
+  "hours": 42434,
+  "date": "2026-09-21",
+  "technician": "SERVICE",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 42884,
+  "nextServiceDate": "2026-10-10",
+  "interval": 450,
+  "notes": "Yard to customer - deployed to Stolway Manufacturing (ICAD II) replacing DG-836. Meter 42434h, next 42884h / 10/10/2026 per Netsonic SER1-000036. 350 kVA."
+ },
+ {
   "dg": "DG-37",
   "hours": 9623,
   "date": "2026-07-18",
