@@ -1,5 +1,27 @@
 require('dotenv').config();
 const path = require('path');
+
+// Persist data on the Render disk automatically. When a persistent disk is
+// mounted (at /var/data or /data) and no DB_PATH was set by hand, point the
+// database and all JSON stores (service log, hire, reminders, breakdowns) at it
+// so everything typed in the app survives restarts and deploys. With no disk
+// (free tier / local dev) it falls back to the in-project ./data folder, exactly
+// as before. This must run before the modules below are required, because each
+// reads process.env.DB_PATH at load time.
+if (!process.env.DB_PATH) {
+  const fsBoot = require('fs');
+  for (const dir of ['/var/data', '/data']) {
+    try {
+      if (fsBoot.existsSync(dir)) {
+        process.env.DB_PATH = path.join(dir, 'deluxe.db');
+        console.log('[storage] persistent disk detected -> data stored at ' + process.env.DB_PATH);
+        break;
+      }
+    } catch (_) { /* ignore and fall back */ }
+  }
+  if (!process.env.DB_PATH) console.log('[storage] no persistent disk found - using in-project ./data (data resets on restart)');
+}
+
 const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
