@@ -95,9 +95,9 @@
  },
  {
   "dg": "DG-830",
-  "offHire": true,
-  "since": "2026-09-03",
-  "note": "Off hire - returned to yard (physical count)"
+  "offHire": false,
+  "since": "2026-09-13",
+  "note": "On hire - sent from yard to replace DG-824 at the same site (Gulf Contracting, Dubai Hessyan First). Per Netsonic SER1-000136."
  },
  {
   "dg": "DG-543",
