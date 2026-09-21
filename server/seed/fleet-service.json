@@ -868,6 +868,20 @@
   "interval": 350
  },
  {
+  "dg": "DG-821",
+  "hours": 4776,
+  "date": "2026-09-21",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 5120,
+  "nextServiceDate": "2026-11-17",
+  "interval": 350,
+  "notes": "Serviced 21/09/2026 at 4776h by IK & Jayaraj (oil + all three filters). Next service 5120h. 45 kVA Kirloskar, Al Reef, Al Bday'ah (Western Region)."
+ },
+ {
   "dg": "DG-845",
   "hours": 2003,
   "date": "2026-07-24",
