@@ -1001,9 +1001,9 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "nextService": 4680,
-  "nextServiceDate": "2026-09-20",
-  "notes": "Meter reset to 4330h leaving yard - next service +350h at 4680h",
+  "nextService": 4681,
+  "nextServiceDate": "2026-10-01",
+  "notes": "Meter baseline leaving yard (yard to customer). Next service 4681h / 01/10/2026 per Netsonic SER1-000399. Gulf Contracting, Abu Dhabi.",
   "interval": 350
  },
  {
