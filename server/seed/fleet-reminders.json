@@ -14,6 +14,13 @@
   "createdBy": "Operations Head"
  },
  {
+  "key": "DG-549-speak-customer-usage-2026-09-24",
+  "dg": "DG-549",
+  "note": "SPEAK TO CUSTOMER (SIX SIGMA, KIZAD - KHIA 8) about how they are running DG-549 - it averages ~15 h/day (439h in 29 days) and went 89h past service. Review the usage with them, explain the tighter ~3-week service cycle it needs, and agree on-site access for it. 100 kVA CAT. (Utilisation notice already prepared.)",
+  "dueDate": "2026-09-24",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-834-offhire-contract-end-2026-09-28",
   "dg": "DG-834",
   "note": "DG-834 contract with GRAND FALCON (Mussafah) FINISHES 28-29/09/2026 - arrange OFF-HIRE and collection back to yard. 320 kVA Caterpillar.",
