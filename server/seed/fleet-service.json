@@ -646,6 +646,20 @@
   "interval": 350
  },
  {
+  "dg": "DG-485",
+  "hours": 4237,
+  "date": "2026-09-22",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 4587,
+  "nextServiceDate": "2026-10-21",
+  "interval": 350,
+  "notes": "Serviced 22/09/2026 at 4237h by IK & Jayaraj (Netsonic SER2-000147). Next 4587h / 21-10-2026 (350h cycle). 60 kVA Weber, Hashim Contracting, Al Bahyah."
+ },
+ {
   "dg": "DG-553",
   "hours": 3548,
   "date": "2026-07-09",
