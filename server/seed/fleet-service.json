@@ -2317,6 +2317,21 @@
   "notes": "Serviced 24/08/2026 at 6035h by Sonu & Hussain (all filters). Meter confirmed 6474h on 22/09/2026 (controller photo) -> 89h OVERDUE (next was 6385h). HEAVY USE ~15.1 h/day - service immediately, keep a tighter ~3-week cycle. Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
  },
  {
+  "dg": "DG-549",
+  "hours": 6474,
+  "date": "2026-09-22",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 15.1,
+  "nextService": 6824,
+  "nextServiceDate": "2026-10-21",
+  "interval": 350,
+  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513) - clears the 89h overdue. Next 6824h / 21-10-2026 (350h cycle). HEAVY USE ~15 h/day - keep a tighter ~3-week cycle. Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
+ },
+ {
   "dg": "DG-467",
   "hours": 29672,
   "date": "2026-08-21",
