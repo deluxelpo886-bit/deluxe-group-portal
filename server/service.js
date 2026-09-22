@@ -76,9 +76,9 @@ function logService(rec) {
   // gap). This is forced for 450-hour machines so the date always reflects the
   // real 12-14 h/day contract. Smaller (350-hour) machines keep the
   // explicit-date-or-observed-estimate behaviour.
-  const CONTRACT_DAILY_450 = 13; // 250+ kVA units: 12-14 h/day average -> use 13
+  const FIXED_DAYS_450 = 43; // ops-head rule: 450-hour service -> next date = service + 43 days
   const daysToService = (interval === 450)
-    ? Math.round(450 / CONTRACT_DAILY_450)
+    ? FIXED_DAYS_450
     : Math.max(1, Math.round(interval / effectiveDailyHours));
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
