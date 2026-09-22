@@ -790,9 +790,25 @@ function genWaText(r){
 function rebuildMap(){
   genLayer.clearLayers();
   for(const k in genMarkers) delete genMarkers[k];
-  getFiltered().filter(r=>r.status!=='Off-Fleet').filter(matchCat).filter(r=> !availOn || isReadyToRent(r)).forEach(r=>{
-    if(r.lat==null || r.lon==null) return;
-    const m = L.marker([r.lat, r.lon], { icon: genIcon(r), draggable: false }); // fixed pin
+  const _visible = getFiltered().filter(r=>r.status!=='Off-Fleet').filter(matchCat).filter(r=> !availOn || isReadyToRent(r)).filter(r=> r.lat!=null && r.lon!=null);
+  // Several gensets often sit on the SAME point (e.g. Al Reem RT8, Gulf
+  // Contracting). Stacked markers hide each other, so fan co-located units out
+  // in a small ring and let each popup list the other gensets at that site.
+  const _site = {};
+  _visible.forEach(r=>{ const k=r.lat.toFixed(4)+','+r.lon.toFixed(4); (_site[k]=_site[k]||[]).push(r); });
+  const _seen = {};
+  _visible.forEach(r=>{
+    const _key = r.lat.toFixed(4)+','+r.lon.toFixed(4);
+    const _grp = _site[_key];
+    const _i = (_seen[_key]=(_seen[_key]||0)); _seen[_key]++;
+    let _mlat=r.lat, _mlon=r.lon;
+    if(_grp.length>1){
+      const _ang=(2*Math.PI*_i)/_grp.length, _rad=0.00040; // ~44m ring
+      _mlat=r.lat+_rad*Math.cos(_ang);
+      _mlon=r.lon+_rad*Math.sin(_ang)/Math.max(0.2,Math.cos(r.lat*Math.PI/180));
+    }
+    r._mates = _grp.filter(x=>x.dg!==r.dg).map(x=>x.dg);
+    const m = L.marker([_mlat, _mlon], { icon: genIcon(r), draggable: false }); // fixed pin (fanned out if co-located)
     const hi = hoursInfo(r);
     // Prefer a CONFIRMED controller reading over the daily-rate estimate.
     const _svcH = (window.SERVICE_BY_DG||{})[r.dg];
@@ -825,7 +841,8 @@ function rebuildMap(){
     const svcLine = svc ? `<br><span style="color:#e8c168;">🔧 last service ${svc.date} @ ${svc.hours}h · next @ <b>${svc.nextService}h</b>${(!isOff && svc.nextServiceDate)?(' (est '+svc.nextServiceDate+')'):''}</span>${offNote}${suNote}` : '';
     const contactLine = (r.contact && String(r.contact).trim()) ? `<br><a href="tel:${String(r.contact).replace(/[^+0-9]/g,'')}" style="color:#4caf7d;text-decoration:none;">📞 ${r.contact}</a>` : '';
     const gateLine = r.gatePass ? `<br><b style="color:#e8a13a;">🎫 GATE PASS REQUIRED — arrange before visiting</b>` : '';
-    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}${contactLine}${gateLine}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
+    const siteLine = (r._mates && r._mates.length) ? `<br><span style="color:#5b9bd5;">📌 Same site — ${r._mates.length+1} gensets here: <b>${r.dg}, ${r._mates.join(', ')}</b></span>` : '';
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}${contactLine}${gateLine}${siteLine}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
     var svcH = (svc && svc.hours!=null) ? svc.hours : (r.last_service_hours!=null ? r.last_service_hours : null);
     var labelTxt = (availOn && svcH!=null) ? (r.dg + ' · ' + svcH + 'h') : r.dg;
     m.bindTooltip(labelTxt, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
