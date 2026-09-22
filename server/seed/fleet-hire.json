@@ -264,5 +264,11 @@
   "offHire": false,
   "since": "2026-09-21",
   "note": "On hire - deployed to Stolway Manufacturing (ICAD II), replacing DG-836. Per Netsonic SER1-000036."
+ },
+ {
+  "dg": "DG-856",
+  "offHire": true,
+  "since": "2026-09-22",
+  "note": "Off-hire 22/09 - returned to yard (was on hire to Trojan, Al Hudayriat Island). 250 kVA Kirlosker."
  }
 ]
