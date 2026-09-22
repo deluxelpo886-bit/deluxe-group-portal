@@ -270,5 +270,17 @@
   "offHire": true,
   "since": "2026-09-22",
   "note": "Off-hire 22/09 - returned to yard (was on hire to Trojan, Al Hudayriat Island). 250 kVA Kirlosker."
+ },
+ {
+  "dg": "DG-836",
+  "offHire": false,
+  "since": "2026-09-22",
+  "note": "On hire 22/09 - deployed to Al Faya (Noor Al Shahra), replacing DG-541. 500 kVA Cummins."
+ },
+ {
+  "dg": "DG-541",
+  "offHire": true,
+  "since": "2026-09-22",
+  "note": "Off-hire 22/09 - returned to yard (was on hire to Noor Al Shahra, Al Faya; replaced by DG-836). 500 kVA FG Wilson."
  }
 ]
