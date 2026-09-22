@@ -2303,14 +2303,18 @@
   "dg": "DG-549",
   "hours": 6035,
   "date": "2026-08-24",
-  "technician": "SATNAM&HUSAIN",
+  "technician": "SONU&HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
+  "airFilter": true,
+  "dailyHours": 15.1,
+  "currentHours": 6474,
+  "currentHoursDate": "2026-09-22",
   "nextService": 6385,
   "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "interval": 350,
+  "notes": "Serviced 24/08/2026 at 6035h by Sonu & Hussain (all filters). Meter confirmed 6474h on 22/09/2026 (controller photo) -> 89h OVERDUE (next was 6385h). HEAVY USE ~15.1 h/day - service immediately, keep a tighter ~3-week cycle. Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
  },
  {
   "dg": "DG-467",
