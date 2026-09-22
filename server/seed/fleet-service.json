@@ -1197,6 +1197,21 @@
   "interval": 450
  },
  {
+  "dg": "DG-830",
+  "hours": 3261,
+  "date": "2026-09-22",
+  "technician": "BAKHTAMAL&ROLAND",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 3.11,
+  "nextService": 3711,
+  "nextServiceDate": "2026-11-01",
+  "interval": 450,
+  "notes": "Service cycle reset from 22/09/2026 (ops-head). Present 3261h per Netsonic SER1-000136. 450h cycle -> next 3711h, next date +40 days = 01/11/2026. 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First) - replaced DG-824."
+ },
+ {
   "dg": "DG-834",
   "hours": 5962,
   "date": "2026-08-26",
