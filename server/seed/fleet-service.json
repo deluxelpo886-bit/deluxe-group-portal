@@ -2065,8 +2065,8 @@
   "nextServiceDate": "2026-09-24",
   "interval": 350,
   "currentHours": 3272,
-  "currentHoursDate": "2026-09-21",
-  "notes": "Serviced 18/08/2026 at 2945h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT), next 3295h (350h interval per card). Controller 3272h 20m / 450 starts on 21/09 -> 23h to next service. 350 kVA, Gulf Contracting, Dubai Hessyan First."
+  "currentHoursDate": "2026-09-22",
+  "notes": "Serviced 18/08/2026 at 2945h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT), next 3295h (350h interval per card). Controller re-confirmed 3272h 20m / 450 starts on 22/09 (unchanged from 21/09) -> 23h to next service, service due now. 350 kVA, Gulf Contracting, Dubai Hessyan First."
  },
  {
   "dg": "DG-502",
