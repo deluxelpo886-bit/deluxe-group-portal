@@ -1457,6 +1457,20 @@
   "notes": "As of 10/09/2026 (office update) ~150h still remaining to next service (current ~8145h, target 8295h). Next service ~27/09/2026. Trojan, Al Bahia, 200 kVA."
  },
  {
+  "dg": "DG-558",
+  "hours": 8346,
+  "date": "2026-09-22",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 8796,
+  "nextServiceDate": "2026-11-01",
+  "interval": 450,
+  "notes": "Serviced 22/09/2026 at 8346h by IK & Jayaraj. 450h cycle -> next 8796h, next date +40 days = 01/11/2026. Trojan, Al Bahia, 200 kVA."
+ },
+ {
   "dg": "DG-804",
   "hours": 11901,
   "date": "2026-08-08",
