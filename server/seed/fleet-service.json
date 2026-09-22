@@ -129,6 +129,20 @@
   "interval": 450
  },
  {
+  "dg": "DG-823",
+  "hours": 5981,
+  "date": "2026-09-22",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 6431,
+  "nextServiceDate": "2026-11-01",
+  "interval": 450,
+  "notes": "Serviced 22/09/2026 at 5981h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT done - pending). Controller confirmed 5981h. Next 6431h (450h cycle -> +40 days = 01/11/2026). 320 kVA CAT, Noor Al Sahara Ready Mix, Jumeirah Islands Dubai."
+ },
+ {
   "dg": "DG-555",
   "hours": 914,
   "date": "2025-11-28",
