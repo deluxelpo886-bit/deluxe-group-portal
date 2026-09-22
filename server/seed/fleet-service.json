@@ -1990,11 +1990,11 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
+  "airFilter": true,
   "nextService": 13835,
   "nextServiceDate": "2026-10-27",
   "interval": 450,
-  "notes": "Serviced 21/09/2026 at 13385h by Adeel & Sajid (oil + oil filter + fuel filter; air filter NOT). Next service 13835h. 250 kVA Kirloskar, Trojan, Baniyas West."
+  "notes": "Serviced 21/09/2026 at 13385h by Adeel & Sajid - all filters done (oil, oil filter, fuel filter, air filter) per service card. Next service 13835h (450h cycle). 250 kVA Kirloskar, Trojan, Baniyas West."
  },
  {
   "dg": "DG-846",
