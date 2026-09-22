@@ -1442,6 +1442,21 @@
   "interval": 350
  },
  {
+  "dg": "DG-456",
+  "hours": 3489,
+  "date": "2026-09-21",
+  "technician": "GAGAN",
+  "oil": true,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 6.84,
+  "nextService": 3839,
+  "nextServiceDate": "2026-10-20",
+  "interval": 350,
+  "notes": "Netsonic SER1-000507 (21/09/2026): reading 3489h on yard->customer move to E20 Investment (Al Ain). Next service 3839h / 20-10-2026 (350h cycle). 62.5 kVA."
+ },
+ {
   "dg": "DG-558",
   "hours": 7945,
   "date": "2026-08-08",
