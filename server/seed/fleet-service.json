@@ -1686,6 +1686,20 @@
   "interval": 350
  },
  {
+  "dg": "DG-864",
+  "hours": 1826,
+  "date": "2026-09-22",
+  "technician": "ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 2276,
+  "nextServiceDate": "2026-11-01",
+  "interval": 450,
+  "notes": "Serviced 22/09/2026 at 1826h by Adeel (service card). Oil, oil filter, fuel filter done; AIR FILTER NOT done (X) - pending. Next 2276h (450h cycle -> +40 days = 01/11/2026). Gulf Contracting, Al Ain (Eidan Al Ridda)."
+ },
+ {
   "dg": "DG-479",
   "hours": 468,
   "date": "2026-08-12",
