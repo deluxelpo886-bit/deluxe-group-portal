@@ -2778,5 +2778,20 @@
   "nextServiceDate": null,
   "interval": 450,
   "notes": "New genset added 18/09/2026 - 500 kVA CAT. In yard. New unit (450h service interval); confirm hours before first hire."
+ },
+ {
+  "dg": "DG-562",
+  "hours": 0,
+  "date": "2026-09-22",
+  "technician": "WORKSHOP",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 0,
+  "nextService": 450,
+  "nextServiceDate": null,
+  "interval": 450,
+  "notes": "New genset added 22/09/2026 - 500 kVA Perkins. In yard, available for hire. New unit (450h service interval); confirm hours before first hire."
  }
 ]
