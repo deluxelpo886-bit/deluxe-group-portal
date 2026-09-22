@@ -828,6 +828,22 @@
   "interval": 450
  },
  {
+  "dg": "DG-836",
+  "hours": 32,
+  "date": "2026-09-22",
+  "technician": "ROLAND",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 0.2,
+  "nextService": 482,
+  "nextServiceDate": "2026-11-04",
+  "interval": 450,
+  "fixedDays": 43,
+  "notes": "STANDBY genset (low use) - on hire 22/09 at Al Faya (Noor Al Shahra), replacing DG-541. Service clock set from today: next service +43 days = 04/11/2026 (standby override, not the 40-day contract rule). Next at 482h. 500 kVA CAT."
+ },
+ {
   "dg": "DG-518",
   "hours": 6130,
   "date": "2026-09-17",

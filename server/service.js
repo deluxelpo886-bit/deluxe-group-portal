@@ -77,8 +77,14 @@ function logService(rec) {
   // real 12-14 h/day contract. Smaller (350-hour) machines keep the
   // explicit-date-or-observed-estimate behaviour.
   const FIXED_DAYS_450 = 40; // ops-head rule: 450-hour service -> next date = service + 40 days
+  // Optional per-record override of the fixed calendar gap (e.g. a low-use
+  // STANDBY 450h unit that runs far less than the 12-14 h/day contract, so its
+  // service stretches to more calendar days). Falls back to FIXED_DAYS_450.
+  const recFixedDays = (rec.fixedDays != null && isFinite(Number(rec.fixedDays)) && Number(rec.fixedDays) > 0)
+    ? Math.round(Number(rec.fixedDays))
+    : null;
   const daysToService = (interval === 450)
-    ? FIXED_DAYS_450
+    ? (recFixedDays || FIXED_DAYS_450)
     : Math.max(1, Math.round(interval / effectiveDailyHours));
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
