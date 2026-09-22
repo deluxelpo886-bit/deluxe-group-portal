@@ -924,10 +924,12 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 9.27,
+  "currentHours": 17529,
+  "currentHoursDate": "2026-09-22",
   "nextService": 17912,
   "nextServiceDate": "2026-10-31",
   "interval": 450,
-  "notes": "Service 13/09/2026 by Team 3 (Imran & Jayaraj) at 17462h. All filters done (oil, oil filter, fuel filter, air filter). Next at 17912h. 250 kVA, Trojan, Al Bahia."
+  "notes": "Service 13/09/2026 by Team 3 (Imran & Jayaraj) at 17462h. All filters done. Next at 17912h (450h cycle -> +40 days). Meter confirmed 17529h on 22/09/2026 (controller photo) -> 383h left. 250 kVA, Trojan, Al Bahia."
  },
  {
   "dg": "DG-450",
@@ -966,10 +968,12 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 5.9,
+  "currentHours": 25988,
+  "currentHoursDate": "2026-09-22",
   "nextService": 26053,
   "nextServiceDate": "2026-11-05",
   "interval": 350,
-  "notes": "From Netsonic SER2-000138 (cross-check). ~5.9h/day observed."
+  "notes": "From Netsonic SER2-000138 (cross-check). Meter confirmed 25988h on 22/09/2026 (controller photo) -> 65h left to next (26053h). 160 kVA, Trojan, Al Bahia."
  },
  {
   "dg": "DG-508",
