@@ -550,8 +550,11 @@
   "airFilter": true,
   "dailyHours": 10.54,
   "nextService": 4093,
-  "nextServiceDate": "2026-10-22",
-  "interval": 450
+  "nextServiceDate": "2026-10-20",
+  "interval": 450,
+  "currentHours": 3750,
+  "currentHoursDate": "2026-09-22",
+  "notes": "Serviced 10/09 @3643h (all filters, IK & Jayaraj). Controller 3750h / 1415 starts on 22/09 -> 343h to next service (4093). 250 kVA, Trojan, Al Bahyah."
  },
  {
   "dg": "DG-473",
@@ -1863,8 +1866,11 @@
   "airFilter": false,
   "dailyHours": 8.81,
   "nextService": 12244,
-  "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "nextServiceDate": "2026-09-28",
+  "interval": 350,
+  "currentHours": 12192,
+  "currentHoursDate": "2026-09-22",
+  "notes": "Controller 12192h on 22/09 -> 52h to next service (12244). ~8.3 h/day, next ~28/09. 200 kVA, Trojan, Al Bahia."
  },
  {
   "dg": "DG-841",
