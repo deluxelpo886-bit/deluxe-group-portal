@@ -801,13 +801,18 @@ function rebuildMap(){
     const _key = r.lat.toFixed(4)+','+r.lon.toFixed(4);
     const _grp = _site[_key];
     const _i = (_seen[_key]=(_seen[_key]||0)); _seen[_key]++;
+    // The yard default coordinate holds all the off-hire units - don't fan those
+    // out (there are dozens) or list them as "same site"; only real customer
+    // sites (a handful of gensets on one point) get the treatment.
+    const _isYard = (_key==='24.3462,54.4998');
+    const _fan = (_grp.length>1 && _grp.length<=10 && !_isYard);
     let _mlat=r.lat, _mlon=r.lon;
-    if(_grp.length>1){
+    if(_fan){
       const _ang=(2*Math.PI*_i)/_grp.length, _rad=0.00040; // ~44m ring
       _mlat=r.lat+_rad*Math.cos(_ang);
       _mlon=r.lon+_rad*Math.sin(_ang)/Math.max(0.2,Math.cos(r.lat*Math.PI/180));
     }
-    r._mates = _grp.filter(x=>x.dg!==r.dg).map(x=>x.dg);
+    r._mates = (_fan ? _grp.filter(x=>x.dg!==r.dg).map(x=>x.dg) : []);
     const m = L.marker([_mlat, _mlon], { icon: genIcon(r), draggable: false }); // fixed pin (fanned out if co-located)
     const hi = hoursInfo(r);
     // Prefer a CONFIRMED controller reading over the daily-rate estimate.
