@@ -292,10 +292,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 10.43,
+  "dailyHours": 0.58,
+  "currentHours": 17322,
+  "currentHoursDate": "2026-09-22",
   "nextService": 17545,
-  "nextServiceDate": "2027-02-14",
-  "notes": "On hire to Hashim 11/08; next = +350h, date from hire date +350h (~14 Sep) - confirm meter",
+  "nextServiceDate": "2027-10-13",
+  "notes": "Meter confirmed 17322h on 22/09/2026 (controller photo). Last service 14/02 @ 17195h -> 223h left to next (17545h). Light standby use ~0.58 h/day (127h in ~7 months). On hire to Hashim, Al Bahia. 40 kVA Tata.",
   "interval": 350
  },
  {
