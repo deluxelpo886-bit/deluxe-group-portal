@@ -2485,20 +2485,6 @@
   "nextService": 22219
  },
  {
-  "dg": "DG-544",
-  "hours": 0,
-  "date": "2026-09-03",
-  "technician": "",
-  "oil": false,
-  "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "nextService": 350,
-  "nextServiceDate": "2027-01-01",
-  "notes": "Yard - available for hire (added from physical count); no service history yet",
-  "interval": 350
- },
- {
   "dg": "DG-470",
   "hours": 0,
   "date": "2026-05-10",

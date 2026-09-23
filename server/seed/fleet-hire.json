@@ -1,11 +1,5 @@
 [
  {
-  "dg": "DG-544",
-  "offHire": true,
-  "since": "2026-09-03",
-  "note": "Yard - available for hire (added from physical count)"
- },
- {
   "dg": "DG-833",
   "offHire": false,
   "since": "2026-09-09",
