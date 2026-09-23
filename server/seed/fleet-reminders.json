@@ -28,6 +28,13 @@
   "createdBy": "Operations Head"
  },
  {
+  "key": "DG-812-heavy-use-service-2026-09-30",
+  "dg": "DG-812",
+  "note": "DG-812 customer (MOTOR WAY, ICAD III) runs it HEAVY ~18 h/day (200h in 11 days). Serviced 12/09 @ 10527h -> next 10877h; at this rate ~150h runs out by ~30/09-01/10. Plan/service by then and keep it on a tight cycle. Check hours before then. 30 kVA Kirlosker.",
+  "dueDate": "2026-09-30",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-494-24h-service-2026-10-06",
   "dg": "DG-494",
   "note": "DG-494 customer (KAT, Dubai - Al Jadaf) is running it 24 HOURS/day, so it reaches the next 350h service much faster than the estimate. Serviced 21/09 @ 7328h -> next 7678h. Plan/service within ~15 days (by ~06/10/2026). Check hours before then. 160 kVA Kirlosker.",
