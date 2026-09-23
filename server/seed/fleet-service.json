@@ -42,7 +42,22 @@
   "interval": 350,
   "currentHours": 7131,
   "currentHoursDate": "2026-09-16",
-  "notes": "On-hire to E 20 Investment (Al Wathba) 16/09/2026. Baseline meter 7131h; next service +350 = 7481h."
+  "notes": "On-hire to E 20 Investment (Al Wathba) 16/09/2026. Baseline meter 7131h; next service +350 = 7481h. Superseded by 23/09 service."
+ },
+ {
+  "dg": "DG-536",
+  "hours": 7229,
+  "date": "2026-09-23",
+  "technician": "ADEEL & SAJID",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 8,
+  "nextService": 7579,
+  "nextServiceDate": "2026-11-06",
+  "interval": 350,
+  "notes": "Serviced 23/09/2026 at 7229h by Adeel & Sajid - all filters done. Controller confirmed 7229h. Next 7579h (350h cycle). 40 kVA Kirlosker, E 20 Investment, Al Wathba."
  },
  {
   "dg": "DG-418",
