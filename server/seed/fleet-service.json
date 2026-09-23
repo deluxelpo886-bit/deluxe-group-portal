@@ -2459,6 +2459,21 @@
   "currentHoursDate": "2026-09-23"
  },
  {
+  "dg": "DG-488",
+  "hours": 5798,
+  "date": "2026-09-23",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 6,
+  "nextService": 6148,
+  "nextServiceDate": "2026-11-20",
+  "interval": 350,
+  "notes": "Serviced 23/09/2026 at 5798h by IK & Jayaraj (service card) - all filters done. Next 6148h (350h cycle). ~6 h/day, ICAD-1, Rock Star Scrap. 40 kVA Weber."
+ },
+ {
   "dg": "DG-844",
   "hours": 30703,
   "date": "2026-09-01",
