@@ -2446,7 +2446,7 @@
   "hours": 5448,
   "date": "2026-07-27",
   "technician": "VELU&IMRAN",
-  "notes": "Re-hired 26/08 - service clock +350h. Controller reading 5734h on 16/09 (64h to next 5798). At ~5.6h/day -> due ~27/09.",
+  "notes": "Re-hired 26/08 - service clock +350h. Meter CONFIRMED 5798h on 23/09/2026 (controller photo) = next-service target 5798h reached -> service DUE NOW (0h left). ~5.6h/day. ICAD-1, Rock Star Scrap.",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
@@ -2455,8 +2455,8 @@
   "nextService": 5798,
   "nextServiceDate": "2026-09-27",
   "interval": 350,
-  "currentHours": 5734,
-  "currentHoursDate": "2026-09-16"
+  "currentHours": 5798,
+  "currentHoursDate": "2026-09-23"
  },
  {
   "dg": "DG-844",
