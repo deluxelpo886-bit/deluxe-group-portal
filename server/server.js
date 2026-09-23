@@ -235,7 +235,7 @@ try {
   const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
   if (fs.existsSync(rmSeedPath)) {
     const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
-    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-23b');
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-23c');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
@@ -243,7 +243,7 @@ try {
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {
-  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21'];
+  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }
