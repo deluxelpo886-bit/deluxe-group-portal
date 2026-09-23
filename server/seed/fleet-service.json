@@ -1588,10 +1588,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 19.7,
+  "dailyHours": 18.2,
+  "currentHours": 10727,
+  "currentHoursDate": "2026-09-23",
   "nextService": 10877,
   "nextServiceDate": "2026-09-30",
-  "interval": 350
+  "interval": 350,
+  "notes": "Serviced 12/09/2026 at 10527h by Adil & Hussain (all filters). Meter confirmed 10727h on 23/09 (controller, 2556 starts) -> 150h left to next (10877h). HEAVY USE ~18 h/day (200h in 11 days). 30 kVA Kirlosker, Motor Way, ICAD III."
  },
  {
   "dg": "DG-35",
