@@ -813,7 +813,7 @@
   "currentHours": 9893,
   "currentHoursDate": "2026-09-23",
   "nextService": 9973,
-  "nextServiceDate": "2026-09-01",
+  "nextServiceDate": "2026-10-13",
   "interval": 350,
   "notes": "Serviced 18/07/2026 at 9623h by Velu & Bakhtamal (all filters). Meter confirmed 9893h on 23/09 (controller) -> 80h left to next (9973h). Light recent use ~4 h/day (270h in ~67 days). 60 kVA Jet, Trojan, Yas Island."
  },
@@ -2154,7 +2154,7 @@
   "currentHours": 14843,
   "currentHoursDate": "2026-09-23",
   "nextService": 15139,
-  "nextServiceDate": "2026-09-12",
+  "nextServiceDate": "2026-11-21",
   "interval": 350,
   "notes": "Serviced 19/08/2026 at 14789h (card ~14786). Meter confirmed 14843h on 23/09 (controller) -> 296h left to next (15139h). Light recent use ~1.5 h/day (54h in ~35 days). 63 kVA Kirlosker, Trojan, Yas Island."
  },
