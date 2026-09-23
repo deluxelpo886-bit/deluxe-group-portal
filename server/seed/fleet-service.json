@@ -601,8 +601,9 @@
   "nextService": 36678,
   "nextServiceDate": "2026-10-08",
   "interval": 350,
-  "currentHours": 36430,
-  "currentHoursDate": "2026-09-16"
+  "currentHours": 36503,
+  "currentHoursDate": "2026-09-23",
+  "notes": "Serviced 07/09/2026 at 36328h by Sonu & Hussain (all filters). Meter confirmed 36503h on 23/09 (display) -> 175h left to next (36678h). ~11 h/day. 30 kVA Kirlosker, Khaliq Noor Scrap, Mussafah."
  },
  {
   "dg": "DG-543",
@@ -1267,8 +1268,11 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 12,
+  "currentHours": 6286,
+  "currentHoursDate": "2026-09-23",
   "nextService": 6412,
-  "interval": 450
+  "interval": 450,
+  "notes": "Serviced 26/08/2026 at 5962h (card shows ~5967) - oil, oil filter, fuel filter; AIR FILTER NOT done. Meter confirmed 6286h on 23/09 (controller, 765 starts) -> 126h left to next (6412h). Contract ends 28-29/09 (off-hire due). 320 kVA CAT, Grand Falcon, Mussafah."
  },
  {
   "dg": "DG-557",
@@ -2626,8 +2630,9 @@
   "nextService": 36678,
   "nextServiceDate": "2026-10-08",
   "interval": 350,
-  "currentHours": 36430,
-  "currentHoursDate": "2026-09-16"
+  "currentHours": 36503,
+  "currentHoursDate": "2026-09-23",
+  "notes": "Serviced 07/09/2026 at 36328h by Sonu & Hussain (all filters). Meter confirmed 36503h on 23/09 (display) -> 175h left to next (36678h). ~11 h/day. 30 kVA Kirlosker, Khaliq Noor Scrap, Mussafah."
  },
  {
   "dg": "DG-851",
