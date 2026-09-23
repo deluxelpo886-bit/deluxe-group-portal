@@ -1867,6 +1867,21 @@
   "notes": "Current running 24885h read 17/09. ARRANGE SERVICE SOON - 24h to next (24909h). Breakdown resolved 18/09. Shakhbout City MSH31, Al Hashim (same site as DG-540)."
  },
  {
+  "dg": "DG-843",
+  "hours": 24978,
+  "date": "2026-09-23",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 10,
+  "nextService": 25328,
+  "nextServiceDate": "2026-10-28",
+  "interval": 350,
+  "notes": "Serviced 23/09/2026 at 24978h by IK & Jayaraj (controller 4540 starts) - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 25328h (350h cycle). 125 kVA Kirlosker, Hasim, Shakhbout City MSH31."
+ },
+ {
   "dg": "DG-854",
   "hours": 28047,
   "date": "2026-08-12",
@@ -2359,6 +2374,21 @@
   "nextService": 15056,
   "nextServiceDate": "2026-09-25",
   "interval": 350
+ },
+ {
+  "dg": "DG-540",
+  "hours": 15055,
+  "date": "2026-09-23",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.5,
+  "nextService": 15405,
+  "nextServiceDate": "2026-10-21",
+  "interval": 350,
+  "notes": "Serviced 23/09/2026 at 15055h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 15405h (350h cycle). 60 kVA Kirlosker, Al Hashim, Shakhbout City MSH31."
  },
  {
   "dg": "DG-535",
