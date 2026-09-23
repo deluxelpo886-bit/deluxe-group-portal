@@ -2107,6 +2107,21 @@
   "notes": "Serviced 19/08 at 15791h (oil + oil filter + fuel filter; air filter NOT). Controller reading 16109h on 18/09 -> 32h to next service (16141), due ~21/09. MN1 Mussafah (batched with DG-503)."
  },
  {
+  "dg": "DG-502",
+  "hours": 16159,
+  "date": "2026-09-23",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 11.85,
+  "nextService": 16509,
+  "nextServiceDate": "2026-10-23",
+  "interval": 350,
+  "notes": "Serviced 23/09/2026 at 16159h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 16509h (350h cycle). ~12 h/day. 50 kVA Perkins, Hydro Power, Mussafah MN1."
+ },
+ {
   "dg": "DG-503",
   "hours": 6589,
   "date": "2026-09-18",
@@ -2119,7 +2134,9 @@
   "nextService": 6939,
   "nextServiceDate": "2026-10-17",
   "interval": 350,
-  "notes": "Serviced 18/09/2026 at 6589h by Sonu & Hussain (oil + oil filter + fuel filter + air filter all changed). Next service 6939h, projected ~17/10/2026. MN1 Mussafah (batched with DG-502)."
+  "currentHours": 6661,
+  "currentHoursDate": "2026-09-23",
+  "notes": "Serviced 18/09/2026 at 6589h by Sonu & Hussain (all filters). Meter confirmed 6661h on 23/09 (controller - panel still marked old 'DG-487') -> 278h left to next (6939h). ~14 h/day. MN1 Mussafah (batched with DG-502). 50 kVA Tata, Hydro Power."
  },
  {
   "dg": "DG-809",
