@@ -1447,6 +1447,21 @@
   "currentHoursDate": "2026-09-16"
  },
  {
+  "dg": "DG-542",
+  "hours": 1998,
+  "date": "2026-09-23",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 7.5,
+  "nextService": 2348,
+  "nextServiceDate": "2026-11-09",
+  "interval": 350,
+  "notes": "Serviced 23/09/2026 at 1998h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller confirmed 1998h. Next 2348h (350h cycle). 100 kVA Perkins, Trojan, Yas Island."
+ },
+ {
   "dg": "DG-811",
   "hours": 9364,
   "date": "2026-08-24",
