@@ -42,6 +42,13 @@
   "createdBy": "Operations Head"
  },
  {
+  "key": "DG-857-overdue-breakdown-replace-2026-09-25",
+  "dg": "DG-857",
+  "note": "DG-857 (GULF CONTRACTING, Dubai - Business Bay) ran OVERDUE and had a BREAKDOWN - need to REPLACE the generator. DG-815 is undergoing TESTING in the YARD as the replacement; once it passes, arrange the swap and collect DG-857 back. 250 kVA Kirlosker.",
+  "dueDate": "2026-09-25",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-860-amount-next-service-2026-10-19",
   "dg": "DG-860",
   "note": "City Construction, RUWAIS - at DG-860's NEXT SERVICE (18575h / 19-10-2026) we need to GIVE the agreed AMOUNT to the customer. 400 kVA. (Fill in the exact figure.)",
