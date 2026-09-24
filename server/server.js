@@ -148,7 +148,7 @@ try {
   const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
   if (fs.existsSync(bdSeedPath)) {
     const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-24a');
+    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-24b');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
   }
 } catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
@@ -237,7 +237,7 @@ try {
   const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
   if (fs.existsSync(rmSeedPath)) {
     const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
-    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-24c');
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-24d');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
