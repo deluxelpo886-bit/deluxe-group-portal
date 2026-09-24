@@ -1518,6 +1518,23 @@
   "interval": 350
  },
  {
+  "dg": "DG-833",
+  "hours": 2336,
+  "date": "2026-09-16",
+  "technician": "NAZIR KHAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 2,
+  "currentHours": 2336,
+  "currentHoursDate": "2026-09-24",
+  "nextService": 2686,
+  "nextServiceDate": "2026-11-16",
+  "interval": 350,
+  "notes": "Serviced 16/09/2026 at 2336h (Nazir Khan) - all filters done. Current meter today (24/09) still 2336h -> very low use / standby. Next 2686h (350h cycle). 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39."
+ },
+ {
   "dg": "DG-858",
   "hours": 16350,
   "date": "2026-09-18",
