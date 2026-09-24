@@ -169,6 +169,8 @@ try {
     'DG-537-bd-2026-09-18',
     // superseded DG-800 note (updated with exact RPM) - replaced by -v2 key
     'DG-800-injpump-2026-09-18',
+    // DG-833 attendance logged then withdrawn at ops-head request
+    'DG-833-breakdown-2026-09-24',
   ];
   let removed = 0;
   breakdowns.getAll().forEach((b) => {
