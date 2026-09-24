@@ -595,13 +595,14 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 18.7,
+  "airFilter": true,
+  "dailyHours": 24.2,
   "nextService": 10694,
   "nextServiceDate": "2026-09-29",
   "interval": 350,
-  "currentHours": 10456,
-  "currentHoursDate": "2026-09-16"
+  "currentHours": 10658,
+  "currentHoursDate": "2026-09-24",
+  "notes": "Serviced 11/09/2026 at 10344h by Adeel & MJ.K (all filters). Meter confirmed 10658h on 24/09 -> only 36h left to next (10694h). 24-HOUR OPERATION ~24.2 h/day (314h in 13 days) - El Masria Cement, Shakhbout City. Service due immediately; keep a tight ~2-week cycle. 100 kVA Weber."
  },
  {
   "dg": "DG-453",
