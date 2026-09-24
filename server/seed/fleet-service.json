@@ -2055,10 +2055,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.15,
+  "dailyHours": 13.2,
+  "currentHours": 2416,
+  "currentHoursDate": "2026-09-24",
   "nextService": 2695,
   "nextServiceDate": "2026-10-21",
-  "interval": 450
+  "interval": 450,
+  "notes": "Serviced 11/09/2026 at 2245h by Adeel & MJ.K. Meter confirmed 2416h on 24/09 (QUARTZ engine-hours meter, 2416.5h) -> 279h left to next (2695h). ~13 h/day. 440 kVA Cummins, Al Masriya, Khalifa Industrial City B."
  },
  {
   "dg": "DG-842",
