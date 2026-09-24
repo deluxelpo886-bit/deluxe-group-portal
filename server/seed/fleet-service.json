@@ -2343,6 +2343,21 @@
   "interval": 350
  },
  {
+  "dg": "DG-492",
+  "hours": 7184,
+  "date": "2026-09-24",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12,
+  "nextService": 7534,
+  "nextServiceDate": "2026-10-23",
+  "interval": 350,
+  "notes": "Serviced 24/09/2026 at 7184h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 7534h (350h cycle). 82 kVA Tata, Emdad, KIZAD."
+ },
+ {
   "dg": "DG-466",
   "hours": 32266,
   "date": "2026-08-29",
