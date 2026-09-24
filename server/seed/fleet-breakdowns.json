@@ -158,18 +158,5 @@
   "reportedBy": "Operations Head",
   "reportedAt": "2026-09-18",
   "notes": "Breakdown 18/09: controller DISPLAY damaged - needs to be changed (replace the controller/display module). 100 kVA Caterpillar, Six Sigma, Jubail Island (JS). Carry a replacement display/controller."
- },
- {
-  "key": "DG-833-breakdown-2026-09-24",
-  "dg": "DG-833",
-  "priority": "Normal",
-  "location": "ZAYED CITY MZ39 (ADU)",
-  "truck": "",
-  "status": "Open",
-  "symptom": "Breakdown attended on site; load current checked",
-  "category": "Electrical",
-  "reportedBy": "Technician",
-  "reportedAt": "2026-09-24",
-  "notes": "Breakdown attended 24/09 (technician on site). Clamp-meter load current readings: 30.42 A and 38.10 A (AC) - unit running under load (~50-60% of a 45 kVA set). NOTE: hour meter read 2336h on both 16/09 (service) and 24/09 despite the unit being loaded - CHECK the hour meter / controller may not be counting run hours. 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39."
  }
 ]
