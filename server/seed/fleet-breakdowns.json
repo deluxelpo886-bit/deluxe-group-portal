@@ -1,5 +1,18 @@
 [
  {
+  "key": "DG-537-overdue-breakdown-2026-09-24",
+  "dg": "DG-537",
+  "priority": "High",
+  "location": "KIZAD (KHALIFA IND. CITY B)",
+  "truck": "",
+  "status": "Open",
+  "symptom": "Ran overdue - breakdown, needs replacement",
+  "category": "Mechanical",
+  "reportedBy": "Operations Head",
+  "reportedAt": "2026-09-24",
+  "notes": "DG-537 (OSAI, KIZAD) ran OVERDUE on service (was due 8741h / 16-09-2026) and BROKE DOWN. Needs REPLACEMENT - DG-815 is undergoing testing in the yard to swap in; once it passes, replace DG-537 and collect it back. 40 kVA Kirlosker."
+ },
+ {
   "key": "DG-37-battery-2026-09-16",
   "dg": "DG-37",
   "priority": "Normal",
