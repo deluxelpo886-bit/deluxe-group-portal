@@ -1094,6 +1094,40 @@ app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
   res.json({ ok: true });
 });
 
+// Get (creating if needed) the secret customer-tracker link for one breakdown.
+// Office-only; the returned link is what the office shares with the customer.
+app.post('/api/breakdowns/share', fleetProtect, (req, res) => {
+  try {
+    const token = breakdowns.ensureToken((req.body || {}).id);
+    const base = (req.get('x-forwarded-proto') ? req.get('x-forwarded-proto') : req.protocol) + '://' + req.get('host');
+    res.json({ ok: true, token, url: base + '/track/' + token });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'error' }); }
+});
+
+// ---------- Customer breakdown status tracker (PUBLIC - no login) ------------
+// The token in the URL is the only key: it maps to exactly one breakdown and
+// exposes only that job's status. Unknown/expired tokens return 404. No other
+// generator, customer, rate or map data is reachable from here.
+app.get('/api/track/:token', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const view = breakdowns.getPublic(req.params.token);
+  if (!view) return res.status(404).json({ error: 'not found' });
+  if (view.expired) return res.status(410).json({ expired: true });
+  res.json(view);
+});
+
+// The public tracker page itself (no auth). Serves the same HTML for any token;
+// the page reads the token from its own URL and calls /api/track/:token.
+app.get('/track/:token', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data: https://fonts.gstatic.com; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'track.html'), { cacheControl: false });
+});
+
 // ---------- Reminders / follow-ups (dated nudges shown in the app) ----------
 app.get('/api/reminders', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
