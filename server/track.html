@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Generator Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --ground:#eef0eb;--scr:#f4f5f0;--card:#ffffff;--ink:#18201a;--muted:#6b7268;--line:#e4e7df;
+    --brand:#1f7a44;--brand-dk:#12572f;
+    --done:#1f9d57;--done-bg:#e4f4e9;--now:#1668d6;--now-bg:#e2edfb;--wait:#c3c9bd;
+    --crit:#c0392b;--crit-bg:#fbe4e0;
+    --shadow:0 1px 2px rgba(20,30,20,.06),0 8px 24px rgba(20,30,20,.09);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;}
+  body{background:var(--ground);color:var(--ink);font-family:"Manrope",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
+       padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);}
+  .wrap{max-width:440px;margin:0 auto;padding:16px 16px 34px;}
+  .brand{display:flex;align-items:center;gap:11px;padding:8px 2px 16px;}
+  .logo{width:44px;height:44px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;letter-spacing:-.02em;}
+  .brand .t b{font-size:15px;color:var(--ink);display:block;line-height:1.2;}
+  .brand .t small{font-size:11.5px;color:var(--muted);font-weight:600;}
+  .live{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--done);background:var(--done-bg);padding:5px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+  .live .dot{width:6px;height:6px;border-radius:50%;background:var(--done);animation:pulse 1.6s infinite;}
+  .live.done{color:var(--muted);background:#eceee9;}
+  .live.done .dot{background:var(--muted);animation:none;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .hero{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px;}
+  .hero .top{display:flex;align-items:baseline;gap:9px;}
+  .dg{font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--ink);}
+  .site{font-size:13.5px;color:var(--muted);font-weight:600;margin-top:4px;}
+  .site b{color:var(--ink);}
+  .nowtag{margin-top:14px;display:flex;align-items:center;gap:10px;border-radius:14px;padding:12px 13px;background:var(--now-bg);}
+  .nowtag.ok{background:var(--done-bg);}
+  .nowtag .ic{width:32px;height:32px;flex:0 0 auto;border-radius:9px;background:var(--now);color:#fff;display:grid;place-items:center;font-size:16px;}
+  .nowtag.ok .ic{background:var(--done);}
+  .nowtag .tx b{font-size:15px;color:var(--now);display:block;line-height:1.2;}
+  .nowtag.ok .tx b{color:var(--done);}
+  .nowtag .tx small{font-size:12px;color:var(--muted);font-weight:600;display:block;margin-top:2px;}
+
+  .tl-h{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:6px 6px 12px;}
+  .card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px 16px 6px;}
+  .tl{position:relative;padding-left:6px;}
+  .step{position:relative;padding:0 0 22px 34px;}
+  .step:last-child{padding-bottom:6px;}
+  .step::before{content:"";position:absolute;left:12px;top:23px;bottom:-2px;width:2.5px;background:var(--wait);border-radius:2px;}
+  .step.done::before{background:var(--done);}
+  .step:last-child::before{display:none;}
+  .dotb{position:absolute;left:2px;top:1px;width:23px;height:23px;border-radius:50%;background:var(--scr);border:2.5px solid var(--wait);display:grid;place-items:center;color:var(--wait);font-size:12px;font-weight:800;}
+  .step.done .dotb{background:var(--done);border-color:var(--done);color:#fff;}
+  .step.now .dotb{background:var(--now);border-color:var(--now);color:#fff;box-shadow:0 0 0 4px var(--now-bg);}
+  .step .lbl{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.2;}
+  .step.wait .lbl{color:var(--muted);font-weight:600;}
+  .step .meta{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
+
+  .team{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:13px 14px;margin-top:14px;display:flex;align-items:center;gap:12px;}
+  .team .av{width:40px;height:40px;border-radius:50%;background:#f2f4ef;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--brand);font-size:14px;}
+  .team .who b{font-size:14px;color:var(--ink);display:block;}
+  .team .who small{font-size:12px;color:var(--muted);font-weight:600;}
+  .call{margin-left:auto;background:var(--brand);color:#fff;text-decoration:none;font-weight:800;font-size:13px;padding:11px 16px;border-radius:11px;display:flex;align-items:center;gap:7px;}
+
+  .foot{text-align:center;font-size:10.5px;color:var(--muted);margin-top:18px;font-weight:600;line-height:1.6;}
+  .foot b{color:var(--ink);}
+  .msg{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:34px 22px;text-align:center;margin-top:20px;}
+  .msg .big{font-size:40px;margin-bottom:10px;}
+  .msg h2{margin:0 0 6px;font-size:18px;color:var(--ink);}
+  .msg p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5;}
+  [hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo">DE</div>
+    <div class="t"><b>Deluxe Energy</b><small>Generator service status</small></div>
+    <span class="live" id="live"><span class="dot"></span>LIVE</span>
+  </div>
+
+  <div id="loading" class="msg"><div class="big">⏳</div><h2>Loading status…</h2><p>Fetching the latest update.</p></div>
+
+  <div id="notfound" class="msg" hidden><div class="big">🔒</div><h2>Link not available</h2><p>This tracking link is invalid or has expired. Please contact us on the number below.</p></div>
+
+  <div id="content" hidden>
+    <div class="hero">
+      <div class="top"><span class="dg" id="dg">DG-000</span></div>
+      <div class="site" id="site">📍 <b>—</b></div>
+      <div class="nowtag" id="nowtag">
+        <div class="ic" id="nowIc">🚚</div>
+        <div class="tx"><b id="nowLbl">—</b><small id="nowSub"></small></div>
+      </div>
+    </div>
+
+    <div class="tl-h">Progress</div>
+    <div class="card"><div class="tl" id="tl"></div></div>
+
+    <div class="team" id="teamBox" hidden>
+      <div class="av" id="teamAv">DE</div>
+      <div class="who"><b id="teamName">Deluxe technician</b><small>Assigned team</small></div>
+      <a class="call" href="tel:0553356428">📞 Call</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>Deluxe Heavy Equipment Rental</b> · Deluxe Energy Solutions<br>
+    Emergency 055 335 6428 / 02 554 5718
+  </div>
+</div>
+
+<script>
+  var STAGE_ICON={'Open':'📝','Assigned':'👷','On the way':'🚚','On site':'📍','Waiting parts':'🧩','Resolved':'✅'};
+  var SUB={'Open':'We received your report','Assigned':'A technician has been assigned','On the way':'Technician is heading to your site','On site':'Technician is at your generator','Waiting parts':'Waiting for a spare part','Resolved':'Generator is back in service'};
+  function fmt(iso){ if(!iso) return ''; try{var d=new Date(iso);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';} }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function show(id){ ['loading','notfound','content'].forEach(function(x){ document.getElementById(x).hidden=(x!==id); }); }
+
+  function render(d){
+    document.getElementById('dg').textContent=d.dg||'';
+    document.getElementById('site').innerHTML='📍 <b>'+esc(d.location||'Your site')+'</b> · reported '+fmt(d.reportedAt);
+    var order=(d.stages||[]).map(function(s){return s.status;});
+    var curIdx=order.indexOf(d.status);
+    if(curIdx<0) curIdx=(d.status==='Waiting parts')?order.indexOf('On site'):0; // waiting parts sits at on-site
+    var resolved=d.resolved;
+    // now card
+    var nt=document.getElementById('nowtag'), ok=(resolved);
+    nt.className='nowtag'+(ok?' ok':'');
+    document.getElementById('nowIc').textContent=STAGE_ICON[d.status]||'🔧';
+    document.getElementById('nowLbl').textContent=d.statusLabel||d.status;
+    document.getElementById('nowSub').textContent=SUB[d.status]||'';
+    // live badge
+    var live=document.getElementById('live');
+    if(resolved){ live.className='live done'; live.innerHTML='<span class="dot"></span>RESOLVED'; }
+    // timeline: standard stages, timestamped from history where present
+    var histMap={}; (d.history||[]).forEach(function(h){ if(!histMap[h.status]) histMap[h.status]=h.at; });
+    var tl=document.getElementById('tl'); tl.innerHTML='';
+    (d.stages||[]).forEach(function(s,i){
+      var cls = i<curIdx?'done' : (i===curIdx?'now':'wait');
+      if(resolved) cls='done';
+      var at=histMap[s.status];
+      var meta = at?fmt(at):(cls==='wait'?'Pending':'');
+      var dotTxt = (cls==='done')?'✓':(cls==='now'?'●':(i+1));
+      var lbl=s.label;
+      if(s.status==='On site' && d.status==='Waiting parts' && !resolved){ lbl='Awaiting parts'; }
+      tl.insertAdjacentHTML('beforeend',
+        '<div class="step '+cls+'"><div class="dotb">'+dotTxt+'</div><div class="lbl">'+esc(lbl)+'</div><div class="meta">'+esc(meta)+'</div></div>');
+    });
+    // team
+    if(d.team){
+      document.getElementById('teamBox').hidden=false;
+      document.getElementById('teamName').textContent=d.team;
+      var init=String(d.team).replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase()||'DE';
+      document.getElementById('teamAv').textContent=init;
+    }
+    show('content');
+  }
+
+  function load(){
+    var m=location.pathname.match(/\/track\/([^\/?#]+)/);
+    var token=m?m[1]:'';
+    if(!token){ show('notfound'); return; }
+    fetch('/api/track/'+encodeURIComponent(token),{cache:'no-store'})
+      .then(function(r){ if(r.status===200) return r.json(); throw r.status; })
+      .then(render)
+      .catch(function(){ show('notfound'); });
+  }
+  load();
+  // Auto-refresh every 30s so the customer always sees the latest stage.
+  setInterval(load, 30000);
+</script>
+</body>
+</html>

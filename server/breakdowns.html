@@ -466,7 +466,7 @@
       var nxt=nextStatus(it.status);
       var stepBtn = (isActive && nxt) ? '<button class="mini" data-step="'+esc(it.id)+'" data-to="'+esc(nxt)+'" style="background:#5b9bd522;border-color:#5b9bd555;color:#8ec5f0;">▶ '+esc(nxt)+'</button> ' : '';
       var action = isActive
-        ? stepBtn+'<button class="mini" data-wa="'+esc(it.id)+'" style="background:#25D36622;border-color:#25D36655;color:#4fe08a;">📲 Send team</button> <button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
+        ? stepBtn+'<button class="mini" data-wa="'+esc(it.id)+'" style="background:#25D36622;border-color:#25D36655;color:#4fe08a;">📲 Send team</button> <button class="mini" data-share="'+esc(it.id)+'" style="background:#1f7a4422;border-color:#1f7a4455;color:#5fce8f;">🔗 Customer link</button> <button class="mini green" data-resolve="'+esc(it.id)+'">✓ Resolve</button>'
         : '<button class="mini" data-reopen="'+esc(it.id)+'">Reopen</button>';
       var clk = isActive ? openClock(it) : null;
       var timer = isActive ? ('<div style="font-size:11px;margin-top:3px;font-weight:700;color:'+(clk.over?'#e0644a':'#8b95a1')+';">'+(clk.over?'⏰ ':'⏱ ')+'open '+clk.txt+(clk.over?(' · over '+clk.target+'h target'):(' / '+clk.target+'h'))+'</div>') : '';
@@ -485,6 +485,19 @@
     $('body').querySelectorAll('button[data-wa]').forEach(function(b){ b.addEventListener('click',function(){ var it=(window.__bd||[]).filter(function(x){return x.id===b.getAttribute('data-wa');})[0]; if(it){ var t=dispatchMsg(it); if(navigator.share){ navigator.share({text:t}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); } } }); });
     $('body').querySelectorAll('button[data-step]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/update',{id:b.getAttribute('data-step'),status:b.getAttribute('data-to')}); }); });
     $('body').querySelectorAll('button[data-resolve]').forEach(function(b){ b.addEventListener('click',function(){ var cause=prompt('What was actually wrong? (root cause — helps spot patterns)\\nLeave blank to skip.'); if(cause===null){ post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve')}); } else { post('/api/breakdowns/resolve',{id:b.getAttribute('data-resolve'),cause:cause}); } }); });
+    $('body').querySelectorAll('button[data-share]').forEach(function(b){ b.addEventListener('click',async function(){
+      var it=(window.__bd||[]).filter(function(x){return x.id===b.getAttribute('data-share');})[0]; if(!it) return;
+      b.disabled=true; var old=b.textContent; b.textContent='…';
+      try{
+        var r=await fetch('/api/breakdowns/share',{method:'POST',headers:authHeaders(),body:JSON.stringify({id:it.id})});
+        var d=await r.json(); b.disabled=false; b.textContent=old;
+        if(!d||!d.url){ alert('Could not create link.'); return; }
+        var msg='Deluxe Energy — live status for your generator '+it.dg+(it.location?(' at '+it.location):'')+':\n'+d.url+'\n\nTap the link to see the technician’s status (no login needed).';
+        if(navigator.share){ navigator.share({text:msg}).catch(function(){ window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }); }
+        else { window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }
+        if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(d.url).catch(function(){}); }
+      }catch(e){ b.disabled=false; b.textContent=old; alert('Could not create link.'); }
+    }); });
     $('body').querySelectorAll('button[data-reopen]').forEach(function(b){ b.addEventListener('click',function(){ post('/api/breakdowns/reopen',{id:b.getAttribute('data-reopen')}); }); });
     $('body').querySelectorAll('button[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Delete this breakdown record?')) post('/api/breakdowns/remove',{id:b.getAttribute('data-rm')}); }); });
   }

@@ -73,6 +73,10 @@ function add(rec) {
     reportedAt: (rec && rec.reportedAt) ? new Date(rec.reportedAt).toISOString() : new Date().toISOString(),
     status: 'Open',
     resolvedAt: null,
+    // Timeline of status changes (customer tracker). First entry is "Open".
+    history: [{ status: 'Open', at: new Date().toISOString() }],
+    // Secret share token for the public customer tracker (null until shared).
+    track: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -81,11 +85,22 @@ function add(rec) {
   return it;
 }
 
+// Record a status change on the timeline (deduped: no repeat of the same
+// status back-to-back). Used by update()/resolve() so the customer tracker can
+// show a stamped Reported -> Assigned -> ... -> Resolved history.
+function pushHistory(it, status) {
+  if (!Array.isArray(it.history)) it.history = [];
+  const last = it.history[it.history.length - 1];
+  if (last && last.status === status) return;
+  it.history.push({ status, at: new Date().toISOString() });
+}
+
 function resolve(id, fields) {
   const it = items.find((x) => x.id === id);
   if (!it) throw new Error('Breakdown not found');
   it.status = 'Resolved';
   it.resolvedAt = new Date().toISOString();
+  pushHistory(it, 'Resolved');
   // Capture what was actually wrong (and confirm/correct the category) so the
   // record teaches you the real cause, not just the reported symptom.
   if (fields && fields.cause != null && String(fields.cause).trim()) it.cause = String(fields.cause).trim();
@@ -126,11 +141,72 @@ function update(id, fields) {
       it.status = s;
       if (s === 'Resolved') { it.resolvedAt = it.resolvedAt || new Date().toISOString(); }
       else { it.resolvedAt = null; }
+      pushHistory(it, s);
     }
   }
   it.updatedAt = new Date().toISOString();
   persist();
   return it;
+}
+
+// ---- Customer status tracker (public, no login) ----------------------------
+// Each breakdown can get one secret share token. The token is the ONLY key to
+// its status page: it maps to exactly one breakdown, cannot be guessed, and
+// exposes nothing else (no other units, no rates, no map). Links auto-expire a
+// week after the job is Resolved.
+const crypto = require('crypto');
+const TRACK_EXPIRE_DAYS = 7;
+
+// Friendly labels shown to the customer for each internal status.
+const PUBLIC_STAGE = {
+  'Open': 'Breakdown reported',
+  'Assigned': 'Technician assigned',
+  'On the way': 'Technician on the way',
+  'On site': 'Arrived on site',
+  'Waiting parts': 'Awaiting parts',
+  'Resolved': 'Resolved — running',
+};
+const STAGE_ORDER = ['Open', 'Assigned', 'On the way', 'On site', 'Resolved'];
+
+function ensureToken(id) {
+  const it = items.find((x) => x.id === id);
+  if (!it) throw new Error('Breakdown not found');
+  if (!it.track) {
+    it.track = crypto.randomBytes(12).toString('base64url'); // 16-char unguessable token
+    it.updatedAt = new Date().toISOString();
+    persist();
+  }
+  return it.track;
+}
+
+// Look up a breakdown by its share token and return a SAFE public view, or
+// null if the token is unknown or the link has expired.
+function getPublic(token) {
+  const t = String(token || '').trim();
+  if (!t) return null;
+  const it = items.find((x) => x.track && x.track === t);
+  if (!it) return null;
+  // Auto-expire: a week after resolution the link stops working.
+  if (it.status === 'Resolved' && it.resolvedAt) {
+    const ageDays = (Date.now() - new Date(it.resolvedAt).getTime()) / 86400000;
+    if (ageDays > TRACK_EXPIRE_DAYS) return { expired: true };
+  }
+  const hist = (Array.isArray(it.history) && it.history.length ? it.history : [{ status: 'Open', at: it.reportedAt }])
+    .map((h) => ({ status: h.status, label: PUBLIC_STAGE[h.status] || h.status, at: h.at }));
+  return {
+    dg: it.dg,
+    location: it.location || '',
+    status: it.status,
+    statusLabel: PUBLIC_STAGE[it.status] || it.status,
+    priority: it.priority,
+    symptom: it.symptom || '',
+    team: it.truck || '',
+    reportedAt: it.reportedAt,
+    resolvedAt: it.resolvedAt,
+    history: hist,
+    stages: STAGE_ORDER.map((s) => ({ status: s, label: PUBLIC_STAGE[s] })),
+    resolved: it.status === 'Resolved',
+  };
 }
 
 function remove(id) {
@@ -219,6 +295,8 @@ function applySeed(records, version) {
       reportedAt,
       status: normStatus(r && r.status) || 'Open',
       resolvedAt: null,
+      history: [{ status: normStatus(r && r.status) || 'Open', at: reportedAt }],
+      track: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -233,4 +311,4 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { add, resolve, reopen, update, remove, getAll, stats, applySeed, STATUSES, PRIORITIES };
+module.exports = { add, resolve, reopen, update, remove, getAll, stats, applySeed, ensureToken, getPublic, STATUSES, PRIORITIES };
