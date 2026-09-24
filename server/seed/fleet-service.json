@@ -699,10 +699,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 7.63,
+  "dailyHours": 1.9,
+  "currentHours": 3695,
+  "currentHoursDate": "2026-09-24",
   "nextService": 3898,
-  "nextServiceDate": "2026-09-05",
-  "interval": 350
+  "nextServiceDate": "2027-01-09",
+  "interval": 350,
+  "notes": "Serviced 09/07/2026 at 3548h (all filters). Meter confirmed 3695h on 24/09 (Weichai controller, 1750 starts, 23150 kWh) -> 203h left to next (3898h). Very light use ~1.9 h/day (147h in 77 days). 100 kVA Weichai, Smart Home, Al Ajban."
  },
  {
   "dg": "DG-801",
