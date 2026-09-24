@@ -712,10 +712,13 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 1.55,
+  "dailyHours": 2.9,
+  "currentHours": 11405,
+  "currentHoursDate": "2026-09-24",
   "nextService": 11640,
   "nextServiceDate": "2026-11-05",
-  "interval": 450
+  "interval": 450,
+  "notes": "Serviced 11/07/2026 at 11190h. Meter confirmed 11405h on 24/09 -> 235h left to next (11640h). Low use ~2.9 h/day (215h in 75 days). 250 kVA FG Wilson, Mawaad, Al Faya."
  },
  {
   "dg": "DG-556",
