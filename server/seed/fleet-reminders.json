@@ -7,13 +7,6 @@
   "createdBy": "Operations Head"
  },
  {
-  "key": "DG-868-arrival-to-yard-2026-09-23",
-  "dg": "DG-868",
-  "note": "DG-868 (500 kVA CAT, new genset) has STILL NOT arrived at the yard as of 22/09/2026 - follow up on delivery/collection and confirm when it reaches the yard.",
-  "dueDate": "2026-09-23",
-  "createdBy": "Operations Head"
- },
- {
   "key": "DG-549-speak-customer-usage-2026-09-24",
   "dg": "DG-549",
   "note": "SPEAK TO CUSTOMER (SIX SIGMA, KIZAD - KHIA 8) about how they are running DG-549 - it averages ~15 h/day (439h in 29 days) and went 89h past service. Review the usage with them, explain the tighter ~3-week service cycle it needs, and agree on-site access for it. 100 kVA CAT. (Utilisation notice already prepared.)",
@@ -28,10 +21,10 @@
   "createdBy": "Operations Head"
  },
  {
-  "key": "DG-473-24h-next-service-2026-09-26",
+  "key": "DG-473-14day-cycle-2026-10-08",
   "dg": "DG-473",
-  "note": "DG-473 (EL MASRIA CEMENT, Shakhbout City) runs 24 HOURS/day (~24.2 h/day, 314h in 13 days). Serviced 11/09 @ 10344h -> next 10694h; only 36h left as of 24/09, so it reaches service in ~1-2 days. SERVICE by ~26/09 and keep it on a tight ~2-week cycle. Check hours before then; utilisation notice already prepared. 100 kVA Weber.",
-  "dueDate": "2026-09-26",
+  "note": "DG-473 (EL MASRIA CEMENT, Shakhbout City) runs 24 HOURS/day. Serviced 24/09 @ 10639h -> next 10989h. Keep it on a TIGHT 14-DAY CYCLE - next service due ~08/10/2026 (14 days from 24/09). Check hours before then. 100 kVA Weber.",
+  "dueDate": "2026-10-08",
   "createdBy": "Operations Head"
  },
  {
