@@ -2331,6 +2331,21 @@
   "notes": "Per Netsonic service list SER1-000463: serviced 30/08 @6279h, next 6729h / 28/09/2026. 380 kVA, City Const, Al Faya."
  },
  {
+  "dg": "DG-822",
+  "hours": 6689,
+  "date": "2026-09-24",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 16.4,
+  "nextService": 7139,
+  "nextServiceDate": "2026-11-03",
+  "interval": 450,
+  "notes": "Serviced 24/09/2026 at 6689h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 7139h (450h cycle -> +40 days = 03/11). Heavy use ~16 h/day. 380 kVA CAT, City Const, Al Faya."
+ },
+ {
   "dg": "DG-492",
   "hours": 6870,
   "date": "2026-08-29",
