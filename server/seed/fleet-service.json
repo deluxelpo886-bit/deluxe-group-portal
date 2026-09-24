@@ -979,6 +979,21 @@
   "interval": 450
  },
  {
+  "dg": "DG-845",
+  "hours": 2003,
+  "date": "2026-09-24",
+  "technician": "ROLAND&BAKHTAMAL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 1,
+  "nextService": 2353,
+  "nextServiceDate": "2026-12-24",
+  "interval": 350,
+  "notes": "Serviced 24/09/2026 at 2003h by Roland & Bakhtamal - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Meter unchanged from July (2003h) = STANDBY / very low use. Next 2353h per card (350h). Date is a placeholder - confirm hours. 320 kVA CAT, Royal Tech, Mussafah ICAD I."
+ },
+ {
   "dg": "DG-853",
   "hours": 16989,
   "date": "2026-07-24",
