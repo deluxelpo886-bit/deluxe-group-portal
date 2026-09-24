@@ -1777,10 +1777,14 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 13.11,
+  "dailyHours": 9.0,
+  "currentHours": 1317,
+  "currentHoursDate": "2026-09-19",
   "nextService": 1415,
-  "nextServiceDate": "2026-09-15",
-  "interval": 450
+  "nextServiceDate": "2026-09-30",
+  "interval": 450,
+  "fixedDays": 50,
+  "notes": "Field STICKER was wrong: it read 965+350=1315h (350h interval), which sent the tech out early on Sat 19/09. Correct interval is 450h -> next service at 1415h. Controller confirmed 1317h @ 19/09/2026 (9 h/day), so ~98h / ~11 days left -> due ~30/09/2026, NOT yet due. 250 kVA Kirlosker, Gulf Contracting, Dubai (Business Bay)."
  },
  {
   "dg": "DG-861",
