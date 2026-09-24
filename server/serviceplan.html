@@ -209,16 +209,20 @@
       if(!g.nextServiceDate && hl===null) return; // nothing to plan against
       if(g.offHire || d.zone==='Yard'){ paused++; return; }
       var daysTo=g.nextServiceDate?dayDiff(when,g.nextServiceDate):null;
-      var inWindow=(daysTo!==null && daysTo<=win);
-      var inHours=(hl!==null && hl<=HRS_SOON);
+      var hasConf=(hl!==null);
+      // A CONFIRMED hour-meter reading is the source of truth: include/urgency by
+      // HOURS only and ignore the stored date (which may be a stale estimate, e.g.
+      // a low-use unit whose 450h "+40 day" date passed long before the hours are due).
+      var inHours=(hasConf && hl<=HRS_SOON);
+      var inWindow=(!hasConf && daysTo!==null && daysTo<=win);
       if(!inWindow && !inHours) return;
       // Urgency in "days" so date-estimate and hours-confirmed units sort together:
       // a confirmed reading is converted to days using the unit's real running rate.
       var rate=g.effectiveDailyHours||g.observedDailyHours||12; if(!(rate>0))rate=12;
       var urg=null;
-      if(inHours) urg=hl/rate;
-      if(inWindow) urg=(urg===null)?daysTo:Math.min(urg,daysTo);
-      picked.push({dg:g.dg,daysTo:daysTo,hoursLeft:hl,confirmed:!!(hl!==null),urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
+      if(hasConf) urg=hl/rate;            // confirmed -> hours drive urgency, stale date ignored
+      else if(inWindow) urg=daysTo;
+      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
     });
     if(!picked.length){ $('out').innerHTML='<div class="empty">✅ Nothing due in this window for on-hire units.'+(paused?'<br><small>'+paused+' off-hire units paused in the yard are not shown.</small>':'')+'</div>'; $('totBadge').textContent='0 units'; $('signRow').style.display='none'; return; }
     var zones={}; picked.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
