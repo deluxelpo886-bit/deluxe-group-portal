@@ -489,7 +489,7 @@
       var it=(window.__bd||[]).filter(function(x){return x.id===b.getAttribute('data-share');})[0]; if(!it) return;
       b.disabled=true; var old=b.textContent; b.textContent='…';
       try{
-        var r=await fetch('/api/breakdowns/share',{method:'POST',headers:authHeaders(),body:JSON.stringify({id:it.id})});
+        var r=await fetch('/api/breakdowns/share',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({id:it.id})});
         var d=await r.json(); b.disabled=false; b.textContent=old;
         if(!d||!d.url){ alert('Could not create link.'); return; }
         var msg='Deluxe Energy — live status for your generator '+it.dg+(it.location?(' at '+it.location):'')+':\n'+d.url+'\n\nTap the link to see the technician’s status (no login needed).';
