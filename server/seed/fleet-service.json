@@ -735,9 +735,9 @@
   "currentHours": 11405,
   "currentHoursDate": "2026-09-24",
   "nextService": 11640,
-  "nextServiceDate": "2026-12-14",
+  "nextServiceDate": "2026-10-20",
   "interval": 450,
-  "fixedDays": 156,
+  "fixedDays": 101,
   "notes": "Serviced 11/07/2026 at 11190h. Meter confirmed 11405h on 24/09 -> 235h left to next (11640h). Low use ~2.9 h/day, so next service date set to 14/12/2026 (light-use override, not the 40-day rule). 250 kVA FG Wilson, Mawaad, Al Faya."
  },
  {
