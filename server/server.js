@@ -92,7 +92,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-24-r9');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-24-r10');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -1067,6 +1067,17 @@ app.get('/serviceplan', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'serviceplan.html'), { cacheControl: false });
+});
+// Printable fleet utilisation report: which units run heavy (near 24h) vs light
+// / standby, so the office can see usage at a glance and relax or tighten dates.
+app.get(['/utilisation', '/usage'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'utilisation.html'), { cacheControl: false });
 });
 
 // ---------- Spare-parts issue tracking ----------

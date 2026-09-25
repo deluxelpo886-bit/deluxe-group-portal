@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Utilisation Report</title>
+<style>
+  :root{
+    --bg:#0f1419; --card:#161c22; --line:#242c34; --text:#e8ecef; --muted:#9aa4ad;
+    --red:#c8102e; --amber:#e8a13a; --green:#43c088; --blue:#5b9bd5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px;}
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:3px solid var(--red);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;}
+  h1{margin:0;font-size:20px;color:var(--red);}
+  .sub{font-size:12px;color:var(--muted);margin-top:3px;}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn{background:#20262c;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block;}
+  .btn.print{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+  .tiles{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;}
+  .tile{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;}
+  .tile .n{font-size:26px;font-weight:800;}
+  .tile .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+  .tile.heavy .n{color:var(--red);} .tile.mod .n{color:var(--amber);} .tile.light .n{color:var(--green);} .tile.all .n{color:var(--blue);}
+  section{margin:18px 0;}
+  h2{font-size:15px;margin:0 0 8px;padding:6px 10px;border-radius:8px;display:flex;align-items:center;gap:8px;}
+  h2.heavy{background:rgba(200,16,46,.14);color:#ff8a7a;} h2.mod{background:rgba(232,161,58,.14);color:var(--amber);} h2.light{background:rgba(67,192,136,.14);color:var(--green);}
+  h2 .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:600;}
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);font-size:12.5px;white-space:nowrap;}
+  th{background:#1b222a;color:var(--muted);font-weight:600;position:sticky;top:0;}
+  td.dg{font-family:ui-monospace,Menlo,monospace;font-weight:700;}
+  td.rate{font-weight:800;text-align:right;}
+  .hd{color:#ff8a7a;} .md{color:var(--amber);} .ld{color:var(--green);}
+  td.wrap2{white-space:normal;max-width:220px;}
+  .left{color:var(--muted);}
+  .over{color:#ff5c4d;font-weight:700;}
+  .soon{color:var(--amber);font-weight:700;}
+  .msg{padding:40px 16px;text-align:center;color:var(--muted);}
+  /* Login */
+  #login{position:fixed;inset:0;background:rgba(10,13,16,.96);display:none;align-items:center;justify-content:center;z-index:50;}
+  #login .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;width:300px;}
+  #login input{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid var(--line);background:#0f1419;color:var(--text);}
+  .foot{margin-top:20px;color:var(--muted);font-size:11px;border-top:1px solid var(--line);padding-top:10px;}
+  @media print{
+    body{background:#fff;color:#000;font-size:11px;}
+    .wrap{max-width:none;padding:0;}
+    .actions,#login{display:none!important;}
+    header{border-color:#000;} h1{color:#000;}
+    .tile,table,.tile{background:#fff;border-color:#bbb;}
+    h2.heavy{background:#f6dcdc;color:#000;} h2.mod{background:#f7ebd2;color:#000;} h2.light{background:#daf1e6;color:#000;}
+    th{background:#eee;color:#000;} td,th{border-color:#ccc;}
+    .hd,.md,.ld,td.rate{color:#000!important;}
+    section{page-break-inside:auto;} tr{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Fleet Utilisation Report</h1>
+      <div class="sub">Deluxe Heavy Equipment Rental L.L.C · Deluxe Energy Solutions L.L.C</div>
+      <div class="sub" id="asof">—</div>
+    </div>
+    <div class="actions">
+      <button class="btn print" onclick="window.print()">🖨 Print</button>
+      <a class="btn" href="/fleet">← Map</a>
+      <a class="btn" href="/plan">Service plan</a>
+    </div>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+  <div id="body"><div class="msg">Loading…</div></div>
+
+  <div class="foot">
+    Usage = running hours per day. <b>Heavy</b> ≥ 12 h/day (near 24-hour running) · <b>Moderate</b> 6–12 h/day · <b>Light / standby</b> &lt; 6 h/day.
+    Rate is measured from the last confirmed meter reading where available, otherwise the recorded daily rate.
+    Change any next-service date from the map (Edit / GPS) or the service list.
+  </div>
+</div>
+
+<div id="login">
+  <div class="box">
+    <h3 style="margin:0 0 6px;">Sign in</h3>
+    <input id="u" placeholder="Username" autocomplete="username">
+    <input id="p" type="password" placeholder="Password" autocomplete="current-password">
+    <div id="err" style="color:#ff5c4d;font-size:12px;min-height:16px;"></div>
+    <button class="btn print" style="width:100%;" onclick="doLogin()">Sign in</button>
+  </div>
+</div>
+
+<script>
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function showLogin(m){ document.getElementById('login').style.display='flex'; if(m) document.getElementById('err').textContent=m; }
+  function hideLogin(){ document.getElementById('login').style.display='none'; }
+  async function doLogin(){
+    var u=document.getElementById('u').value.trim(), p=document.getElementById('p').value;
+    try{
+      var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:u,password:p})});
+      var d=await r.json().catch(function(){return {};});
+      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin(); load();
+    }catch(e){ document.getElementById('err').textContent=e.message||'Login failed'; }
+  }
+
+  function fmtDMY(iso){ if(!iso) return '—'; var p=String(iso).slice(0,10).split('-'); return p.length===3? (p[2]+'/'+p[1]+'/'+p[0]) : iso; }
+  function daysBetween(a,b){ return (new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000; }
+
+  // Best available hours/day for a unit.
+  function rateOf(g){
+    if(g.currentHours!=null && g.currentHoursDate && g.date && isFinite(g.hours)){
+      var d=daysBetween(g.date, String(g.currentHoursDate).slice(0,10));
+      var dh=Number(g.currentHours)-Number(g.hours);
+      if(d>0 && dh>0) return dh/d;
+    }
+    var r=Number(g.effectiveDailyHours||g.dailyHours||g.observedDailyHours||0);
+    return isFinite(r)?r:0;
+  }
+  function leftCell(g){
+    var due=g.due||{};
+    if(due.confirmed && due.hoursLeft!=null){
+      var h=due.hoursLeft;
+      return h<=0 ? '<span class="over">OVERDUE '+Math.abs(h)+'h</span>' : (h<=50?'<span class="soon">'+h+'h</span>':'<span class="left">'+h+'h</span>');
+    }
+    return '<span class="left">— </span>';
+  }
+
+  async function load(){
+    try{
+      var r=await fetch('/api/service/status',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin('Please sign in.'); return; }
+      var data=await r.json();
+      render(data.generators||[]);
+    }catch(e){ document.getElementById('body').innerHTML='<div class="msg">Could not load: '+e.message+'</div>'; }
+  }
+
+  function render(gens){
+    document.getElementById('asof').textContent='As of '+fmtDMY(new Date().toISOString())+'  ·  '+gens.length+' units in the log';
+    // In-use only (drop off-hire / yard); attach rate.
+    var rows=gens.filter(function(g){ return !g.offHire; }).map(function(g){ return Object.assign({}, g, {_rate:rateOf(g)}); });
+    rows.sort(function(a,b){ return b._rate-a._rate; });
+    var heavy=rows.filter(function(g){ return g._rate>=12; });
+    var mod=rows.filter(function(g){ return g._rate>=6 && g._rate<12; });
+    var light=rows.filter(function(g){ return g._rate<6; });
+
+    var tiles=document.getElementById('tiles');
+    tiles.innerHTML=''
+      + tile('all','In use',rows.length)
+      + tile('heavy','Heavy ≥12h',heavy.length)
+      + tile('mod','Moderate 6–12h',mod.length)
+      + tile('light','Light/standby <6h',light.length);
+
+    var html='';
+    html+=group('heavy','🔴 Heavy use — near 24 hours/day (tight service cycle)', heavy, 'hd');
+    html+=group('mod','🟠 Moderate use — 6 to 12 h/day', mod, 'md');
+    html+=group('light','🟢 Light / standby — under 6 h/day (dates can be relaxed)', light, 'ld');
+    document.getElementById('body').innerHTML=html || '<div class="msg">No units in use.</div>';
+  }
+  function tile(cls,label,n){ return '<div class="tile '+cls+'"><div class="n">'+n+'</div><div class="l">'+label+'</div></div>'; }
+  function group(cls,title,list,rc){
+    if(!list.length) return '';
+    var body=list.map(function(g){
+      return '<tr>'
+        +'<td class="dg">'+g.dg+'</td>'
+        +'<td>'+(g.kva||'—')+'</td>'
+        +'<td class="wrap2">'+(g.customer||'—')+'</td>'
+        +'<td class="wrap2">'+(g.location||'—')+'</td>'
+        +'<td class="rate '+rc+'">'+g._rate.toFixed(1)+'</td>'
+        +'<td>'+fmtDMY(g.date)+'</td>'
+        +'<td>'+(g.currentHours!=null?g.currentHours+'h':'—')+'</td>'
+        +'<td>'+leftCell(g)+'</td>'
+        +'<td>'+fmtDMY(g.nextServiceDate)+'</td>'
+        +'</tr>';
+    }).join('');
+    return '<section><h2 class="'+cls+'">'+title+'<span class="cnt">'+list.length+' units</span></h2>'
+      +'<table><thead><tr>'
+      +'<th>DG</th><th>kVA</th><th>Customer</th><th>Location</th><th>h/day</th><th>Last service</th><th>Meter</th><th>Left</th><th>Next service</th>'
+      +'</tr></thead><tbody>'+body+'</tbody></table></section>';
+  }
+
+  if(TOKEN) load(); else showLogin();
+</script>
+</body>
+</html>
