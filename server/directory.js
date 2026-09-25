@@ -15,6 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const overrides = require('./overrides');
 
 const FLEET_HTML = path.join(__dirname, 'fleet.html');
 
@@ -102,20 +103,20 @@ function zoneOf(location) {
   return titleCase(raw);
 }
 
-let cache = null; // DG(upper) -> record
+let base = null; // DG(upper) -> record parsed from fleet.html (cached)
 
-function load() {
-  if (cache) return cache;
-  cache = {};
+function loadBase() {
+  if (base) return base;
+  base = {};
   try {
     const html = fs.readFileSync(FLEET_HTML, 'utf8');
     const m = html.match(/let DATA = (\[[\s\S]*?\]);/);
-    if (!m) return cache;
+    if (!m) return base;
     const data = JSON.parse(m[1]);
     data.forEach((g) => {
       const dg = String((g && g.dg) || '').trim().toUpperCase();
       if (!dg || dg === 'DG-NO') return;
-      cache[dg] = {
+      base[dg] = {
         dg,
         location: g.location || '',
         zone: zoneOf(g.location),
@@ -131,12 +132,37 @@ function load() {
       };
     });
   } catch (_) {
-    cache = cache || {};
+    base = base || {};
   }
-  return cache;
+  return base;
 }
 
-function getMap() { return Object.assign({}, load()); }
+// Layer the office's manual overrides on top of the parsed base list. Applied
+// fresh on every read (the base HTML parse stays cached) so a manual entry
+// takes effect immediately, without a restart. A unit marked `removed` is
+// dropped entirely, so it disappears from the plan, the morning route and the
+// service directory at once.
+function load() {
+  const b = loadBase();
+  const ov = overrides.getAll();
+  const out = {};
+  Object.keys(b).forEach((dg) => {
+    const o = ov[dg];
+    if (o && o.removed) return; // hidden by the office
+    const rec = Object.assign({}, b[dg]);
+    if (o) {
+      if (typeof o.lat === 'number') rec.lat = o.lat;
+      if (typeof o.lon === 'number') rec.lon = o.lon;
+      if (o.coordsLocked) rec.coordsLocked = true;
+      if (o.location) { rec.location = o.location; rec.zone = zoneOf(o.location); }
+      if (o.customer) rec.customer = o.customer;
+    }
+    out[dg] = rec;
+  });
+  return out;
+}
+
+function getMap() { return load(); }
 function get(dg) { return load()[String(dg || '').trim().toUpperCase()] || null; }
 
 module.exports = { getMap, get, zoneOf };
