@@ -624,6 +624,53 @@ function haversine(lat1,lon1,lat2,lon2){
   const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
+// Generators nearest to a point (a van's position), by straight-line km.
+// Skips the office/parked pseudo-pins and anything without real coordinates.
+function nearbyGensFor(lat, lon, limit, radiusKm){
+  if(typeof lat!=='number' || typeof lon!=='number') return [];
+  var lim=limit||6, rad=radiusKm||30;
+  return DATA
+    .filter(function(r){ return typeof r.lat==='number' && typeof r.lon==='number'
+      && !(Math.abs(r.lat-OFFICE.lat)<0.0005 && Math.abs(r.lon-OFFICE.lon)<0.0005); })
+    .map(function(r){ return { dg:r.dg, kva:r.kva, status:r.status, lat:r.lat, lon:r.lon, d:haversine(lat,lon,r.lat,r.lon) }; })
+    .filter(function(r){ return r.d<=rad; })
+    .sort(function(a,b){ return a.d-b.d; })
+    .slice(0, lim);
+}
+// Measure the real road distance van -> a generator, on demand (when the office
+// taps a row in the vehicle popup). Falls back to the straight-line figure if
+// the routing service can't be reached.
+window.measureVanToDG = function(el, vlat, vlon, glat, glon){
+  if(!el) return;
+  el.textContent='measuring road…';
+  fetch('/api/route?fromLat='+vlat+'&fromLon='+vlon+'&toLat='+glat+'&toLon='+glon, {cache:'no-store'})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(d){
+      if(d && d.distance!=null){
+        var km=Number(d.distance)/1000; var min=(d.duration!=null?Math.round(Number(d.duration)/60):null);
+        el.textContent=km.toFixed(1)+' km'+(d.approx?' (approx)':' by road')+(min!=null?(' · ~'+min+' min'):'');
+      } else { el.textContent='(road route unavailable)'; }
+    })
+    .catch(function(){ el.textContent='(road route unavailable)'; });
+};
+// Build the "nearby generators" block for a vehicle popup.
+function nearbyGensPopupHtml(vlat, vlon){
+  var near=nearbyGensFor(vlat, vlon, 6, 30);
+  if(!near.length) return '<div style="margin-top:8px;font-size:12px;color:#9aa4ad;">No generators within 30 km.</div>';
+  var rows=near.map(function(r){
+    var col=(r.status==='On Hire'?'#e8a13a':(r.status==='Available'?'#7aa0b8':(r.status==='Breakdown'?'#ff5c4d':'#4caf7d')));
+    var gmap='https://www.google.com/maps/dir/?api=1&origin='+vlat+','+vlon+'&destination='+r.lat+','+r.lon;
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid #262c33;">'
+      + '<span><b style="font-family:var(--mono,monospace)">'+r.dg+'</b> <span style="color:#9aa4ad">'+(r.kva||'?')+'KVA</span> <span style="color:'+col+';font-size:11px">●</span></span>'
+      + '<span style="display:flex;align-items:center;gap:8px;">'
+      +   '<span onclick="measureVanToDG(this,'+vlat+','+vlon+','+r.lat+','+r.lon+')" title="Tap for road distance" style="cursor:pointer;color:#e8ecef;font-weight:600;white-space:nowrap;">'+r.d.toFixed(1)+' km ⟳</span>'
+      +   '<a href="'+gmap+'" target="_blank" rel="noopener" style="text-decoration:none;">🧭</a>'
+      + '</span></div>';
+  }).join('');
+  return '<div style="margin-top:8px;font-size:12px;">'
+    + '<div style="color:#9aa4ad;margin-bottom:2px;">📍 Nearby generators (straight-line — tap km for road):</div>'
+    + rows + '</div>';
+}
 function getFiltered(){
   const cf = document.getElementById('companyFilter').value;
   return cf ? DATA.filter(r=>r.company===cf) : DATA;
@@ -1765,7 +1812,8 @@ refreshAll();
       + '<div style="margin-top:8px;display:flex;gap:6px;">'
       +   '<a href="https://www.google.com/maps/dir/?api=1&destination='+d.lat+','+d.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
       +   '<a href="https://wa.me/?text='+encodeURIComponent('Vehicle '+v.name+' location: https://maps.google.com/?q='+d.lat+','+d.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
-      + '</div>';
+      + '</div>'
+      + ((typeof d.lat==='number' && typeof d.lon==='number') ? nearbyGensPopupHtml(d.lat, d.lon) : '');
     const company=companyOf(v.name);
     const icon=truckIcon(d.course, TRUCK_COLORS[company], speeding);
     let m=vehMarkers[key];
