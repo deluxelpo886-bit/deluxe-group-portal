@@ -80,22 +80,32 @@ function logService(rec) {
   // Optional per-record override of the fixed calendar gap (e.g. a low-use
   // STANDBY 450h unit that runs far less than the 12-14 h/day contract, so its
   // service stretches to more calendar days). Falls back to FIXED_DAYS_450.
+  // A per-record fixed calendar cycle. Used for two cases:
+  //  - a low-use STANDBY 450h unit that runs far less than contract, and
+  //  - a heavy 24h-a-day unit the office keeps on a short fixed cycle (e.g. 14
+  //    days) regardless of the hours estimate.
+  // When set, it wins for ANY interval: next date = service date + fixedDays.
   const recFixedDays = (rec.fixedDays != null && isFinite(Number(rec.fixedDays)) && Number(rec.fixedDays) > 0)
     ? Math.round(Number(rec.fixedDays))
     : null;
-  const daysToService = (interval === 450)
-    ? (recFixedDays || FIXED_DAYS_450)
-    : Math.max(1, Math.round(interval / effectiveDailyHours));
+  const daysToService = recFixedDays
+    ? recFixedDays
+    : ((interval === 450)
+      ? FIXED_DAYS_450
+      : Math.max(1, Math.round(interval / effectiveDailyHours)));
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
-  // Next-service date: for 450-hour machines it is the contract 12-14 h/day
-  // projection (~35 days); otherwise an explicit date wins (authoritative
-  // asset-list / Netsonic date), else the observed-rate projection.
-  const nextServiceDate = (interval === 450)
+  // Next-service date: a fixedDays cycle wins; else for 450-hour machines it is
+  // the contract 12-14 h/day projection (~35 days); otherwise an explicit date
+  // wins (authoritative asset-list / Netsonic date), else the observed-rate
+  // projection.
+  const nextServiceDate = recFixedDays
     ? nsd.toISOString().slice(0, 10)
-    : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
-      ? String(rec.nextServiceDate).slice(0, 10)
-      : nsd.toISOString().slice(0, 10));
+    : ((interval === 450)
+      ? nsd.toISOString().slice(0, 10)
+      : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
+        ? String(rec.nextServiceDate).slice(0, 10)
+        : nsd.toISOString().slice(0, 10)));
   const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
 
   const entry = {

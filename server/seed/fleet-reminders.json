@@ -9,7 +9,7 @@
  {
   "key": "DG-549-speak-customer-usage-2026-09-24",
   "dg": "DG-549",
-  "note": "SPEAK TO CUSTOMER (SIX SIGMA, KIZAD - KHIA 8) about how they are running DG-549 - it averages ~15 h/day (439h in 29 days) and went 89h past service. Review the usage with them, explain the tighter ~3-week service cycle it needs, and agree on-site access for it. 100 kVA CAT. (Utilisation notice already prepared.)",
+  "note": "SPEAK TO CUSTOMER (SIX SIGMA, KIZAD - KHIA 8) about how they are running DG-549 - 24 HOURS/day (~15 h/day avg, 439h in 29 days) and it went 89h past service. Now serviced 22/09 and kept on a FIXED 14-DAY service cycle -> next due 06/10/2026. Review the usage, explain the 14-day cycle, and agree on-site access. 100 kVA CAT. (Utilisation notice already prepared.)",
   "dueDate": "2026-09-24",
   "createdBy": "Operations Head"
  },
@@ -28,10 +28,10 @@
   "createdBy": "Operations Head"
  },
  {
-  "key": "DG-812-heavy-use-service-2026-09-30",
+  "key": "DG-812-14day-cycle-2026-09-26",
   "dg": "DG-812",
-  "note": "DG-812 customer (MOTOR WAY, ICAD III) runs it HEAVY ~18 h/day (200h in 11 days). Serviced 12/09 @ 10527h -> next 10877h; at this rate ~150h runs out by ~30/09-01/10. Plan/service by then and keep it on a tight cycle. Check hours before then. 30 kVA Kirlosker.",
-  "dueDate": "2026-09-30",
+  "note": "DG-812 (MOTOR WAY, ICAD III) runs 24 HOURS/day. Now kept on a FIXED 14-DAY service cycle. Serviced 12/09 @ 10527h -> next service due 26/09/2026 (12/09 + 14 days). Check hours before then. 30 kVA Kirlosker.",
+  "dueDate": "2026-09-26",
   "createdBy": "Operations Head"
  },
  {

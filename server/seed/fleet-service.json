@@ -1699,9 +1699,10 @@
   "currentHours": 10727,
   "currentHoursDate": "2026-09-23",
   "nextService": 10877,
-  "nextServiceDate": "2026-09-30",
+  "nextServiceDate": "2026-09-26",
   "interval": 350,
-  "notes": "Serviced 12/09/2026 at 10527h by Adil & Hussain (all filters). Meter confirmed 10727h on 23/09 (controller, 2556 starts) -> 150h left to next (10877h). HEAVY USE ~18 h/day (200h in 11 days). 30 kVA Kirlosker, Motor Way, ICAD III."
+  "fixedDays": 14,
+  "notes": "Serviced 12/09/2026 at 10527h by Adil & Hussain (all filters). Meter confirmed 10727h on 23/09 (controller, 2556 starts) -> 150h left to next (10877h). 24-HOUR USE -> kept on a fixed 14-DAY service cycle: next 26/09/2026 (12/09 + 14 days). 30 kVA Kirlosker, Motor Way, ICAD III."
  },
  {
   "dg": "DG-35",
@@ -2553,9 +2554,10 @@
   "airFilter": true,
   "dailyHours": 15.1,
   "nextService": 6824,
-  "nextServiceDate": "2026-10-21",
+  "nextServiceDate": "2026-10-06",
   "interval": 350,
-  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513) - clears the 89h overdue. Next 6824h / 21-10-2026 (350h cycle). HEAVY USE ~15 h/day - keep a tighter ~3-week cycle. Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
+  "fixedDays": 14,
+  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513) - clears the 89h overdue. 24-HOUR USE -> kept on a fixed 14-DAY service cycle: next 06/10/2026 (22/09 + 14 days). Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
  },
  {
   "dg": "DG-467",
