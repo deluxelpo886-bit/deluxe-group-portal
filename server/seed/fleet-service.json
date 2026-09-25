@@ -458,15 +458,18 @@
   "dg": "DG-480",
   "hours": 10920,
   "date": "2026-05-09",
-  "technician": "BAKHTAMAL&ROLAND",
+  "technician": "ROLAND&BAKHTAMAL",
   "oil": true,
-  "oilFilter": false,
-  "fuelFilter": false,
+  "oilFilter": true,
+  "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 1.55,
-  "nextService": 11370,
-  "nextServiceDate": "2026-09-25",
-  "interval": 450
+  "dailyHours": 1.19,
+  "currentHours": 11086,
+  "currentHoursDate": "2026-09-25",
+  "nextService": 11270,
+  "nextServiceDate": "2027-02-27",
+  "interval": 350,
+  "notes": "Service card: serviced 10920h (oil, oil filter, fuel filter; air filter not changed), next 11270h on a 350h cycle (card written by tech). Controller meter confirmed 11086h on 25/09/2026 -> 184h left. VERY LOW USE ~1.2 h/day (standby, NOV Mussafah). Note: card uses a 350h interval although this is a 250 kVA unit (rule default is 450h) - kept to the card. 250 kVA Kirlosker."
  },
  {
   "dg": "DG-847",
@@ -1657,7 +1660,9 @@
   "nextService": 8796,
   "nextServiceDate": "2026-11-01",
   "interval": 450,
-  "notes": "Serviced 22/09/2026 at 8346h by IK & Jayaraj. 450h cycle -> next 8796h, next date +40 days = 01/11/2026. Trojan, Al Bahia, 200 kVA."
+  "currentHours": 8350,
+  "currentHoursDate": "2026-09-25",
+  "notes": "Serviced 22/09/2026 at 8346h by IK & Jayaraj (all filters). 450h cycle -> next 8796h (01/11/2026). Controller meter confirmed 8350h on 25/09/2026 (DSE 7110) -> 446h left. Trojan, Al Bahyah, 200 kVA Cummins."
  },
  {
   "dg": "DG-804",
@@ -2109,11 +2114,11 @@
   "airFilter": false,
   "dailyHours": 8.81,
   "nextService": 12244,
-  "nextServiceDate": "2026-09-28",
+  "nextServiceDate": "2026-10-01",
   "interval": 350,
-  "currentHours": 12192,
-  "currentHoursDate": "2026-09-22",
-  "notes": "Controller 12192h on 22/09 -> 52h to next service (12244). ~8.3 h/day, next ~28/09. 200 kVA, Trojan, Al Bahia."
+  "currentHours": 12198,
+  "currentHoursDate": "2026-09-25",
+  "notes": "Card confirms: serviced 17/08 @ 11894h by Sonu & Hussain (oil, oil filter, fuel filter; air filter not changed), next 12244h (350h). Controller meter confirmed 12198h on 25/09/2026 -> 46h left, service due ~01/10/2026. ~7.8 h/day. 200 kVA Kirlosker, Trojan, Al Bahyah."
  },
  {
   "dg": "DG-841",
