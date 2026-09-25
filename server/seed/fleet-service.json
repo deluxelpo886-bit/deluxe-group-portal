@@ -1899,8 +1899,11 @@
   "fuelFilter": true,
   "airFilter": true,
   "interval": 450,
+  "currentHours": 23544,
+  "currentHoursDate": "2026-09-25",
   "nextService": 23676,
-  "nextServiceDate": "2026-09-26"
+  "nextServiceDate": "2026-09-26",
+  "notes": "Serviced 03/09 @ 23226h (all filters). Controller meter confirmed 23544h on 25/09/2026 -> 132h left to next (23676). ~14.5 h/day. 250 kVA."
  },
  {
   "dg": "DG-803",
@@ -1924,9 +1927,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
+  "currentHours": 11740,
+  "currentHoursDate": "2026-09-25",
   "nextService": 11853,
   "nextServiceDate": "2026-10-02",
-  "interval": 350
+  "interval": 350,
+  "notes": "Serviced 02/09 @ 11503h (all filters). Controller meter confirmed 11740h on 25/09/2026 -> 113h left to next (11853). ~10.3 h/day. 160 kVA."
  },
  {
   "dg": "DG-843",
@@ -1983,9 +1989,11 @@
   "fuelFilter": true,
   "airFilter": false,
   "interval": 450,
+  "currentHours": 28686,
+  "currentHoursDate": "2026-09-25",
   "nextService": 28810,
   "nextServiceDate": "2026-10-02",
-  "notes": "Night service (Bright Accord office, after 3pm access). Air filter not changed."
+  "notes": "Night service (Bright Accord office, after 3pm access). Air filter not changed. Controller meter confirmed 28686h on 25/09/2026 (DSE 7320, 3333 starts) -> 124h left to next (28810). ~14.2 h/day."
  },
  {
   "dg": "DG-863",
