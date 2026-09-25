@@ -77,6 +77,7 @@
   <div class="foot">
     Usage = running hours per day. <b>Heavy</b> ≥ 12 h/day (near 24-hour running) · <b>Moderate</b> 6–12 h/day · <b>Light / standby</b> &lt; 6 h/day.
     Rate is measured from the last confirmed meter reading where available, otherwise the recorded daily rate.
+    A <b>bold</b> meter is a confirmed reading; a <b>~</b> value (meter or hours-left) is an estimate = last-service hours + rate × days since.
     Change any next-service date from the map (Edit / GPS) or the service list.
   </div>
 </div>
@@ -120,11 +121,31 @@
     var r=Number(g.effectiveDailyHours||g.dailyHours||g.observedDailyHours||0);
     return isFinite(r)?r:0;
   }
+  var TODAY=new Date().toISOString().slice(0,10);
+  // Estimated current meter for a unit with no confirmed reading:
+  // last-service hours + usage rate x days since that service.
+  function estMeter(g){
+    if(g.hours==null || !g.date) return null;
+    var days=daysBetween(String(g.date).slice(0,10), TODAY);
+    if(days<0) days=0;
+    return Math.round(Number(g.hours)+ (g._rate||0)*days);
+  }
+  function meterCell(g){
+    if(g.currentHours!=null) return '<b>'+g.currentHours+'h</b>';
+    var e=estMeter(g);
+    return e!=null ? '<span class="left">~'+e+'h</span>' : '—';
+  }
   function leftCell(g){
     var due=g.due||{};
     if(due.confirmed && due.hoursLeft!=null){
       var h=due.hoursLeft;
       return h<=0 ? '<span class="over">OVERDUE '+Math.abs(h)+'h</span>' : (h<=50?'<span class="soon">'+h+'h</span>':'<span class="left">'+h+'h</span>');
+    }
+    // Estimate hours-left from the estimated meter vs the next-service target.
+    var e=estMeter(g);
+    if(e!=null && g.nextService!=null){
+      var h2=Math.round(Number(g.nextService)-e);
+      return h2<=0 ? '<span class="over">~OVERDUE '+Math.abs(h2)+'h</span>' : (h2<=50?'<span class="soon">~'+h2+'h</span>':'<span class="left">~'+h2+'h</span>');
     }
     return '<span class="left">— </span>';
   }
@@ -171,7 +192,7 @@
         +'<td class="wrap2">'+(g.location||'—')+'</td>'
         +'<td class="rate '+rc+'">'+g._rate.toFixed(1)+'</td>'
         +'<td>'+fmtDMY(g.date)+'</td>'
-        +'<td>'+(g.currentHours!=null?g.currentHours+'h':'—')+'</td>'
+        +'<td>'+meterCell(g)+'</td>'
         +'<td>'+leftCell(g)+'</td>'
         +'<td>'+fmtDMY(g.nextServiceDate)+'</td>'
         +'</tr>';
