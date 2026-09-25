@@ -76,7 +76,7 @@ function logService(rec) {
   // gap). This is forced for 450-hour machines so the date always reflects the
   // real 12-14 h/day contract. Smaller (350-hour) machines keep the
   // explicit-date-or-observed-estimate behaviour.
-  const FIXED_DAYS_450 = 40; // ops-head rule: 450-hour service -> next date = service + 40 days
+  const FIXED_DAYS_450 = 38; // ops-head rule: 450-hour service (250 kVA and above) -> next date = service + 38 days
   // Optional per-record override of the fixed calendar gap (e.g. a low-use
   // STANDBY 450h unit that runs far less than the 12-14 h/day contract, so its
   // service stretches to more calendar days). Falls back to FIXED_DAYS_450.
