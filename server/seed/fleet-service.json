@@ -486,6 +486,20 @@
   "interval": 450
  },
  {
+  "dg": "DG-847",
+  "hours": 5191,
+  "date": "2026-09-25",
+  "technician": "IK & JAYARAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 5641,
+  "nextServiceDate": "2026-11-02",
+  "interval": 450,
+  "notes": "Serviced 25/09/2026 at 5191h by IK & Jayaraj (oil, oil filter, fuel filter; air filter not changed). Next 5641h on the 450h cycle (250 kVA+), next date +38 days = 02/11/2026. 375 kVA Weichai, Fantastic, Mussafah M40."
+ },
+ {
   "dg": "DG-531",
   "hours": 14124,
   "date": "2026-05-30",
