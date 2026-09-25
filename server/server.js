@@ -39,6 +39,7 @@ const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
 const positions = require('./positions');
 const serviceLog = require('./service');
+const overrides = require('./overrides');
 const schedule = require('./schedule');
 const spares = require('./spares');
 const sites = require('./sites');
@@ -865,7 +866,23 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
     timeZone: process.env.ALERT_TIMEZONE || 'Asia/Dubai', year: 'numeric', month: '2-digit', day: '2-digit',
   }).format(new Date());
   const dirMap = directory.getMap();
-  const generators = serviceLog.getAll().map((g) => {
+  const ov = overrides.getAll();
+  const generators = serviceLog.getAll()
+    // A unit the office manually removed disappears from the service list,
+    // the plan, the schedule and the alarms - "check all, update all".
+    .filter((g) => { const o = ov[String(g.dg || '').toUpperCase()]; return !(o && o.removed); })
+    .map((g) => {
+    // Manual office entry wins: a hand-typed current meter reading drives the
+    // hours-left calculation (and therefore the plan) exactly like a technician
+    // reading, and a forced next-service date is honoured too.
+    const o = ov[String(g.dg || '').toUpperCase()];
+    if (o) {
+      if (o.currentHours != null && isFinite(Number(o.currentHours))) {
+        g.currentHours = Number(o.currentHours);
+        if (o.currentHoursDate) g.currentHoursDate = o.currentHoursDate;
+      }
+      if (o.nextServiceDate) g.nextServiceDate = o.nextServiceDate;
+    }
     const h = hm[g.dg];
     if (h) { g.offHire = !!h.offHire; g.hireSince = h.since; g.hireNote = h.note; }
     // A unit physically in the YARD / WORK SHOP is not on hire, even if no
@@ -899,6 +916,57 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
   });
   res.json({ generators, hire: hire.getAll() });
 });
+
+// ---- Manual fleet overrides (office-entered, persistent) ----
+// The map's asset list is a base list embedded in fleet.html. These endpoints
+// let the office correct a few fields per unit by hand - GPS pin, current
+// meter hours, next-service date - or hide a unit, and have it persist across
+// restarts and deploys and "seat" on the map, the plan and the directory.
+app.get('/api/fleet/overrides', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ overrides: overrides.getAll() });
+});
+app.post('/api/fleet/override', fleetProtect, (req, res) => {
+  try {
+    const body = req.body || {};
+    const dg = String(body.dg || '').trim().toUpperCase();
+    if (!dg) return res.status(400).json({ error: 'DG number is required' });
+    const entry = overrides.set(dg, body, 'office');
+    return res.json({ ok: true, dg, override: entry });
+  } catch (e) {
+    return res.status(400).json({ error: (e && e.message) || 'Invalid' });
+  }
+});
+// Clear a unit's override entirely (revert to the base list).
+app.post('/api/fleet/override/clear', fleetProtect, (req, res) => {
+  const dg = String((req.body || {}).dg || '').trim().toUpperCase();
+  if (!dg) return res.status(400).json({ error: 'DG number is required' });
+  const cleared = overrides.clear(dg);
+  return res.json({ ok: true, dg, cleared });
+});
+
+// ---- Data backup (download everything as one JSON file) ----
+// "Keep a backup file / make data safe": one click exports the full live state
+// - service log, manual overrides, reminders, breakdowns and hire status - so
+// the office always has an off-server copy of the data.
+app.get('/api/fleet/backup', fleetProtect, (req, res) => {
+  const safe = (fn, dflt) => { try { return fn(); } catch (_) { return dflt; } };
+  const bundle = {
+    exportedAt: new Date().toISOString(),
+    app: 'deluxe-group-portal',
+    service: safe(() => serviceLog.getAll(), []),
+    overrides: safe(() => overrides.getAll(), {}),
+    reminders: safe(() => reminders.getAll(), []),
+    breakdowns: safe(() => breakdowns.getAll(), []),
+    hire: safe(() => hire.getAll(), []),
+  };
+  const stamp = new Date().toISOString().slice(0, 10);
+  res.set('Cache-Control', 'no-store');
+  res.set('Content-Type', 'application/json');
+  res.set('Content-Disposition', 'attachment; filename="deluxe-backup-' + stamp + '.json"');
+  res.send(JSON.stringify(bundle, null, 2));
+});
+
 // On-hire / off-hire status for a generator.
 app.post('/api/hire/set', fleetProtect, (req, res) => {
   try { res.json({ ok: true, entry: hire.setStatus(req.body || {}) }); }
