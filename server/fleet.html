@@ -952,6 +952,25 @@ function rebuildMap(){
     } else {
       hoursLine = hi ? `<br><small>${hi.overdue ? '⚠ overdue by '+Math.abs(hi.remaining)+'h (est)' : '~'+hi.estRun+'h run / 350h ('+hi.pct+'%) est'}</small>` : '';
     }
+    // Utilisation: how many hours/day this unit runs, and its band (same as the
+    // Utilisation Report). Measured from the last confirmed meter reading where
+    // available, else the recorded daily rate.
+    let utilLine='';
+    (function(){
+      var rate=null;
+      if(_svcH && _svcH.currentHours!=null && _svcH.currentHoursDate && _svcH.date && _svcH.hours!=null){
+        var d=(new Date(String(_svcH.currentHoursDate).slice(0,10)+'T00:00:00') - new Date(String(_svcH.date).slice(0,10)+'T00:00:00'))/86400000;
+        var dh=Number(_svcH.currentHours)-Number(_svcH.hours);
+        if(d>0 && dh>0) rate=dh/d;
+      }
+      if(rate===null){ var rr=Number((_svcH&&(_svcH.effectiveDailyHours||_svcH.dailyHours))||r.daily_hours_rate||0); if(isFinite(rr)&&rr>0) rate=rr; }
+      if(rate===null) return;
+      var band, col;
+      if(rate>=12){ band='Heavy (near 24h)'; col='#ff5c4d'; }
+      else if(rate>=6){ band='Moderate'; col='#e8a13a'; }
+      else { band='Light / standby'; col='#43c088'; }
+      utilLine='<br><small>⏱️ Usage: <b style="color:'+col+'">'+rate.toFixed(1)+' h/day</b> — '+band+'</small>';
+    })();
     const genShare = '<div style="margin-top:8px;display:flex;gap:6px;">'
       +'<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
       +'<button onclick="openEdit('+DATA.indexOf(r)+')" style="flex:1;text-align:center;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;cursor:pointer;">✏️ Edit / GPS</button>'
@@ -975,7 +994,7 @@ function rebuildMap(){
     const contactLine = (r.contact && String(r.contact).trim()) ? `<br><a href="tel:${String(r.contact).replace(/[^+0-9]/g,'')}" style="color:#4caf7d;text-decoration:none;">📞 ${r.contact}</a>` : '';
     const gateLine = r.gatePass ? `<br><b style="color:#e8a13a;">🎫 GATE PASS REQUIRED — arrange before visiting</b>` : '';
     const siteLine = (r._mates && r._mates.length) ? `<br><span style="color:#5b9bd5;">📌 Same site — ${r._mates.length+1} gensets here: <b>${r.dg}, ${r._mates.join(', ')}</b></span>` : '';
-    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}${contactLine}${gateLine}${siteLine}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
+    m.bindPopup(`<b>${r.dg}</b> — ${r.kva} KVA — ${r.brand||''} — <span style="color:${r.company==='Energy'?'#5b9bd5':'#e8a13a'};">${r.company}</span><br>${r.status}${r.customer&&r.customer!=='-'?' — '+r.customer:''}<br>${r.location}${contactLine}${gateLine}${siteLine}<br><small>next service ${r.next_service||'—'}</small>${hoursLine}${utilLine}${r.maps_link?`<br><a href="${r.maps_link}" target="_blank" style="color:#5b9bd5;">📍 Open exact location in Google Maps</a>`:''}${svcLine}${genShare}${contractBtn}${endBtn}`);
     var svcH = (svc && svc.hours!=null) ? svc.hours : (r.last_service_hours!=null ? r.last_service_hours : null);
     var labelTxt = (availOn && svcH!=null) ? (r.dg + ' · ' + svcH + 'h') : r.dg;
     m.bindTooltip(labelTxt, { permanent: true, direction: 'top', offset: [0,-13], className: 'dg-label' });
