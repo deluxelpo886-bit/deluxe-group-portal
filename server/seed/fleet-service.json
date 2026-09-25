@@ -467,7 +467,7 @@
   "currentHours": 11086,
   "currentHoursDate": "2026-09-25",
   "nextService": 11270,
-  "nextServiceDate": "2027-02-27",
+  "nextServiceDate": "2026-10-18",
   "interval": 350,
   "notes": "Service card: serviced 10920h (oil, oil filter, fuel filter; air filter not changed), next 11270h on a 350h cycle (card written by tech). Controller meter confirmed 11086h on 25/09/2026 -> 184h left. VERY LOW USE ~1.2 h/day (standby, NOV Mussafah). Note: card uses a 350h interval although this is a 250 kVA unit (rule default is 450h) - kept to the card. 250 kVA Kirlosker."
  },
