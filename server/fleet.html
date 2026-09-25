@@ -663,7 +663,7 @@ function nearbyGensPopupHtml(vlat, vlon){
     return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid #262c33;">'
       + '<span><b style="font-family:var(--mono,monospace)">'+r.dg+'</b> <span style="color:#9aa4ad">'+(r.kva||'?')+'KVA</span> <span style="color:'+col+';font-size:11px">●</span></span>'
       + '<span style="display:flex;align-items:center;gap:8px;">'
-      +   '<span onclick="measureVanToDG(this,'+vlat+','+vlon+','+r.lat+','+r.lon+')" title="Tap for road distance" style="cursor:pointer;color:#e8ecef;font-weight:600;white-space:nowrap;">'+r.d.toFixed(1)+' km ⟳</span>'
+      +   '<span onclick="measureVanToDG(this,'+vlat+','+vlon+','+r.lat+','+r.lon+')" title="Tap for road distance" style="cursor:pointer;color:#000;font-weight:700;white-space:nowrap;">'+r.d.toFixed(1)+' km ⟳</span>'
       +   '<a href="'+gmap+'" target="_blank" rel="noopener" style="text-decoration:none;">🧭</a>'
       + '</span></div>';
   }).join('');
