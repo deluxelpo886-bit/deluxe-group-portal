@@ -171,6 +171,32 @@
   .tabbar a:active{background:rgba(255,255,255,.05);}
   @media(max-width:720px){.tabbar{display:block;}}
 
+  /* ---------- entrance & interaction polish (additive · motion-safe) ---------- */
+  a.big,a.card,.kpi{will-change:transform;}
+  a.big:hover .glow{opacity:1;}
+  /* premium light-sweep across the primary cards on hover */
+  a.big::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;pointer-events:none;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-18deg);opacity:0;}
+  @media (prefers-reduced-motion: no-preference){
+    @keyframes deRise{from{opacity:0;transform:translateY(11px);}to{opacity:1;transform:none;}}
+    @keyframes dePulse{0%,100%{box-shadow:0 0 0 3px rgba(67,192,136,.18);}50%{box-shadow:0 0 0 6px rgba(67,192,136,.04);}}
+    @keyframes deSheen{0%{left:-60%;opacity:0;}22%{opacity:1;}100%{left:125%;opacity:0;}}
+    .hero,.install,.sec-h,.login,footer{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
+    .hero{animation-delay:.02s;} .sec-h{animation-delay:.10s;} .login{animation-delay:.24s;} footer{animation-delay:.28s;}
+    .kpi{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
+    .kpi:nth-child(1){animation-delay:.05s;} .kpi:nth-child(2){animation-delay:.10s;}
+    .kpi:nth-child(3){animation-delay:.15s;} .kpi:nth-child(4){animation-delay:.20s;}
+    a.big{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
+    a.big:nth-child(1){animation-delay:.14s;} a.big:nth-child(2){animation-delay:.19s;} a.big:nth-child(3){animation-delay:.24s;}
+    .grid a.card{animation:deRise .45s cubic-bezier(.22,.61,.36,1) both;}
+    .grid a.card:nth-child(1){animation-delay:.20s;} .grid a.card:nth-child(2){animation-delay:.25s;}
+    .grid a.card:nth-child(3){animation-delay:.30s;} .grid a.card:nth-child(4){animation-delay:.34s;}
+    .grid a.card:nth-child(5){animation-delay:.38s;} .grid a.card:nth-child(6){animation-delay:.42s;}
+    .grid a.card:nth-child(n+7){animation-delay:.46s;}
+    #statusDot{animation:dePulse 2.6s ease-in-out infinite;}
+    a.big:hover::after{animation:deSheen .85s ease;}
+  }
+
   @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
