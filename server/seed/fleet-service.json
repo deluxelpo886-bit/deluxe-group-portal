@@ -2475,6 +2475,20 @@
   "notes": "Serviced 29/08 @ 32266h (oil, oil filter, fuel filter; air filter not). Controller meter confirmed 32663h on 26/09/2026 -> 47h OVERDUE (next was 32616). ~14 h/day - SERVICE NOW. Hydro Power, near E75 (KIZAD / Al Samha), 160 kVA."
  },
  {
+  "dg": "DG-466",
+  "hours": 32664,
+  "date": "2026-09-26",
+  "technician": "ADEEL & SA",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": false,
+  "airFilter": true,
+  "nextService": 33014,
+  "nextServiceDate": "2026-10-21",
+  "interval": 350,
+  "notes": "Serviced 26/09/2026 at 32664h by Adeel & SA (oil, oil filter, air filter done; FUEL FILTER not changed per card - pending). Clears the 47h overdue. Next 33014h (350h cycle) ~ 21/10/2026 at ~14 h/day. Hydro Power, near E75 (KIZAD / Al Samha), 160 kVA."
+ },
+ {
   "dg": "DG-837",
   "hours": 9543,
   "date": "2026-08-27",
