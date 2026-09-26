@@ -300,5 +300,11 @@
   "offHire": true,
   "since": "2026-09-26",
   "note": "Off-hire 26/09 - returned to yard for repair (ran overdue and broke down); replaced by DG-815 at OSAI, KIZAD. 40 kVA Kirlosker."
+ },
+ {
+  "dg": "DG-837",
+  "offHire": true,
+  "since": "2026-09-26",
+  "note": "Off-hire 26/09 - contract ended, returned to yard (was on hire to City Const, Al Shawamekh SHM11). 80 kVA Perkins."
  }
 ]
