@@ -282,5 +282,11 @@
   "offHire": true,
   "since": "2026-09-23",
   "note": "Off-hire 23/09 - returned to yard (was on hire to Mawaad, Al Faya North / Al Asheesh). 50 kVA Tata."
+ },
+ {
+  "dg": "DG-820",
+  "offHire": true,
+  "since": "2026-09-26",
+  "note": "Off-hire 26/09 - returned to yard (was on hire to Hydro Power, Baniyas West WB1). 45 kVA Kirlosker."
  }
 ]
