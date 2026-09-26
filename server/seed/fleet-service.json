@@ -2492,6 +2492,20 @@
   "notes": "Serviced 27/08 @ 10856h. Controller meter confirmed 11156h on 26/09/2026 -> 50h left to next (11206), service due ~01/10. ~10 h/day. City Const, Al Shawamekh SHM11, 45 kVA."
  },
  {
+  "dg": "DG-832",
+  "hours": 11157,
+  "date": "2026-09-26",
+  "technician": "SONU&HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 11507,
+  "nextServiceDate": "2026-10-31",
+  "interval": 350,
+  "notes": "Serviced 26/09/2026 at 11157h by Sonu & Hussain (all filters). Next 11507h (350h cycle) ~ 31/10/2026 at ~10 h/day. City Const, Al Shawamekh SHM11, 45 kVA."
+ },
+ {
   "dg": "DG-820",
   "hours": 1357,
   "date": "2026-08-27",
