@@ -54,6 +54,18 @@
     .hd,.md,.ld,td.rate{color:#000!important;}
     section{page-break-inside:auto;} tr{page-break-inside:avoid;}
   }
+
+  /* ---- UX polish (additive · motion-safe) ---- */
+  .btn{transition:transform .12s ease, box-shadow .15s ease;}
+  .btn:active{transform:scale(.97);}
+  @media (prefers-reduced-motion: no-preference){
+    @keyframes uxRise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+    .tile{animation:uxRise .45s cubic-bezier(.22,.61,.36,1) both;}
+    .tile:nth-child(1){animation-delay:.04s;} .tile:nth-child(2){animation-delay:.09s;}
+    .tile:nth-child(3){animation-delay:.14s;} .tile:nth-child(4){animation-delay:.19s;}
+    section{animation:uxRise .5s cubic-bezier(.22,.61,.36,1) both;}
+    section:nth-of-type(2){animation-delay:.10s;} section:nth-of-type(3){animation-delay:.16s;}
+  }
 </style>
 </head>
 <body>
