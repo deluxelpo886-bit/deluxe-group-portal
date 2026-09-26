@@ -2465,9 +2465,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "currentHours": 32663,
+  "currentHoursDate": "2026-09-26",
   "nextService": 32616,
   "nextServiceDate": "2026-09-12",
-  "interval": 350
+  "interval": 350,
+  "notes": "Serviced 29/08 @ 32266h (oil, oil filter, fuel filter; air filter not). Controller meter confirmed 32663h on 26/09/2026 -> 47h OVERDUE (next was 32616). ~14 h/day - SERVICE NOW. Hydro Power, near E75 (KIZAD / Al Samha), 160 kVA."
  },
  {
   "dg": "DG-837",
