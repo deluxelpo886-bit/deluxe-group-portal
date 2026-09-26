@@ -2077,9 +2077,51 @@ refreshAll();
       +'<p style="margin:0 0 14px;color:#8b95a1;font-size:12.5px;">Distance is measured since you opened this page (live session).</p>'
       +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="text-align:left;color:#8b95a1;font-size:11px;text-transform:uppercase;">'
       +'<th style="padding:8px 10px;">Truck</th><th style="padding:8px 10px;">Company</th><th style="padding:8px 10px;">Status</th><th style="padding:8px 10px;text-align:right;">Speed</th><th style="padding:8px 10px;text-align:right;">Distance (session)</th><th style="padding:8px 10px;">Last fix</th>'
-      +'</tr></thead><tbody>'+(rows||'<tr><td colspan="6" style="padding:14px;color:#8b95a1;">No live vehicles yet.</td></tr>')+'</tbody></table></div></div>';
+      +'</tr></thead><tbody>'+(rows||'<tr><td colspan="6" style="padding:14px;color:#8b95a1;">No live vehicles yet.</td></tr>')+'</tbody></table></div>'
+      // ---- Daily stops section ----
+      +'<div style="margin-top:22px;border-top:1px solid #2c333a;padding-top:14px;">'
+      +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">'
+      +'<h3 style="margin:0;font-size:15px;">Daily stops — where &amp; how long</h3>'
+      +'<input type="date" id="stopDate" value="'+(new Date().toISOString().slice(0,10))+'" style="background:#0f1419;color:#e8ecef;border:1px solid #2c333a;border-radius:8px;padding:6px 8px;">'
+      +'<button id="stopLoad" style="background:#c8102e;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">Load</button>'
+      +'</div>'
+      +'<p style="margin:0 0 10px;color:#8b95a1;font-size:12px;">Each stop is matched to the nearest generator (within 300 m). A long stop at a genset = service time.</p>'
+      +'<div id="stopsBody"><p style="color:#8b95a1;font-size:12.5px;padding:8px 0;">Pick a date and press Load.</p></div>'
+      +'</div>'
+      +'</div>';
     reportModal.style.display='flex';
     document.getElementById('reportClose').addEventListener('click', function(){ reportModal.style.display='none'; });
+    document.getElementById('stopLoad').addEventListener('click', function(){ loadStops(document.getElementById('stopDate').value); });
+    loadStops(document.getElementById('stopDate').value);
+  }
+  function fmtDur(min){ if(min<60) return min+' min'; var h=Math.floor(min/60), m=min%60; return h+'h'+(m?(' '+m+'m'):''); }
+  function fmtT(iso){ try{ return new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){ return '-'; } }
+  function loadStops(date){
+    var body=document.getElementById('stopsBody'); if(!body) return;
+    body.innerHTML='<p style="color:#8b95a1;font-size:12.5px;padding:8px 0;">Loading stops for '+date+'…</p>';
+    var tok=localStorage.getItem('deluxeFleetToken')||'';
+    fetch('/api/positions/stops?date='+encodeURIComponent(date),{cache:'no-store',headers:{Authorization:'Bearer '+tok}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d.configured===false){ body.innerHTML='<p style="color:#e8a13a;font-size:12.5px;">Live GPS (Total Secure) is not connected, so stop history is unavailable.</p>'; return; }
+        if(d.error){ body.innerHTML='<p style="color:#e0644a;font-size:12.5px;">Could not load stops: '+d.error+'</p>'; return; }
+        var stops=(d.stops||[]).filter(function(s){ return (s.durationMin||0)>=3; }).sort(function(a,b){ return new Date(a.startTime)-new Date(b.startTime); });
+        if(!stops.length){ body.innerHTML='<p style="color:#8b95a1;font-size:12.5px;">No stops recorded for '+date+'.</p>'; return; }
+        var rows=stops.map(function(s){
+          var atGen=!!s.nearDg;
+          return '<tr style="border-bottom:1px solid #2c333a;">'
+            +'<td style="padding:7px 10px;font-family:monospace;">'+(s.deviceName||'')+'</td>'
+            +'<td style="padding:7px 10px;'+(atGen?'color:#43c088;font-weight:600;':(s.atYard?'color:#8b95a1;':''))+'">'+s.place+'</td>'
+            +'<td style="padding:7px 10px;">'+fmtT(s.startTime)+'</td>'
+            +'<td style="padding:7px 10px;">'+fmtT(s.endTime)+'</td>'
+            +'<td style="padding:7px 10px;text-align:right;font-weight:700;font-family:monospace;">'+fmtDur(s.durationMin||0)+'</td>'
+            +'</tr>';
+        }).join('');
+        body.innerHTML='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="text-align:left;color:#8b95a1;font-size:11px;text-transform:uppercase;">'
+          +'<th style="padding:7px 10px;">Van</th><th style="padding:7px 10px;">Stopped at (nearest genset)</th><th style="padding:7px 10px;">Arrived</th><th style="padding:7px 10px;">Left</th><th style="padding:7px 10px;text-align:right;">Time</th>'
+          +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+      })
+      .catch(function(e){ body.innerHTML='<p style="color:#e0644a;font-size:12.5px;">Could not load stops: '+e.message+'</p>'; });
   }
   reportBtn.addEventListener('click', openReport);
 
