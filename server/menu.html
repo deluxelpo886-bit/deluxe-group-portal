@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Deluxe Operations</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0e1216">
+<meta name="theme-color" content="#0a0e13">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest-portal.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,126 +13,108 @@
 <meta name="apple-mobile-web-app-title" content="Deluxe Ops">
 <style>
   :root{
-    --bg:#0e1216; --bg2:#11161b;
-    --card:rgba(28,34,41,.72); --card-solid:#181e24;
-    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
-    --text:#eef2f5; --muted:#9aa5b1; --faint:#6c7783;
-    --amber:#f0a93b; --green:#43c088; --blue:#5aa2e6; --purple:#b18be6;
-    --gold:#e8c168; --red:#ec6a52; --teal:#38c6c0;
+    --bg:#0a0e13; --bg2:#0e141c;
+    --card:#141b24; --card2:#171f29; --glass:rgba(23,31,41,.66);
+    --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+    --text:#eef3f7; --ink:#eef3f7; --muted:#93a1b0; --faint:#5f6b78;
+    --amber:#f4a83a; --teal:#33c6c0; --green:#41c98a; --blue:#5aa2e6; --red:#f0655a; --violet:#a98be6; --gold:#e9c56b;
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
     --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
-    --shadow:0 10px 30px -12px rgba(0,0,0,.55);
+    --sh:0 18px 40px -20px rgba(0,0,0,.7); --sh2:0 8px 22px -12px rgba(0,0,0,.6);
     --radius:20px;
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{-webkit-text-size-adjust:100%;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
   body{
-    margin:0;color:var(--text);font-family:var(--sans);
-    background:var(--bg);
-    background-image:
-      radial-gradient(120% 90% at 88% -8%, rgba(240,169,59,.16), transparent 46%),
-      radial-gradient(120% 90% at -8% 4%, rgba(90,162,230,.14), transparent 44%),
-      linear-gradient(180deg,var(--bg2),var(--bg) 320px);
-    background-attachment:fixed;
-    padding:0 0 calc(96px + env(safe-area-inset-bottom));
-    min-height:100vh;letter-spacing:-.01em;
+    color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background-color:var(--bg);
+    background:
+      radial-gradient(120% 80% at 100% -6%, rgba(244,168,58,.10), transparent 55%),
+      radial-gradient(120% 70% at -10% 4%, rgba(51,198,192,.09), transparent 50%),
+      linear-gradient(180deg,var(--bg2),var(--bg) 340px);
+    min-height:100vh;
   }
-  .wrap{max-width:920px;margin:0 auto;padding:0 16px;}
+  .wrap{max-width:480px;margin:0 auto;padding:16px 16px calc(96px + env(safe-area-inset-bottom));}
 
   /* ---------- App header ---------- */
-  .appbar{
-    position:sticky;top:0;z-index:40;
-    padding:calc(env(safe-area-inset-top) + 14px) 16px 12px;
-    background:linear-gradient(180deg,rgba(14,18,22,.92),rgba(14,18,22,.62) 70%,transparent);
-    backdrop-filter:saturate(150%) blur(14px);-webkit-backdrop-filter:saturate(150%) blur(14px);
-  }
-  .appbar-in{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+  .appbar{position:sticky;top:0;z-index:40;backdrop-filter:saturate(150%) blur(14px);-webkit-backdrop-filter:saturate(150%) blur(14px);
+    background:linear-gradient(180deg,rgba(10,14,19,.9),rgba(10,14,19,.55));border-bottom:1px solid var(--line);}
+  .appbar-in{max-width:480px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 16px;}
   .logos{display:flex;align-items:center;gap:9px;}
-  .logos img{height:34px;width:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
-  .appbar .spacer{flex:1;}
-  .status-pill{
-    display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
-    color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--line);
-    padding:7px 12px;border-radius:999px;white-space:nowrap;
-  }
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(67,192,136,.18);}
-  .dot.warn{background:var(--amber);box-shadow:0 0 0 3px rgba(240,169,59,.18);}
+  .logos img{height:30px;width:auto;display:block;}
+  .spacer{flex:1;}
+  .status-pill{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:var(--green);
+    background:rgba(65,201,138,.12);border:1px solid rgba(65,201,138,.28);border-radius:999px;padding:7px 12px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(65,201,138,.18);}
+  .dot.warn{background:var(--amber);box-shadow:0 0 0 4px rgba(244,168,58,.18);}
 
   /* ---------- Hero ---------- */
-  .hero{padding:14px 0 6px;}
-  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;}
-  .hello{font-size:29px;font-weight:800;margin:7px 0 3px;letter-spacing:-.02em;line-height:1.1;}
-  .hello span{background:linear-gradient(90deg,#fff,#c9d2db);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-  .today{color:var(--muted);font-size:13.5px;}
+  .hero{position:relative;overflow:hidden;border-radius:22px;padding:20px;margin-top:16px;border:1px solid var(--line2);
+    background:linear-gradient(145deg,rgba(244,168,58,.13),rgba(20,27,36,.55) 44%),var(--card);box-shadow:var(--sh);}
+  .hero::after{content:"";position:absolute;right:-34px;top:-34px;width:150px;height:150px;border-radius:50%;
+    background:radial-gradient(circle at 32% 32%, rgba(244,168,58,.26), transparent 62%);pointer-events:none;}
+  .eyebrow{position:relative;font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--amber);font-weight:700;}
+  .hello{position:relative;font-size:27px;font-weight:800;letter-spacing:-.02em;margin:6px 0 3px;}
+  .today{position:relative;color:var(--muted);font-size:13px;font-weight:600;}
 
-  /* ---------- KPI tiles ---------- */
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 6px;}
-  @media(max-width:620px){.kpis{grid-template-columns:1fr 1fr;}}
-  .kpi{
-    position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);
-    border-radius:16px;padding:14px 14px 13px;box-shadow:var(--shadow);
-    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  }
-  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--amber));}
-  .kpi .k-num{font-size:27px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
-  .kpi .k-lbl{color:var(--muted);font-size:11.5px;font-weight:600;margin-top:7px;text-transform:uppercase;letter-spacing:.05em;}
-  .kpi.due{--accent:var(--red);} .kpi.plan{--accent:var(--gold);}
-  .kpi.hire{--accent:var(--green);} .kpi.fleet{--accent:var(--blue);}
-  .kpi .k-num.dash{color:var(--faint);}
+  /* ---------- Alert strip (live) ---------- */
+  .alert{display:flex;align-items:center;gap:13px;margin-top:13px;border-radius:18px;padding:14px 15px;text-decoration:none;color:var(--text);
+    background:linear-gradient(135deg,rgba(240,101,90,.16),rgba(244,168,58,.10));border:1px solid rgba(240,101,90,.28);box-shadow:var(--sh2);}
+  .alert.ok{background:linear-gradient(135deg,rgba(65,201,138,.14),rgba(51,198,192,.08));border-color:rgba(65,201,138,.28);}
+  .alert .ic{width:42px;height:42px;flex:0 0 auto;border-radius:13px;background:rgba(240,101,90,.18);display:grid;place-items:center;font-size:21px;}
+  .alert.ok .ic{background:rgba(65,201,138,.16);}
+  .alert .tx b{font-size:14.5px;} .alert .tx span{display:block;color:var(--muted);font-size:12px;font-weight:600;margin-top:1px;}
+  .alert .go{margin-left:auto;color:var(--amber);font-weight:800;font-size:20px;}
+  .alert.ok .go{color:var(--green);}
 
   /* ---------- section headings ---------- */
-  .sec-h{display:flex;align-items:center;gap:10px;margin:30px 2px 13px;}
-  .sec-h h2{font-size:14px;font-weight:700;margin:0;letter-spacing:.02em;color:var(--text);}
+  .sec-h{display:flex;align-items:center;gap:10px;margin:22px 3px 12px;}
+  .sec-h h2{font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin:0;color:var(--muted);}
   .sec-h .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent);}
 
+  /* ---------- KPI tiles ---------- */
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+  .kpi{position:relative;overflow:hidden;text-decoration:none;color:var(--text);border-radius:18px;padding:15px;background:var(--card);border:1px solid var(--line);box-shadow:var(--sh2);}
+  .kpi .kc{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;margin-bottom:10px;background:rgba(255,255,255,.05);}
+  .kpi .k-num{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1;}
+  .kpi .k-num.dash{color:var(--faint);}
+  .kpi .k-lbl{color:var(--muted);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
+  .kpi .tag{position:absolute;top:14px;right:14px;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;}
+  .kpi.fleet .kc{background:rgba(90,162,230,.16);color:var(--blue);}
+  .kpi.hire .kc{background:rgba(65,201,138,.16);color:var(--green);} .kpi.hire .tag{background:rgba(65,201,138,.14);color:var(--green);}
+  .kpi.due .kc{background:rgba(240,101,90,.16);color:var(--red);} .kpi.due .tag{background:rgba(240,101,90,.14);color:var(--red);}
+  .kpi.plan .kc{background:rgba(233,197,107,.16);color:var(--gold);} .kpi.plan .tag{background:rgba(233,197,107,.14);color:var(--gold);}
+  .kpi:active{transform:scale(.99);}
+
   /* ---------- primary quick actions ---------- */
-  .primary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-  @media(max-width:620px){.primary{grid-template-columns:1fr;}}
-  a.big{
-    position:relative;overflow:hidden;text-decoration:none;color:var(--text);
-    border-radius:var(--radius);padding:18px;min-height:118px;display:flex;flex-direction:column;
-    justify-content:space-between;border:1px solid var(--line2);box-shadow:var(--shadow);
-    background:var(--card-solid);transition:transform .12s ease,border-color .15s,box-shadow .15s;
-  }
-  a.big .glow{position:absolute;inset:0;opacity:.9;background:
-     radial-gradient(120% 120% at 100% 0%, var(--g1), transparent 60%);pointer-events:none;}
-  a.big .b-ico{font-size:26px;position:relative;}
+  .primary{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  a.big{position:relative;overflow:hidden;text-decoration:none;color:var(--text);border-radius:var(--radius);padding:16px;min-height:120px;
+    display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line2);box-shadow:var(--sh2);background:var(--card2);
+    transition:transform .12s ease,border-color .15s,box-shadow .15s;}
+  a.big .glow{position:absolute;inset:0;opacity:.85;background:radial-gradient(120% 120% at 100% 0%, var(--g1), transparent 62%);pointer-events:none;}
+  a.big .b-ico{position:relative;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:23px;background:rgba(255,255,255,.06);border:1px solid var(--line2);}
   a.big .b-t{position:relative;}
-  a.big .b-title{font-size:17px;font-weight:800;letter-spacing:-.01em;}
-  a.big .b-sub{position:relative;color:var(--muted);font-size:12.5px;margin-top:2px;}
+  a.big .b-title{font-size:15.5px;font-weight:800;letter-spacing:-.01em;}
+  a.big .b-sub{color:var(--muted);font-size:11.5px;margin-top:2px;}
   a.big:active{transform:scale(.985);}
-  a.big:hover{border-color:var(--line2);transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(0,0,0,.6);}
-  a.cmd{--g1:rgba(236,106,82,.30);}
-  a.map{--g1:rgba(90,162,230,.28);}
-  a.svc{--g1:rgba(67,192,136,.26);}
-  a.plan{--g1:rgba(240,169,59,.26);}
+  a.big:hover{transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(0,0,0,.6);}
+  a.cmd{--g1:rgba(240,101,90,.32);} a.map{--g1:rgba(90,162,230,.34);} a.svc{--g1:rgba(65,201,138,.30);} a.plan{--g1:rgba(244,168,58,.30);}
 
   /* ---------- tool grid ---------- */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
-  @media(min-width:640px){.grid{grid-template-columns:1fr 1fr 1fr;}}
-  a.card{
-    display:flex;gap:12px;align-items:flex-start;text-decoration:none;color:var(--text);
-    background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;
-    transition:transform .1s ease,border-color .15s,background .15s;
-    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  }
-  a.card:hover{border-color:var(--line2);background:rgba(38,46,54,.8);transform:translateY(-1px);}
+  a.card{display:flex;gap:12px;align-items:flex-start;text-decoration:none;color:var(--text);
+    background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:14px;
+    backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);transition:transform .1s ease,border-color .15s,background .15s;}
+  a.card:hover{border-color:var(--line2);background:rgba(38,46,54,.7);transform:translateY(-1px);}
   a.card:active{transform:scale(.99);}
-  a.card .chip{
-    flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-    font-size:20px;background:var(--cbg,rgba(255,255,255,.06));border:1px solid var(--line);
-  }
+  a.card .chip{flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--cbg,rgba(255,255,255,.06));border:1px solid var(--line);}
   a.card .c-body{min-width:0;}
   a.card .c-title{font-size:14.5px;font-weight:700;letter-spacing:-.01em;}
   a.card .c-desc{color:var(--muted);font-size:12px;line-height:1.45;margin-top:3px;}
 
   /* ---------- install banner ---------- */
-  .install{
-    display:none;align-items:center;gap:12px;margin:16px 0 2px;padding:14px 15px;border-radius:16px;
-    background:linear-gradient(135deg,rgba(240,169,59,.18),rgba(90,162,230,.13));
-    border:1px solid var(--line2);box-shadow:var(--shadow);
-    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  }
+  .install{display:none;align-items:center;gap:12px;margin:16px 0 2px;padding:14px 15px;border-radius:16px;
+    background:linear-gradient(135deg,rgba(244,168,58,.18),rgba(90,162,230,.12));border:1px solid var(--line2);box-shadow:var(--sh2);}
   .install .ic{flex:0 0 auto;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:23px;background:rgba(255,255,255,.07);border:1px solid var(--line);}
   .install .it{flex:1;min-width:0;line-height:1.35;}
   .install .it b{display:block;font-size:14.5px;letter-spacing:-.01em;}
@@ -143,60 +125,47 @@
   .install .x{flex:0 0 auto;background:transparent;border:none;color:var(--faint);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;align-self:flex-start;}
 
   /* ---------- login note ---------- */
-  .login{
-    margin-top:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-    background:linear-gradient(180deg,rgba(28,34,41,.7),rgba(24,30,36,.7));
-    border:1px solid var(--line);border-radius:16px;padding:15px 17px;font-size:13px;color:var(--muted);
-  }
+  .login{margin-top:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:15px 17px;font-size:13px;color:var(--muted);}
   .login .key{font-size:18px;}
   .login b{color:var(--text);}
-  .login code{font-family:var(--mono);color:var(--amber);background:rgba(240,169,59,.1);padding:2px 7px;border-radius:6px;font-size:12.5px;}
+  .login code{font-family:var(--mono);color:var(--amber);background:rgba(244,168,58,.1);padding:2px 7px;border-radius:6px;font-size:12.5px;}
   footer{margin-top:20px;color:var(--faint);font-size:12px;line-height:1.6;text-align:center;}
 
-  /* ---------- bottom tab bar (mobile) ---------- */
-  .tabbar{
-    position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;
-    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-    background:linear-gradient(180deg,rgba(14,18,22,.6),rgba(12,15,19,.96) 40%);
-    backdrop-filter:saturate(160%) blur(16px);-webkit-backdrop-filter:saturate(160%) blur(16px);
-    border-top:1px solid var(--line);
-  }
-  .tabbar-in{max-width:920px;margin:0 auto;display:flex;justify-content:space-around;align-items:stretch;}
-  .tabbar a{
-    flex:1;text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;
-    gap:3px;padding:6px 2px;font-size:10.5px;font-weight:600;border-radius:12px;transition:color .15s,background .15s;
-  }
+  /* ---------- bottom tab bar ---------- */
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;
+    padding:8px 10px calc(9px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(10,14,19,.4),rgba(9,12,17,.96) 45%);
+    backdrop-filter:saturate(160%) blur(16px);-webkit-backdrop-filter:saturate(160%) blur(16px);border-top:1px solid var(--line);}
+  .tabbar-in{max-width:480px;margin:0 auto;display:flex;justify-content:space-around;align-items:stretch;}
+  .tabbar a{flex:1;text-decoration:none;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;font-size:10.5px;font-weight:700;border-radius:12px;transition:color .15s,background .15s;}
   .tabbar a .t-ico{font-size:20px;line-height:1;}
   .tabbar a.active{color:var(--amber);}
+  .tabbar a.active .t-ico{filter:drop-shadow(0 3px 8px rgba(244,168,58,.5));}
   .tabbar a:active{background:rgba(255,255,255,.05);}
-  @media(max-width:720px){.tabbar{display:block;}}
 
-  /* ---------- entrance & interaction polish (additive · motion-safe) ---------- */
+  /* ---------- entrance & interaction polish (motion-safe) ---------- */
   a.big,a.card,.kpi{will-change:transform;}
-  a.big:hover .glow{opacity:1;}
-  /* premium light-sweep across the primary cards on hover */
   a.big::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;pointer-events:none;
     background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-18deg);opacity:0;}
   @media (prefers-reduced-motion: no-preference){
     @keyframes deRise{from{opacity:0;transform:translateY(11px);}to{opacity:1;transform:none;}}
-    @keyframes dePulse{0%,100%{box-shadow:0 0 0 3px rgba(67,192,136,.18);}50%{box-shadow:0 0 0 6px rgba(67,192,136,.04);}}
+    @keyframes dePulse{0%,100%{box-shadow:0 0 0 4px rgba(65,201,138,.18);}50%{box-shadow:0 0 0 7px rgba(65,201,138,.04);}}
     @keyframes deSheen{0%{left:-60%;opacity:0;}22%{opacity:1;}100%{left:125%;opacity:0;}}
-    .hero,.install,.sec-h,.login,footer{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
-    .hero{animation-delay:.02s;} .sec-h{animation-delay:.10s;} .login{animation-delay:.24s;} footer{animation-delay:.28s;}
+    .hero,.alert,.install,.sec-h,.login,footer{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
+    .hero{animation-delay:.02s;} .alert{animation-delay:.06s;} .sec-h{animation-delay:.10s;} .login{animation-delay:.22s;} footer{animation-delay:.26s;}
     .kpi{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
-    .kpi:nth-child(1){animation-delay:.05s;} .kpi:nth-child(2){animation-delay:.10s;}
-    .kpi:nth-child(3){animation-delay:.15s;} .kpi:nth-child(4){animation-delay:.20s;}
+    .kpi:nth-child(1){animation-delay:.06s;} .kpi:nth-child(2){animation-delay:.11s;}
+    .kpi:nth-child(3){animation-delay:.16s;} .kpi:nth-child(4){animation-delay:.21s;}
     a.big{animation:deRise .5s cubic-bezier(.22,.61,.36,1) both;}
-    a.big:nth-child(1){animation-delay:.14s;} a.big:nth-child(2){animation-delay:.19s;} a.big:nth-child(3){animation-delay:.24s;}
+    a.big:nth-child(1){animation-delay:.13s;} a.big:nth-child(2){animation-delay:.18s;} a.big:nth-child(3){animation-delay:.23s;} a.big:nth-child(4){animation-delay:.28s;}
     .grid a.card{animation:deRise .45s cubic-bezier(.22,.61,.36,1) both;}
-    .grid a.card:nth-child(1){animation-delay:.20s;} .grid a.card:nth-child(2){animation-delay:.25s;}
-    .grid a.card:nth-child(3){animation-delay:.30s;} .grid a.card:nth-child(4){animation-delay:.34s;}
-    .grid a.card:nth-child(5){animation-delay:.38s;} .grid a.card:nth-child(6){animation-delay:.42s;}
-    .grid a.card:nth-child(n+7){animation-delay:.46s;}
+    .grid a.card:nth-child(1){animation-delay:.05s;} .grid a.card:nth-child(2){animation-delay:.10s;}
+    .grid a.card:nth-child(3){animation-delay:.14s;} .grid a.card:nth-child(4){animation-delay:.18s;} .grid a.card:nth-child(n+5){animation-delay:.22s;}
     #statusDot{animation:dePulse 2.6s ease-in-out infinite;}
     a.big:hover::after{animation:deSheen .85s ease;}
   }
-
+  [hidden]{display:none!important;}
   @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
@@ -211,17 +180,24 @@
       <img src="/logo-energy.png" alt="Deluxe Energy Solutions">
     </div>
     <div class="spacer"></div>
-    <div class="status-pill" id="statusPill"><span class="dot" id="statusDot"></span><span id="statusTxt">System online</span></div>
+    <div class="status-pill" id="statusPill"><span class="dot" id="statusDot"></span><span id="statusTxt">LIVE</span></div>
   </div>
 </header>
 
 <div class="wrap">
 
   <section class="hero">
-    <div class="eyebrow">Deluxe Heavy Equipment &amp; Energy Solutions</div>
+    <div class="eyebrow">Operations Console</div>
     <div class="hello"><span id="greet">Operations Console</span></div>
     <div class="today" id="today">—</div>
   </section>
+
+  <!-- Live alert strip (shown when units need attention) -->
+  <a class="alert" id="alertStrip" href="/serviceplan" hidden>
+    <div class="ic" id="alertIc">⚠️</div>
+    <div class="tx"><b id="alertTitle">—</b><span id="alertSub"></span></div>
+    <div class="go">›</div>
+  </a>
 
   <!-- Install app banner (hidden unless installable & not yet installed) -->
   <section class="install" id="installBanner">
@@ -233,10 +209,10 @@
 
   <!-- Live KPIs -->
   <section class="kpis" id="kpis">
-    <div class="kpi fleet"><div class="k-num dash" id="kFleet">—</div><div class="k-lbl">Generators</div></div>
-    <div class="kpi hire"><div class="k-num dash" id="kHire">—</div><div class="k-lbl">On hire</div></div>
-    <a class="kpi due" href="/command#services" style="text-decoration:none;color:inherit;"><div class="k-num dash" id="kDue">—</div><div class="k-lbl">Service due ›</div></a>
-    <a class="kpi plan" href="/command#services" style="text-decoration:none;color:inherit;"><div class="k-num dash" id="kPlan">—</div><div class="k-lbl">Plan soon ›</div></a>
+    <div class="kpi fleet"><div class="kc">🔌</div><div class="k-num dash" id="kFleet">—</div><div class="k-lbl">Generators</div></div>
+    <div class="kpi hire"><div class="kc">✅</div><span class="tag" id="kHireTag"></span><div class="k-num dash" id="kHire">—</div><div class="k-lbl">On hire</div></div>
+    <a class="kpi due" href="/command#services"><div class="kc">🛠️</div><span class="tag" id="kDueTag"></span><div class="k-num dash" id="kDue">—</div><div class="k-lbl">Service due ›</div></a>
+    <a class="kpi plan" href="/command#services"><div class="kc">⏳</div><span class="tag" id="kPlanTag"></span><div class="k-num dash" id="kPlan">—</div><div class="k-lbl">Plan soon ›</div></a>
   </section>
 
   <!-- Reminders (shown only when there are open reminders) -->
@@ -249,12 +225,12 @@
     <a class="big cmd" href="/command">
       <span class="glow"></span>
       <span class="b-ico">🌅</span>
-      <span class="b-t"><div class="b-title">Morning Command</div><div class="b-sub">Breakdowns → parts → services</div></span>
+      <span class="b-t"><div class="b-title">Morning Command</div><div class="b-sub">Breakdowns → parts → jobs</div></span>
     </a>
     <a class="big map" href="/fleet">
       <span class="glow"></span>
       <span class="b-ico">🗺️</span>
-      <span class="b-t"><div class="b-title">Live Fleet Map</div><div class="b-sub">Pins, teams &amp; alerts</div></span>
+      <span class="b-t"><div class="b-title">Live Fleet Map</div><div class="b-sub">Pins, teams &amp; routes</div></span>
     </a>
     <a class="big svc" href="/service">
       <span class="glow"></span>
@@ -271,37 +247,37 @@
   <!-- Operations -->
   <div class="sec-h"><h2>Operations</h2><span class="rule"></span></div>
   <section class="grid">
-    <a class="card" href="/dashboard" style="--cbg:rgba(240,169,59,.12)"><div class="chip">📊</div><div class="c-body"><div class="c-title">Dashboard</div><div class="c-desc">Fleet, services, spares &amp; sites at a glance.</div></div></a>
-    <a class="card" href="/utilisation" style="--cbg:rgba(91,155,213,.12)"><div class="chip">⏱️</div><div class="c-body"><div class="c-title">Utilisation Report</div><div class="c-desc">Heavy vs light-use units, printable in one page.</div></div></a>
-    <a class="card" href="/health" style="--cbg:rgba(67,192,136,.12)"><div class="chip">🩺</div><div class="c-body"><div class="c-title">Health Check</div><div class="c-desc">One-tap cross-check of the whole portal.</div></div></a>
-    <a class="card" href="/strategy" style="--cbg:rgba(236,106,82,.12)"><div class="chip">🧠</div><div class="c-body"><div class="c-title">Service Strategy</div><div class="c-desc">Dispatch brain — go-now / this-week / hold.</div></div></a>
-    <a class="card" href="/technicians" style="--cbg:rgba(232,193,104,.12)"><div class="chip">👷</div><div class="c-body"><div class="c-title">Technicians &amp; Teams</div><div class="c-desc">Who serviced what, by team &amp; period.</div></div></a>
+    <a class="card" href="/dashboard" style="--cbg:rgba(244,168,58,.14)"><div class="chip">📊</div><div class="c-body"><div class="c-title">Dashboard</div><div class="c-desc">Fleet, services, spares &amp; sites at a glance.</div></div></a>
+    <a class="card" href="/utilisation" style="--cbg:rgba(90,162,230,.14)"><div class="chip">⏱️</div><div class="c-body"><div class="c-title">Utilisation Report</div><div class="c-desc">Heavy vs light-use units, printable in one page.</div></div></a>
+    <a class="card" href="/health" style="--cbg:rgba(65,201,138,.14)"><div class="chip">🩺</div><div class="c-body"><div class="c-title">Health Check</div><div class="c-desc">One-tap cross-check of the whole portal.</div></div></a>
+    <a class="card" href="/strategy" style="--cbg:rgba(240,101,90,.14)"><div class="chip">🧠</div><div class="c-body"><div class="c-title">Service Strategy</div><div class="c-desc">Dispatch brain — go-now / this-week / hold.</div></div></a>
+    <a class="card" href="/technicians" style="--cbg:rgba(233,197,107,.14)"><div class="chip">👷</div><div class="c-body"><div class="c-title">Technicians &amp; Teams</div><div class="c-desc">Who serviced what, by team &amp; period.</div></div></a>
   </section>
 
   <!-- Service & planning -->
   <div class="sec-h"><h2>Service &amp; planning</h2><span class="rule"></span></div>
   <section class="grid">
-    <a class="card" href="/servicecard" style="--cbg:rgba(240,169,59,.12)"><div class="chip">🃏</div><div class="c-body"><div class="c-title">Service Card</div><div class="c-desc">Pre-filled card with the exact parts to load.</div></div></a>
-    <a class="card" href="/serviceplan" style="--cbg:rgba(90,162,230,.12)"><div class="chip">📋</div><div class="c-body"><div class="c-title">Service Plan (PDF)</div><div class="c-desc">Branded, print-ready plan for the team.</div></div></a>
-    <a class="card" href="/schedule" style="--cbg:rgba(232,193,104,.12)"><div class="chip">📅</div><div class="c-body"><div class="c-title">Daily Schedule</div><div class="c-desc">Plan &amp; tick off jobs across the teams.</div></div></a>
-    <a class="card" href="/specs" style="--cbg:rgba(56,198,192,.12)"><div class="chip">🧰</div><div class="c-body"><div class="c-title">Parts &amp; Oil</div><div class="c-desc">Filters &amp; oil per unit — send on WhatsApp.</div></div></a>
+    <a class="card" href="/servicecard" style="--cbg:rgba(244,168,58,.14)"><div class="chip">🃏</div><div class="c-body"><div class="c-title">Service Card</div><div class="c-desc">Pre-filled card with the exact parts to load.</div></div></a>
+    <a class="card" href="/serviceplan" style="--cbg:rgba(90,162,230,.14)"><div class="chip">📋</div><div class="c-body"><div class="c-title">Service Plan (PDF)</div><div class="c-desc">Branded, print-ready plan for the team.</div></div></a>
+    <a class="card" href="/schedule" style="--cbg:rgba(233,197,107,.14)"><div class="chip">📅</div><div class="c-body"><div class="c-title">Daily Schedule</div><div class="c-desc">Plan &amp; tick off jobs across the teams.</div></div></a>
+    <a class="card" href="/specs" style="--cbg:rgba(56,198,192,.14)"><div class="chip">🧰</div><div class="c-body"><div class="c-title">Parts &amp; Oil</div><div class="c-desc">Filters &amp; oil per unit — send on WhatsApp.</div></div></a>
   </section>
 
   <!-- Hire & contracts -->
   <div class="sec-h"><h2>Hire &amp; contracts</h2><span class="rule"></span></div>
   <section class="grid">
-    <a class="card" href="/delivery" style="--cbg:rgba(90,162,230,.12)"><div class="chip">📦</div><div class="c-body"><div class="c-title">Delivery Note</div><div class="c-desc">On-hire hand-over note &amp; flip to on-hire.</div></div></a>
-    <a class="card" href="/return" style="--cbg:rgba(67,192,136,.12)"><div class="chip">↩️</div><div class="c-body"><div class="c-title">Return Note</div><div class="c-desc">Off-hire return note with final meter.</div></div></a>
-    <a class="card" href="/contract" style="--cbg:rgba(240,169,59,.12)"><div class="chip">🗂️</div><div class="c-body"><div class="c-title">Contract File</div><div class="c-desc">One page per unit — customer, rate &amp; notes.</div></div></a>
-    <a class="card" href="/rentals" style="--cbg:rgba(67,192,136,.12)"><div class="chip">💰</div><div class="c-body"><div class="c-title">Rental Income</div><div class="c-desc">Rates, total income, earning vs idle.</div></div></a>
-    <a class="card" href="/sites" style="--cbg:rgba(177,139,230,.12)"><div class="chip">📍</div><div class="c-body"><div class="c-title">Customer Sites</div><div class="c-desc">Location, access, rate &amp; delivery review.</div></div></a>
+    <a class="card" href="/delivery" style="--cbg:rgba(90,162,230,.14)"><div class="chip">📦</div><div class="c-body"><div class="c-title">Delivery Note</div><div class="c-desc">On-hire hand-over note &amp; flip to on-hire.</div></div></a>
+    <a class="card" href="/return" style="--cbg:rgba(65,201,138,.14)"><div class="chip">↩️</div><div class="c-body"><div class="c-title">Return Note</div><div class="c-desc">Off-hire return note with final meter.</div></div></a>
+    <a class="card" href="/contract" style="--cbg:rgba(244,168,58,.14)"><div class="chip">🗂️</div><div class="c-body"><div class="c-title">Contract File</div><div class="c-desc">One page per unit — customer, rate &amp; notes.</div></div></a>
+    <a class="card" href="/rentals" style="--cbg:rgba(65,201,138,.14)"><div class="chip">💰</div><div class="c-body"><div class="c-title">Rental Income</div><div class="c-desc">Rates, total income, earning vs idle.</div></div></a>
+    <a class="card" href="/sites" style="--cbg:rgba(177,139,230,.14)"><div class="chip">📍</div><div class="c-body"><div class="c-title">Customer Sites</div><div class="c-desc">Location, access, rate &amp; delivery review.</div></div></a>
   </section>
 
   <!-- Fleet care -->
   <div class="sec-h"><h2>Fleet care</h2><span class="rule"></span></div>
   <section class="grid">
-    <a class="card" href="/spares" style="--cbg:rgba(177,139,230,.12)"><div class="chip">🧩</div><div class="c-body"><div class="c-title">Spare Parts</div><div class="c-desc">Needed → Ordered → Received → Fitted.</div></div></a>
-    <a class="card" href="/breakdowns" style="--cbg:rgba(236,106,82,.12)"><div class="chip">🚨</div><div class="c-body"><div class="c-title">Breakdown Log</div><div class="c-desc">Log &amp; resolve — response &amp; repeat offenders.</div></div></a>
+    <a class="card" href="/spares" style="--cbg:rgba(177,139,230,.14)"><div class="chip">🧩</div><div class="c-body"><div class="c-title">Spare Parts</div><div class="c-desc">Needed → Ordered → Received → Fitted.</div></div></a>
+    <a class="card" href="/breakdowns" style="--cbg:rgba(240,101,90,.14)"><div class="chip">🚨</div><div class="c-body"><div class="c-title">Breakdown Log</div><div class="c-desc">Log &amp; resolve — response &amp; repeat offenders.</div></div></a>
   </section>
 
   <div class="login">
@@ -360,26 +336,54 @@
     document.getElementById('today').textContent=dstr;
   }catch(e){}
 
-  // --- live KPIs (only if signed in on this device) ---
+  // --- live KPIs + alert strip (only if signed in on this device) ---
   var tok=null; try{ tok=localStorage.getItem('deluxeFleetToken'); }catch(e){}
   function setNum(id,v){ var el=document.getElementById(id); if(!el)return; el.textContent=String(v); el.classList.remove('dash'); }
+  function setTag(id,v){ var el=document.getElementById(id); if(el) el.textContent=v||''; }
   if(tok){
     fetch('/api/service/status',{headers:{'Authorization':'Bearer '+tok}})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(d){
         var gens=(d&&d.generators)||[];
-        var onhire=0,due=0,plan=0;
+        var onhire=0,due=0,plan=0,dueNames=[];
         gens.forEach(function(g){
           var off=g.offHire;
           if(!off) onhire++;
           var st=g.due&&g.due.state;
-          if(st==='due') due++;
+          if(st==='due'){ due++; if(!off) dueNames.push(g.dg); }
           else if(st==='plan') plan++;
         });
         setNum('kFleet',gens.length);
         setNum('kHire',onhire);
         setNum('kDue',due);
         setNum('kPlan',plan);
+        // context tags
+        if(gens.length) setTag('kHireTag', Math.round(onhire/gens.length*100)+'%');
+        setTag('kDueTag', due>0 ? 'now' : '');
+        setTag('kPlanTag', plan>0 ? '7 days' : '');
+        // live alert strip
+        var strip=document.getElementById('alertStrip');
+        if(strip){
+          if(due>0){
+            strip.classList.remove('ok'); strip.setAttribute('href','/serviceplan');
+            document.getElementById('alertIc').textContent='⚠️';
+            document.getElementById('alertTitle').textContent = due+' generator'+(due!==1?'s':'')+' need service now'+(plan?(' · '+plan+' due soon'):'');
+            document.getElementById('alertSub').textContent = dueNames.length ? (dueNames.slice(0,3).join(', ')+(dueNames.length>3?' +'+(dueNames.length-3)+' more':'')) : 'Tap to open the service plan';
+            strip.hidden=false;
+          } else if(plan>0){
+            strip.classList.remove('ok'); strip.setAttribute('href','/serviceplan');
+            document.getElementById('alertIc').textContent='🗓️';
+            document.getElementById('alertTitle').textContent = plan+' generator'+(plan!==1?'s':'')+' due soon';
+            document.getElementById('alertSub').textContent = 'Plan them into this week’s route';
+            strip.hidden=false;
+          } else {
+            strip.classList.add('ok'); strip.setAttribute('href','/serviceplan');
+            document.getElementById('alertIc').textContent='✅';
+            document.getElementById('alertTitle').textContent = 'All units on schedule';
+            document.getElementById('alertSub').textContent = 'No services due right now';
+            strip.hidden=false;
+          }
+        }
       })
       .catch(function(){ /* leave dashes if not authorised */ });
 
