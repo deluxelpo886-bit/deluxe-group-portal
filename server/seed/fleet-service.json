@@ -3170,5 +3170,20 @@
   "nextServiceDate": null,
   "interval": 450,
   "notes": "New genset added 22/09/2026 - 500 kVA Perkins. In yard, available for hire. New unit (450h service interval); confirm hours before first hire."
+ },
+ {
+  "dg": "DG-563",
+  "hours": 0,
+  "date": "2026-09-26",
+  "technician": "ADEEL & MJ.K",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 24,
+  "nextService": 350,
+  "nextServiceDate": "2026-10-10",
+  "interval": 350,
+  "notes": "NEW ASSET added 26/09/2026 - 82.5 kVA Kirloskar. Deployed to EL MASRIA CEMENT (Shakhbout City), replacing DG-473 (off-hired to yard). 24-HOUR site - enter the actual controller meter on the first reading, then keep a tight ~2-week cycle. 350h interval."
  }
 ]
