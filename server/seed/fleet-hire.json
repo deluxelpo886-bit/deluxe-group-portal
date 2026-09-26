@@ -306,5 +306,17 @@
   "offHire": true,
   "since": "2026-09-26",
   "note": "Off-hire 26/09 - contract ended, returned to yard (was on hire to City Const, Al Shawamekh SHM11). 80 kVA Perkins."
+ },
+ {
+  "dg": "DG-563",
+  "offHire": false,
+  "since": "2026-09-26",
+  "note": "On hire 26/09 - NEW asset deployed to El Masria Cement (Shakhbout City), replacing DG-473. 82.5 kVA Kirloskar."
+ },
+ {
+  "dg": "DG-473",
+  "offHire": true,
+  "since": "2026-09-26",
+  "note": "Off-hire 26/09 - returned to yard, replaced by DG-563 at El Masria Cement (Shakhbout City). 100 kVA Weber."
  }
 ]
