@@ -2484,9 +2484,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "currentHours": 11156,
+  "currentHoursDate": "2026-09-26",
   "nextService": 11206,
-  "nextServiceDate": "2026-09-25",
-  "interval": 350
+  "nextServiceDate": "2026-10-01",
+  "interval": 350,
+  "notes": "Serviced 27/08 @ 10856h. Controller meter confirmed 11156h on 26/09/2026 -> 50h left to next (11206), service due ~01/10. ~10 h/day. City Const, Al Shawamekh SHM11, 45 kVA."
  },
  {
   "dg": "DG-820",
