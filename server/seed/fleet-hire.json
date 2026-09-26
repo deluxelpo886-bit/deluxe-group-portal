@@ -288,5 +288,17 @@
   "offHire": true,
   "since": "2026-09-26",
   "note": "Off-hire 26/09 - returned to yard (was on hire to Hydro Power, Baniyas West WB1). 45 kVA Kirlosker."
+ },
+ {
+  "dg": "DG-815",
+  "offHire": false,
+  "since": "2026-09-26",
+  "note": "On hire 26/09 - deployed from yard to OSAI, KIZAD (Khalifa Ind. City B), replacing DG-537 (which broke down). 30 kVA Perkins."
+ },
+ {
+  "dg": "DG-537",
+  "offHire": true,
+  "since": "2026-09-26",
+  "note": "Off-hire 26/09 - returned to yard for repair (ran overdue and broke down); replaced by DG-815 at OSAI, KIZAD. 40 kVA Kirlosker."
  }
 ]

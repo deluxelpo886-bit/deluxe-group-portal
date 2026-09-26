@@ -92,7 +92,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-24-r14');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-24-r15');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -104,7 +104,7 @@ try {
   const hireSeedPath = path.join(__dirname, 'seed', 'fleet-hire.json');
   if (fs.existsSync(hireSeedPath)) {
     const hs = JSON.parse(fs.readFileSync(hireSeedPath, 'utf8'));
-    const r = hire.applySeed(hs, 'fleet-hire-2026-09-26a');
+    const r = hire.applySeed(hs, 'fleet-hire-2026-09-26b');
     if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
@@ -186,6 +186,9 @@ try {
 // time, it is left alone. Matches by the stable seedKey.
 try {
   const RESOLVE_BD = {
+    'DG-537-overdue-breakdown-2026-09-24': {
+      cause: 'Replaced on site by DG-815 (26/09) - DG-537 collected to yard for repair.', category: 'Mechanical',
+    },
     'DG-826-startermotor-2026-09-16': {
       cause: 'New starter motor fitted (17/09) - unit back in service.', category: 'Electrical',
     },
@@ -246,7 +249,7 @@ try {
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {
-  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23'];
+  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }

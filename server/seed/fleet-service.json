@@ -1486,6 +1486,20 @@
   "interval": 350
  },
  {
+  "dg": "DG-815",
+  "hours": 37261,
+  "date": "2026-09-26",
+  "technician": "IMRAN&JAIRAZ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 37611,
+  "nextServiceDate": "2026-10-25",
+  "interval": 350,
+  "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD (Khalifa Ind. City B). Checked/serviced at 37261h, next 37611h. Per Netsonic SER1-000528. 30 kVA Perkins."
+ },
+ {
   "dg": "DG-542",
   "hours": 1679,
   "date": "2026-08-11",
