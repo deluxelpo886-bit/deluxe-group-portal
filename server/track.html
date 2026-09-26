@@ -100,8 +100,8 @@
 
     <div class="team" id="teamBox" hidden>
       <div class="av" id="teamAv">DE</div>
-      <div class="who"><b id="teamName">Deluxe technician</b><small>Assigned team</small></div>
-      <a class="call" href="tel:0553356428">📞 Call</a>
+      <div class="who"><b id="teamName">Deluxe technician</b><small id="teamSub">Assigned team</small></div>
+      <a class="call" id="callBtn" href="tel:0553356428">📞 Call</a>
     </div>
   </div>
 
@@ -149,12 +149,18 @@
       tl.insertAdjacentHTML('beforeend',
         '<div class="step '+cls+'"><div class="dotb">'+dotTxt+'</div><div class="lbl">'+esc(lbl)+'</div><div class="meta">'+esc(meta)+'</div></div>');
     });
-    // team
-    if(d.team){
+    // team + technician contact
+    if(d.team || d.teamContact){
       document.getElementById('teamBox').hidden=false;
-      document.getElementById('teamName').textContent=d.team;
-      var init=String(d.team).replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase()||'DE';
+      var primary = d.teamContact || d.team || 'Deluxe technician';
+      document.getElementById('teamName').textContent = primary;
+      document.getElementById('teamSub').textContent = d.teamContact ? ('Assigned technician'+(d.team?(' · '+d.team):'')) : 'Assigned team';
+      var init=String(primary).replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase()||'DE';
       document.getElementById('teamAv').textContent=init;
+      // Call button: the assigned technician's number when known, else the office.
+      var call=document.getElementById('callBtn');
+      if(d.teamPhone){ call.href='tel:'+d.teamPhone; call.innerHTML='📞 Call '+(d.teamContact||'technician'); }
+      else { call.href='tel:0553356428'; call.innerHTML='📞 Call office'; }
     }
     show('content');
   }

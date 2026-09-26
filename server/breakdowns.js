@@ -11,6 +11,26 @@
 const fs = require('fs');
 const path = require('path');
 
+// Technician / driver phone directory. When a breakdown's assigned team names a
+// technician, the customer tracker shows a working Call button to that person.
+// Numbers are E.164 for the tel: link.
+const TECH_PHONES = {
+  SONU: '+971583883891',
+  IMRAN: '+971568810583',
+  ADEEL: '+971562534830',
+};
+function phoneForTeam(team) {
+  const s = String(team || '').toUpperCase();
+  const names = Object.keys(TECH_PHONES);
+  for (let i = 0; i < names.length; i += 1) {
+    if (s.indexOf(names[i]) !== -1) {
+      const k = names[i];
+      return { name: k.charAt(0) + k.slice(1).toLowerCase(), phone: TECH_PHONES[k] };
+    }
+  }
+  return null;
+}
+
 // Store next to the database so the data lives on the same persistent disk
 // (a plain app-folder path is wiped on every Render deploy).
 const DIR = path.dirname(process.env.DB_PATH || path.join(__dirname, '..', 'data', 'deluxe.db'));
@@ -201,6 +221,8 @@ function getPublic(token) {
     priority: it.priority,
     symptom: it.symptom || '',
     team: it.truck || '',
+    teamContact: (phoneForTeam(it.truck) || {}).name || '',
+    teamPhone: (phoneForTeam(it.truck) || {}).phone || '',
     reportedAt: it.reportedAt,
     resolvedAt: it.resolvedAt,
     history: hist,
