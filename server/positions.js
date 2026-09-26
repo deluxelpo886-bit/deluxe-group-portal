@@ -194,4 +194,46 @@ function getSnapshot() {
   return snapshot;
 }
 
-module.exports = { startPolling, getSnapshot, isConfigured, loadLastKnown };
+// Traccar STOP report for all devices in a time window. A "stop" is a period
+// the vehicle sat still - which is what tells the office where a van stopped
+// and for how long (e.g. how long a genset service took). Returns
+// [{deviceId, deviceName, startTime, endTime, durationMs, lat, lon, address}].
+async function getStops(fromISO, toISO) {
+  if (!isConfigured()) return { configured: false, stops: [] };
+  try {
+    if (!cookie) await login();
+    let devices;
+    try { devices = await api('/api/devices'); }
+    catch (e) {
+      if (String(e.message).includes('unauthorized')) { await login(); devices = await api('/api/devices'); }
+      else throw e;
+    }
+    const ids = (devices || []).map((d) => d.id).filter((x) => x != null);
+    if (!ids.length) return { configured: true, stops: [] };
+    const q = ids.map((id) => 'deviceId=' + id).join('&')
+      + '&from=' + encodeURIComponent(fromISO) + '&to=' + encodeURIComponent(toISO);
+    let rows;
+    try { rows = await api('/api/reports/stops?' + q); }
+    catch (e) {
+      if (String(e.message).includes('unauthorized')) { await login(); rows = await api('/api/reports/stops?' + q); }
+      else throw e;
+    }
+    const nameById = {};
+    (devices || []).forEach((d) => { nameById[d.id] = d.name; });
+    const stops = (rows || []).map((s) => ({
+      deviceId: s.deviceId,
+      deviceName: s.deviceName || nameById[s.deviceId] || ('Device ' + s.deviceId),
+      startTime: s.startTime,
+      endTime: s.endTime,
+      durationMs: s.duration,
+      lat: s.latitude,
+      lon: s.longitude,
+      address: s.address || '',
+    }));
+    return { configured: true, stops };
+  } catch (e) {
+    return { configured: true, stops: [], error: (e && e.message) || 'stops fetch failed' };
+  }
+}
+
+module.exports = { startPolling, getSnapshot, isConfigured, loadLastKnown, getStops };

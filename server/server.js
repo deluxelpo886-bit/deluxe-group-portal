@@ -684,6 +684,50 @@ app.get('/api/positions', fleetProtect, (req, res) => {
   res.json(positions.getSnapshot());
 });
 
+// Daily STOPS report: where each van stopped on a given day and for how long,
+// with each stop matched to the nearest generator so the office can see, e.g.,
+// "stopped 45 min at DG-844" (how long a service took). Data comes from the
+// Total Secure / Traccar stop report.
+app.get('/api/positions/stops', fleetProtect, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const tz = process.env.ALERT_TIMEZONE || 'Asia/Dubai';
+  const date = /^\d{4}-\d\d-\d\d$/.test(req.query.date || '')
+    ? req.query.date
+    : new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  // Dubai is UTC+4 with no DST, so the local day is a fixed +04:00 window.
+  const fromISO = new Date(date + 'T00:00:00+04:00').toISOString();
+  const toISO = new Date(date + 'T23:59:59+04:00').toISOString();
+  const R = 6371000, toRad = (d) => (d * Math.PI) / 180;
+  const distM = (aLat, aLon, bLat, bLon) => {
+    const dLat = toRad(bLat - aLat), dLon = toRad(bLon - aLon);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+  const r = await positions.getStops(fromISO, toISO);
+  const dir = directory.getMap();
+  const gens = Object.keys(dir).map((k) => dir[k]).filter((g) => typeof g.lat === 'number' && typeof g.lon === 'number');
+  const OFFICE = { lat: 24.3462062, lon: 54.4998379 };
+  function nearestGen(lat, lon) {
+    let best = null;
+    gens.forEach((g) => { const d = distM(lat, lon, g.lat, g.lon); if (!best || d < best.d) best = { dg: g.dg, loc: g.location, customer: g.customer, d }; });
+    return best;
+  }
+  const stops = (r.stops || []).map((s) => {
+    const atYard = (typeof s.lat === 'number') && distM(s.lat, s.lon, OFFICE.lat, OFFICE.lon) < 250;
+    const near = (typeof s.lat === 'number') ? nearestGen(s.lat, s.lon) : null;
+    const atGen = (near && near.d <= 300) ? near : null;
+    return Object.assign({}, s, {
+      durationMin: Math.round((s.durationMs || 0) / 60000),
+      atYard,
+      nearDg: atYard ? null : (atGen ? atGen.dg : null),
+      place: atYard
+        ? 'Yard / Office'
+        : (atGen ? (atGen.dg + (atGen.customer ? ' — ' + atGen.customer : '')) : (s.address || 'Unknown location')),
+    });
+  });
+  res.json({ date, configured: r.configured, error: r.error || null, stops });
+});
+
 // ---------- Map tile proxy (same-origin tiles for the fleet map) ----------
 // Some mobile networks block third-party tile CDNs (OpenStreetMap etc.), which
 // leaves the fleet map with a blank grey background. Relaying tiles through our
