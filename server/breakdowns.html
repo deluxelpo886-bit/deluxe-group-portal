@@ -83,6 +83,17 @@
   .apptabbar a .ti{font-size:20px;line-height:1;}
   .apptabbar a.active{color:#e8a13a;}
   .apptabbar a:active{background:rgba(255,255,255,.06);}
+
+  /* ---- UX polish (additive · motion-safe) ---- */
+  .btn{transition:transform .12s ease, box-shadow .15s ease;}
+  .btn:active{transform:scale(.97);}
+  @media (prefers-reduced-motion: no-preference){
+    @keyframes uxRise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+    .stat{animation:uxRise .45s cubic-bezier(.22,.61,.36,1) both;}
+    .stat:nth-child(1){animation-delay:.04s;} .stat:nth-child(2){animation-delay:.09s;}
+    .stat:nth-child(3){animation-delay:.14s;} .stat:nth-child(4){animation-delay:.19s;}
+    .card,.panel,.sec{animation:uxRise .5s cubic-bezier(.22,.61,.36,1) both;animation-delay:.10s;}
+  }
 </style>
 <link rel="stylesheet" href="/theme.css">
 <link rel="manifest" href="/manifest-portal.json">
