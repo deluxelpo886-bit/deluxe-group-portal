@@ -134,6 +134,10 @@ function logService(rec) {
     // boot, 'manual' when a person entered it in the app. Manual entries are
     // protected from being wiped by a later seed re-import (see applySeed).
     source: (rec.source === 'seed') ? 'seed' : 'manual',
+    // Office-set priority flag: forces the unit to show RED / top of the service
+    // plan regardless of the hours/date window (e.g. a far-site big set the office
+    // wants serviced on the next trip no matter what).
+    urgent: !!rec.urgent,
     updatedAt: new Date().toISOString(),
   };
 

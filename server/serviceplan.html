@@ -170,6 +170,7 @@
   function dayDiff(from,to){ if(!to)return null; var a=new Date(from+'T00:00:00'),b=new Date(to+'T00:00:00'); return Math.round((b-a)/86400000); }
   function pill(u){
     // Confirmed hour-meter reading -> show real hours left (hours-first). Otherwise fall back to the date estimate.
+    if(u && u.urgent){ var extra=(u.confirmed && u.hoursLeft!=null)?(' · '+u.hoursLeft+'h left'):(u.daysTo!=null?(' · due '+u.daysTo+'d'):''); return '<span class="pill over">🔴 URGENT'+extra+'</span>'; }
     if(u && u.confirmed && u.hoursLeft!=null){ var h=u.hoursLeft; if(h<=0)return '<span class="pill over">OVERDUE '+(-h)+'h</span>'; if(h<=50)return '<span class="pill soon">'+h+'h left</span>'; return '<span class="pill ok">'+h+'h left</span>'; }
     var daysTo=(u&&typeof u==='object')?u.daysTo:u;
     if(daysTo==null)return '<span class="pill ok">—</span>';
@@ -215,14 +216,18 @@
       // a low-use unit whose 450h "+40 day" date passed long before the hours are due).
       var inHours=(hasConf && hl<=HRS_SOON);
       var inWindow=(!hasConf && daysTo!==null && daysTo<=win);
-      if(!inWindow && !inHours) return;
+      // An office "urgent" flag forces the unit into the plan (and red), whatever
+      // the hours/date window says.
+      var urgent=!!g.urgent;
+      if(!inWindow && !inHours && !urgent) return;
       // Urgency in "days" so date-estimate and hours-confirmed units sort together:
       // a confirmed reading is converted to days using the unit's real running rate.
       var rate=g.effectiveDailyHours||g.observedDailyHours||12; if(!(rate>0))rate=12;
       var urg=null;
       if(hasConf) urg=hl/rate;            // confirmed -> hours drive urgency, stale date ignored
       else if(inWindow) urg=daysTo;
-      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
+      if(urgent) urg=-999;                // office-flagged units sort to the very top
+      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urgent:urgent,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
     });
     if(!picked.length){ $('out').innerHTML='<div class="empty">✅ Nothing due in this window for on-hire units.'+(paused?'<br><small>'+paused+' off-hire units paused in the yard are not shown.</small>':'')+'</div>'; $('totBadge').textContent='0 units'; $('signRow').style.display='none'; return; }
     var zones={}; picked.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
