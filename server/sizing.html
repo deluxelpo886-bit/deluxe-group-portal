@@ -23,18 +23,22 @@
   .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
   .card h2 .ic{font-size:16px;}
   .acrow{display:flex;gap:8px;align-items:center;margin-bottom:9px;}
-  .acrow select,.acrow input,.fld input,.fld select{background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 11px;font-size:14px;font-family:var(--sans);}
-  .acrow select{flex:1;} .acrow .qty{width:74px;text-align:center;} .acrow .rm{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
+  .acrow select,.acrow input,.fld input,.fld select,.jf input{background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 11px;font-size:14px;font-family:var(--sans);}
+  .acrow select{flex:1;min-width:0;} .acrow .lab{flex:1;min-width:0;} .acrow .qty{width:64px;text-align:center;} .acrow .kw{width:82px;text-align:right;}
+  .acrow .rm{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;}
   .acrow .x{color:var(--muted);font-size:13px;}
-  .addbtn{background:var(--panel2);border:1px dashed #3a4550;color:var(--amber);border-radius:9px;padding:9px;width:100%;font-weight:700;font-size:13px;cursor:pointer;margin-top:3px;}
+  .addrow{display:flex;gap:8px;margin-top:3px;}
+  .addrow select{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 11px;font-size:13.5px;}
+  .addbtn{background:var(--panel2);border:1px dashed #3a4550;color:var(--amber);border-radius:9px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
   .fld{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
   .fld label{flex:1;font-size:13.5px;}
   .fld label small{display:block;color:var(--faint);font-size:11px;font-weight:400;}
   .fld input{width:110px;text-align:right;}
+  .jf{display:flex;gap:9px;margin-bottom:10px;}
+  .jf input{flex:1;min-width:0;}
   .tog{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;cursor:pointer;}
   .tog input{width:18px;height:18px;accent-color:var(--amber);}
   .tog div{font-size:13px;} .tog div small{display:block;color:var(--faint);font-size:11px;}
-  /* Result */
   .result{background:linear-gradient(145deg,rgba(65,201,138,.14),var(--panel) 55%);border:1px solid rgba(65,201,138,.3);border-radius:16px;padding:18px;text-align:center;margin-bottom:14px;}
   .result .rl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
   .result .rv{font-size:44px;font-weight:850;line-height:1.05;margin:4px 0 2px;color:var(--green);}
@@ -44,7 +48,10 @@
   .bd .b{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;text-align:left;}
   .bd .b .l{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);}
   .bd .b .v{font-size:16px;font-weight:800;margin-top:1px;}
-  .units .u{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-bottom:8px;}
+  .qbtn{width:100%;margin-top:14px;background:var(--amber);color:#1a1300;border:none;border-radius:11px;padding:13px;font-weight:800;font-size:14.5px;cursor:pointer;}
+  .qbtn:disabled{opacity:.4;cursor:default;}
+  .units .u{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-bottom:8px;cursor:pointer;}
+  .units .u.sel{border-color:var(--green);box-shadow:0 0 0 2px rgba(65,201,138,.3);}
   .units .u .dg{font-family:var(--mono);font-weight:800;font-size:14px;}
   .units .u .kva{background:rgba(65,201,138,.16);color:var(--green);font-weight:800;font-size:12px;padding:3px 9px;border-radius:999px;}
   .units .u .meta{margin-left:auto;text-align:right;font-size:11.5px;color:var(--muted);}
@@ -54,6 +61,34 @@
   .note b{color:var(--muted);}
   .warn{background:rgba(232,161,58,.1);border:1px solid rgba(232,161,58,.3);border-radius:10px;padding:10px 12px;font-size:12.5px;color:#f0c987;margin-top:12px;}
   .signin{color:var(--amber);text-decoration:underline;cursor:pointer;}
+
+  /* ---------- Printable quote (hidden on screen) ---------- */
+  #quote{display:none;}
+  @media print{
+    @page{size:A4 portrait;margin:14mm;}
+    body{background:#fff !important;padding:0;}
+    .wrap{display:none !important;}
+    #quote{display:block !important;color:#16202b;font-family:'Segoe UI',Arial,sans-serif;font-size:12.5px;}
+    #quote .qhead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0d3b66;padding-bottom:12px;margin-bottom:14px;}
+    #quote .qco{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#5b6b7b;}
+    #quote h1{font-size:20px;color:#0d3b66;margin:3px 0 1px;}
+    #quote .qref{text-align:right;font-size:11px;color:#5b6b7b;}
+    #quote .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+    #quote .qb{border:1px solid #dbe3ea;border-radius:8px;padding:9px 11px;}
+    #quote .qb .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#5b6b7b;}
+    #quote .qb .v{font-size:14px;font-weight:700;}
+    #quote h2{font-size:12px;color:#0d3b66;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 7px;border-bottom:1px solid #dbe3ea;padding-bottom:4px;}
+    #quote table{width:100%;border-collapse:collapse;font-size:12px;}
+    #quote th,#quote td{border:1px solid #dbe3ea;padding:7px 9px;text-align:left;}
+    #quote th{background:#0d3b66;color:#fff;font-size:10.5px;text-transform:uppercase;}
+    #quote td.r,#quote th.r{text-align:right;}
+    #quote .rec{display:flex;justify-content:space-between;align-items:center;background:#eef7f1;border:1px solid #bfe3cf;border-radius:10px;padding:12px 15px;margin-top:8px;}
+    #quote .rec .big{font-size:26px;font-weight:800;color:#0d7a4a;}
+    #quote .sign{margin-top:26px;display:flex;gap:36px;}
+    #quote .sign .s{flex:1;border-top:1px solid #9aa7b3;padding-top:5px;font-size:11px;color:#5b6b7b;}
+    #quote .qfoot{margin-top:16px;padding-top:9px;border-top:1px solid #dbe3ea;font-size:10px;color:#5b6b7b;display:flex;justify-content:space-between;}
+    #quote .terms{font-size:10.5px;color:#5b6b7b;margin-top:6px;line-height:1.6;}
+  }
 </style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
 </head>
@@ -65,21 +100,36 @@
     <div>
       <div class="co">Deluxe Heavy Equipment Rental · Deluxe Energy</div>
       <h1>Generator Size Advisor</h1>
-      <div class="sub">Tell us the load — get the right kVA + what's in the yard.</div>
+      <div class="sub">Tell us the load — get the right kVA, the yard unit, and a quote.</div>
     </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="ic">🧾</span> Customer (for the quote)</h2>
+    <div class="jf"><input type="text" id="custName" placeholder="Customer name"><input type="text" id="custProj" placeholder="Project / site"></div>
+    <div class="jf"><input type="text" id="custPhone" placeholder="Contact (optional)"><input type="number" id="rate" placeholder="Rate AED / month (optional)"></div>
   </div>
 
   <div class="card">
     <h2><span class="ic">❄️</span> Air conditioners</h2>
     <div id="acList"></div>
-    <button class="addbtn" id="addAc">+ Add another AC size</button>
+    <button class="addbtn" id="addAc" style="width:100%;">+ Add another AC size</button>
+  </div>
+
+  <div class="card">
+    <h2><span class="ic">🏗️</span> Equipment</h2>
+    <div id="eqList"></div>
+    <div class="addrow">
+      <select id="eqPick"></select>
+      <button class="addbtn" id="addEq">+ Add</button>
+    </div>
   </div>
 
   <div class="card">
     <h2><span class="ic">⚡</span> Other load</h2>
     <div class="fld"><label>Lights &amp; small power <small>total kW (sockets, fans, TV…)</small></label><input type="number" id="lightKw" min="0" step="0.5" placeholder="0"></div>
     <div class="fld"><label>Water pump / motor <small>biggest one, in HP</small></label><input type="number" id="pumpHp" min="0" step="0.5" placeholder="0"></div>
-    <div class="fld"><label>Welding / other machine <small>total kW</small></label><input type="number" id="otherKw" min="0" step="0.5" placeholder="0"></div>
+    <div class="fld"><label>Other machine <small>total kW</small></label><input type="number" id="otherKw" min="0" step="0.5" placeholder="0"></div>
     <label class="tog"><input type="checkbox" id="hardStart"><div><b>Hard start</b><small>Many ACs / motors switch on together (no stagger)</small></div></label>
   </div>
 
@@ -94,6 +144,7 @@
       <div class="b"><div class="l">Load on genset</div><div class="v" id="loadPct">—</div></div>
     </div>
     <div class="warn" id="warnBox" hidden></div>
+    <button class="qbtn" id="quoteBtn" disabled>📄 Print quote / Save PDF</button>
   </div>
 
   <div class="card">
@@ -104,12 +155,15 @@
   <div class="card">
     <h2><span class="ic">ℹ️</span> How this is worked out</h2>
     <div class="note">
-      <b>AC:</b> ~1.2 kW per ton of cooling (compressor + fans). <b>Pump/motor:</b> HP × 0.75 kW.<br>
+      <b>AC:</b> ~1.2 kW per ton of cooling. <b>Pump/motor:</b> HP × 0.75 kW. Equipment presets are typical values — edit the kW if you know the exact figure.<br>
       Running kW → <b>kVA at 0.8 power factor</b>. Then a <b>×1.3 margin</b> (motor starting inrush, Abu&nbsp;Dhabi heat de-rating, a little spare) — or <b>×1.5</b> if everything hard-starts together. Rounded up to the next standard genset.<br>
       Aim to load a genset to ~<b>70–80%</b>. A quick guide, not a substitute for a site survey on big or motor-heavy loads.
     </div>
   </div>
 </div>
+
+<!-- Printable quote -->
+<div id="quote"></div>
 
 <script>
 (function(){
@@ -117,116 +171,161 @@
   var TOKEN=localStorage.getItem(LS)||'';
   var $=function(id){return document.getElementById(id);};
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function fmt(n){return Math.round(n).toLocaleString();}
 
-  // Standard Deluxe genset ladder (kVA).
   var SIZES=[20,30,45,60,82.5,100,125,160,200,250,320,400,500,630];
   var TONS=[0.75,1,1.5,2,2.5,3,4,5,7.5,10];
   var KW_PER_TON=1.2;
 
-  var acRows=[];
-  function acRowHtml(i){
+  // Common rental equipment — typical running kW (editable). m=motor (starts hard).
+  var EQUIP=[
+    {n:'Cold store / chiller room',kw:15},
+    {n:'Reefer / freezer container',kw:10},
+    {n:'Submersible pump 3"',kw:4},
+    {n:'Dewatering pump 4"',kw:7.5},
+    {n:'Booster water pump',kw:2.2},
+    {n:'Tower crane',kw:45},
+    {n:'Passenger / material hoist',kw:11},
+    {n:'Concrete mixer',kw:5.5},
+    {n:'Air compressor (screw)',kw:22},
+    {n:'Welding machine',kw:8},
+    {n:'Lighting tower',kw:6},
+    {n:'Kitchen (oven / grill)',kw:12},
+    {n:'Office / portacabin',kw:5},
+    {n:'Custom load…',kw:0}
+  ];
+
+  // ---- AC rows ----
+  function acRowHtml(){
     var opts=TONS.map(function(t){return '<option value="'+t+'"'+(t===1.5?' selected':'')+'>'+t+' ton</option>';}).join('');
-    return '<div class="acrow" data-i="'+i+'">'+
-      '<select class="acton">'+opts+'</select>'+
-      '<span class="x">×</span>'+
-      '<input class="qty" type="number" min="0" step="1" value="1">'+
-      '<button class="rm" title="remove">×</button></div>';
+    return '<div class="acrow"><select class="acton">'+opts+'</select><span class="x">×</span>'+
+      '<input class="qty" type="number" min="0" step="1" value="1"><button class="rm" title="remove">×</button></div>';
   }
-  function addAc(){ var i=acRows.length; acRows.push(i); var d=document.createElement('div'); d.innerHTML=acRowHtml(i); var el=d.firstChild; $('acList').appendChild(el);
+  function addAc(){ var d=document.createElement('div'); d.innerHTML=acRowHtml(); var el=d.firstChild; $('acList').appendChild(el);
     el.querySelector('.acton').addEventListener('change',calc); el.querySelector('.qty').addEventListener('input',calc);
     el.querySelector('.rm').addEventListener('click',function(){ el.remove(); calc(); }); calc(); }
   $('addAc').addEventListener('click',addAc);
+
+  // ---- Equipment rows ----
+  $('eqPick').innerHTML=EQUIP.map(function(e,i){return '<option value="'+i+'">'+esc(e.n)+(e.kw?(' ('+e.kw+' kW)'):'')+'</option>';}).join('');
+  function eqRowHtml(name,kw){
+    return '<div class="acrow"><input class="lab" type="text" value="'+esc(name)+'">'+
+      '<input class="kw" type="number" min="0" step="0.5" value="'+(kw||'')+'" placeholder="kW"><span class="x">kW ×</span>'+
+      '<input class="qty" type="number" min="0" step="1" value="1"><button class="rm" title="remove">×</button></div>';
+  }
+  function addEq(){ var e=EQUIP[parseInt($('eqPick').value,10)||0]; var d=document.createElement('div');
+    d.innerHTML=eqRowHtml(e.n==='Custom load…'?'':e.n, e.kw); var el=d.firstChild; $('eqList').appendChild(el);
+    el.querySelector('.kw').addEventListener('input',calc); el.querySelector('.qty').addEventListener('input',calc);
+    el.querySelector('.lab').addEventListener('input',calc);
+    el.querySelector('.rm').addEventListener('click',function(){ el.remove(); calc(); });
+    el.querySelector(e.kw?'.qty':'.kw').focus(); calc(); }
+  $('addEq').addEventListener('click',addEq);
 
   ['lightKw','pumpHp','otherKw'].forEach(function(id){ $(id).addEventListener('input',calc); });
   $('hardStart').addEventListener('change',calc);
 
   function num(v){ var n=parseFloat(v); return isFinite(n)&&n>0?n:0; }
-
   function nextSize(kva){ for(var i=0;i<SIZES.length;i++){ if(SIZES[i]>=kva) return SIZES[i]; } return null; }
 
-  var DIR=null;
+  var DIR=null, lastSize=null, LOADS=[], STATE={};
   function calc(){
-    // 1) sum AC kW + track biggest single AC
-    var acKw=0, biggestAcKw=0, acCount=0;
+    LOADS=[];
+    var runKw=0, acCount=0;
     $('acList').querySelectorAll('.acrow').forEach(function(r){
       var tons=num(r.querySelector('.acton').value), qty=num(r.querySelector('.qty').value);
-      var oneKw=tons*KW_PER_TON;
-      acKw+=oneKw*qty; acCount+=qty;
-      if(qty>0 && oneKw>biggestAcKw) biggestAcKw=oneKw;
+      if(qty<=0) return; var kw=tons*KW_PER_TON*qty; runKw+=kw; acCount+=qty;
+      LOADS.push({n:qty+' × '+tons+' ton AC', kw:kw});
     });
-    var lightKw=num($('lightKw').value);
-    var pumpHp=num($('pumpHp').value); var pumpKw=pumpHp*0.746;
-    var otherKw=num($('otherKw').value);
-    var runKw=acKw+lightKw+pumpKw+otherKw;
+    $('eqList').querySelectorAll('.acrow').forEach(function(r){
+      var kw1=num(r.querySelector('.kw').value), qty=num(r.querySelector('.qty').value), lab=(r.querySelector('.lab').value||'Equipment').trim();
+      if(kw1<=0||qty<=0) return; var kw=kw1*qty; runKw+=kw;
+      LOADS.push({n:qty+' × '+lab+' ('+kw1+' kW)', kw:kw});
+    });
+    var lightKw=num($('lightKw').value); if(lightKw>0){ runKw+=lightKw; LOADS.push({n:'Lights & small power',kw:lightKw}); }
+    var pumpHp=num($('pumpHp').value); if(pumpHp>0){ var pk=pumpHp*0.746; runKw+=pk; LOADS.push({n:'Water pump / motor '+pumpHp+' HP',kw:pk}); }
+    var otherKw=num($('otherKw').value); if(otherKw>0){ runKw+=otherKw; LOADS.push({n:'Other machine',kw:otherKw}); }
 
     if(runKw<=0){ $('recV').textContent='—'; $('recN').textContent='Enter the load above';
       $('runKw').textContent='0 kW'; $('runKva').textContent='0 kVA'; $('designKva').textContent='0 kVA'; $('loadPct').textContent='—';
-      $('warnBox').hidden=true; $('units').innerHTML='<div class="empty">Enter a load to see matching units.</div>'; return; }
+      $('warnBox').hidden=true; $('quoteBtn').disabled=true; $('units').innerHTML='<div class="empty">Enter a load to see matching units.</div>'; STATE={}; return; }
 
-    var pf=0.8;
-    var runKva=runKw/pf;
-    var hard=$('hardStart').checked;
-    var margin=hard?1.5:1.3;
-    var designKva=runKva*margin;
-    var size=nextSize(designKva);
+    var runKva=runKw/0.8;
+    var hard=$('hardStart').checked; var margin=hard?1.5:1.3;
+    var designKva=runKva*margin; var size=nextSize(designKva);
 
-    $('runKw').textContent=(Math.round(runKw*10)/10)+' kW';
-    $('runKva').textContent=(Math.round(runKva))+' kVA';
-    $('designKva').textContent=(Math.round(designKva))+' kVA';
-    if(size){ $('recV').innerHTML=size+' <small>kVA</small>';
-      var pct=Math.round(runKva/size*100);
-      $('loadPct').textContent=pct+'%';
-      $('recN').textContent=(acCount?acCount+' AC':'load')+' → run '+Math.round(runKva)+' kVA, need ~'+Math.round(designKva)+' kVA → '+size+' kVA set';
-    } else { $('recV').textContent='500+'; $('recN').textContent='Very large load — needs a survey / multiple sets'; $('loadPct').textContent='—'; }
+    $('runKw').textContent=fmt(runKw)+' kW'; $('runKva').textContent=fmt(runKva)+' kVA'; $('designKva').textContent=fmt(designKva)+' kVA';
+    if(size){ $('recV').innerHTML=size+' <small>kVA</small>'; var pct=Math.round(runKva/size*100);
+      $('loadPct').textContent=pct+'%'; $('recN').textContent=(acCount?acCount+' AC + ':'')+'run '+fmt(runKva)+' kVA → need ~'+fmt(designKva)+' kVA → '+size+' kVA set';
+    } else { $('recV').textContent='500+'; $('recN').textContent='Very large — needs a survey / multiple sets'; $('loadPct').textContent='—'; }
+    $('quoteBtn').disabled=!size;
 
-    // warnings
     var w=[];
     if(hard) w.push('Hard-start selected — sized with a bigger (×1.5) margin so compressors can start.');
     if(size && runKva/size>0.85) w.push('This set would run above 85% — consider the next size up for headroom.');
-    if(size && runKva/size<0.35 && runKva>0) w.push('Load is light for this set (<35%) — a smaller set may be cheaper, or fine if the load will grow.');
+    if(size && runKva/size<0.35) w.push('Load is light for this set (<35%) — a smaller set may be cheaper, or fine if load will grow.');
     if(w.length){ $('warnBox').hidden=false; $('warnBox').innerHTML=w.map(esc).join('<br>'); } else { $('warnBox').hidden=true; }
 
+    STATE={runKw:runKw, runKva:runKva, designKva:designKva, size:size, pct:(size?Math.round(runKva/size*100):0), hard:hard};
     matchUnits(size);
   }
 
   function renderUnits(size){
     var box=$('units');
     if(!size){ box.innerHTML='<div class="empty">—</div>'; return; }
-    if(DIR===null){
-      box.innerHTML='<div class="empty">'+(TOKEN?'Loading yard stock…':'<span class="signin" id="si">Sign in</span> to see which yard units are available.')+'</div>';
-      var si=$('si'); if(si) si.addEventListener('click',function(){ location.href='/menu'; }); return;
-    }
-    var avail=Object.keys(DIR).map(function(k){return DIR[k];})
-      .filter(function(u){ return u && u.kva && String(u.status||'').toLowerCase()==='available'; });
-    // units at or above the recommended size, closest first; then one size below as a "tight" fallback
+    if(DIR===null){ box.innerHTML='<div class="empty">'+(TOKEN?'Loading yard stock…':'<span class="signin" id="si">Sign in</span> to see which yard units are available.')+'</div>';
+      var si=$('si'); if(si) si.addEventListener('click',function(){ location.href='/menu'; }); return; }
+    var avail=Object.keys(DIR).map(function(k){return DIR[k];}).filter(function(u){ return u && u.kva && String(u.status||'').toLowerCase()==='available'; });
     var fit=avail.filter(function(u){return u.kva>=size;}).sort(function(a,b){return a.kva-b.kva;});
     var below=avail.filter(function(u){return u.kva<size && u.kva>=size*0.8;}).sort(function(a,b){return b.kva-a.kva;});
-    var list=fit.slice(0,5);
-    var html='';
-    if(list.length){
-      html+=list.map(function(u){ return '<div class="u"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span>'+
-        '<span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join('');
-    } else {
-      html+='<div class="empty">No '+size+' kVA-or-bigger unit free in the yard right now.</div>';
-    }
-    if(!fit.length && below.length){
-      html+='<div class="note" style="margin:8px 0 4px;">Nearest available (slightly under — OK only if the real load is lower):</div>';
-      html+=below.slice(0,3).map(function(u){ return '<div class="u tight"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span>'+
-        '<span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join('');
-    }
+    var list=fit.slice(0,5); var html='';
+    if(list.length){ html+=list.map(function(u,i){ return '<div class="u'+(i===0?' sel':'')+'" data-dg="'+esc(u.dg)+'" data-kva="'+esc(u.kva)+'" data-brand="'+esc(u.brand||'')+'"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span><span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join('');
+      STATE.unit={dg:list[0].dg,kva:list[0].kva,brand:list[0].brand||''};
+    } else { html+='<div class="empty">No '+size+' kVA-or-bigger unit free in the yard right now.</div>'; STATE.unit=null; }
+    if(!fit.length && below.length){ html+='<div class="note" style="margin:8px 0 4px;">Nearest available (slightly under — OK only if the real load is lower):</div>';
+      html+=below.slice(0,3).map(function(u){ return '<div class="u tight" data-dg="'+esc(u.dg)+'" data-kva="'+esc(u.kva)+'" data-brand="'+esc(u.brand||'')+'"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span><span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join(''); }
     box.innerHTML=html;
+    box.querySelectorAll('.u').forEach(function(el){ el.addEventListener('click',function(){
+      box.querySelectorAll('.u').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel');
+      STATE.unit={dg:el.getAttribute('data-dg'),kva:+el.getAttribute('data-kva'),brand:el.getAttribute('data-brand')}; }); });
   }
-
-  var lastSize=null;
   function matchUnits(size){ lastSize=size;
     if(DIR!==null){ renderUnits(size); return; }
-    renderUnits(size); // shows loading / sign-in
-    if(!TOKEN) return;
+    renderUnits(size); if(!TOKEN) return;
     fetch('/api/fleet/directory',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}})
-      .then(function(r){ return r.ok?r.json():null; })
-      .then(function(d){ DIR=(d&&d.directory)||{}; renderUnits(lastSize); })
+      .then(function(r){ return r.ok?r.json():null; }).then(function(d){ DIR=(d&&d.directory)||{}; renderUnits(lastSize); })
       .catch(function(){ DIR={}; renderUnits(lastSize); });
   }
+
+  // ---- Quote ----
+  function buildQuote(){
+    if(!STATE.size) return;
+    var now=new Date(); var pad=function(n){return(n<10?'0':'')+n;};
+    var dstr=pad(now.getDate())+'/'+pad(now.getMonth()+1)+'/'+now.getFullYear();
+    var ref='DE-'+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'-'+STATE.size;
+    var rows=LOADS.map(function(l){ return '<tr><td>'+esc(l.n)+'</td><td class="r">'+fmt(l.kw)+' kW</td></tr>'; }).join('');
+    var rate=num($('rate').value);
+    var unit=STATE.unit;
+    var q='<div class="qhead"><div><div class="qco">Deluxe Heavy Equipment Rental L.L.C · Deluxe Energy Solutions L.L.C</div>'+
+      '<h1>Generator Rental — Proposal</h1></div>'+
+      '<div class="qref">Ref: '+esc(ref)+'<br>Date: '+esc(dstr)+'</div></div>'+
+      '<div class="qgrid"><div class="qb"><div class="l">Customer</div><div class="v">'+esc($('custName').value||'—')+'</div></div>'+
+      '<div class="qb"><div class="l">Project / site</div><div class="v">'+esc($('custProj').value||'—')+'</div></div>'+
+      '<div class="qb"><div class="l">Contact</div><div class="v">'+esc($('custPhone').value||'—')+'</div></div>'+
+      '<div class="qb"><div class="l">Prepared by</div><div class="v">Deluxe Operations</div></div></div>'+
+      '<h2>Load assessed</h2><table><tr><th>Item</th><th class="r">Running load</th></tr>'+rows+
+      '<tr><td><b>Total running load</b></td><td class="r"><b>'+fmt(STATE.runKw)+' kW ≈ '+fmt(STATE.runKva)+' kVA</b></td></tr></table>'+
+      '<h2>Recommended generator</h2><div class="rec"><div><b>'+STATE.size+' kVA diesel generator</b>'+
+      (unit?('<br><span style="font-size:11px;color:#5b6b7b;">Proposed unit: '+esc(unit.dg)+' — '+esc(unit.brand)+' '+esc(unit.kva)+' kVA</span>'):'')+
+      '<br><span style="font-size:11px;color:#5b6b7b;">Runs at ~'+STATE.pct+'% load — with margin for starting &amp; ambient heat.</span></div>'+
+      '<div class="big">'+STATE.size+' kVA</div></div>'+
+      (rate?('<h2>Commercial</h2><table><tr><th>Description</th><th class="r">Amount</th></tr><tr><td>'+STATE.size+' kVA generator — monthly rental</td><td class="r">AED '+fmt(rate)+' / month</td></tr></table>'):'')+
+      '<div class="terms"><b>Includes:</b> generator set, standard delivery &amp; installation on site, and routine servicing every 350/450 running hours. Fuel by customer unless agreed. Prices exclusive of 5% VAT. Proposal valid 15 days.</div>'+
+      '<div class="sign"><div class="s">Deluxe — authorised signature</div><div class="s">Customer — accepted (name &amp; date)</div></div>'+
+      '<div class="qfoot"><span>Deluxe Heavy Equipment Rental L.L.C · Deluxe Energy Solutions L.L.C</span><span>055 335 6428 / 02 554 5718</span></div>';
+    $('quote').innerHTML=q;
+    window.print();
+  }
+  $('quoteBtn').addEventListener('click',buildQuote);
 
   addAc(); // start with one AC row
 })();
