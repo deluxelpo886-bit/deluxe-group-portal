@@ -54,5 +54,12 @@
   "note": "City Construction, RUWAIS - at DG-860's NEXT SERVICE (18575h / 19-10-2026) we need to GIVE the agreed AMOUNT to the customer. 400 kVA. (Fill in the exact figure.)",
   "dueDate": "2026-10-19",
   "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-501-heavy-use-2026-10-07",
+  "dg": "DG-501",
+  "note": "DG-501 is HEAVY USE ~18 h/day (127h in 7 days). Serviced 20/09 @ 20941h by Adeel; controller 21068h @ 27/09 -> only 223h left to the 21291h service. Burns hours fast, so CHECK HOURS and plan the service by ~09/10/2026 - don't let it run past. Send a fresh controller reading before then.",
+  "dueDate": "2026-10-07",
+  "createdBy": "Operations Head"
  }
 ]

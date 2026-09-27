@@ -159,7 +159,7 @@ try {
   const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
   if (fs.existsSync(rmSeedPath)) {
     const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
-    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-24e');
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-27f');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
