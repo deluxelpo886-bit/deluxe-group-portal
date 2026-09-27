@@ -51,6 +51,7 @@ const rentals = require('./rentals');
 const lpo = require('./lpo');
 const technicians = require('./technicians');
 const jobs = require('./jobs');
+const push = require('./push');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
@@ -1073,9 +1074,9 @@ app.get('/dispatch', (req, res) => {
   res.sendFile(path.join(__dirname, 'dispatch.html'), { cacheControl: false });
 });
 
-// Technician field app: opened via the technician's private token link
-// (/tech/<token>) - no login. Bilingual (Hindi + English), big buttons.
-app.get('/tech/:token', (req, res) => {
+// Technician field app: the installed app opens at /tech and signs in with a
+// PIN; /tech/<token> still works as a direct link. Bilingual, big buttons.
+app.get(['/tech', '/tech/:token'], (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
@@ -1296,8 +1297,18 @@ app.get('/api/jobs', fleetProtect, (req, res) => {
 app.post('/api/jobs/assign', fleetProtect, (req, res) => {
   try {
     const b = req.body || {};
-    if (!technicians.byId(b.tech)) return res.status(400).json({ error: 'Unknown technician' });
-    res.json({ ok: true, item: jobs.add(b) });
+    const tech = technicians.byId(b.tech);
+    if (!tech) return res.status(400).json({ error: 'Unknown technician' });
+    const item = jobs.add(b);
+    // Fire a push to the technician's phone(s) - best effort, don't block.
+    const typeLabel = item.type === 'breakdown' ? 'Breakdown / ब्रेकडाउन' : (item.type === 'service' ? 'Service / सर्विस' : 'Job / काम');
+    push.sendToTech(tech.id, {
+      title: 'New job / नया काम' + (item.dg ? ' — ' + item.dg : ''),
+      body: typeLabel + (item.location ? ' · ' + item.location : '') + (item.title ? '\n' + item.title : ''),
+      tag: 'job-' + item.id,
+      url: '/tech',
+    }).catch(() => {});
+    res.json({ ok: true, item, push: push.isReady() });
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 app.post('/api/jobs/remove', fleetProtect, (req, res) => {
@@ -1305,10 +1316,35 @@ app.post('/api/jobs/remove', fleetProtect, (req, res) => {
   res.json({ ok: true });
 });
 
+// Technician sign-in for the installed app: name + PIN -> the technician's
+// private token, which the app stores and uses for all later calls.
+app.get('/api/tech/names', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ techs: technicians.names(), push: push.isReady(), vapid: push.publicKey() });
+});
+app.post('/api/tech/login', (req, res) => {
+  const b = req.body || {};
+  const t = technicians.login(b.tech, b.pin);
+  if (!t) return res.status(401).json({ error: 'Wrong PIN' });
+  res.json({ ok: true, token: t.token, tech: { id: t.id, name: t.name, phone: t.phone } });
+});
+
 // Technician side (token only, no login): the field app reads its jobs and
 // pushes status updates. The token maps to exactly one technician and exposes
 // only that technician's jobs.
 function techFromToken(req) { return technicians.byToken(req.params.token); }
+// Push: give the app the VAPID public key and register a device subscription.
+app.get('/api/tech/:token/vapid', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  res.json({ key: push.publicKey(), ready: push.isReady() });
+});
+app.post('/api/tech/:token/subscribe', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  const ok = push.subscribe(t.id, (req.body || {}).subscription);
+  res.json({ ok: ok });
+});
 app.get('/api/tech/:token', (req, res) => {
   res.set('Cache-Control', 'no-store');
   const t = techFromToken(req);

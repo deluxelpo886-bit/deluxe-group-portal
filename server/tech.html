@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Deluxe — My Jobs / मेरे काम</title>
+<title>Deluxe Technician — My Jobs / मेरे काम</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d3b66">
+<link rel="manifest" href="/manifest-tech.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Deluxe Tech">
 <style>
   :root{--bg:#0e1621;--card:#18232f;--card2:#1f2c3a;--line:#2b3a4a;--ink:#f3f7fa;--mut:#9fb0c0;
     --green:#22c55e;--greenD:#166534;--red:#ef4444;--redD:#7f1d1d;--amber:#f59e0b;--blue:#3b82f6;
@@ -16,11 +20,12 @@
   .bar .logos img{height:24px;display:block;} .bar .logos .sep{width:1px;height:20px;background:#d3dce4;}
   .bar .who{margin-left:2px;} .bar .who b{color:#fff;font-size:14px;display:block;line-height:1.1;} .bar .who span{color:#bcd4ea;font-size:11px;}
   .bar .bell{margin-left:auto;position:relative;font-size:21px;color:#fff;cursor:pointer;}
-  .bar .bell b{position:absolute;top:-4px;right:-5px;background:var(--red);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:9px;display:grid;place-items:center;padding:0 3px;display:none;}
+  .bar .bell b{position:absolute;top:-4px;right:-5px;background:var(--red);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:9px;display:none;place-items:center;padding:0 3px;}
+  .bar .out{margin-left:12px;color:#bcd4ea;font-size:12px;cursor:pointer;}
   .wrap{padding:14px;}
   .h{display:flex;align-items:baseline;gap:8px;margin:4px 2px 12px;} .h b{font-size:19px;} .h span{font-size:14px;color:var(--mut);}
-  .notiEnable{background:var(--card);border:1px solid var(--amber);border-radius:12px;padding:11px 13px;margin-bottom:13px;display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;}
-  .notiEnable .ic{font-size:22px;} .notiEnable b{display:block;} .notiEnable span{color:var(--mut);font-size:12px;}
+  .banner-info{background:var(--card);border:1px solid var(--amber);border-radius:12px;padding:11px 13px;margin-bottom:13px;display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;}
+  .banner-info .ic{font-size:22px;} .banner-info b{display:block;} .banner-info span{color:var(--mut);font-size:12px;}
   .job{border-radius:18px;padding:15px;margin-bottom:13px;border:1px solid var(--line);background:var(--card);cursor:pointer;}
   .job .tagrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
   .job .type{font-size:13px;font-weight:800;padding:5px 11px;border-radius:999px;}
@@ -31,12 +36,10 @@
   .job .task{font-size:14.5px;margin:7px 0 2px;font-weight:600;}
   .job .loc{display:flex;gap:6px;color:var(--mut);font-size:13px;margin-top:8px;}
   .job .go2{margin-top:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;font-weight:800;color:#fff;font-size:15px;}
-  .job .go2 .hi{color:#a9c7e6;font-weight:500;font-size:12.5px;display:block;margin-top:1px;}
   .back{display:inline-flex;gap:7px;color:#a9c7e6;font-size:14px;font-weight:700;margin:2px 0 12px;cursor:pointer;}
   .banner{border-radius:16px;padding:15px;margin-bottom:13px;text-align:center;}
   .banner.bd{background:linear-gradient(135deg,var(--redD),#b91c1c);} .banner.svc{background:linear-gradient(135deg,var(--greenD),#15803d);} .banner.other{background:linear-gradient(135deg,#1e3a8a,#2563eb);}
-  .banner .bdg{font-size:12px;font-weight:800;color:#fff;opacity:.9;} .banner .dg{font-size:32px;font-weight:900;color:#fff;margin:3px 0;}
-  .banner .task{font-size:15px;color:#fff;font-weight:700;}
+  .banner .bdg{font-size:12px;font-weight:800;color:#fff;opacity:.9;} .banner .dg{font-size:32px;font-weight:900;color:#fff;margin:3px 0;} .banner .task{font-size:15px;color:#fff;font-weight:700;}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px;}
   .act{border:none;border-radius:16px;padding:15px 10px;text-align:center;color:#fff;font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;display:block;}
   .act .ic{font-size:28px;display:block;margin-bottom:4px;} .act .hi{display:block;font-weight:500;font-size:12px;opacity:.9;margin-top:2px;}
@@ -57,80 +60,138 @@
   .step.done .n{background:var(--green);} .step.done .tx b{color:#4ade80;} .step .chk{margin-left:auto;font-size:22px;color:var(--green);opacity:0;} .step.done .chk{opacity:1;}
   .hint{text-align:center;color:var(--mut);font-size:12px;margin-top:11px;line-height:1.6;}
   .empty{text-align:center;color:var(--mut);padding:50px 20px;} .empty .ic{font-size:46px;} .empty b{display:block;margin-top:12px;font-size:17px;color:var(--ink);} .empty span{font-size:14px;}
-  .noti{position:fixed;left:12px;right:12px;top:12px;max-width:456px;margin:0 auto;background:#fff;color:#12233a;border-radius:16px;padding:13px 14px;display:flex;gap:11px;align-items:center;box-shadow:0 16px 40px -12px rgba(0,0,0,.7);transform:translateY(-180%);transition:transform .45s cubic-bezier(.2,.8,.3,1);z-index:40;cursor:pointer;}
-  .noti.show{transform:translateY(0);}
-  .noti .ic{width:42px;height:42px;flex:0 0 auto;border-radius:12px;background:#0d3b66;color:#fff;display:grid;place-items:center;font-size:22px;}
+  /* Login */
+  .login{padding:30px 20px;text-align:center;}
+  .login .logoBig{display:flex;justify-content:center;gap:12px;background:#fff;border-radius:14px;padding:12px;margin:10px auto 22px;max-width:230px;}
+  .login .logoBig img{height:34px;}
+  .login h1{font-size:22px;} .login .hi{color:var(--mut);font-size:15px;margin-bottom:22px;}
+  .who-pick{display:grid;gap:11px;margin-bottom:10px;}
+  .who-pick button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:17px;font-size:18px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;justify-content:center;}
+  .pinwrap{max-width:280px;margin:0 auto;}
+  .pindots{display:flex;justify-content:center;gap:12px;margin:14px 0 20px;}
+  .pindots i{width:16px;height:16px;border-radius:50%;background:var(--card2);border:1px solid var(--line);}
+  .pindots i.on{background:var(--amber);border-color:var(--amber);}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+  .pad button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:18px;font-size:24px;font-weight:800;cursor:pointer;}
+  .pad button.wide{grid-column:span 1;font-size:15px;}
+  .lErr{color:var(--red);min-height:20px;font-size:14px;margin-top:12px;}
+  .noti{position:fixed;left:12px;right:12px;top:12px;max-width:456px;margin:0 auto;background:#fff;color:#12233a;border-radius:16px;padding:13px 14px;display:flex;gap:11px;align-items:center;box-shadow:0 16px 40px -12px rgba(0,0,0,.7);transform:translateY(-180%);transition:transform .45s cubic-bezier(.2,.8,.3,1);z-index:40;}
+  .noti.show{transform:translateY(0);} .noti .ic{width:42px;height:42px;flex:0 0 auto;border-radius:12px;background:#0d3b66;color:#fff;display:grid;place-items:center;font-size:22px;}
   .noti b{font-size:14px;display:block;} .noti span{font-size:12px;color:#5b6b7b;}
   .done{position:fixed;inset:0;background:rgba(5,9,13,.93);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;z-index:50;}
   .done.on{display:flex;} .done .big{width:104px;height:104px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:56px;margin-bottom:16px;}
   .done h2{font-size:23px;color:#fff;} .done p{color:var(--mut);font-size:14px;margin-top:5px;} .done .hi{color:#cfe0ee;font-size:15px;}
   .done button{margin-top:20px;background:var(--blue);color:#fff;border:none;border-radius:13px;padding:13px 24px;font-size:15px;font-weight:800;cursor:pointer;}
+  .installbtn{position:fixed;left:12px;right:12px;bottom:14px;max-width:456px;margin:0 auto;background:var(--amber);color:#1a1200;border:none;border-radius:13px;padding:14px;font-weight:800;font-size:15px;display:none;z-index:30;box-shadow:0 12px 30px -10px rgba(0,0,0,.6);}
 </style>
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
 </head>
 <body>
   <div class="noti" id="noti"><div class="ic">🔔</div><div><b id="notiT">New job</b><span id="notiS">नया काम आया</span></div></div>
-  <div class="bar">
-    <div class="logos"><img src="/logo-heavy.png" alt="Deluxe Heavy"><span class="sep"></span><img src="/logo-energy.png" alt="Deluxe Energy"></div>
-    <div class="who"><b id="uName">…</b><span id="uRole">Technician · टेक्नीशियन</span></div>
-    <div class="bell" id="bell">🔔<b id="badge">0</b></div>
+
+  <!-- Sign-in shell (installed app) -->
+  <div id="loginView" style="display:none;">
+    <div class="login">
+      <div class="logoBig"><img src="/logo-heavy.png" alt=""><img src="/logo-energy.png" alt=""></div>
+      <h1 id="lTitle">Who are you?</h1>
+      <div class="hi" id="lSub">आप कौन हैं? — नाम चुनो</div>
+      <div class="who-pick" id="whoPick"></div>
+      <div class="pinwrap" id="pinWrap" style="display:none;">
+        <div class="pindots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+        <div class="pad" id="pad"></div>
+        <div class="lErr" id="lErr"></div>
+        <div style="margin-top:14px;color:var(--mut);font-size:13px;cursor:pointer;" id="lBackName">‹ Change name · नाम बदलो</div>
+      </div>
+    </div>
   </div>
-  <div class="wrap">
-    <div id="screen"><div class="empty"><div class="ic">⏳</div><b>Loading…</b><span>लोड हो रहा है</span></div></div>
+
+  <!-- App -->
+  <div id="appView" style="display:none;">
+    <div class="bar">
+      <div class="logos"><img src="/logo-heavy.png" alt="Deluxe Heavy"><span class="sep"></span><img src="/logo-energy.png" alt="Deluxe Energy"></div>
+      <div class="who"><b id="uName">…</b><span id="uRole">Technician · टेक्नीशियन</span></div>
+      <div class="bell" id="bell">🔔<b id="badge">0</b></div>
+      <div class="out" id="logout">⎋</div>
+    </div>
+    <div class="wrap"><div id="screen"></div></div>
   </div>
+
+  <button class="installbtn" id="installBtn">⬇️ Install app · ऐप इंस्टॉल करें</button>
   <div class="done" id="doneOv"><div class="big">✅</div><h2>Job done!</h2><p class="hi">काम पूरा हुआ!</p><p>Office has been told · ऑफिस को बता दिया</p><button onclick="closeDone()">OK · ठीक है</button></div>
 
 <script>
 (function(){
-  var parts=location.pathname.split('/'); var TOKEN=parts[parts.length-1]||'';
+  var TSTORE='deluxeTechToken';
   var $=function(id){return document.getElementById(id);};
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  var TECH=null, JOBS=[], known={}, openId=null, first=true;
+  var TOKEN='', TECH=null, JOBS=[], known={}, openId=null, first=true, pollT=null;
 
   var TYPE={svc:{cls:'svc',en:'Service',hi:'सर्विस',ic:'🔧'},bd:{cls:'bd',en:'Breakdown',hi:'ब्रेकडाउन',ic:'🚨'},other:{cls:'other',en:'Job',hi:'काम',ic:'📋'}};
   function tkey(t){ return t==='service'?'svc':(t==='breakdown'?'bd':'other'); }
   var STEPS=[{k:'otw',ic:'🚗',en:'On the way',hi:'निकल गया'},{k:'reached',ic:'📍',en:'Reached site',hi:'पहुँच गया'},{k:'done',ic:'✅',en:'Job done',hi:'काम पूरा हुआ'}];
-  function stepIndex(status){ if(status==='new')return 0; if(status==='otw')return 1; if(status==='reached')return 2; return 3; }
+  function stepIndex(s){ return s==='new'?0:(s==='otw'?1:(s==='reached'?2:3)); }
+  async function api(url,opt){ var r=await fetch(url,opt); if(!r.ok) throw new Error('http'+r.status); return r.json(); }
 
-  async function api(url,opt){ var r=await fetch(url,opt); if(!r.ok) throw new Error('http'); return r.json(); }
+  // ---------- boot: token from URL (/tech/<token>) or stored, else login ----------
+  function urlToken(){ var p=location.pathname.replace(/\/+$/,'').split('/'); var last=p[p.length-1]; return (last && last!=='tech') ? last : ''; }
+  function boot(){
+    var t=urlToken() || localStorage.getItem(TSTORE) || '';
+    if(t){ TOKEN=t; try{localStorage.setItem(TSTORE,t);}catch(e){} startApp(); }
+    else showLogin();
+  }
+
+  // ---------- Login (name + PIN) ----------
+  var pickId='', pin='';
+  async function showLogin(){
+    $('appView').style.display='none'; $('loginView').style.display='block';
+    try{ var d=await api('/api/tech/names'); renderWho(d.techs||[]); }catch(e){ $('whoPick').innerHTML='<div class="hi">Cannot reach office. Try again.<br>ऑफिस से कनेक्ट नहीं हुआ।</div>'; }
+  }
+  function renderWho(techs){ $('pinWrap').style.display='none'; $('whoPick').style.display='grid'; $('lTitle').textContent='Who are you?'; $('lSub').textContent='आप कौन हैं? — नाम चुनो';
+    $('whoPick').innerHTML=techs.map(function(t){return '<button data-id="'+esc(t.id)+'">👷 '+esc(t.name)+'</button>';}).join('');
+    $('whoPick').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ pickId=b.getAttribute('data-id'); startPin(b.textContent.trim()); }); });
+  }
+  function startPin(name){ pin=''; $('whoPick').style.display='none'; $('pinWrap').style.display='block'; $('lTitle').textContent=name; $('lSub').textContent='Enter your PIN · अपना PIN डालो'; $('lErr').textContent=''; renderPad(); renderDots();
+  }
+  function renderPad(){ var keys=['1','2','3','4','5','6','7','8','9','','0','⌫'];
+    $('pad').innerHTML=keys.map(function(k){ return k===''?'<span></span>':'<button data-k="'+k+'">'+k+'</button>'; }).join('');
+    $('pad').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ var k=b.getAttribute('data-k');
+      if(k==='⌫'){ pin=pin.slice(0,-1); } else if(pin.length<4){ pin+=k; } renderDots(); if(pin.length===4) submitPin(); }); });
+  }
+  function renderDots(){ $('pinDots').querySelectorAll('i').forEach(function(d,i){ d.classList.toggle('on', i<pin.length); }); }
+  async function submitPin(){ try{ var d=await api('/api/tech/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tech:pickId,pin:pin})});
+      TOKEN=d.token; try{localStorage.setItem(TSTORE,TOKEN);}catch(e){} startApp();
+    }catch(e){ $('lErr').textContent='Wrong PIN · गलत PIN'; pin=''; renderDots(); }
+  }
+  $('lBackName').addEventListener('click',function(){ showLogin(); });
+
+  // ---------- App ----------
+  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; registerSW(); load(); if(pollT) clearInterval(pollT); pollT=setInterval(load,20000); }
+  $('logout').addEventListener('click',function(){ if(confirm('Sign out? · साइन आउट?')){ try{localStorage.removeItem(TSTORE);}catch(e){} TOKEN=''; first=true; known={}; showLogin(); } });
 
   async function load(){
     try{
       var d=await api('/api/tech/'+encodeURIComponent(TOKEN));
-      TECH=d.tech; JOBS=d.jobs||[];
-      $('uName').textContent=TECH.name;
-      // detect new jobs -> notify
+      TECH=d.tech; JOBS=d.jobs||[]; $('uName').textContent=TECH.name;
       var active=JOBS.filter(function(j){return j.status!=='done';});
       $('badge').textContent=active.length; $('badge').style.display=active.length?'grid':'none';
-      if(!first){ JOBS.forEach(function(j){ if(!known[j.id] && j.status==='new'){ notify(j); } }); }
-      JOBS.forEach(function(j){ known[j.id]=true; });
-      first=false;
-      if(openId){ var j=JOBS.filter(function(x){return x.id===openId;})[0]; if(j) renderDetail(j); else renderList(); }
-      else renderList();
-    }catch(e){
-      if(!TECH) $('screen').innerHTML='<div class="empty"><div class="ic">🔗</div><b>Ask the office for your link</b><span>ऑफिस से अपना लिंक माँगो</span></div>';
-    }
+      if(!first){ JOBS.forEach(function(j){ if(!known[j.id] && j.status==='new') notify(j); }); }
+      JOBS.forEach(function(j){ known[j.id]=true; }); first=false;
+      if(openId){ var j=JOBS.filter(function(x){return x.id===openId;})[0]; if(j) renderDetail(j); else renderList(); } else renderList();
+    }catch(e){ if(e.message==='http404'){ try{localStorage.removeItem(TSTORE);}catch(x){} showLogin(); } }
   }
+  function notify(j){ var T=TYPE[tkey(j.type)]; showBanner('New '+T.en+' · '+(j.dg||''),'नया काम — '+(j.dg||T.hi));
+    try{ if(window.Notification && Notification.permission==='granted') new Notification('Deluxe — New job / नया काम',{body:(j.dg||'')+' · '+T.en+' · '+(j.location||''),icon:'/icon-192.png'}); }catch(e){}
+    try{ if(navigator.vibrate) navigator.vibrate([200,80,200]); }catch(e){} }
+  var bTimer; function showBanner(t,s){ $('notiT').textContent=t; $('notiS').textContent=s; $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},6000); }
 
-  function notify(j){ var T=TYPE[tkey(j.type)];
-    showBanner('New '+T.en+' · '+(j.dg||''), 'नया काम — '+(j.dg||T.hi));
-    try{ if(window.Notification && Notification.permission==='granted'){ new Notification('Deluxe — New job / नया काम', {body:(j.dg||'')+' · '+T.en+' · '+(j.location||''), icon:'/icon-192.png'}); } }catch(e){}
-    try{ if(navigator.vibrate) navigator.vibrate([200,80,200]); }catch(e){}
-  }
-  var bTimer;
-  function showBanner(t,s){ $('notiT').textContent=t; $('notiS').textContent=s; $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},6000); }
-
-  function notiEnableHtml(){
-    if(!window.Notification || Notification.permission==='granted') return '';
-    return '<div class="notiEnable" onclick="askNoti()"><div class="ic">🔔</div><div><b>Turn on notifications</b><span>नए काम की घंटी चालू करो — दबाओ</span></div></div>';
-  }
-  window.askNoti=function(){ if(window.Notification) Notification.requestPermission().then(function(){ renderList(); }); };
+  function pushBanner(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)) return '';
+    if(window.Notification && Notification.permission==='granted') return '';
+    return '<div class="banner-info" onclick="enablePush()"><div class="ic">🔔</div><div><b>Turn on job alerts</b><span>नए काम की घंटी चालू करो — दबाओ</span></div></div>'; }
 
   function renderList(){ openId=null;
     var active=JOBS.filter(function(j){return j.status!=='done';});
     var done=JOBS.filter(function(j){return j.status==='done';});
-    var html=notiEnableHtml()+'<div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
-    if(!active.length && !done.length){ html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं</span></div>'; }
+    var html=pushBanner()+'<div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
+    if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं</span></div>';
     active.forEach(function(j){ html+=jobCard(j); });
     if(done.length){ html+='<div class="h" style="margin-top:18px;"><b>Done today</b><span>आज पूरा हुआ</span></div>'; done.forEach(function(j){ html+=jobCard(j); }); }
     $('screen').innerHTML=html;
@@ -140,23 +201,18 @@
     var stx=(j.status==='done')?'<span class="st done">✅ Done</span>':(j.status==='new')?'<span class="st">🆕 New</span>':'<span class="st go">'+esc(STEPS[si-1]?STEPS[si-1].en:'Working')+'</span>';
     return '<div class="job '+T.cls+'" data-open="'+esc(j.id)+'"><div class="tagrow"><div class="type">'+T.ic+' '+T.en+' · '+T.hi+'</div>'+stx+'</div>'+
       '<div class="dg">'+esc(j.dg||'—')+(j.kva?' <small>'+esc(j.kva)+' kVA</small>':'')+'</div>'+
-      (j.title?'<div class="task">'+esc(j.title)+'</div>':'')+
-      (j.location?'<div class="loc">📍 '+esc(j.location)+'</div>':'')+
+      (j.title?'<div class="task">'+esc(j.title)+'</div>':'')+(j.location?'<div class="loc">📍 '+esc(j.location)+'</div>':'')+
       '<div class="go2">Open · खोलें</div></div>';
   }
-
   function renderDetail(j){ openId=j.id; var T=TYPE[tkey(j.type)]; var si=stepIndex(j.status);
-    var call=(TECH&&TECH.phone)?TECH.phone:'';
     var html='<div class="back" onclick="goList()">‹ Back · वापस</div>'+
-      '<div class="banner '+T.cls+'"><div class="bdg">'+T.ic+' '+T.en.toUpperCase()+' · '+T.hi+'</div><div class="dg">'+esc(j.dg||'—')+'</div>'+
-      (j.title?'<div class="task">'+esc(j.title)+'</div>':'')+'</div>'+
+      '<div class="banner '+T.cls+'"><div class="bdg">'+T.ic+' '+T.en.toUpperCase()+' · '+T.hi+'</div><div class="dg">'+esc(j.dg||'—')+'</div>'+(j.title?'<div class="task">'+esc(j.title)+'</div>':'')+'</div>'+
       '<div class="two">'+
-        (j.mapLink?('<a class="act map" href="'+esc(j.mapLink)+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span></a>'):('<a class="act map" href="https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span></a>'))+
-        '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span></a>'+
-      '</div>';
+        '<a class="act map" href="'+(j.mapLink?esc(j.mapLink):('https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')))+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span></a>'+
+        '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span></a></div>';
     if(j.parts && j.parts.length){ html+='<div class="sec">🧰 Parts to carry <span class="hi">— पुर्ज़े ले जाओ</span></div><div class="parts">'+
       j.parts.map(function(p){ return '<div class="part" onclick="this.classList.toggle(\'got\')"><div class="ic">🔧</div><div class="tx"><b>'+esc(p.en)+'</b>'+(p.hi?'<span>'+esc(p.hi)+'</span>':'')+'</div>'+(p.qty?'<div class="qty">'+esc(p.qty)+'</div>':'')+'</div>'; }).join('')+'</div>'; }
-    if(j.note){ html+='<div class="note">📝 '+esc(j.note)+'</div>'; }
+    if(j.note) html+='<div class="note">📝 '+esc(j.note)+'</div>';
     html+='<div class="sec">✔️ Do the job <span class="hi">— काम करो</span></div><div class="steps">'+
       STEPS.map(function(s,i){ var idx=i+1; var cls=(idx<si)?'done':((idx===si)?'next':''); return '<div class="step '+cls+'" data-k="'+s.k+'" data-i="'+idx+'"><div class="n">'+s.ic+'</div><div class="tx"><b>'+s.en+'</b><span>'+s.hi+'</span></div><div class="chk">✔</div></div>'; }).join('')+
       '</div><div class="hint">Tap the yellow button when you do that step.<br>वो काम करने पर पीला बटन दबाओ।</div>';
@@ -164,21 +220,36 @@
     $('screen').querySelectorAll('.step').forEach(function(el){ el.addEventListener('click',function(){ var idx=+el.getAttribute('data-i'); if(idx!==si) return; setStatus(j.id, el.getAttribute('data-k')); }); });
   }
   window.goList=function(){ renderList(); };
-
-  async function setStatus(id,status){
-    try{ var d=await api('/api/tech/'+encodeURIComponent(TOKEN)+'/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,status:status})});
-      // update local
+  async function setStatus(id,status){ try{ var d=await api('/api/tech/'+encodeURIComponent(TOKEN)+'/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,status:status})});
       for(var i=0;i<JOBS.length;i++){ if(JOBS[i].id===id) JOBS[i]=d.item; }
-      if(status==='done'){ $('doneOv').classList.add('on'); }
+      if(status==='done') $('doneOv').classList.add('on');
       var j=JOBS.filter(function(x){return x.id===id;})[0]; if(j) renderDetail(j);
-    }catch(e){ showBanner('Could not save · फिर कोशिश करो',''); }
-  }
+    }catch(e){ showBanner('Could not save · फिर कोशिश करो',''); } }
   window.closeDone=function(){ $('doneOv').classList.remove('on'); renderList(); };
+  $('bell').addEventListener('click',function(){ enablePush(); });
 
-  $('bell').addEventListener('click',function(){ if(window.Notification && Notification.permission!=='granted') askNoti(); });
+  // ---------- Push ----------
+  var swReg=null;
+  function registerSW(){ if(!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.register('/tech-sw.js',{scope:'/tech'}).then(function(reg){ swReg=reg; maybeResubscribe(); }).catch(function(){}); }
+  function urlB64ToUint8(base64){ var pad='='.repeat((4-base64.length%4)%4); var b=(base64+pad).replace(/-/g,'+').replace(/_/g,'/'); var raw=atob(b); var arr=new Uint8Array(raw.length); for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i); return arr; }
+  async function maybeResubscribe(){ try{ if(window.Notification && Notification.permission==='granted') await doSubscribe(); }catch(e){} }
+  window.enablePush=async function(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)){ alert('This phone cannot show alerts. Add app to home screen.\\nफ़ोन में अलर्ट के लिए ऐप को होम स्क्रीन पर लगाओ।'); return; }
+    try{ var perm=await Notification.requestPermission(); if(perm!=='granted'){ return; } await doSubscribe(); renderList(); }catch(e){} };
+  async function doSubscribe(){ if(!swReg) swReg=await navigator.serviceWorker.ready;
+    var vd=await api('/api/tech/'+encodeURIComponent(TOKEN)+'/vapid'); if(!vd.key) return;
+    var sub=await swReg.pushManager.getSubscription();
+    if(!sub){ sub=await swReg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:urlB64ToUint8(vd.key)}); }
+    await api('/api/tech/'+encodeURIComponent(TOKEN)+'/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub})});
+    showBanner('Alerts ON · घंटी चालू ✓',''); }
 
-  load();
-  setInterval(load, 20000); // poll for new jobs / status
+  // ---------- Install prompt ----------
+  var deferred=null;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; $('installBtn').style.display='block'; });
+  $('installBtn').addEventListener('click',function(){ if(deferred){ deferred.prompt(); deferred.userChoice.finally(function(){ deferred=null; $('installBtn').style.display='none'; }); } });
+  window.addEventListener('appinstalled',function(){ $('installBtn').style.display='none'; });
+
+  boot();
 })();
 </script>
 </body>
