@@ -25,6 +25,8 @@
   @media(max-width:640px){.cols{grid-template-columns:1fr;}}
   .team{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;}
   .team h2{font-size:15px;margin:0 0 12px;display:flex;justify-content:space-between;align-items:center;}
+  .team h2 .rename{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 4px;margin-right:auto;margin-left:6px;}
+  .team h2 .rename:hover{color:var(--text);}
   .count{font-family:var(--mono);font-size:12px;color:var(--muted);}
   .item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
   .item:last-child{border-bottom:none;}
@@ -106,6 +108,12 @@
   var LS='deluxeFleetToken';
   var TOKEN=localStorage.getItem(LS)||'';
   var TEAMS=['Team 1','Team 2','Team 3'];
+  // Custom display names for the teams (e.g. "Sonu", "Imran"), remembered on
+  // this device. The internal team keys stay 'Team 1/2/3' so saved jobs never
+  // get lost when a team is renamed.
+  function loadTeamNames(){ try{ return JSON.parse(localStorage.getItem('deluxeScheduleTeamNames')||'{}')||{}; }catch(e){ return {}; } }
+  function teamLabel(t){ var m=loadTeamNames(); return (m[t]&&String(m[t]).trim())||t; }
+  function saveTeamName(t,v){ var m=loadTeamNames(); if(v&&String(v).trim())m[t]=String(v).trim(); else delete m[t]; try{localStorage.setItem('deluxeScheduleTeamNames',JSON.stringify(m));}catch(e){} }
   var $=function(id){return document.getElementById(id);};
   $('date').value=new Date().toISOString().slice(0,10);
 
@@ -141,7 +149,7 @@
           +'<button class="x" data-rm-team="'+esc(team)+'" data-rm-dg="'+esc(it.dg)+'" title="Remove">✕</button>'
           +'</div>';
       }).join('') : '<div class="empty">No generators assigned yet.</div>';
-      return '<div class="team"><h2>'+esc(team)+'<span class="count">'+done+' / '+items.length+' done</span></h2>'
+      return '<div class="team"><h2>'+esc(teamLabel(team))+' <button class="rename" data-rename="'+esc(team)+'" title="Rename team">✏️</button><span class="count">'+done+' / '+items.length+' done</span></h2>'
         +rows
         +'<div class="add"><input class="dg" type="text" placeholder="DG-###" data-add-dg="'+esc(team)+'"><input class="note" type="text" placeholder="note (optional)" data-add-note="'+esc(team)+'"><button class="btn" data-add-team="'+esc(team)+'">Add</button></div>'
         +'</div>';
@@ -155,6 +163,13 @@
     });
     $('cols').querySelectorAll('button[data-rm-team]').forEach(function(b){
       b.addEventListener('click',function(){ post('/api/schedule/remove',{date:$('date').value,team:b.getAttribute('data-rm-team'),dg:b.getAttribute('data-rm-dg')}); });
+    });
+    $('cols').querySelectorAll('button[data-rename]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var t=b.getAttribute('data-rename');
+        var v=prompt('Team name (blank = default). e.g. Sonu, Imran, Adeel:', teamLabel(t));
+        if(v===null) return; saveTeamName(t, v); load();
+      });
     });
     $('cols').querySelectorAll('button[data-add-team]').forEach(function(b){
       b.addEventListener('click',function(){
@@ -277,7 +292,7 @@
       }
       var bdCount=toAssign.filter(function(j){return j.pr===0;}).length;
       var msg='Planned '+added+' job'+(added!==1?'s':'')+' ('+bdCount+' breakdown'+(bdCount!==1?'s':'')+') — '
-        +TEAMS.map(function(t){ return t+': '+counts[t]; }).join(', ')+'.';
+        +TEAMS.map(function(t){ return teamLabel(t)+': '+counts[t]; }).join(', ')+'.';
       if(overflow.length){
         $('autoStatus').style.color='var(--amber)';
         msg+=' ⚠ '+overflow.length+' more didn’t fit ('+overflow.slice(0,6).map(function(j){return j.dg;}).join(', ')+(overflow.length>6?'…':'')+') — raise "Per team", add a day, or send an extra team.';
