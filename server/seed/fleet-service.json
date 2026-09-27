@@ -1344,13 +1344,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 3.11,
-  "currentHours": 3365,
-  "currentHoursDate": "2026-09-22",
+  "dailyHours": 15.4,
+  "currentHours": 3442,
+  "currentHoursDate": "2026-09-27",
   "nextService": 3711,
   "nextServiceDate": "2026-11-01",
   "interval": 450,
-  "notes": "Service cycle reset from 22/09/2026 (ops-head). Meter confirmed 3365h on 22/09/2026 (controller photo, 981 starts) -> 346h left to next (3711h). 450h cycle, next date +40 days = 01/11/2026. 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First) - replaced DG-824."
+  "notes": "Service cycle reset from 22/09/2026 (ops-head). Controller confirmed 3442h @ 27/09/2026 (998 starts) -> 269h left to next (3711h). Running ~15 h/day (3365h @ 22/09 -> 3442h @ 27/09). 450h cycle. 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First) - replaced DG-824."
  },
  {
   "dg": "DG-834",
