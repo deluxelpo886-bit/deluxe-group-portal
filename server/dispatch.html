@@ -75,6 +75,7 @@
     <h2>Set up each technician's app</h2>
     <div class="tlink"><span>📲 <b>App link</b> (send once, then "Add to Home Screen")</span><span style="color:var(--faint);font-size:11px;" id="appUrl"></span><button class="cpy" id="cpyApp">Copy</button></div>
     <div id="links"></div>
+    <div id="chStatus" style="font-size:12px;margin:8px 0 2px;"></div>
     <div class="sub" style="font-size:11.5px;color:var(--faint);">Send the app link to each technician, they add it to their home screen, open it, pick their name and enter their PIN. Then tap the 🔔 once to turn on alerts. Each sees only their own jobs.</div>
   </div>
 
@@ -157,6 +158,12 @@
         $('cpyApp').addEventListener('click',function(){ navigator.clipboard.writeText(appUrl).then(function(){toast('App link copied');}); });
         $('links').innerHTML=t.techs.map(function(x){
           return '<div class="tlink"><span>👷 <b>'+esc(x.name)+'</b></span><span style="color:var(--faint);font-size:12px;">PIN: <b style="color:var(--amber);font-family:var(--mono);letter-spacing:2px;">'+esc(x.pin||'—')+'</b></span></div>'; }).join('');
+        var on='color:var(--green);', off='color:var(--faint);';
+        $('chStatus').innerHTML='Alerts when you dispatch: '+
+          '<span style="'+(t.push?on:off)+'">'+(t.push?'✓':'○')+' App push</span> · '+
+          '<span style="'+(t.whatsapp?on:off)+'">'+(t.whatsapp?'✓':'○')+' WhatsApp</span> · '+
+          '<span style="'+(t.sms?on:off)+'">'+(t.sms?'✓':'○')+' SMS</span>'+
+          ((!t.whatsapp&&!t.sms)?'<div style="color:var(--faint);font-size:11px;margin-top:3px;">WhatsApp/SMS need Twilio keys in the server settings — app push still works. Ask to set TWILIO_* to turn these on.</div>':'');
       }
     }catch(e){ if(!TOKEN){showLogin();return;} }
     try{ var dd=await (await fetch('/api/fleet/directory',{headers:authH()})).json(); DIR=dd.directory||{};

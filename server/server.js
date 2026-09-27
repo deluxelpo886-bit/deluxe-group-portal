@@ -52,6 +52,7 @@ const lpo = require('./lpo');
 const technicians = require('./technicians');
 const jobs = require('./jobs');
 const push = require('./push');
+const techalert = require('./techalert');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
@@ -1288,7 +1289,12 @@ app.post('/api/lpo/remove', fleetProtect, (req, res) => {
 // Office side (fleet login): list technicians, assign jobs, monitor status.
 app.get('/api/techs', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
-  res.json({ techs: technicians.list() });
+  res.json({
+    techs: technicians.list(),
+    push: push.isReady(),
+    whatsapp: techalert.waConfigured(),
+    sms: techalert.smsConfigured(),
+  });
 });
 app.get('/api/jobs', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
@@ -1308,7 +1314,13 @@ app.post('/api/jobs/assign', fleetProtect, (req, res) => {
       tag: 'job-' + item.id,
       url: '/tech',
     }).catch(() => {});
-    res.json({ ok: true, item, push: push.isReady() });
+    // Backup alert over WhatsApp / SMS so the tech gets it even without the app.
+    const appUrl = (process.env.PUBLIC_URL || 'https://deluxe-group-portal.onrender.com').replace(/\/+$/, '') + '/tech';
+    const msg = 'Deluxe: New ' + (item.type === 'breakdown' ? 'BREAKDOWN' : (item.type === 'service' ? 'SERVICE' : 'job'))
+      + (item.dg ? ' ' + item.dg : '') + (item.location ? ' at ' + item.location : '')
+      + (item.title ? '. ' + item.title : '') + '. Open app: ' + appUrl + '  |  नया काम आया, ऐप खोलो।';
+    techalert.alertTech(tech.phone, msg).catch(() => {});
+    res.json({ ok: true, item, push: push.isReady(), alert: techalert.ready() });
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 app.post('/api/jobs/remove', fleetProtect, (req, res) => {
