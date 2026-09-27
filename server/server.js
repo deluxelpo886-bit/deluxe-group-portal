@@ -143,97 +143,15 @@ try {
   }
 } catch (e) { console.warn('[seed] spares import skipped:', e && e.message); }
 
-// One-time import of breakdowns reported to the office (e.g. by WhatsApp) so
-// they land in the breakdown log durably even after a deploy.
+// Breakdown log wiped clean at the Operations Head's request (26/09). The full
+// history - seeded reports, prunes, and confirmed-fixed resolutions - is cleared
+// once on boot and stays cleared across deploys (the seed file is emptied so
+// nothing is re-imported). Any NEW breakdown logged from the app afterwards
+// persists as normal.
 try {
-  const bdSeedPath = path.join(__dirname, 'seed', 'fleet-breakdowns.json');
-  if (fs.existsSync(bdSeedPath)) {
-    const bseed = JSON.parse(fs.readFileSync(bdSeedPath, 'utf8'));
-    const r = breakdowns.applySeed(bseed, 'fleet-breakdowns-2026-09-24b');
-    if (r && r.applied) console.log('[seed] added ' + r.applied + ' breakdowns to the log');
-  }
-} catch (e) { console.warn('[seed] breakdowns import skipped:', e && e.message); }
-
-// Prune the older seeded breakdowns the office asked to clear (the 14/09 batch),
-// keeping only the ones raised on 16/09. Removes them from the live store by
-// their stable seedKey; idempotent, so they stay gone across deploys.
-try {
-  const PRUNE_BD = [
-    'DG-481-bd-2026-09-14', 'DG-831-bd-2026-09-14', 'DG-801-bd-2026-09-14',
-    'DG-835-bd-2026-09-14', 'DG-505-bd-2026-09-14', 'DG-844-bd-2026-09-14',
-    'DG-477-bd-2026-09-14',
-    // superseded DG-473 note (old Khalifa label) - replaced by the -09-17 key
-    'DG-473-replace-2026-09-16',
-    // superseded DG-857 (empty fault) - replaced by the -leak-09-18 key
-    'DG-857-bd-2026-09-17',
-    // DG-537 breakdown opened by mistake (meant DG-857) - remove it
-    'DG-537-bd-2026-09-18',
-    // superseded DG-800 note (updated with exact RPM) - replaced by -v2 key
-    'DG-800-injpump-2026-09-18',
-    // DG-833 attendance logged then withdrawn at ops-head request
-    'DG-833-breakdown-2026-09-24',
-  ];
-  let removed = 0;
-  breakdowns.getAll().forEach((b) => {
-    if (b && b.seedKey && PRUNE_BD.indexOf(b.seedKey) !== -1) { breakdowns.remove(b.id); removed += 1; }
-  });
-  if (removed) console.log('[prune] removed ' + removed + ' old (14/09) breakdown(s)');
-} catch (e) { console.warn('[prune] breakdowns skipped:', e && e.message); }
-
-// Breakdowns the office has confirmed FIXED. Mark them Resolved on boot (keeps
-// them in the history with a resolved time + real cause) so they clear off the
-// active list durably across deploys. Idempotent: once a record has a resolved
-// time, it is left alone. Matches by the stable seedKey.
-try {
-  const RESOLVE_BD = {
-    'DG-537-overdue-breakdown-2026-09-24': {
-      cause: 'Replaced on site by DG-815 (26/09) - DG-537 collected to yard for repair.', category: 'Mechanical',
-    },
-    'DG-826-startermotor-2026-09-16': {
-      cause: 'New starter motor fitted (17/09) - unit back in service.', category: 'Electrical',
-    },
-    'DG-837-radiator-2026-09-17': {
-      cause: 'Radiator repaired and oil leak fixed (17/09) - unit back in service.', category: 'Cooling',
-    },
-    'DG-481-ctcoil-2026-09-18': {
-      cause: 'CT coil / cable problem - repaired on site by Sonu (18/09). Unit back on hire.', category: 'Electrical',
-    },
-    'DG-843-bd-2026-09-17': {
-      cause: 'Repaired and back in service (18/09).', category: 'Other',
-    },
-    'DG-37-battery-2026-09-16': {
-      cause: 'New batteries fitted at site (20/09) - unit back in service.', category: 'Electrical',
-    },
-    'DG-809-battery-2026-09-16': {
-      cause: 'New batteries fitted at site (20/09) - unit back in service.', category: 'Electrical',
-    },
-    'DG-541-oilleak-2026-09-16': {
-      cause: 'Closed by Operations Head (20/09). Re-open if the oil leak / starter motor is still outstanding.', category: 'Mechanical',
-    },
-    'DG-857-leak-2026-09-18': {
-      cause: 'Closed by Operations Head (20/09). Re-open if the base-skid leak is still outstanding.', category: 'Mechanical',
-    },
-    'DG-453-solenoid-2026-09-17': {
-      cause: 'Closed by Operations Head (20/09). Re-open if the solenoid / controller program is still outstanding.', category: 'Control panel',
-    },
-    'DG-548-display-2026-09-18': {
-      cause: 'Closed by Operations Head (20/09). Re-open if the controller display still needs changing.', category: 'Control panel',
-    },
-    'DG-800-injpump-2026-09-18-v2': {
-      cause: 'Closed by Operations Head (20/09). Routine service done. Re-open if the injection-pump fuel leak returns.', category: 'Fuel',
-    },
-    'DG-473-replace-2026-09-17': {
-      cause: 'Closed by Operations Head (20/09). Replace-or-keep decision to be taken with the customer.', category: 'Other',
-    },
-  };
-  let closed = 0;
-  breakdowns.getAll().forEach((b) => {
-    if (b && b.seedKey && RESOLVE_BD[b.seedKey] && !b.resolvedAt) {
-      breakdowns.resolve(b.id, RESOLVE_BD[b.seedKey]); closed += 1;
-    }
-  });
-  if (closed) console.log('[breakdowns] marked ' + closed + ' confirmed-fixed breakdown(s) Resolved');
-} catch (e) { console.warn('[breakdowns] resolve-on-boot skipped:', e && e.message); }
+  const r = breakdowns.wipeOnce('fleet-breakdowns-wipe-2026-09-26');
+  if (r && r.cleared) console.log('[breakdowns] wiped ' + r.cleared + ' breakdown(s) - history cleared at ops-head request');
+} catch (e) { console.warn('[breakdowns] wipe skipped:', e && e.message); }
 
 // One-time import of reminders / follow-ups (dated nudges the office wants
 // surfaced in the app). Runs once per version, de-duplicated by seedKey.

@@ -51,6 +51,12 @@
   .pill.over{background:#fce8e6;color:var(--over);}
   .pill.soon{background:#fdf3e0;color:var(--soon);}
   .pill.ok{background:#e5f4ec;color:var(--ok);}
+  /* Customer running rate (h/day). Colour maps to how fast the unit burns
+     hours: heavy = red (services come round quickly), moderate = amber,
+     light = green. Bold = a real measured/entered rate; faint ~ = assumed. */
+  .use{font-weight:800;white-space:nowrap;}
+  .use.hi{color:var(--over);} .use.mid{color:var(--soon);} .use.lo{color:var(--ok);}
+  .use.est{font-weight:700;opacity:.7;}
   .flt{font-size:11px;color:var(--muted);}
   .zfoot{padding:11px 16px;background:#fbfdff;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .maplink{color:var(--brand);text-decoration:none;font-weight:700;font-size:13px;}
@@ -189,6 +195,19 @@
     if(daysTo<0)return '<span class="pill over">OVERDUE '+(-daysTo)+'d</span>'; if(daysTo===0)return '<span class="pill soon">DUE</span>'; if(daysTo<=3)return '<span class="pill soon">due '+daysTo+'d</span>'; return '<span class="pill ok">due '+daysTo+'d</span>';
   }
 
+  // How many hours the customer runs the unit per day. Bold = a real rate the
+  // technician entered or the system measured from the meter gap; faint "~" =
+  // the assumed 12 h/day contract default (no reading to measure yet).
+  function usageCell(u){
+    var r=u.usage;
+    if(r==null||!(r>0)) return '<span class="flt">—</span>';
+    var band=r>=12?'hi':(r>=6?'mid':'lo');
+    var label=r>=12?'Heavy':(r>=6?'Moderate':'Light');
+    var val=Math.round(r*10)/10;
+    if(u.usageMeasured) return '<span class="use '+band+'">'+val+' h/day</span><div class="flt">'+label+' use</div>';
+    return '<span class="use est '+band+'">~'+val+' h/day</span><div class="flt">assumed</div>';
+  }
+
   function teamKey(){ return 'deluxePlanTeams'; }
   function loadTeams(){ try{return JSON.parse(localStorage.getItem(teamKey())||'{}');}catch(e){return {};} }
   function saveTeam(z,v){ var m=loadTeams(); if(v)m[z]=v; else delete m[z]; localStorage.setItem(teamKey(),JSON.stringify(m)); }
@@ -204,7 +223,7 @@
   function zoneMsg(zg){
     var team=(loadTeams()[zg.zone]||'').trim();
     var m='🔧 *Deluxe Service Plan*\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'  ('+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+')\n';
-    zg.units.forEach(function(u){ m+='• '+u.dg+' — '+(u.customer||u.location||'')+' — next @ '+(u.nextHours||'?')+'h'+(u.daysTo<0?(' (OVERDUE '+(-u.daysTo)+'d)'):'')+(u.gatePass?' 🎫 GATE PASS REQUIRED':'')+'\n'; });
+    zg.units.forEach(function(u){ var ur=(u.usage>0)?(' · '+(Math.round(u.usage*10)/10)+'h/day'+(u.usageMeasured?'':'~')):''; m+='• '+u.dg+' — '+(u.customer||u.location||'')+' — next @ '+(u.nextHours||'?')+'h'+ur+(u.daysTo<0?(' (OVERDUE '+(-u.daysTo)+'d)'):'')+(u.gatePass?' 🎫 GATE PASS REQUIRED':'')+'\n'; });
     m+='🗺️ Route: '+mapsRoute(zg.units,zg.zone);
     return m;
   }
@@ -239,7 +258,7 @@
       if(hasConf) urg=hl/rate;            // confirmed -> hours drive urgency, stale date ignored
       else if(inWindow) urg=daysTo;
       if(urgent) urg=-999;                // office-flagged units sort to the very top
-      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urgent:urgent,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass)});
+      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urgent:urgent,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass),usage:(g.effectiveDailyHours||g.observedDailyHours||null),usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null)});
     });
     if(!picked.length){ $('out').innerHTML='<div class="empty">✅ Nothing due in this window for on-hire units.'+(paused?'<br><small>'+paused+' off-hire units paused in the yard are not shown.</small>':'')+'</div>'; $('totBadge').textContent='0 units'; $('signRow').style.display='none'; return; }
     var zones={}; picked.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
@@ -259,15 +278,16 @@
       html+='<div class="zhead"><span class="rt">'+(zi+1)+'</span><span class="zn">'+esc(zg.zone)+'</span>'
         +'<span class="zc">'+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+'</span>'
         +'<span class="team"><label>Team</label><input type="text" placeholder="assign…" value="'+esc(teams[zg.zone]||'')+'" data-zone="'+esc(zg.zone)+'"></span></div>';
-      html+='<table><thead><tr><th>DG</th><th>Customer / site</th><th>Rating</th><th>Next service</th><th>Status</th></tr></thead><tbody>';
+      html+='<table><thead><tr><th>DG</th><th>Customer / site</th><th>Rating</th><th>Customer usage</th><th>Next service</th><th>Status</th></tr></thead><tbody>';
       zg.units.forEach(function(u){
         html+='<tr><td class="dg">'+esc(u.dg)+(u.noPin?' <span class="flt" title="no exact pin">📍?</span>':'')+'</td>'
           +'<td>'+esc(u.customer||'—')+(u.gatePass?' <span style="display:inline-block;background:#8a6d1a;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:9px;">🎫 GATE PASS</span>':'')+'<div class="flt">'+esc(u.location||'')+'</div></td>'
           +'<td>'+(u.kva?esc(u.kva)+' kVA':'')+'<div class="flt">'+esc(u.brand||'')+'</div></td>'
+          +'<td>'+usageCell(u)+'</td>'
           +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+'</div></td>'
           +'<td>'+pill(u)+'</td></tr>';
         var bd=BDMAP[String(u.dg).toUpperCase()];
-        if(bd) html+='<tr><td colspan="5" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
+        if(bd) html+='<tr><td colspan="6" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
       });
       html+='</tbody></table>';
       html+='<div class="zfoot"><a class="maplink" href="'+esc(mapsRoute(zg.units,zg.zone))+'" target="_blank" rel="noopener">🗺️ Open route ('+zg.units.length+' stop'+(zg.units.length!==1?'s':'')+')</a>'

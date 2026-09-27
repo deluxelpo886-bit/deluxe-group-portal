@@ -236,6 +236,37 @@ function remove(id) {
   persist();
 }
 
+// Clear the entire breakdown log (active + resolved history). Used by the
+// one-time wipe on boot; empties the store and persists so the file on disk is
+// truly empty, not just filtered.
+function clearAll() {
+  const n = items.length;
+  items = [];
+  persist();
+  return n;
+}
+
+// One-time, versioned wipe of the whole breakdown history. Runs at most once per
+// version string (recorded in a marker file next to the store), so the log is
+// cleared once and stays cleared across deploys/restarts, while any NEW
+// breakdown logged from the app afterwards persists normally.
+const WIPE_MARKER = path.join(DIR, 'breakdowns-wiped.json');
+function wipeOnce(version) {
+  if (!version) return { skipped: true };
+  let applied = {};
+  try {
+    if (fs.existsSync(WIPE_MARKER)) applied = JSON.parse(fs.readFileSync(WIPE_MARKER, 'utf8')) || {};
+  } catch (_) { applied = {}; }
+  if (applied[version]) return { skipped: true, version };
+  const cleared = clearAll();
+  applied[version] = { at: new Date().toISOString(), cleared };
+  try {
+    if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
+    fs.writeFileSync(WIPE_MARKER, JSON.stringify(applied, null, 2));
+  } catch (_) { /* best-effort */ }
+  return { cleared, version };
+}
+
 // Active breakdowns first (anything not yet Resolved), ranked by priority then
 // oldest-first so the most urgent, longest-waiting job is chased first. Then
 // resolved history, most-recent first.
@@ -333,4 +364,4 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { add, resolve, reopen, update, remove, getAll, stats, applySeed, ensureToken, getPublic, STATUSES, PRIORITIES };
+module.exports = { add, resolve, reopen, update, remove, clearAll, wipeOnce, getAll, stats, applySeed, ensureToken, getPublic, STATUSES, PRIORITIES };

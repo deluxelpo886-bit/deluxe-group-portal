@@ -225,6 +225,18 @@
   var LAST=[];          // the zones currently rendered, for the share buttons
   var BDMAP={};         // dg -> open-breakdown note, to flag broken units on the plan
   function badgeText(daysTo){ return daysTo<0 ? ('OVERDUE '+Math.abs(daysTo)+'d') : (daysTo===0 ? 'DUE TODAY' : ('due in '+daysTo+'d')); }
+  // Customer running rate (h/day). Colour: heavy = red (hours burn fast),
+  // moderate = amber, light = green. Bold value = a real measured/entered rate;
+  // faint "~" value = the assumed 12 h/day contract default (no reading yet).
+  function usageHtml(u){
+    var r=u.usage; if(r==null||!(r>0)) return '';
+    var col=r>=12?'var(--red)':(r>=6?'var(--amber)':'var(--green)');
+    var val=Math.round(r*10)/10;
+    if(u.usageMeasured) return ' · <b style="color:'+col+'">'+val+' h/day</b>';
+    return ' · <span style="color:'+col+';opacity:.7">~'+val+' h/day</span>';
+  }
+  // Same, for the WhatsApp text (plain, no HTML).
+  function usageText(u){ var r=u.usage; if(r==null||!(r>0)) return ''; return ' · '+(Math.round(r*10)/10)+'h/day'+(u.usageMeasured?'':'~'); }
   function niceDate(){ try{ return new Date($('date').value+'T00:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return $('date').value; } }
   // Build the WhatsApp text for one area (reads the team name live).
   function zoneMsg(zg){
@@ -234,7 +246,7 @@
     if(team) m+='👷 Team: '+team+'\n';
     m+='\n';
     zg.units.forEach(function(u){
-      m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+'  ['+badgeText(u.daysTo)+']';
+      m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+'  ['+badgeText(u.daysTo)+']';
       if(u.nextHours) m+=' · next '+u.nextHours+'h';
       m+='\n';
     });
@@ -249,7 +261,7 @@
     LAST.forEach(function(zg){
       var team=(loadTeams()[zg.zone]||'').trim();
       m+='\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'\n';
-      zg.units.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+' ['+badgeText(u.daysTo)+']\n'; });
+      zg.units.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+' ['+badgeText(u.daysTo)+']\n'; });
       m+='🗺️ '+mapsRoute(zg.units,zg.zone)+'\n';
     });
     return m;
@@ -285,7 +297,9 @@
       picked.push({
         dg:g.dg, daysTo:daysTo, nextHours:g.nextService, nextDate:g.nextServiceDate,
         zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
-        lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand
+        lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand,
+        usage:(g.effectiveDailyHours||g.observedDailyHours||null),
+        usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null)
       });
     });
 
@@ -335,7 +349,7 @@
         var bdFlag=bd?('<div class="bdflag">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</div>'):'';
         html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
           +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
-          +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+brand+'</span>'
+          +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+brand+usageHtml(u)+'</span>'
           +overBadge(u.daysTo)+bdFlag+'</div>';
       });
       html+=manyHint;
