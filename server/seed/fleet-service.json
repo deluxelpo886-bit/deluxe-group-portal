@@ -2584,9 +2584,11 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "dailyHours": 5.3,
   "nextService": 34641,
-  "nextServiceDate": "2026-09-15",
-  "interval": 350
+  "nextServiceDate": "2026-12-21",
+  "interval": 350,
+  "notes": "Low-use standby at Al Bahyah (Hydro Power) - next service date skipped to 21/12/2026, same as DG-491 at the same site (ops-head decision). Runs ~5 h/day, so not due yet; the 15/09 date was only an estimate. Send a controller reading to confirm exact hours left to the 34641h service."
  },
  {
   "dg": "DG-494",
