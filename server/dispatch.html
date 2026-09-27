@@ -75,6 +75,7 @@
     <h2>Set up each technician's app</h2>
     <div class="tlink"><span>📲 <b>App link</b> (send once, then "Add to Home Screen")</span><span style="color:var(--faint);font-size:11px;" id="appUrl"></span><button class="cpy" id="cpyApp">Copy</button></div>
     <div id="links"></div>
+    <div class="tlink" style="margin-top:10px;"><span>📦 <b>Store Keeper app</b></span><span style="color:var(--faint);font-size:11px;" id="storeUrl"></span><button class="cpy" id="cpyStore">Copy</button></div>
     <div id="chStatus" style="font-size:12px;margin:8px 0 2px;"></div>
     <div class="sub" style="font-size:11.5px;color:var(--faint);">Send the app link to each technician, they add it to their home screen, open it, pick their name and enter their PIN. Then tap the 🔔 once to turn on alerts. Each sees only their own jobs.</div>
   </div>
@@ -156,6 +157,8 @@
       if(t && t.techs){ $('tech').innerHTML='<option value="">— technician —</option>'+t.techs.map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join('');
         var appUrl=location.origin+'/tech'; $('appUrl').textContent=appUrl;
         $('cpyApp').addEventListener('click',function(){ navigator.clipboard.writeText(appUrl).then(function(){toast('App link copied');}); });
+        var storeUrl=location.origin+'/store'; $('storeUrl').textContent=storeUrl+' · PIN 3001';
+        $('cpyStore').addEventListener('click',function(){ navigator.clipboard.writeText(storeUrl).then(function(){toast('Store link copied');}); });
         $('links').innerHTML=t.techs.map(function(x){
           return '<div class="tlink"><span>👷 <b>'+esc(x.name)+'</b></span><span style="color:var(--faint);font-size:12px;">PIN: <b style="color:var(--amber);font-family:var(--mono);letter-spacing:2px;">'+esc(x.pin||'—')+'</b></span></div>'; }).join('');
         var on='color:var(--green);', off='color:var(--faint);';

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe Store — Parts / पुर्ज़े</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b66">
+<link rel="manifest" href="/manifest-store.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Deluxe Store">
+<style>
+  :root{--bg:#0e1621;--card:#18232f;--card2:#1f2c3a;--line:#2b3a4a;--ink:#f3f7fa;--mut:#9fb0c0;
+    --green:#22c55e;--greenD:#166534;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;
+    --sans:'Segoe UI',-apple-system,Roboto,'Noto Sans',Arial,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);font-family:var(--sans);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:26px;}
+  .bar{display:flex;align-items:center;gap:10px;padding:13px 15px;background:linear-gradient(135deg,#0d3b66,#12507f);position:sticky;top:0;z-index:10;}
+  .bar .logos{display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:5px 9px;}
+  .bar .logos img{height:24px;display:block;} .bar .logos .sep{width:1px;height:20px;background:#d3dce4;}
+  .bar .who{margin-left:2px;} .bar .who b{color:#fff;font-size:14px;display:block;line-height:1.1;} .bar .who span{color:#bcd4ea;font-size:11px;}
+  .bar .bell{margin-left:auto;font-size:21px;color:#fff;cursor:pointer;} .bar .out{margin-left:12px;color:#bcd4ea;font-size:12px;cursor:pointer;}
+  .tabs{display:flex;gap:8px;padding:12px 14px 4px;}
+  .tabs button{flex:1;background:var(--card);border:1px solid var(--line);color:var(--mut);border-radius:11px;padding:11px;font-size:14px;font-weight:800;cursor:pointer;}
+  .tabs button.on{background:linear-gradient(135deg,#0d3b66,#12507f);border-color:#1f6fb0;color:#fff;}
+  .wrap{padding:12px 14px;}
+  .banner-info{background:var(--card);border:1px solid var(--amber);border-radius:12px;padding:11px 13px;margin-bottom:13px;display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;}
+  .banner-info .ic{font-size:22px;} .banner-info b{display:block;} .banner-info span{color:var(--mut);font-size:12px;}
+  .req{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;}
+  .req.done{opacity:.7;}
+  .req .rh{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+  .req .rh .dg{font-weight:900;color:#fff;font-size:19px;} .req .rh .for{font-size:12px;color:var(--mut);}
+  .req .rh .tp{margin-left:auto;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;}
+  .req .rh .tp.svc{background:rgba(34,197,94,.15);color:#4ade80;} .req .rh .tp.bd{background:rgba(239,68,68,.15);color:#f87171;} .req .rh .tp.other{background:rgba(59,130,246,.15);color:#93c5fd;}
+  .pl{display:flex;align-items:center;gap:9px;padding:9px 3px;font-size:15px;border-top:1px solid var(--line);}
+  .pl:first-of-type{border-top:none;} .pl .hi{color:var(--mut);font-size:12.5px;} .pl .q{margin-left:auto;background:#0d3b66;color:#cfe3f6;font-weight:800;font-size:13px;padding:3px 10px;border-radius:999px;}
+  .issue{width:100%;margin-top:11px;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;background:var(--amber);color:#1a1200;cursor:pointer;}
+  .issue.done{background:var(--greenD);color:#bbf7d0;}
+  .stk{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:9px;}
+  .stk.low{border-color:rgba(245,158,11,.5);}
+  .stk .tx b{font-size:15.5px;display:block;} .stk .tx span{font-size:12.5px;color:var(--mut);}
+  .stk .lowtag{font-size:10px;font-weight:800;color:var(--amber);}
+  .stk .ctr{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .stk .ctr button{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:22px;font-weight:800;cursor:pointer;}
+  .stk .ctr .qv{min-width:56px;text-align:center;font-size:18px;font-weight:800;} .stk .ctr .qv small{font-size:11px;color:var(--mut);font-weight:600;}
+  .empty{text-align:center;color:var(--mut);padding:50px 20px;} .empty .ic{font-size:46px;} .empty b{display:block;margin-top:12px;font-size:17px;color:var(--ink);} .empty span{font-size:14px;}
+  /* Login (shared with tech) */
+  .login{padding:30px 20px;text-align:center;}
+  .login .logoBig{display:flex;justify-content:center;gap:12px;background:#fff;border-radius:14px;padding:12px;margin:10px auto 22px;max-width:230px;} .login .logoBig img{height:34px;}
+  .login h1{font-size:22px;} .login .hi{color:var(--mut);font-size:15px;margin-bottom:22px;}
+  .who-pick{display:grid;gap:11px;} .who-pick button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:17px;font-size:18px;font-weight:800;cursor:pointer;}
+  .pinwrap{max-width:280px;margin:0 auto;} .pindots{display:flex;justify-content:center;gap:12px;margin:14px 0 20px;} .pindots i{width:16px;height:16px;border-radius:50%;background:var(--card2);border:1px solid var(--line);} .pindots i.on{background:var(--amber);border-color:var(--amber);}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;} .pad button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:18px;font-size:24px;font-weight:800;cursor:pointer;}
+  .lErr{color:var(--red);min-height:20px;font-size:14px;margin-top:12px;}
+  .noti{position:fixed;left:12px;right:12px;top:12px;max-width:456px;margin:0 auto;background:#fff;color:#12233a;border-radius:16px;padding:13px 14px;display:flex;gap:11px;align-items:center;box-shadow:0 16px 40px -12px rgba(0,0,0,.7);transform:translateY(-180%);transition:transform .45s cubic-bezier(.2,.8,.3,1);z-index:40;}
+  .noti.show{transform:translateY(0);} .noti .ic{width:42px;height:42px;flex:0 0 auto;border-radius:12px;background:#0d3b66;color:#fff;display:grid;place-items:center;font-size:22px;} .noti b{font-size:14px;display:block;} .noti span{font-size:12px;color:#5b6b7b;}
+  .installbtn{position:fixed;left:12px;right:12px;bottom:14px;max-width:456px;margin:0 auto;background:var(--amber);color:#1a1200;border:none;border-radius:13px;padding:14px;font-weight:800;font-size:15px;display:none;z-index:30;box-shadow:0 12px 30px -10px rgba(0,0,0,.6);}
+  .done{position:fixed;inset:0;background:rgba(5,9,13,.93);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;z-index:50;}
+  .done.on{display:flex;} .done .big{width:104px;height:104px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:56px;margin-bottom:16px;}
+  .done h2{font-size:23px;color:#fff;} .done p{color:var(--mut);font-size:14px;margin-top:5px;} .done .hi{color:#cfe0ee;font-size:15px;} .done button{margin-top:20px;background:var(--blue);color:#fff;border:none;border-radius:13px;padding:13px 24px;font-size:15px;font-weight:800;cursor:pointer;}
+</style>
+</head>
+<body>
+  <div class="noti" id="noti"><div class="ic">🔔</div><div><b id="notiT">Parts request</b><span id="notiS">पुर्ज़े की माँग</span></div></div>
+
+  <div id="loginView" style="display:none;">
+    <div class="login">
+      <div class="logoBig"><img src="/logo-heavy.png" alt=""><img src="/logo-energy.png" alt=""></div>
+      <h1 id="lTitle">Who are you?</h1><div class="hi" id="lSub">आप कौन हैं? — नाम चुनो</div>
+      <div class="who-pick" id="whoPick"></div>
+      <div class="pinwrap" id="pinWrap" style="display:none;">
+        <div class="pindots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+        <div class="pad" id="pad"></div><div class="lErr" id="lErr"></div>
+        <div style="margin-top:14px;color:var(--mut);font-size:13px;cursor:pointer;" id="lBackName">‹ Change name · नाम बदलो</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="appView" style="display:none;">
+    <div class="bar">
+      <div class="logos"><img src="/logo-heavy.png" alt="Deluxe Heavy"><span class="sep"></span><img src="/logo-energy.png" alt="Deluxe Energy"></div>
+      <div class="who"><b id="uName">…</b><span>Store Keeper · स्टोर कीपर</span></div>
+      <div class="bell" id="bell">🔔</div><div class="out" id="logout">⎋</div>
+    </div>
+    <div class="tabs"><button id="tabReq" class="on" onclick="setTab('req')">📋 Requests · माँग</button><button id="tabStk" onclick="setTab('stk')">📦 Stock · स्टॉक</button></div>
+    <div class="wrap"><div id="screen"></div></div>
+  </div>
+
+  <button class="installbtn" id="installBtn">⬇️ Install app · ऐप इंस्टॉल करें</button>
+  <div class="done" id="doneOv"><div class="big">📦</div><h2>Parts issued!</h2><p class="hi">पुर्ज़े दे दिए!</p><p>Technician notified · टेक्नीशियन को भेजा</p><button onclick="closeDone()">OK · ठीक है</button></div>
+  <div class="done" id="installHelp"><div class="big">⬇️</div><h2>Install the app</h2><p class="hi">ऐप इंस्टॉल करें</p><p id="installSteps" style="max-width:340px;line-height:1.7;"></p><button onclick="document.getElementById('installHelp').classList.remove('on')">OK · ठीक है</button></div>
+
+<script>
+(function(){
+  var TSTORE='deluxeStoreToken';
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function cap(s){return String(s||'').charAt(0).toUpperCase()+String(s||'').slice(1);}
+  var TOKEN='', KEEPER=null, DATA={requests:[],stock:[]}, known={}, first=true, pollT=null, tab='req';
+  var TYPE={service:{c:'svc',t:'Service'},breakdown:{c:'bd',t:'Breakdown'},other:{c:'other',t:'Job'}};
+  async function api(url,opt){ var r=await fetch(url,opt); if(!r.ok) throw new Error('http'+r.status); return r.json(); }
+
+  function urlToken(){ var p=location.pathname.replace(/\/+$/,'').split('/'); var last=p[p.length-1]; return (last && last!=='store') ? last : ''; }
+  function boot(){ var t=urlToken()||localStorage.getItem(TSTORE)||''; if(t){ TOKEN=t; try{localStorage.setItem(TSTORE,t);}catch(e){} startApp(); } else showLogin(); }
+
+  // ---- login ----
+  var pickId='', pin='';
+  async function showLogin(){ $('appView').style.display='none'; $('loginView').style.display='block';
+    try{ var d=await api('/api/store/names'); renderWho(d.keepers||[]); }catch(e){ $('whoPick').innerHTML='<div class="hi">Cannot reach office.<br>ऑफिस से कनेक्ट नहीं हुआ।</div>'; } }
+  function renderWho(ks){ $('pinWrap').style.display='none'; $('whoPick').style.display='grid'; $('lTitle').textContent='Who are you?'; $('lSub').textContent='आप कौन हैं? — नाम चुनो';
+    $('whoPick').innerHTML=ks.map(function(k){return '<button data-id="'+esc(k.id)+'">📦 '+esc(k.name)+'</button>';}).join('');
+    $('whoPick').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ pickId=b.getAttribute('data-id'); startPin(b.textContent.trim()); }); }); }
+  function startPin(name){ pin=''; $('whoPick').style.display='none'; $('pinWrap').style.display='block'; $('lTitle').textContent=name; $('lSub').textContent='Enter your PIN · अपना PIN डालो'; $('lErr').textContent=''; renderPad(); renderDots(); }
+  function renderPad(){ var keys=['1','2','3','4','5','6','7','8','9','','0','⌫'];
+    $('pad').innerHTML=keys.map(function(k){ return k===''?'<span></span>':'<button data-k="'+k+'">'+k+'</button>'; }).join('');
+    $('pad').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ var k=b.getAttribute('data-k'); if(k==='⌫')pin=pin.slice(0,-1); else if(pin.length<4)pin+=k; renderDots(); if(pin.length===4)submitPin(); }); }); }
+  function renderDots(){ $('pinDots').querySelectorAll('i').forEach(function(d,i){ d.classList.toggle('on',i<pin.length); }); }
+  async function submitPin(){ try{ var d=await api('/api/store/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({keeper:pickId,pin:pin})}); TOKEN=d.token; try{localStorage.setItem(TSTORE,TOKEN);}catch(e){} startApp(); }catch(e){ $('lErr').textContent='Wrong PIN · गलत PIN'; pin=''; renderDots(); } }
+  $('lBackName').addEventListener('click',function(){ showLogin(); });
+
+  // ---- app ----
+  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; registerSW(); load(); if(pollT)clearInterval(pollT); pollT=setInterval(load,20000); }
+  $('logout').addEventListener('click',function(){ if(confirm('Sign out? · साइन आउट?')){ try{localStorage.removeItem(TSTORE);}catch(e){} TOKEN=''; first=true; known={}; showLogin(); } });
+  window.setTab=function(t){ tab=t; $('tabReq').classList.toggle('on',t==='req'); $('tabStk').classList.toggle('on',t==='stk'); render(); };
+
+  async function load(){ try{ var d=await api('/api/store/'+encodeURIComponent(TOKEN)); KEEPER=d.keeper; DATA={requests:d.requests||[],stock:d.stock||[]}; $('uName').textContent=KEEPER.name;
+      var pend=DATA.requests.filter(function(r){return !r.partsIssued;});
+      if(!first){ pend.forEach(function(r){ if(!known[r.id]) notify(r); }); }
+      DATA.requests.forEach(function(r){ known[r.id]=true; }); first=false; render();
+    }catch(e){ if(e.message==='http404'){ try{localStorage.removeItem(TSTORE);}catch(x){} showLogin(); } } }
+  function notify(r){ showBanner('Parts request · '+(r.dg||''),'पुर्ज़े की माँग — '+cap(r.tech));
+    try{ if(window.Notification&&Notification.permission==='granted') new Notification('Deluxe Store — Parts request / पुर्ज़े',{body:(r.dg||'')+' · '+cap(r.tech),icon:'/icon-192.png'}); }catch(e){}
+    try{ if(navigator.vibrate) navigator.vibrate([200,80,200]); }catch(e){} }
+  var bTimer; function showBanner(t,s){ $('notiT').textContent=t; $('notiS').textContent=s; $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},6000); }
+
+  function pushBanner(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)) return ''; if(window.Notification&&Notification.permission==='granted') return '';
+    return '<div class="banner-info" onclick="enablePush()"><div class="ic">🔔</div><div><b>Turn on alerts</b><span>घंटी चालू करो — दबाओ</span></div></div>'; }
+
+  function render(){ if(tab==='req') renderReq(); else renderStock(); }
+  function renderReq(){ var pend=DATA.requests.filter(function(r){return !r.partsIssued;}); var done=DATA.requests.filter(function(r){return r.partsIssued;});
+    var html=pushBanner()+'<div style="margin:2px 2px 12px;font-size:19px;font-weight:800;">Parts requests <span style="color:var(--mut);font-size:14px;">माँग ('+pend.length+')</span></div>';
+    if(!pend.length&&!done.length) html+='<div class="empty"><div class="ic">✅</div><b>No requests</b><span>कोई माँग नहीं</span></div>';
+    pend.forEach(function(r){ html+=reqCard(r); });
+    if(done.length){ html+='<div style="margin:16px 2px 8px;font-size:15px;font-weight:800;color:var(--mut);">Issued · दे दिए</div>'; done.forEach(function(r){ html+=reqCard(r); }); }
+    $('screen').innerHTML=html;
+    $('screen').querySelectorAll('[data-issue]').forEach(function(b){ b.addEventListener('click',function(){ issue(b.getAttribute('data-issue')); }); });
+  }
+  function reqCard(r){ var T=TYPE[r.type]||TYPE.other;
+    return '<div class="req'+(r.partsIssued?' done':'')+'"><div class="rh"><span class="dg">'+esc(r.dg||'—')+'</span><span class="for">'+esc(cap(r.tech))+(r.location?' · '+esc(r.location):'')+'</span><span class="tp '+T.c+'">'+T.t+'</span></div>'+
+      (r.parts||[]).map(function(p){ return '<div class="pl">🔧 '+esc(p.en)+' <span class="hi">'+esc(p.hi||'')+'</span>'+(p.qty?'<span class="q">'+esc(p.qty)+'</span>':'')+'</div>'; }).join('')+
+      '<button class="issue'+(r.partsIssued?' done':'')+'" data-issue="'+esc(r.id)+'"'+(r.partsIssued?' disabled':'')+'>'+(r.partsIssued?'✓ Issued · दे दिया':'Issue parts · पुर्ज़े दे दो')+'</button></div>';
+  }
+  async function issue(id){ try{ await api('/api/store/'+encodeURIComponent(TOKEN)+'/issue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})});
+      for(var i=0;i<DATA.requests.length;i++){ if(DATA.requests[i].id===id){ DATA.requests[i].partsIssued=true; } } $('doneOv').classList.add('on'); render();
+    }catch(e){ showBanner('Could not save · फिर कोशिश',''); } }
+  window.closeDone=function(){ $('doneOv').classList.remove('on'); };
+
+  function renderStock(){ var html='<div style="margin:2px 2px 12px;font-size:19px;font-weight:800;">Stock <span style="color:var(--mut);font-size:14px;">स्टॉक</span></div>';
+    DATA.stock.forEach(function(s){ var low=Number(s.qty)<=Number(s.low);
+      html+='<div class="stk'+(low?' low':'')+'"><div class="tx"><b>'+esc(s.en)+'</b><span>'+esc(s.hi||'')+(low?' · <span class="lowtag">LOW · कम</span>':'')+'</span></div>'+
+        '<div class="ctr"><button data-adj="'+esc(s.key)+'" data-d="-1">−</button><div class="qv">'+esc(s.qty)+'<small> '+esc(s.unit||'')+'</small></div><button data-adj="'+esc(s.key)+'" data-d="1">+</button></div></div>';
+    });
+    $('screen').innerHTML=html;
+    $('screen').querySelectorAll('[data-adj]').forEach(function(b){ b.addEventListener('click',function(){ adjust(b.getAttribute('data-adj'), +b.getAttribute('data-d')); }); });
+  }
+  async function adjust(key,delta){ try{ var d=await api('/api/store/'+encodeURIComponent(TOKEN)+'/stock',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,delta:delta})});
+      if(d.item){ for(var i=0;i<DATA.stock.length;i++){ if(DATA.stock[i].key===key) DATA.stock[i]=d.item; } renderStock(); }
+    }catch(e){} }
+
+  $('bell').addEventListener('click',function(){ enablePush(); });
+
+  // ---- push ----
+  var swReg=null;
+  function registerSW(){ if(!('serviceWorker' in navigator)) return; navigator.serviceWorker.register('/store-sw.js',{scope:'/store'}).then(function(reg){ swReg=reg; maybeResub(); }).catch(function(){}); }
+  function urlB64(base64){ var pad='='.repeat((4-base64.length%4)%4); var b=(base64+pad).replace(/-/g,'+').replace(/_/g,'/'); var raw=atob(b); var arr=new Uint8Array(raw.length); for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i); return arr; }
+  async function maybeResub(){ try{ if(window.Notification&&Notification.permission==='granted') await doSub(); }catch(e){} }
+  window.enablePush=async function(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)){ alert('Add app to home screen for alerts.\\nअलर्ट के लिए ऐप होम स्क्रीन पर लगाओ।'); return; }
+    try{ var p=await Notification.requestPermission(); if(p!=='granted') return; await doSub(); render(); }catch(e){} };
+  async function doSub(){ if(!swReg) swReg=await navigator.serviceWorker.ready; var vd=await api('/api/store/'+encodeURIComponent(TOKEN)+'/vapid'); if(!vd.key) return;
+    var sub=await swReg.pushManager.getSubscription(); if(!sub) sub=await swReg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(vd.key)});
+    await api('/api/store/'+encodeURIComponent(TOKEN)+'/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub})}); showBanner('Alerts ON · घंटी चालू ✓',''); }
+
+  // ---- install ----
+  var deferred=null;
+  function isStandalone(){ return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true; }
+  function showInstallBtn(){ if(!isStandalone()) $('installBtn').style.display='block'; }
+  function isiOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); }
+  function installHelp(){ $('installSteps').innerHTML=isiOS()?'1) Tap <b>Share</b> (↑) at the bottom.<br>2) <b>Add to Home Screen</b>.<br><br>iPhone: नीचे <b>Share</b> (↑), फिर <b>Add to Home Screen</b>।':'1) Tap <b>⋮ menu</b> (top-right).<br>2) <b>Install app</b>.<br><br>ऊपर <b>⋮ मेन्यू</b>, फिर <b>Install app</b>।'; $('installHelp').classList.add('on'); }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; showInstallBtn(); });
+  $('installBtn').addEventListener('click',function(){ if(deferred){ deferred.prompt(); deferred.userChoice.finally(function(){ deferred=null; $('installBtn').style.display='none'; }); } else installHelp(); });
+  window.addEventListener('appinstalled',function(){ $('installBtn').style.display='none'; });
+  if(!isStandalone()) setTimeout(showInstallBtn,800);
+
+  boot();
+})();
+</script>
+</body>
+</html>

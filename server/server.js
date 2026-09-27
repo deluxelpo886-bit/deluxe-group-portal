@@ -53,6 +53,8 @@ const technicians = require('./technicians');
 const jobs = require('./jobs');
 const push = require('./push');
 const techalert = require('./techalert');
+const storekeepers = require('./storekeepers');
+const stock = require('./stock');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
@@ -1087,6 +1089,17 @@ app.get(['/tech', '/tech/:token'], (req, res) => {
   res.sendFile(path.join(__dirname, 'tech.html'), { cacheControl: false });
 });
 
+// Store keeper app: installed app opens at /store and signs in with a PIN.
+app.get(['/store', '/store/:token'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'store.html'), { cacheControl: false });
+});
+
 // Generator size advisor: a customer says what they need to run (ACs, pumps,
 // other load) and the page recommends the right kVA and lists which yard units
 // are available to match. Static page + it uses /api/fleet/directory for stock.
@@ -1320,6 +1333,17 @@ app.post('/api/jobs/assign', fleetProtect, (req, res) => {
       + (item.dg ? ' ' + item.dg : '') + (item.location ? ' at ' + item.location : '')
       + (item.title ? '. ' + item.title : '') + '. Open app: ' + appUrl + '  |  नया काम आया, ऐप खोलो।';
     techalert.alertTech(tech.phone, msg).catch(() => {});
+    // Tell the store keeper(s) a parts request has come in.
+    if (item.parts && item.parts.length) {
+      storekeepers.list().forEach((k) => {
+        push.sendToTech(storekeepers.pushKey(k.id), {
+          title: 'Parts request / पुर्ज़े की माँग' + (item.dg ? ' — ' + item.dg : ''),
+          body: (tech.name + ' · ' + item.parts.map((p) => p.en).join(', ')),
+          tag: 'parts-' + item.id,
+          url: '/store',
+        }).catch(() => {});
+      });
+    }
     res.json({ ok: true, item, push: push.isReady(), alert: techalert.ready() });
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
@@ -1355,6 +1379,49 @@ app.post('/api/tech/:token/subscribe', (req, res) => {
   const t = techFromToken(req);
   if (!t) return res.status(404).json({ error: 'Unknown link' });
   const ok = push.subscribe(t.id, (req.body || {}).subscription);
+  res.json({ ok: ok });
+});
+
+// ---------- Store keeper app (parts requests + stock) ----------
+app.get('/api/store/names', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ keepers: storekeepers.names() });
+});
+app.post('/api/store/login', (req, res) => {
+  const b = req.body || {};
+  const k = storekeepers.login(b.keeper, b.pin);
+  if (!k) return res.status(401).json({ error: 'Wrong PIN' });
+  res.json({ ok: true, token: k.token, keeper: { id: k.id, name: k.name } });
+});
+function keeperFromToken(req) { return storekeepers.byToken(req.params.token); }
+app.get('/api/store/:token', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const k = keeperFromToken(req);
+  if (!k) return res.status(404).json({ error: 'Unknown link' });
+  res.json({ keeper: { id: k.id, name: k.name }, requests: jobs.forStore(), stock: stock.getAll() });
+});
+app.post('/api/store/:token/issue', (req, res) => {
+  const k = keeperFromToken(req);
+  if (!k) return res.status(404).json({ error: 'Unknown link' });
+  try { res.json({ ok: true, item: jobs.setPartsIssued((req.body || {}).id, true) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/store/:token/stock', (req, res) => {
+  const k = keeperFromToken(req);
+  if (!k) return res.status(404).json({ error: 'Unknown link' });
+  const b = req.body || {};
+  const it = (b.delta != null) ? stock.adjust(b.key, b.delta) : stock.setQty(b.key, b.qty);
+  res.json({ ok: !!it, item: it });
+});
+app.get('/api/store/:token/vapid', (req, res) => {
+  const k = keeperFromToken(req);
+  if (!k) return res.status(404).json({ error: 'Unknown link' });
+  res.json({ key: push.publicKey(), ready: push.isReady() });
+});
+app.post('/api/store/:token/subscribe', (req, res) => {
+  const k = keeperFromToken(req);
+  if (!k) return res.status(404).json({ error: 'Unknown link' });
+  const ok = push.subscribe(storekeepers.pushKey(k.id), (req.body || {}).subscription);
   res.json({ ok: ok });
 });
 app.get('/api/tech/:token', (req, res) => {

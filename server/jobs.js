@@ -52,6 +52,9 @@ function add(rec) {
       en: clean(p.en), hi: clean(p.hi), qty: clean(p.qty),
     })).filter((p) => p.en) : [],
     status: 'new',
+    // Store-keeper side: have the parts for this job been issued yet?
+    partsIssued: false,
+    partsIssuedAt: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     history: [{ status: 'new', at: new Date().toISOString() }],
@@ -88,6 +91,23 @@ function setStatus(id, status) {
 
 function remove(id) { items = items.filter((x) => x.id !== id); persist(); }
 
+// Store keeper: jobs that need parts, pending-issue first, then recently issued.
+function forStore() {
+  return items
+    .filter((x) => Array.isArray(x.parts) && x.parts.length)
+    .filter((x) => x.status !== 'done' || (Date.now() - new Date(x.updatedAt).getTime()) < 12 * 3600000)
+    .sort((a, b) => (Number(!!a.partsIssued) - Number(!!b.partsIssued)) || String(b.createdAt).localeCompare(String(a.createdAt)));
+}
+function setPartsIssued(id, issued) {
+  const it = items.find((x) => x.id === id);
+  if (!it) throw new Error('Job not found');
+  it.partsIssued = !!issued;
+  it.partsIssuedAt = issued ? new Date().toISOString() : null;
+  it.updatedAt = new Date().toISOString();
+  persist();
+  return it;
+}
+
 // All jobs (office monitor), active first then recent done.
 function all() {
   const rank = (s) => (s === 'done' ? 1 : 0);
@@ -99,4 +119,4 @@ function stats() {
   return { total: items.length, active: active.length };
 }
 
-module.exports = { add, get, forTech, setStatus, remove, all, stats, TYPES, STATUSES };
+module.exports = { add, get, forTech, forStore, setStatus, setPartsIssued, remove, all, stats, TYPES, STATUSES };
