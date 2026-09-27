@@ -21,7 +21,7 @@
   input:focus{border-color:var(--amber);}
   .btn{background:var(--amber);color:#1a1300;border:none;padding:9px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
   .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
   @media(max-width:640px){.cols{grid-template-columns:1fr;}}
   .team{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;}
   .team h2{font-size:15px;margin:0 0 12px;display:flex;justify-content:space-between;align-items:center;}
@@ -83,7 +83,7 @@
       <button class="btn sec" id="signOut" style="display:none;">Sign out</button>
     </div>
   </div>
-  <p class="sub">Plan the day's work for each team. Technicians tick jobs off as they finish. Tap <b>🧭 Plan today</b> to auto-assign a rough <b>Per team</b> number of jobs (default 3) across the two teams — <b>open breakdowns come first</b>, then services confirmed due by hours, then the rest; anything over the cap is reported so you can push it to another day. Or <b>🔧 Auto-add due</b> for services only. Also see the <a href="/breakdowns" class="link">breakdowns</a>, <a href="/service" class="link">service log</a>, <a href="/fleet" class="link">live map</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
+  <p class="sub">Plan the day's work for each team. Technicians tick jobs off as they finish. Tap <b>🧭 Plan today</b> to auto-assign a rough <b>Per team</b> number of jobs (default 3) across the three teams — <b>open breakdowns come first</b>, then services confirmed due by hours, then the rest; anything over the cap is reported so you can push it to another day. Or <b>🔧 Auto-add due</b> for services only. Also see the <a href="/breakdowns" class="link">breakdowns</a>, <a href="/service" class="link">service log</a>, <a href="/fleet" class="link">live map</a>, or <a href="/menu" class="link">☰ menu</a>.</p>
   <div id="autoStatus" style="font-size:13px;color:var(--green);min-height:18px;margin:-4px 0 12px;"></div>
 
   <div class="cols" id="cols"></div>
@@ -105,7 +105,7 @@
 (function(){
   var LS='deluxeFleetToken';
   var TOKEN=localStorage.getItem(LS)||'';
-  var TEAMS=['Team 1','Team 2'];
+  var TEAMS=['Team 1','Team 2','Team 3'];
   var $=function(id){return document.getElementById(id);};
   $('date').value=new Date().toISOString().slice(0,10);
 
@@ -213,7 +213,7 @@
         await addSilently(team,g.dg,note); added++;
       }
       var msg = added
-        ? ('Added '+added+' confirmed-due service'+(added>1?'s':'')+', split across the two teams.')
+        ? ('Added '+added+' confirmed-due service'+(added>1?'s':'')+', split across the teams.')
         : (send.length ? 'All confirmed-due services are already on today’s schedule. 👍' : 'Nothing confirmed due by hours. 👍');
       if(confirm.length){
         msg += ' ⚠ '+confirm.length+' more flagged by date estimate ('+confirm.slice(0,8).map(function(g){return g.dg;}).join(', ')+(confirm.length>8?'…':'')+') — confirm their hours in the service log before sending a team.';
