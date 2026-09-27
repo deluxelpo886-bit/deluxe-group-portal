@@ -127,6 +127,7 @@ function loadBase() {
         kva: g.kva || null,
         brand: g.brand || '',
         company: g.company || '',
+        status: g.status || '',
         maps_link: g.maps_link || null,
         gatePass: !!g.gatePass,
       };

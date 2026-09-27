@@ -1033,6 +1033,19 @@ app.get('/serviceplan', (req, res) => {
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'serviceplan.html'), { cacheControl: false });
 });
+// Generator size advisor: a customer says what they need to run (ACs, pumps,
+// other load) and the page recommends the right kVA and lists which yard units
+// are available to match. Static page + it uses /api/fleet/directory for stock.
+app.get(['/sizing', '/advisor'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'sizing.html'), { cacheControl: false });
+});
+
 // Printable fleet utilisation report: which units run heavy (near 24h) vs light
 // / standby, so the office can see usage at a glance and relax or tighten dates.
 app.get(['/utilisation', '/usage'], (req, res) => {

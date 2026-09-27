@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Genset Size Advisor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b66">
+<style>
+  :root{ --bg:#0a0e13; --panel:#141b24; --panel2:#1a222c; --line:#2a333d; --text:#eef3f7; --muted:#93a1b0; --faint:#5f6b78;
+    --brand:#0d3b66; --amber:#e8a13a; --green:#41c98a; --red:#f0655a; --blue:#5aa2e6;
+    --sans:'Inter','Segoe UI',-apple-system,sans-serif; --mono:ui-monospace,'SF Mono',Menlo,monospace; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);padding:16px 14px 80px;line-height:1.5;
+    background-image:radial-gradient(120% 70% at 100% -10%,rgba(232,161,58,.10),transparent 55%),radial-gradient(110% 60% at -10% 0,rgba(90,162,230,.09),transparent 50%);min-height:100vh;}
+  .wrap{max-width:560px;margin:0 auto;}
+  .navback{display:inline-block;margin-bottom:12px;color:var(--amber);text-decoration:none;font-size:13px;font-weight:700;}
+  .head{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;}
+  .head .mk{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--amber),#c9761f);display:grid;place-items:center;font-weight:900;color:#1a1200;font-size:16px;flex:0 0 auto;}
+  .head .co{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .head h1{font-size:21px;font-weight:800;margin:2px 0 1px;letter-spacing:-.01em;}
+  .head .sub{font-size:12.5px;color:var(--muted);}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 15px 16px;margin-bottom:14px;box-shadow:0 8px 22px -14px rgba(0,0,0,.6);}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .card h2 .ic{font-size:16px;}
+  .acrow{display:flex;gap:8px;align-items:center;margin-bottom:9px;}
+  .acrow select,.acrow input,.fld input,.fld select{background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 11px;font-size:14px;font-family:var(--sans);}
+  .acrow select{flex:1;} .acrow .qty{width:74px;text-align:center;} .acrow .rm{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
+  .acrow .x{color:var(--muted);font-size:13px;}
+  .addbtn{background:var(--panel2);border:1px dashed #3a4550;color:var(--amber);border-radius:9px;padding:9px;width:100%;font-weight:700;font-size:13px;cursor:pointer;margin-top:3px;}
+  .fld{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+  .fld label{flex:1;font-size:13.5px;}
+  .fld label small{display:block;color:var(--faint);font-size:11px;font-weight:400;}
+  .fld input{width:110px;text-align:right;}
+  .tog{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;cursor:pointer;}
+  .tog input{width:18px;height:18px;accent-color:var(--amber);}
+  .tog div{font-size:13px;} .tog div small{display:block;color:var(--faint);font-size:11px;}
+  /* Result */
+  .result{background:linear-gradient(145deg,rgba(65,201,138,.14),var(--panel) 55%);border:1px solid rgba(65,201,138,.3);border-radius:16px;padding:18px;text-align:center;margin-bottom:14px;}
+  .result .rl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+  .result .rv{font-size:44px;font-weight:850;line-height:1.05;margin:4px 0 2px;color:var(--green);}
+  .result .rv small{font-size:20px;font-weight:700;}
+  .result .rn{font-size:13px;color:var(--muted);}
+  .bd{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;}
+  .bd .b{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;text-align:left;}
+  .bd .b .l{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);}
+  .bd .b .v{font-size:16px;font-weight:800;margin-top:1px;}
+  .units .u{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-bottom:8px;}
+  .units .u .dg{font-family:var(--mono);font-weight:800;font-size:14px;}
+  .units .u .kva{background:rgba(65,201,138,.16);color:var(--green);font-weight:800;font-size:12px;padding:3px 9px;border-radius:999px;}
+  .units .u .meta{margin-left:auto;text-align:right;font-size:11.5px;color:var(--muted);}
+  .units .u.tight .kva{background:rgba(232,161,58,.16);color:var(--amber);}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:14px;}
+  .note{font-size:11.5px;color:var(--faint);line-height:1.6;margin-top:4px;}
+  .note b{color:var(--muted);}
+  .warn{background:rgba(232,161,58,.1);border:1px solid rgba(232,161,58,.3);border-radius:10px;padding:10px 12px;font-size:12.5px;color:#f0c987;margin-top:12px;}
+  .signin{color:var(--amber);text-decoration:underline;cursor:pointer;}
+</style>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="navback" href="/menu">☰ Menu</a>
+  <div class="head">
+    <div class="mk">DE</div>
+    <div>
+      <div class="co">Deluxe Heavy Equipment Rental · Deluxe Energy</div>
+      <h1>Generator Size Advisor</h1>
+      <div class="sub">Tell us the load — get the right kVA + what's in the yard.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="ic">❄️</span> Air conditioners</h2>
+    <div id="acList"></div>
+    <button class="addbtn" id="addAc">+ Add another AC size</button>
+  </div>
+
+  <div class="card">
+    <h2><span class="ic">⚡</span> Other load</h2>
+    <div class="fld"><label>Lights &amp; small power <small>total kW (sockets, fans, TV…)</small></label><input type="number" id="lightKw" min="0" step="0.5" placeholder="0"></div>
+    <div class="fld"><label>Water pump / motor <small>biggest one, in HP</small></label><input type="number" id="pumpHp" min="0" step="0.5" placeholder="0"></div>
+    <div class="fld"><label>Welding / other machine <small>total kW</small></label><input type="number" id="otherKw" min="0" step="0.5" placeholder="0"></div>
+    <label class="tog"><input type="checkbox" id="hardStart"><div><b>Hard start</b><small>Many ACs / motors switch on together (no stagger)</small></div></label>
+  </div>
+
+  <div class="result">
+    <div class="rl">Recommended generator</div>
+    <div class="rv" id="recV">—</div>
+    <div class="rn" id="recN">Enter the load above</div>
+    <div class="bd">
+      <div class="b"><div class="l">Running load</div><div class="v" id="runKw">0 kW</div></div>
+      <div class="b"><div class="l">Running power</div><div class="v" id="runKva">0 kVA</div></div>
+      <div class="b"><div class="l">With start + heat margin</div><div class="v" id="designKva">0 kVA</div></div>
+      <div class="b"><div class="l">Load on genset</div><div class="v" id="loadPct">—</div></div>
+    </div>
+    <div class="warn" id="warnBox" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="ic">🏭</span> Available in the yard</h2>
+    <div id="units"><div class="empty" id="unitsMsg">Enter a load to see matching units.</div></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="ic">ℹ️</span> How this is worked out</h2>
+    <div class="note">
+      <b>AC:</b> ~1.2 kW per ton of cooling (compressor + fans). <b>Pump/motor:</b> HP × 0.75 kW.<br>
+      Running kW → <b>kVA at 0.8 power factor</b>. Then a <b>×1.3 margin</b> (motor starting inrush, Abu&nbsp;Dhabi heat de-rating, a little spare) — or <b>×1.5</b> if everything hard-starts together. Rounded up to the next standard genset.<br>
+      Aim to load a genset to ~<b>70–80%</b>. A quick guide, not a substitute for a site survey on big or motor-heavy loads.
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  // Standard Deluxe genset ladder (kVA).
+  var SIZES=[20,30,45,60,82.5,100,125,160,200,250,320,400,500,630];
+  var TONS=[0.75,1,1.5,2,2.5,3,4,5,7.5,10];
+  var KW_PER_TON=1.2;
+
+  var acRows=[];
+  function acRowHtml(i){
+    var opts=TONS.map(function(t){return '<option value="'+t+'"'+(t===1.5?' selected':'')+'>'+t+' ton</option>';}).join('');
+    return '<div class="acrow" data-i="'+i+'">'+
+      '<select class="acton">'+opts+'</select>'+
+      '<span class="x">×</span>'+
+      '<input class="qty" type="number" min="0" step="1" value="1">'+
+      '<button class="rm" title="remove">×</button></div>';
+  }
+  function addAc(){ var i=acRows.length; acRows.push(i); var d=document.createElement('div'); d.innerHTML=acRowHtml(i); var el=d.firstChild; $('acList').appendChild(el);
+    el.querySelector('.acton').addEventListener('change',calc); el.querySelector('.qty').addEventListener('input',calc);
+    el.querySelector('.rm').addEventListener('click',function(){ el.remove(); calc(); }); calc(); }
+  $('addAc').addEventListener('click',addAc);
+
+  ['lightKw','pumpHp','otherKw'].forEach(function(id){ $(id).addEventListener('input',calc); });
+  $('hardStart').addEventListener('change',calc);
+
+  function num(v){ var n=parseFloat(v); return isFinite(n)&&n>0?n:0; }
+
+  function nextSize(kva){ for(var i=0;i<SIZES.length;i++){ if(SIZES[i]>=kva) return SIZES[i]; } return null; }
+
+  var DIR=null;
+  function calc(){
+    // 1) sum AC kW + track biggest single AC
+    var acKw=0, biggestAcKw=0, acCount=0;
+    $('acList').querySelectorAll('.acrow').forEach(function(r){
+      var tons=num(r.querySelector('.acton').value), qty=num(r.querySelector('.qty').value);
+      var oneKw=tons*KW_PER_TON;
+      acKw+=oneKw*qty; acCount+=qty;
+      if(qty>0 && oneKw>biggestAcKw) biggestAcKw=oneKw;
+    });
+    var lightKw=num($('lightKw').value);
+    var pumpHp=num($('pumpHp').value); var pumpKw=pumpHp*0.746;
+    var otherKw=num($('otherKw').value);
+    var runKw=acKw+lightKw+pumpKw+otherKw;
+
+    if(runKw<=0){ $('recV').textContent='—'; $('recN').textContent='Enter the load above';
+      $('runKw').textContent='0 kW'; $('runKva').textContent='0 kVA'; $('designKva').textContent='0 kVA'; $('loadPct').textContent='—';
+      $('warnBox').hidden=true; $('units').innerHTML='<div class="empty">Enter a load to see matching units.</div>'; return; }
+
+    var pf=0.8;
+    var runKva=runKw/pf;
+    var hard=$('hardStart').checked;
+    var margin=hard?1.5:1.3;
+    var designKva=runKva*margin;
+    var size=nextSize(designKva);
+
+    $('runKw').textContent=(Math.round(runKw*10)/10)+' kW';
+    $('runKva').textContent=(Math.round(runKva))+' kVA';
+    $('designKva').textContent=(Math.round(designKva))+' kVA';
+    if(size){ $('recV').innerHTML=size+' <small>kVA</small>';
+      var pct=Math.round(runKva/size*100);
+      $('loadPct').textContent=pct+'%';
+      $('recN').textContent=(acCount?acCount+' AC':'load')+' → run '+Math.round(runKva)+' kVA, need ~'+Math.round(designKva)+' kVA → '+size+' kVA set';
+    } else { $('recV').textContent='500+'; $('recN').textContent='Very large load — needs a survey / multiple sets'; $('loadPct').textContent='—'; }
+
+    // warnings
+    var w=[];
+    if(hard) w.push('Hard-start selected — sized with a bigger (×1.5) margin so compressors can start.');
+    if(size && runKva/size>0.85) w.push('This set would run above 85% — consider the next size up for headroom.');
+    if(size && runKva/size<0.35 && runKva>0) w.push('Load is light for this set (<35%) — a smaller set may be cheaper, or fine if the load will grow.');
+    if(w.length){ $('warnBox').hidden=false; $('warnBox').innerHTML=w.map(esc).join('<br>'); } else { $('warnBox').hidden=true; }
+
+    matchUnits(size);
+  }
+
+  function renderUnits(size){
+    var box=$('units');
+    if(!size){ box.innerHTML='<div class="empty">—</div>'; return; }
+    if(DIR===null){
+      box.innerHTML='<div class="empty">'+(TOKEN?'Loading yard stock…':'<span class="signin" id="si">Sign in</span> to see which yard units are available.')+'</div>';
+      var si=$('si'); if(si) si.addEventListener('click',function(){ location.href='/menu'; }); return;
+    }
+    var avail=Object.keys(DIR).map(function(k){return DIR[k];})
+      .filter(function(u){ return u && u.kva && String(u.status||'').toLowerCase()==='available'; });
+    // units at or above the recommended size, closest first; then one size below as a "tight" fallback
+    var fit=avail.filter(function(u){return u.kva>=size;}).sort(function(a,b){return a.kva-b.kva;});
+    var below=avail.filter(function(u){return u.kva<size && u.kva>=size*0.8;}).sort(function(a,b){return b.kva-a.kva;});
+    var list=fit.slice(0,5);
+    var html='';
+    if(list.length){
+      html+=list.map(function(u){ return '<div class="u"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span>'+
+        '<span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join('');
+    } else {
+      html+='<div class="empty">No '+size+' kVA-or-bigger unit free in the yard right now.</div>';
+    }
+    if(!fit.length && below.length){
+      html+='<div class="note" style="margin:8px 0 4px;">Nearest available (slightly under — OK only if the real load is lower):</div>';
+      html+=below.slice(0,3).map(function(u){ return '<div class="u tight"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span>'+
+        '<span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join('');
+    }
+    box.innerHTML=html;
+  }
+
+  var lastSize=null;
+  function matchUnits(size){ lastSize=size;
+    if(DIR!==null){ renderUnits(size); return; }
+    renderUnits(size); // shows loading / sign-in
+    if(!TOKEN) return;
+    fetch('/api/fleet/directory',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){ DIR=(d&&d.directory)||{}; renderUnits(lastSize); })
+      .catch(function(){ DIR={}; renderUnits(lastSize); });
+  }
+
+  addAc(); // start with one AC row
+})();
+</script>
+</body>
+</html>
