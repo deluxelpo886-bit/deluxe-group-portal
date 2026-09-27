@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — LPO & Billing Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b66">
+<style>
+  :root{ --bg:#0a0e13; --panel:#141b24; --panel2:#1a222c; --line:#2a333d; --text:#eef3f7; --muted:#93a1b0; --faint:#5f6b78;
+    --brand:#0d3b66; --amber:#e8a13a; --green:#41c98a; --red:#f0655a; --blue:#5aa2e6;
+    --sans:'Inter','Segoe UI',-apple-system,sans-serif; --mono:ui-monospace,'SF Mono',Menlo,monospace; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);padding:16px 14px 80px;line-height:1.5;
+    background-image:radial-gradient(120% 70% at 100% -10%,rgba(232,161,58,.10),transparent 55%),radial-gradient(110% 60% at -10% 0,rgba(90,162,230,.09),transparent 50%);min-height:100vh;}
+  .wrap{max-width:640px;margin:0 auto;}
+  .navback{display:inline-block;margin-bottom:12px;color:var(--amber);text-decoration:none;font-size:13px;font-weight:700;}
+  .head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+  .head .mk{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--amber),#c9761f);display:grid;place-items:center;font-weight:900;color:#1a1200;font-size:16px;flex:0 0 auto;}
+  .head .co{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .head h1{font-size:21px;font-weight:800;margin:2px 0 1px;}
+  .head .sub{font-size:12.5px;color:var(--muted);}
+  .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+  .sc{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 8px;text-align:center;}
+  .sc .n{font-size:22px;font-weight:850;line-height:1;} .sc .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--faint);margin-top:4px;}
+  .sc.red .n{color:var(--red);} .sc.amber .n{color:var(--amber);} .sc.green .n{color:var(--green);}
+  .ctl{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+  .ctl select,.ctl input{background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:9px 11px;font-size:13px;font-family:var(--sans);}
+  .ctl .search{flex:1;min-width:120px;}
+  .ctl label{font-size:11px;color:var(--muted);}
+  .grp{margin-bottom:6px;}
+  .grp .gh{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin:14px 3px 8px;display:flex;align-items:center;gap:8px;}
+  .grp .gh .c{color:var(--faint);font-weight:600;}
+  .u{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:9px;overflow:hidden;}
+  .u .top{display:flex;align-items:center;gap:9px;padding:12px 13px;cursor:pointer;}
+  .u .dg{font-family:var(--mono);font-weight:800;font-size:14.5px;}
+  .u .kva{font-size:11px;color:var(--muted);}
+  .u .loc{font-size:11px;color:var(--faint);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pill{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap;}
+  .pill.po{background:rgba(65,201,138,.16);color:var(--green);} .pill.nopo{background:rgba(240,101,90,.16);color:var(--red);}
+  .pill.exp{background:rgba(240,101,90,.16);color:var(--red);} .pill.expsoon{background:rgba(232,161,58,.16);color:var(--amber);}
+  .chips{display:flex;gap:6px;padding:0 13px 11px;}
+  .chip{flex:1;text-align:center;font-size:11px;font-weight:700;padding:7px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);cursor:pointer;}
+  .chip.on{background:rgba(65,201,138,.16);border-color:rgba(65,201,138,.4);color:var(--green);}
+  .chip.off{background:rgba(240,101,90,.09);border-color:rgba(240,101,90,.3);color:#f0a89e;}
+  .edit{border-top:1px solid var(--line);padding:13px;display:none;background:var(--panel2);}
+  .edit.open{display:block;}
+  .row{display:flex;gap:9px;margin-bottom:9px;}
+  .f{flex:1;min-width:0;} .f label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--faint);margin-bottom:3px;}
+  .f input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 10px;font-size:13.5px;font-family:var(--sans);}
+  .save{background:var(--amber);color:#1a1300;border:none;border-radius:9px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;}
+  .del{background:none;border:1px solid var(--line);color:var(--faint);border-radius:9px;padding:10px 12px;font-size:12px;cursor:pointer;}
+  .month{background:none;border:1px solid var(--line);color:var(--blue);border-radius:9px;padding:10px 12px;font-size:12px;cursor:pointer;}
+  .erow{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+  .hist{font-size:11px;color:var(--faint);margin-top:9px;border-top:1px dashed var(--line);padding-top:8px;}
+  .empty{color:var(--muted);text-align:center;padding:30px;}
+  #overlay{position:fixed;inset:0;background:rgba(5,8,12,.85);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:340px;width:100%;}
+  #overlay input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:10px 11px;margin-bottom:10px;font-size:14px;}
+  #overlay .save{width:100%;}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#0f1620;border:1px solid var(--line);color:var(--text);padding:11px 16px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60;}
+  .toast.show{opacity:1;}
+</style>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="navback" href="/menu">☰ Menu</a>
+  <div class="head">
+    <div class="mk">DE</div>
+    <div>
+      <div class="co">Deluxe Heavy Equipment Rental · Deluxe Energy</div>
+      <h1>LPO &amp; Billing Tracker</h1>
+      <div class="sub">Every on-hire genset — PO number, timesheet &amp; invoice each month.</div>
+    </div>
+  </div>
+
+  <div class="sum" id="sum"></div>
+  <div class="ctl">
+    <select id="fCust"><option value="">All customers</option></select>
+    <input class="search" id="search" placeholder="Search DG / PO / site…">
+    <label>Month <input type="month" id="period" style="width:130px;"></label>
+  </div>
+
+  <div id="out"><div class="empty">Loading…</div></div>
+</div>
+
+<div id="overlay"><div class="card">
+  <h2 style="margin:0 0 4px;font-size:18px;">LPO Tracker — Sign in</h2>
+  <p style="color:var(--muted);font-size:13px;margin:0 0 14px;">Sign in to view billing.</p>
+  <input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username">
+  <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+  <div style="color:var(--red);font-size:13px;min-height:18px;" id="loginErr"></div>
+  <button class="save" id="loginBtn">Sign in</button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function authH(){return {'Authorization':'Bearer '+TOKEN};}
+  function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1800);}
+
+  var now=new Date(); var pad=function(n){return(n<10?'0':'')+n;};
+  var curPeriod=now.getFullYear()+'-'+pad(now.getMonth()+1);
+
+  function showLogin(m){$('overlay').style.display='flex';if(m)$('loginErr').textContent=m;}
+  function hideLogin(){$('overlay').style.display='none';load();}
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(),password=$('loginPass').value;$('loginErr').textContent='';
+    try{var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json();if(!r.ok){$('loginErr').textContent=d.message||'Sign in failed';return;}
+      TOKEN=d.token;localStorage.setItem(LS,TOKEN);hideLogin();
+    }catch(e){$('loginErr').textContent='Network error';}
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('loginPass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+
+  var UNITS=[], LPO={};
+  function dayDiff(to){ if(!to) return null; var a=new Date(new Date().toISOString().slice(0,10)+'T00:00:00'),b=new Date(to+'T00:00:00'); return Math.round((b-a)/86400000); }
+
+  async function load(){
+    $('out').innerHTML='<div class="empty">Loading…</div>';
+    try{
+      var sr=await fetch('/api/service/status',{cache:'no-store',headers:authH()});
+      if(sr.status===401){showLogin();return;}
+      var sd=await sr.json();
+      var ld=await (await fetch('/api/lpo',{cache:'no-store',headers:authH()})).json();
+      LPO=ld.lpo||{};
+      // one row per ON-HIRE genset
+      UNITS=(sd.generators||[]).filter(function(g){return !g.offHire;}).map(function(g){
+        return {dg:g.dg, kva:g.kva, customer:(g.customer||'').trim()||'—', location:g.location||''};
+      }).sort(function(a,b){return String(a.dg).localeCompare(b.dg);});
+      // customer filter options
+      var custs={}; UNITS.forEach(function(u){custs[u.customer]=(custs[u.customer]||0)+1;});
+      var sel=$('fCust'); var cur=sel.value;
+      sel.innerHTML='<option value="">All customers ('+UNITS.length+')</option>'+Object.keys(custs).sort().map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+' ('+custs[c]+')</option>';}).join('');
+      sel.value=cur;
+      render();
+    }catch(e){ $('out').innerHTML='<div class="empty">Could not load. Pull to refresh.</div>'; }
+  }
+
+  function render(){
+    var period=$('period').value||curPeriod;
+    var q=($('search').value||'').trim().toUpperCase();
+    var cf=$('fCust').value;
+    var noPo=0,tsPend=0,invPend=0,expSoon=0;
+    var rows=UNITS.filter(function(u){
+      if(cf && u.customer!==cf) return false;
+      if(q){ var rec=LPO[u.dg]||{}; var hay=(u.dg+' '+u.customer+' '+u.location+' '+(rec.poNumber||'')).toUpperCase(); if(hay.indexOf(q)<0) return false; }
+      return true;
+    });
+    // counts over the (unfiltered) fleet for the summary
+    UNITS.forEach(function(u){ var r=LPO[u.dg]||{};
+      if(!r.poNumber) noPo++;
+      if(!r.timesheetDone) tsPend++;
+      if(!r.invoiceDone) invPend++;
+      var dd=dayDiff(r.validTo); if(dd!=null && dd>=0 && dd<=30) expSoon++;
+    });
+    $('sum').innerHTML=
+      '<div class="sc red"><div class="n">'+noPo+'</div><div class="l">No PO</div></div>'+
+      '<div class="sc amber"><div class="n">'+tsPend+'</div><div class="l">Timesheet due</div></div>'+
+      '<div class="sc amber"><div class="n">'+invPend+'</div><div class="l">Invoice due</div></div>'+
+      '<div class="sc'+(expSoon?' red':'')+'"><div class="n">'+expSoon+'</div><div class="l">PO expiring</div></div>';
+
+    if(!rows.length){ $('out').innerHTML='<div class="empty">No units match.</div>'; return; }
+    // group by customer
+    var groups={}; rows.forEach(function(u){(groups[u.customer]=groups[u.customer]||[]).push(u);});
+    var html='';
+    Object.keys(groups).sort(function(a,b){return groups[b].length-groups[a].length;}).forEach(function(c){
+      html+='<div class="grp"><div class="gh">'+esc(c)+' <span class="c">'+groups[c].length+' unit'+(groups[c].length!==1?'s':'')+'</span></div>';
+      groups[c].forEach(function(u){ html+=card(u,period); });
+      html+='</div>';
+    });
+    $('out').innerHTML=html;
+    wire();
+  }
+
+  function card(u,period){
+    var r=LPO[u.dg]||{};
+    var poPill=r.poNumber?('<span class="pill po">PO '+esc(r.poNumber)+'</span>'):'<span class="pill nopo">NO PO</span>';
+    var dd=dayDiff(r.validTo); var expPill='';
+    if(dd!=null){ if(dd<0) expPill='<span class="pill exp">EXPIRED</span>'; else if(dd<=30) expPill='<span class="pill expsoon">'+dd+'d left</span>'; }
+    var ts=r.timesheetDone, inv=r.invoiceDone;
+    return '<div class="u" data-dg="'+esc(u.dg)+'">'+
+      '<div class="top" data-toggle><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+(u.kva?esc(u.kva)+'kVA':'')+'</span>'+
+      '<span class="loc">'+esc(u.location||'')+'</span>'+poPill+expPill+'</div>'+
+      '<div class="chips"><div class="chip '+(ts?'on':'off')+'" data-ts>'+(ts?'✓ Timesheet'+(r.timesheetDate?' '+esc(r.timesheetDate):''):'▢ Timesheet due')+'</div>'+
+      '<div class="chip '+(inv?'on':'off')+'" data-inv>'+(inv?'✓ Invoice'+(r.invoiceNo?' '+esc(r.invoiceNo):''):'▢ Invoice due')+'</div></div>'+
+      '<div class="edit">'+
+        '<div class="row"><div class="f"><label>PO / LPO number</label><input data-k="poNumber" value="'+esc(r.poNumber||'')+'"></div>'+
+          '<div class="f"><label>PO value (AED)</label><input data-k="poValue" value="'+esc(r.poValue!=null?r.poValue:'')+'"></div></div>'+
+        '<div class="row"><div class="f"><label>Valid to (expiry)</label><input type="date" data-k="validTo" value="'+esc(r.validTo||'')+'"></div>'+
+          '<div class="f"><label>Upload portal</label><input data-k="portal" value="'+esc(r.portal||'')+'"></div></div>'+
+        '<div class="row"><div class="f"><label>Billing month</label><input type="month" data-k="period" value="'+esc(r.period||period)+'"></div>'+
+          '<div class="f"><label>Monthly rate (AED)</label><input data-k="rate" value="'+esc(r.rate!=null?r.rate:'')+'"></div></div>'+
+        '<div class="row"><div class="f"><label>Timesheet date</label><input type="date" data-k="timesheetDate" value="'+esc(r.timesheetDate||'')+'"></div>'+
+          '<div class="f"><label>Invoice no.</label><input data-k="invoiceNo" value="'+esc(r.invoiceNo||'')+'"></div></div>'+
+        '<div class="row"><div class="f"><label>Invoice date</label><input type="date" data-k="invoiceDate" value="'+esc(r.invoiceDate||'')+'"></div>'+
+          '<div class="f"><label>Invoice amount (AED)</label><input data-k="invoiceAmount" value="'+esc(r.invoiceAmount!=null?r.invoiceAmount:'')+'"></div></div>'+
+        '<div class="row"><div class="f"><label>Notes</label><input data-k="notes" value="'+esc(r.notes||'')+'"></div></div>'+
+        (r.history&&r.history.length?('<div class="hist">Past: '+r.history.slice(0,4).map(function(h){return esc(h.period||'?')+(h.invoiceNo?(' inv '+esc(h.invoiceNo)):'')+(h.timesheetDone?' ✓ts':'');}).join(' · ')+'</div>'):'')+
+        '<div class="erow"><button class="del" data-del>Remove</button><button class="month" data-month>Start new month</button><button class="save" data-save>Save</button></div>'+
+      '</div></div>';
+  }
+
+  function collect(el){ var o={dg:el.getAttribute('data-dg')}; el.querySelectorAll('[data-k]').forEach(function(i){o[i.getAttribute('data-k')]=i.value;}); return o; }
+  async function post(url,body){ var r=await fetch(url,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH()),body:JSON.stringify(body)}); return r.ok?r.json():Promise.reject(); }
+
+  function wire(){
+    $('out').querySelectorAll('.u').forEach(function(el){
+      var dg=el.getAttribute('data-dg');
+      el.querySelector('[data-toggle]').addEventListener('click',function(){ el.querySelector('.edit').classList.toggle('open'); });
+      el.querySelector('[data-ts]').addEventListener('click',function(e){ e.stopPropagation(); var r=LPO[dg]||{}; var nd=!r.timesheetDone;
+        post('/api/lpo/save',{dg:dg,timesheetDone:nd,timesheetDate:nd?(new Date().toISOString().slice(0,10)):''}).then(function(d){LPO[dg]=d.item;render();toast(nd?'Timesheet ✓ '+dg:'Timesheet cleared');}).catch(function(){toast('Failed');}); });
+      el.querySelector('[data-inv]').addEventListener('click',function(e){ e.stopPropagation(); var r=LPO[dg]||{}; var nd=!r.invoiceDone;
+        post('/api/lpo/save',{dg:dg,invoiceDone:nd,invoiceDate:nd?(new Date().toISOString().slice(0,10)):''}).then(function(d){LPO[dg]=d.item;render();toast(nd?'Invoice ✓ '+dg:'Invoice cleared');}).catch(function(){toast('Failed');}); });
+      var sv=el.querySelector('[data-save]'); if(sv) sv.addEventListener('click',function(){ post('/api/lpo/save',collect(el)).then(function(d){LPO[dg]=d.item;toast('Saved '+dg);var open=el.querySelector('.edit').classList.contains('open');render();if(open){var n=$('out').querySelector('.u[data-dg="'+dg+'"] .edit');if(n)n.classList.add('open');}}).catch(function(){toast('Save failed');}); });
+      var mo=el.querySelector('[data-month]'); if(mo) mo.addEventListener('click',function(){ var np=prompt('Start a new billing month (archives the current timesheet/invoice). New month (YYYY-MM):',curPeriod); if(!np)return; post('/api/lpo/month',{dg:dg,period:np}).then(function(d){LPO[dg]=d.item;render();toast('New month started for '+dg);}).catch(function(){toast('Failed');}); });
+      var dl=el.querySelector('[data-del]'); if(dl) dl.addEventListener('click',function(){ if(!confirm('Remove the LPO record for '+dg+'?'))return; post('/api/lpo/remove',{dg:dg}).then(function(){delete LPO[dg];render();toast('Removed '+dg);}).catch(function(){toast('Failed');}); });
+    });
+  }
+
+  $('fCust').addEventListener('change',render);
+  $('search').addEventListener('input',render);
+  $('period').addEventListener('change',render);
+  $('period').value=curPeriod;
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>

@@ -153,6 +153,16 @@
   </div>
 
   <div class="card">
+    <h2><span class="ic">📐</span> Quick reference</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+      <thead><tr style="color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;text-align:right;">
+        <th style="text-align:left;padding:4px 6px;">Genset</th><th style="padding:4px 6px;">kW (0.8)</th><th style="padding:4px 6px;">Amps 415V 3ph</th><th style="padding:4px 6px;">~AC tons</th></tr></thead>
+      <tbody id="refBody"></tbody>
+    </table>
+    <div class="note" style="margin-top:8px;">1 ton AC ≈ 1.2 kW · 1 HP ≈ 0.75 kW · kVA = kW ÷ 0.8 · Amps (3-ph 415V) = kVA × 1.39. "~AC tons" = how many 1.5-ton splits that set comfortably carries.</div>
+  </div>
+
+  <div class="card">
     <h2><span class="ic">ℹ️</span> How this is worked out</h2>
     <div class="note">
       <b>AC:</b> ~1.2 kW per ton of cooling. <b>Pump/motor:</b> HP × 0.75 kW. Equipment presets are typical values — edit the kW if you know the exact figure.<br>
@@ -227,6 +237,12 @@
   function num(v){ var n=parseFloat(v); return isFinite(n)&&n>0?n:0; }
   function nextSize(kva){ for(var i=0;i<SIZES.length;i++){ if(SIZES[i]>=kva) return SIZES[i]; } return null; }
 
+  // Auto-fill the monthly rate from the picked yard unit, unless the office
+  // has typed its own rate.
+  var rateTouched=false;
+  $('rate').addEventListener('input',function(){ rateTouched=true; });
+  function autofillRate(unit){ if(unit && unit.rate && !rateTouched){ $('rate').value=Math.round(unit.rate); } }
+
   var DIR=null, lastSize=null, LOADS=[], STATE={};
   function calc(){
     LOADS=[];
@@ -278,15 +294,17 @@
     var fit=avail.filter(function(u){return u.kva>=size;}).sort(function(a,b){return a.kva-b.kva;});
     var below=avail.filter(function(u){return u.kva<size && u.kva>=size*0.8;}).sort(function(a,b){return b.kva-a.kva;});
     var list=fit.slice(0,5); var html='';
-    if(list.length){ html+=list.map(function(u,i){ return '<div class="u'+(i===0?' sel':'')+'" data-dg="'+esc(u.dg)+'" data-kva="'+esc(u.kva)+'" data-brand="'+esc(u.brand||'')+'"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span><span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join('');
-      STATE.unit={dg:list[0].dg,kva:list[0].kva,brand:list[0].brand||''};
+    function uHtml(u,cls){ return '<div class="u'+cls+'" data-dg="'+esc(u.dg)+'" data-kva="'+esc(u.kva)+'" data-brand="'+esc(u.brand||'')+'" data-rate="'+esc(u.rate!=null?u.rate:'')+'"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span><span class="meta">'+esc(u.brand||'')+(u.rate?'<br>AED '+Math.round(u.rate).toLocaleString()+'/mo':'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }
+    if(list.length){ html+=list.map(function(u,i){ return uHtml(u,i===0?' sel':''); }).join('');
+      STATE.unit={dg:list[0].dg,kva:list[0].kva,brand:list[0].brand||'',rate:list[0].rate||null}; autofillRate(STATE.unit);
     } else { html+='<div class="empty">No '+size+' kVA-or-bigger unit free in the yard right now.</div>'; STATE.unit=null; }
     if(!fit.length && below.length){ html+='<div class="note" style="margin:8px 0 4px;">Nearest available (slightly under — OK only if the real load is lower):</div>';
-      html+=below.slice(0,3).map(function(u){ return '<div class="u tight" data-dg="'+esc(u.dg)+'" data-kva="'+esc(u.kva)+'" data-brand="'+esc(u.brand||'')+'"><span class="dg">'+esc(u.dg)+'</span><span class="kva">'+esc(u.kva)+' kVA</span><span class="meta">'+esc(u.brand||'')+'<br>'+esc(u.location||'yard')+'</span></div>'; }).join(''); }
+      html+=below.slice(0,3).map(function(u){ return uHtml(u,' tight'); }).join(''); }
     box.innerHTML=html;
     box.querySelectorAll('.u').forEach(function(el){ el.addEventListener('click',function(){
       box.querySelectorAll('.u').forEach(function(x){x.classList.remove('sel');}); el.classList.add('sel');
-      STATE.unit={dg:el.getAttribute('data-dg'),kva:+el.getAttribute('data-kva'),brand:el.getAttribute('data-brand')}; }); });
+      var rt=parseFloat(el.getAttribute('data-rate')); rt=isFinite(rt)?rt:null;
+      STATE.unit={dg:el.getAttribute('data-dg'),kva:+el.getAttribute('data-kva'),brand:el.getAttribute('data-brand'),rate:rt}; autofillRate(STATE.unit); }); });
   }
   function matchUnits(size){ lastSize=size;
     if(DIR!==null){ renderUnits(size); return; }
@@ -326,6 +344,15 @@
     window.print();
   }
   $('quoteBtn').addEventListener('click',buildQuote);
+
+  // Quick-reference table (matches the calculator's assumptions).
+  (function(){ var show=[20,45,60,100,200,320,500];
+    $('refBody').innerHTML=show.map(function(k){
+      var kw=Math.round(k*0.8), amps=Math.round(k*1000/(1.732*415));
+      var acs=Math.floor((k*0.8/1.3)/1.8); // 1.5-ton splits at ~1.8kW with margin
+      return '<tr style="text-align:right;border-top:1px solid var(--line);"><td style="text-align:left;padding:6px;font-weight:700;">'+k+' kVA</td><td style="padding:6px;">'+kw+' kW</td><td style="padding:6px;">'+amps+' A</td><td style="padding:6px;color:var(--green);font-weight:700;">'+acs+'</td></tr>';
+    }).join('');
+  })();
 
   addAc(); // start with one AC row
 })();

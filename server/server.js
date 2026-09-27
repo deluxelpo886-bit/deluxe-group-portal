@@ -48,6 +48,7 @@ const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
 const reminders = require('./reminders');
 const rentals = require('./rentals');
+const lpo = require('./lpo');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
@@ -187,6 +188,18 @@ try {
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' rental contracts');
   }
 } catch (e) { console.warn('[seed] rentals import skipped:', e && e.message); }
+
+// Pre-flag the portal customers' units (e.g. Trojan) in the LPO tracker so the
+// office just fills the PO number - customer + upload portal are seeded. Only
+// fills empty fields, so office edits are never overwritten.
+try {
+  const lpoSeedPath = path.join(__dirname, 'seed', 'fleet-lpo.json');
+  if (fs.existsSync(lpoSeedPath)) {
+    const ls = JSON.parse(fs.readFileSync(lpoSeedPath, 'utf8'));
+    const r = lpo.applySeed(ls, 'fleet-lpo-2026-09-27a');
+    if (r && r.applied) console.log('[seed] seeded ' + r.applied + ' LPO/billing records');
+  }
+} catch (e) { console.warn('[seed] lpo import skipped:', e && e.message); }
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -1033,6 +1046,19 @@ app.get('/serviceplan', (req, res) => {
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'serviceplan.html'), { cacheControl: false });
 });
+// LPO / billing tracker page: every on-hire genset with its PO number and the
+// monthly timesheet + invoice status (uses /api/service/status for the live
+// on-hire list and /api/lpo for the saved billing data).
+app.get('/lpo', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'lpo.html'), { cacheControl: false });
+});
+
 // Generator size advisor: a customer says what they need to run (ACs, pumps,
 // other load) and the page recommends the right kVA and lists which yard units
 // are available to match. Static page + it uses /api/fleet/directory for stock.
@@ -1207,6 +1233,27 @@ app.post('/api/reminders/reopen', fleetProtect, (req, res) => {
 });
 app.post('/api/reminders/remove', fleetProtect, (req, res) => {
   reminders.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+
+// ---------- LPO / billing tracker ----------
+// Per-generator LPO (PO) number and the monthly timesheet + invoice status,
+// so portal customers (e.g. Trojan) are always billed against a valid PO.
+// Same fleet login. See server/lpo.js.
+app.get('/api/lpo', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ lpo: lpo.getAll() });
+});
+app.post('/api/lpo/save', fleetProtect, (req, res) => {
+  try { const b = req.body || {}; res.json({ ok: true, item: lpo.save(b.dg, b) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/lpo/month', fleetProtect, (req, res) => {
+  try { const b = req.body || {}; res.json({ ok: true, item: lpo.newMonth(b.dg, b.period) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/lpo/remove', fleetProtect, (req, res) => {
+  lpo.remove((req.body || {}).dg);
   res.json({ ok: true });
 });
 
