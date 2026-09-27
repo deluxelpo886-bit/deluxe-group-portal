@@ -55,6 +55,7 @@ const push = require('./push');
 const techalert = require('./techalert');
 const storekeepers = require('./storekeepers');
 const stock = require('./stock');
+const repairs = require('./repairs');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
@@ -1089,6 +1090,17 @@ app.get(['/tech', '/tech/:token'], (req, res) => {
   res.sendFile(path.join(__dirname, 'tech.html'), { cacheControl: false });
 });
 
+// Workshop repair-tracking page (moved off the map). Fleet login.
+app.get('/workshop', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'workshop.html'), { cacheControl: false });
+});
+
 // Store keeper app: installed app opens at /store and signs in with a PIN.
 app.get(['/store', '/store/:token'], (req, res) => {
   res.setHeader(
@@ -1439,6 +1451,22 @@ app.post('/api/tech/:token/status', (req, res) => {
     if (!job || job.tech !== t.id) return res.status(404).json({ error: 'Job not found' });
     res.json({ ok: true, item: jobs.setStatus(b.id, b.status) });
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+
+// ---------- Workshop repair tracking ----------
+// Generators in the workshop: queued / repairing / awaiting parts / completed.
+// Same fleet login. See server/repairs.js. Its own page at /workshop.
+app.get('/api/repairs', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ repairs: repairs.all(), stats: repairs.stats() });
+});
+app.post('/api/repairs/save', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: repairs.save(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/repairs/remove', fleetProtect, (req, res) => {
+  repairs.remove((req.body || {}).id);
+  res.json({ ok: true });
 });
 
 // ---------- Data flags (in-app "to resolve" notifications) ----------
