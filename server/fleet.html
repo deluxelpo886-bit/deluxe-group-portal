@@ -2015,6 +2015,17 @@ refreshAll();
   fsBtn.addEventListener('click', function(){ setFullscreen(true); });
   fsExitBtn.addEventListener('click', function(){ setFullscreen(false); });
 
+  // Open the map edge-to-edge full screen by default, once signed in (the map
+  // page is a map first). Tap "✕ Exit full screen" to see the fleet table etc.
+  (function(){
+    var done=false;
+    var t=setInterval(function(){
+      if(done) { clearInterval(t); return; }
+      if(localStorage.getItem('deluxeFleetToken')){ done=true; clearInterval(t); setTimeout(function(){ if(!mapElRef.classList.contains('fs-map')) setFullscreen(true); }, 500); }
+    }, 400);
+    setTimeout(function(){ clearInterval(t); }, 20000);
+  })();
+
   // ---- "My location" button (blue dot, like Google Maps) ----
   var locBtn=null, locMarker=null, locCircle=null;
   var LocateCtl = L.Control.extend({ options:{position:'topright'}, onAdd:function(){
