@@ -49,6 +49,8 @@ const breakdowns = require('./breakdowns');
 const reminders = require('./reminders');
 const rentals = require('./rentals');
 const lpo = require('./lpo');
+const technicians = require('./technicians');
+const jobs = require('./jobs');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
 const specs = require('./specs');
@@ -1059,6 +1061,30 @@ app.get('/lpo', (req, res) => {
   res.sendFile(path.join(__dirname, 'lpo.html'), { cacheControl: false });
 });
 
+// Office dispatch board: assign a job (service / breakdown / other) to a
+// technician and watch their live status. Fleet login.
+app.get('/dispatch', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'dispatch.html'), { cacheControl: false });
+});
+
+// Technician field app: opened via the technician's private token link
+// (/tech/<token>) - no login. Bilingual (Hindi + English), big buttons.
+app.get('/tech/:token', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'tech.html'), { cacheControl: false });
+});
+
 // Generator size advisor: a customer says what they need to run (ACs, pumps,
 // other load) and the page recommends the right kVA and lists which yard units
 // are available to match. Static page + it uses /api/fleet/directory for stock.
@@ -1255,6 +1281,49 @@ app.post('/api/lpo/month', fleetProtect, (req, res) => {
 app.post('/api/lpo/remove', fleetProtect, (req, res) => {
   lpo.remove((req.body || {}).dg);
   res.json({ ok: true });
+});
+
+// ---------- Technician jobs (dispatch + field app) ----------
+// Office side (fleet login): list technicians, assign jobs, monitor status.
+app.get('/api/techs', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ techs: technicians.list() });
+});
+app.get('/api/jobs', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ jobs: jobs.all(), stats: jobs.stats() });
+});
+app.post('/api/jobs/assign', fleetProtect, (req, res) => {
+  try {
+    const b = req.body || {};
+    if (!technicians.byId(b.tech)) return res.status(400).json({ error: 'Unknown technician' });
+    res.json({ ok: true, item: jobs.add(b) });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/jobs/remove', fleetProtect, (req, res) => {
+  jobs.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+
+// Technician side (token only, no login): the field app reads its jobs and
+// pushes status updates. The token maps to exactly one technician and exposes
+// only that technician's jobs.
+function techFromToken(req) { return technicians.byToken(req.params.token); }
+app.get('/api/tech/:token', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  res.json({ tech: { id: t.id, name: t.name, phone: t.phone }, jobs: jobs.forTech(t.id) });
+});
+app.post('/api/tech/:token/status', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  try {
+    const b = req.body || {};
+    const job = jobs.get(b.id);
+    if (!job || job.tech !== t.id) return res.status(404).json({ error: 'Job not found' });
+    res.json({ ok: true, item: jobs.setStatus(b.id, b.status) });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 
 // ---------- Data flags (in-app "to resolve" notifications) ----------
