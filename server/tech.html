@@ -117,6 +117,7 @@
 
   <button class="installbtn" id="installBtn">⬇️ Install app · ऐप इंस्टॉल करें</button>
   <div class="done" id="doneOv"><div class="big">✅</div><h2>Job done!</h2><p class="hi">काम पूरा हुआ!</p><p>Office has been told · ऑफिस को बता दिया</p><button onclick="closeDone()">OK · ठीक है</button></div>
+  <div class="done" id="installHelp"><div class="big">⬇️</div><h2>Install the app</h2><p class="hi">ऐप इंस्टॉल करें</p><p id="installSteps" style="max-width:340px;line-height:1.7;"></p><button onclick="document.getElementById('installHelp').classList.remove('on')">OK · ठीक है</button></div>
 
 <script>
 (function(){
@@ -245,9 +246,24 @@
 
   // ---------- Install prompt ----------
   var deferred=null;
-  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; $('installBtn').style.display='block'; });
-  $('installBtn').addEventListener('click',function(){ if(deferred){ deferred.prompt(); deferred.userChoice.finally(function(){ deferred=null; $('installBtn').style.display='none'; }); } });
+  function isStandalone(){ return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+  function showInstallBtn(){ if(!isStandalone()) $('installBtn').style.display='block'; }
+  function isiOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }
+  function installHelp(){
+    var steps = isiOS()
+      ? '1) Tap <b>Share</b> ( the box with ↑ ) at the bottom.<br>2) Choose <b>Add to Home Screen</b>.<br><br>iPhone: नीचे <b>Share</b> (↑) दबाओ, फिर <b>Add to Home Screen</b> चुनो।'
+      : '1) Tap the <b>⋮ menu</b> (top-right).<br>2) Choose <b>Install app</b> / <b>Add to Home screen</b>.<br><br>ऊपर <b>⋮ मेन्यू</b> दबाओ, फिर <b>Install app</b> चुनो।';
+    $('installSteps').innerHTML=steps; $('installHelp').classList.add('on');
+  }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; showInstallBtn(); });
+  $('installBtn').addEventListener('click',function(){
+    if(deferred){ deferred.prompt(); deferred.userChoice.finally(function(){ deferred=null; $('installBtn').style.display='none'; }); }
+    else { installHelp(); }
+  });
   window.addEventListener('appinstalled',function(){ $('installBtn').style.display='none'; });
+  // Show the install button by default (browsers that fire beforeinstallprompt
+  // will still upgrade it to the one-tap native prompt).
+  if(!isStandalone()) setTimeout(showInstallBtn, 800);
 
   boot();
 })();
