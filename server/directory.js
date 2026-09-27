@@ -128,6 +128,7 @@ function loadBase() {
         brand: g.brand || '',
         company: g.company || '',
         status: g.status || '',
+        rate: (g.rate != null && Number(g.rate) > 0) ? Number(g.rate) : null,
         maps_link: g.maps_link || null,
         gatePass: !!g.gatePass,
       };
