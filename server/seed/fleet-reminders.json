@@ -61,5 +61,12 @@
   "note": "DG-501 is HEAVY USE ~18 h/day (127h in 7 days). Serviced 20/09 @ 20941h by Adeel; controller 21068h @ 27/09 -> only 223h left to the 21291h service. Burns hours fast, so CHECK HOURS and plan the service by ~09/10/2026 - don't let it run past. Send a fresh controller reading before then.",
   "dueDate": "2026-10-07",
   "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-849-temp-sensor-2026-09-27",
+  "dg": "DG-849",
+  "note": "DG-849 (TROJAN, Yas Island) controller is showing a 'TEMP SENSOR OPEN' warning (27/09/2026) - the coolant-temperature sensor / wiring is open-circuit, so the set has NO high-temperature shutdown protection until it is fixed. Send a technician to check & replace the temp sensor / wiring. 125 kVA Weichai. Running ~13 h/day, meter 9336h.",
+  "dueDate": "2026-09-27",
+  "createdBy": "Operations Head"
  }
 ]
