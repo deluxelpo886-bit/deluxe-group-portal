@@ -782,12 +782,14 @@
   "technician": "VELU&IMRAN",
   "oil": true,
   "oilFilter": false,
-  "fuelFilter": false,
-  "airFilter": false,
-  "dailyHours": 9.67,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 2.2,
+  "currentHours": 9772,
+  "currentHoursDate": "2026-09-27",
   "nextService": 9960,
-  "nextServiceDate": "2026-09-25",
-  "notes": "Service scheduled/held to 25 Sep 2026 (office suggestion).",
+  "nextServiceDate": "2026-12-21",
+  "notes": "Serviced 14/07/2026 @ 9610h (oil + fuel & air filters; oil filter not changed). Controller confirmed 9772h @ 27/09/2026 -> 188h left to the 9960h service. Very low use ~2.2 h/day (162h over 75 days), so due ~21/12/2026 - NOT overdue (the 25/09 date was only an estimate). 83 kVA Kirlosker, Hydro Power, Al Bahyah.",
   "interval": 350
  },
  {
@@ -2886,9 +2888,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
+  "dailyHours": 11,
+  "currentHours": 9393,
+  "currentHoursDate": "2026-09-27",
   "nextService": 9500,
-  "nextServiceDate": "2026-10-06",
-  "interval": 350
+  "nextServiceDate": "2026-10-07",
+  "interval": 350,
+  "notes": "Serviced 05/09/2026 by Sonu & Hussain @ 9150h (oil + all filters). Controller confirmed 9393h @ 27/09/2026 -> 107h left to the 9500h service. ~11 h/day (243h over 22 days) -> due ~07/10/2026. 45 kVA Jet, Agritek, Al Bahyah Farms."
  },
  {
   "dg": "DG-554",
@@ -3069,15 +3075,19 @@
  {
   "dg": "DG-501",
   "hours": 20941,
-  "date": "2026-09-10",
+  "date": "2026-09-20",
   "technician": "ADEEL&MK",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
+  "airFilter": true,
+  "dailyHours": 18.1,
+  "currentHours": 21068,
+  "currentHoursDate": "2026-09-27",
   "nextService": 21291,
-  "nextServiceDate": "2026-10-31",
-  "interval": 350
+  "nextServiceDate": "2026-10-09",
+  "interval": 350,
+  "notes": "Serviced 20/09/2026 by Adeel & MK @ 20941h (oil + oil/fuel/air filters). Controller confirmed 21068h @ 27/09/2026 -> 223h left to the 21291h service. Heavy use ~18 h/day (127h over 7 days) -> due ~09/10/2026."
  },
  {
   "dg": "DG-867",
