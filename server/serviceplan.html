@@ -57,6 +57,8 @@
   .use{font-weight:800;white-space:nowrap;}
   .use.hi{color:var(--over);} .use.mid{color:var(--soon);} .use.lo{color:var(--ok);}
   .use.est{font-weight:700;opacity:.7;}
+  .stale{background:#fdf3e0;border:1px solid #e8c98a;color:#8a5a12;border-radius:10px;padding:11px 14px;font-size:12.5px;line-height:1.7;margin-bottom:16px;}
+  .stale b{color:#7a3d00;}
   .flt{font-size:11px;color:var(--muted);}
   .zfoot{padding:11px 16px;background:#fbfdff;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .maplink{color:var(--brand);text-decoration:none;font-weight:700;font-size:13px;}
@@ -267,12 +269,29 @@
     LAST=zoneList;
     $('totBadge').textContent=picked.length+' unit'+(picked.length!==1?'s':'');
     var teams=loadTeams();
+    // Reading-age flag: on-hire units whose meter hasn't been read in 10+ days.
+    // Chase a photo before they silently drift overdue.
+    var STALE_DAYS=10, stale=[];
+    gens.forEach(function(g){
+      var dd=dir[String(g.dg).toUpperCase()]||{};
+      if(g.offHire || dd.zone==='Yard') return;
+      var last=String(g.currentHoursDate||g.date||'').slice(0,10);
+      if(!last) return;
+      var age=dayDiff(last, when);
+      if(age!=null && age>STALE_DAYS) stale.push({dg:g.dg, age:age});
+    });
+    stale.sort(function(a,b){ return b.age-a.age; });
     var html='<div class="sum">'
       +'<div class="m"><div class="n">'+picked.length+'</div><div class="l">To service</div></div>'
       +'<div class="m over"><div class="n">'+over+'</div><div class="l">Overdue</div></div>'
       +'<div class="m"><div class="n">'+zoneList.length+'</div><div class="l">Areas / routes</div></div>'
       +'<div class="m"><div class="n">'+paused+'</div><div class="l">Paused (yard)</div></div>'
       +'</div>';
+    if(stale.length){
+      html+='<div class="stale">📷 <b>READ HOURS NOW</b> — '+stale.length+' on-hire unit'+(stale.length!==1?'s':'')+' not read in '+STALE_DAYS+'+ days (send a controller photo before they drift overdue):<br>'
+        +stale.slice(0,14).map(function(s){ return esc(s.dg)+' <span style="opacity:.7">('+s.age+'d)</span>'; }).join(' · ')
+        +(stale.length>14?' …':'')+'</div>';
+    }
     zoneList.forEach(function(zg,zi){
       html+='<div class="zone'+(zg.worst<0?' urgent':'')+'">';
       html+='<div class="zhead"><span class="rt">'+(zi+1)+'</span><span class="zn">'+esc(zg.zone)+'</span>'
