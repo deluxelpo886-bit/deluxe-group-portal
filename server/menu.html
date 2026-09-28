@@ -144,6 +144,15 @@
   .tabbar a.active .t-ico{filter:drop-shadow(0 3px 8px rgba(244,168,58,.5));}
   .tabbar a:active{background:rgba(255,255,255,.05);}
 
+  /* ---------- desktop / laptop web layout (mobile stays as-is) ---------- */
+  @media(min-width:900px){
+    .wrap{max-width:1120px;padding-left:26px;padding-right:26px;}
+    .appbar-in,.tabbar-in{max-width:1120px;}
+    .kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+    .primary{grid-template-columns:repeat(auto-fit,minmax(215px,1fr));}
+    .grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
+  }
+
   /* ---------- entrance & interaction polish (motion-safe) ---------- */
   a.big,a.card,.kpi{will-change:transform;}
   a.big::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;pointer-events:none;
