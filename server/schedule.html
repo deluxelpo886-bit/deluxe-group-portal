@@ -271,11 +271,18 @@
         .forEach(function(g){ jobs.push({dg:g.dg, note:'🔧 service — '+Math.abs(g.due.hoursLeft||0)+'h over (confirmed)', pr:1}); });
       gens.filter(function(g){ return g.due&&g.due.state==='plan'; })
         .forEach(function(g){ jobs.push({dg:g.dg, note:'🔧 service soon — '+(g.due.hoursLeft||0)+'h left', pr:2}); });
+      // Estimated-due (no confirmed reading). If the DATE estimate is already
+      // PAST, treat it as near-top priority with a red "CHECK HOURS" flag so a
+      // likely-overdue unit is never buried or dropped; otherwise soft (bottom).
       gens.filter(function(g){ return g.due&&g.due.state==='confirm'; })
-        .forEach(function(g){ jobs.push({dg:g.dg, note:'📋 confirm hours first (est. due)', pr:3}); });
+        .sort(function(a,b){ return (a.due.daysEst||0)-(b.due.daysEst||0); })
+        .forEach(function(g){ var d=g.due.daysEst; var over=(d!=null&&d<0);
+          jobs.push({dg:g.dg, note:(over?('⚠ CHECK HOURS — est. overdue '+Math.abs(d)+'d'):'📋 confirm hours first (est. due)'), pr:(over?1.5:3)}); });
 
-      // De-dup by DG (a breakdown wins over a service for the same machine) and
-      // drop ones already scheduled today.
+      // Sort by priority (breakdowns > confirmed-due > est-overdue > plan-soon >
+      // confirm), then de-dup by DG (breakdown wins) and drop ones already
+      // scheduled today.
+      jobs.sort(function(a,b){ return a.pr-b.pr; });
       var seen={}, queue=[];
       jobs.forEach(function(j){ var k=String(j.dg).toUpperCase(); if(seen[k]||existing[k]) return; seen[k]=true; queue.push(j); });
 
