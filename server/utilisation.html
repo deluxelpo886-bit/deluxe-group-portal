@@ -123,15 +123,17 @@
   function fmtDMY(iso){ if(!iso) return '—'; var p=String(iso).slice(0,10).split('-'); return p.length===3? (p[2]+'/'+p[1]+'/'+p[0]) : iso; }
   function daysBetween(a,b){ return (new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000; }
 
-  // Best available hours/day for a unit.
+  // Best available hours/day for a unit. A genset cannot run more than 24 h/day,
+  // so any meter-gap estimate over 24 (from a stale/mismatched service baseline)
+  // is ignored in favour of the recorded rate; everything is capped at 24.
   function rateOf(g){
     if(g.currentHours!=null && g.currentHoursDate && g.date && isFinite(g.hours)){
       var d=daysBetween(g.date, String(g.currentHoursDate).slice(0,10));
       var dh=Number(g.currentHours)-Number(g.hours);
-      if(d>0 && dh>0) return dh/d;
+      if(d>0 && dh>0){ var r=dh/d; if(r<=24) return r; }
     }
-    var r=Number(g.effectiveDailyHours||g.dailyHours||g.observedDailyHours||0);
-    return isFinite(r)?r:0;
+    var e=Number(g.effectiveDailyHours||g.dailyHours||g.observedDailyHours||0);
+    return isFinite(e)&&e>0 ? Math.min(24,e) : 0;
   }
   var TODAY=new Date().toISOString().slice(0,10);
   // Estimated current meter for a unit with no confirmed reading:

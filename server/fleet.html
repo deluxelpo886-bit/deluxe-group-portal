@@ -912,9 +912,9 @@ function rebuildMap(){
       if(_svcH && _svcH.currentHours!=null && _svcH.currentHoursDate && _svcH.date && _svcH.hours!=null){
         var d=(new Date(String(_svcH.currentHoursDate).slice(0,10)+'T00:00:00') - new Date(String(_svcH.date).slice(0,10)+'T00:00:00'))/86400000;
         var dh=Number(_svcH.currentHours)-Number(_svcH.hours);
-        if(d>0 && dh>0) rate=dh/d;
+        if(d>0 && dh>0 && (dh/d)<=24) rate=dh/d; // ignore impossible >24 h/day (bad baseline)
       }
-      if(rate===null){ var rr=Number((_svcH&&(_svcH.effectiveDailyHours||_svcH.dailyHours))||r.daily_hours_rate||0); if(isFinite(rr)&&rr>0) rate=rr; }
+      if(rate===null){ var rr=Number((_svcH&&(_svcH.effectiveDailyHours||_svcH.dailyHours))||r.daily_hours_rate||0); if(isFinite(rr)&&rr>0) rate=Math.min(24,rr); }
       if(rate===null) return;
       var band, col;
       if(rate>=12){ band='Heavy (near 24h)'; col='#ff5c4d'; }
