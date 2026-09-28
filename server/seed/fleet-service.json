@@ -3075,19 +3075,19 @@
  {
   "dg": "DG-501",
   "hours": 20941,
-  "date": "2026-09-20",
+  "date": "2026-09-10",
   "technician": "ADEEL&MK",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 18.1,
+  "dailyHours": 7.5,
   "currentHours": 21068,
   "currentHoursDate": "2026-09-27",
   "nextService": 21291,
-  "nextServiceDate": "2026-10-09",
+  "nextServiceDate": "2026-10-27",
   "interval": 350,
-  "notes": "Serviced 20/09/2026 by Adeel & MK @ 20941h (oil + oil/fuel/air filters). Controller confirmed 21068h @ 27/09/2026 -> 223h left to the 21291h service. Heavy use ~18 h/day (127h over 7 days) -> due ~09/10/2026."
+  "notes": "Serviced 10/09/2026 by Adeel & MK @ 20941h (oil + oil/fuel/air filters). Controller confirmed 21068h @ 27/09/2026 -> 223h left to the 21291h service. ~7.5 h/day (127h over 17 days) -> due ~27/10/2026."
  },
  {
   "dg": "DG-867",
