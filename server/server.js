@@ -100,7 +100,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-27-r32');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-09-28-r33');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -167,7 +167,7 @@ try {
   const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
   if (fs.existsSync(rmSeedPath)) {
     const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
-    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-27g');
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-09-28h');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
@@ -175,7 +175,7 @@ try {
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {
-  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27'];
+  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27', 'DG-501-heavy-use-2026-10-07'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }
