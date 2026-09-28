@@ -1157,7 +1157,7 @@ function renderTable(){
   let rows = getFiltered().filter(r=>{
     const mq = !q || (r.dg+ (r.customer||'') +r.location).toLowerCase().includes(q);
     const ms = !sf || r.status===sf;
-    return mq&&ms;
+    return mq&&ms&&matchCat(r); // the map chips (On hire / Ready / In repair / Service due) filter the table too
   });
   rows.sort((a,b)=>{
     let va=a[sortKey], vb=b[sortKey];
@@ -1416,6 +1416,7 @@ document.getElementById('statusFilter').addEventListener('change', renderTable);
     mapCat=b.getAttribute('data-cat');
     box.querySelectorAll('.mapcat').forEach(function(x){ x.classList.toggle('active', x===b); });
     if(typeof rebuildMap==='function') rebuildMap();
+    if(typeof renderTable==='function') renderTable(); // sync the fleet table to the chosen chip
   });
 })();
 
