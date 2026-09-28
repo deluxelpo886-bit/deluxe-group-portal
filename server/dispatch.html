@@ -81,6 +81,15 @@
   </div>
 
   <div class="card">
+    <h2>📷 Read-Hours round</h2>
+    <div id="staleInfo" class="sub" style="font-size:12.5px;margin-bottom:10px;">Loading stale readings…</div>
+    <div class="row"><div class="f"><label>Technician</label><select id="rhTech"></select></div>
+      <div class="f"><label>How many (worst first)</label><input id="rhN" type="number" value="6" min="1" max="30"></div></div>
+    <button class="send" id="rhSend">📲 Create read-hours jobs</button>
+    <div class="sub" style="font-size:11.5px;color:var(--faint);margin-top:8px;">Sends "📷 READ HOURS" jobs (send a controller photo) for the units not read in 10+ days, so they show in the technician's app.</div>
+  </div>
+
+  <div class="card">
     <h2>Live jobs</h2>
     <div id="jobs"><div class="empty">Loading…</div></div>
   </div>
@@ -171,8 +180,35 @@
     }catch(e){ if(!TOKEN){showLogin();return;} }
     try{ var dd=await (await fetch('/api/fleet/directory',{headers:authH()})).json(); DIR=dd.directory||{};
       $('dgList').innerHTML=Object.keys(DIR).map(function(k){return '<option value="'+esc(k)+'">';}).join(''); }catch(e){}
+    // Read-hours round: technician dropdown mirrors the main one.
+    $('rhTech').innerHTML=$('tech').innerHTML;
+    loadStale();
     setParts(DEFAULT_PARTS[TYPE]); loadJobs();
   }
+
+  // Compute on-hire units not read in 10+ days from the live service status.
+  var STALE=[];
+  async function loadStale(){
+    try{
+      var d=await (await fetch('/api/service/status',{cache:'no-store',headers:authH()})).json();
+      var today=new Date().toISOString().slice(0,10);
+      function age(x){ if(!x) return null; return Math.round((new Date(today+'T00:00:00')-new Date(String(x).slice(0,10)+'T00:00:00'))/86400000); }
+      STALE=(d.generators||[]).filter(function(g){ return !g.offHire; }).map(function(g){
+        var dd=DIR[String(g.dg).toUpperCase()]||{}; var last=g.currentHoursDate||g.date; return {dg:g.dg, age:age(last), loc:dd.location||g.location||'', mapLink:dd.maps_link||'', kva:dd.kva||g.kva}; })
+        .filter(function(s){ return s.age!=null && s.age>10; }).sort(function(a,b){ return b.age-a.age; });
+      $('staleInfo').innerHTML=STALE.length? ('<b>'+STALE.length+'</b> units not read in 10+ days. Worst: '+STALE.slice(0,6).map(function(s){return esc(s.dg)+' ('+s.age+'d)';}).join(', ')+'…') : 'All units read recently 👍';
+    }catch(e){ $('staleInfo').textContent='Could not load readings.'; }
+  }
+  $('rhSend').addEventListener('click',async function(){
+    var tech=$('rhTech').value; if(!tech){ toast('Pick a technician'); return; }
+    if(!STALE.length){ toast('No stale readings'); return; }
+    var n=Math.max(1,Math.min(30, parseInt($('rhN').value,10)||6));
+    var pick=STALE.slice(0,n); $('rhSend').disabled=true; var made=0;
+    for(var i=0;i<pick.length;i++){ var s=pick[i];
+      try{ await fetch('/api/jobs/assign',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH()),body:JSON.stringify({tech:tech,type:'other',dg:s.dg,kva:s.kva||'',title:'📷 READ HOURS — send controller photo (not read '+s.age+'d)',location:s.loc,mapLink:s.mapLink,note:'Meter not read in '+s.age+' days — take a clear photo of the controller hours.'})}); made++; }catch(e){}
+    }
+    $('rhSend').disabled=false; toast('Sent '+made+' read-hours job'+(made!==1?'s':'')); loadJobs();
+  });
 
   async function loadJobs(){
     try{ var r=await fetch('/api/jobs',{cache:'no-store',headers:authH()}); if(r.status===401){showLogin();return;}
