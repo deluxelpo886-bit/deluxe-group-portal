@@ -2851,20 +2851,18 @@
  },
  {
   "dg": "DG-819",
-  "hours": 22291,
-  "date": "2026-09-03",
-  "technician": "ADEEL",
+  "hours": 22717,
+  "date": "2026-09-28",
+  "technician": "ADEEL & JAIRAZ",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
   "dailyHours": 17,
-  "nextService": 22693,
-  "nextServiceDate": "2026-09-28",
+  "nextService": 23067,
+  "nextServiceDate": "2026-10-18",
   "interval": 350,
-  "currentHours": 22717,
-  "currentHoursDate": "2026-09-28",
-  "notes": "Controller confirmed 22717h @ 28/09/2026 (Adeel) -> OVERDUE by ~24h (service target 22693h). Heavy use ~17 h/day (154h in the 9 days since 19/09) ran it past. SERVICE NOW. Trojan, Al Reem."
+  "notes": "Serviced 28/09/2026 @ 22717h by Adeel & Jairaz - oil + oil & fuel filters done; AIR FILTER NOT changed. Clears the overdue. Next 23067h (350h). Heavy use ~17 h/day -> due ~18/10/2026. Trojan, Al Reem."
  },
  {
   "dg": "DG-804",
