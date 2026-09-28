@@ -2858,12 +2858,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
+  "dailyHours": 17,
   "nextService": 22693,
-  "nextServiceDate": "2026-10-04",
+  "nextServiceDate": "2026-09-28",
   "interval": 350,
-  "currentHours": 22563,
-  "currentHoursDate": "2026-09-19",
-  "notes": "Controller 22563h on 19/09 -> 130h to next service (22693). Next service date set to 04/10/2026 (office, ~15 days). Trojan, Al Reem."
+  "currentHours": 22717,
+  "currentHoursDate": "2026-09-28",
+  "notes": "Controller confirmed 22717h @ 28/09/2026 (Adeel) -> OVERDUE by ~24h (service target 22693h). Heavy use ~17 h/day (154h in the 9 days since 19/09) ran it past. SERVICE NOW. Trojan, Al Reem."
  },
  {
   "dg": "DG-804",
