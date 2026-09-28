@@ -1090,6 +1090,18 @@ app.get(['/tech', '/tech/:token'], (req, res) => {
   res.sendFile(path.join(__dirname, 'tech.html'), { cacheControl: false });
 });
 
+// Pre-delivery (yard-out) inspection checklist - fill on screen and print/sign
+// before a generator leaves the yard. Static printable form.
+app.get(['/predelivery', '/yardcheck'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'predelivery.html'), { cacheControl: false });
+});
+
 // Workshop repair-tracking page (moved off the map). Fleet login.
 app.get('/workshop', (req, res) => {
   res.setHeader(

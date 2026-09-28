@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Pre-Delivery Checklist (Yard Out)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b66">
+<style>
+  :root{--bg:#0a0e13;--panel:#141b24;--panel2:#1a222c;--line:#2a333d;--text:#eef3f7;--mut:#93a1b0;--faint:#5f6b78;
+    --amber:#e8a13a;--green:#41c98a;--red:#f0655a;--blue:#5aa2e6;--sans:'Inter','Segoe UI','Noto Sans',-apple-system,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);padding:16px 14px 40px;line-height:1.5;}
+  .wrap{max-width:820px;margin:0 auto;}
+  .navback{display:inline-block;margin-bottom:10px;color:var(--amber);text-decoration:none;font-size:13px;font-weight:700;}
+  .sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .head{background:linear-gradient(120deg,#0d3b66,#134a80);padding:16px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+  .head .co{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#bcd4ea;}
+  .head h1{font-size:19px;color:#fff;margin:3px 0 1px;}
+  .head .hi{font-size:12.5px;color:#bcd4ea;}
+  .body{padding:16px 18px;}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .f label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--faint);margin-bottom:3px;}
+  .f input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 10px;font-size:14px;font-family:var(--sans);}
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
+  h2 .hi{color:var(--faint);font-weight:500;font-size:11px;}
+  .item{display:flex;align-items:center;gap:12px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;margin-bottom:7px;cursor:pointer;background:var(--panel2);}
+  .item .bx{width:26px;height:26px;flex:0 0 auto;border-radius:7px;border:2px solid var(--faint);display:grid;place-items:center;font-size:16px;color:transparent;}
+  .item.on .bx{background:var(--green);border-color:var(--green);color:#04210f;}
+  .item .tx b{font-size:14.5px;display:block;} .item .tx span{font-size:12px;color:var(--mut);}
+  .item.on{border-color:rgba(65,201,138,.4);}
+  .notes{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:10px;font-size:14px;min-height:60px;font-family:var(--sans);margin-top:6px;}
+  .sign{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:22px;}
+  .sign .s{border-top:1px solid var(--faint);padding-top:6px;font-size:11px;color:var(--mut);}
+  .bar{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
+  .btn{border:none;border-radius:9px;padding:11px 16px;font-weight:800;font-size:14px;cursor:pointer;}
+  .btn.print{background:var(--amber);color:#1a1200;} .btn.all{background:var(--panel2);color:var(--text);border:1px solid var(--line);} .btn.clr{background:var(--panel2);color:var(--faint);border:1px solid var(--line);}
+  @media print{
+    @page{size:A4 portrait;margin:11mm;}
+    body{background:#fff;color:#000;padding:0;font-size:11px;}
+    .navback,.bar{display:none !important;}
+    .sheet{border:none;} .head{background:#0d3b66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:10px 12px;} .head h1{font-size:16px;}
+    .body{padding:6px 4px;}
+    .f input,.notes{background:#fff;border:1px solid #999;color:#000;}
+    h2{color:#0d3b66;margin:10px 0 5px;}
+    .item{background:#fff;border:1px solid #bbb;padding:5px 8px;margin-bottom:4px;break-inside:avoid;}
+    .item .bx{border-color:#333;color:#333 !important;} .item.on .bx{background:#fff;color:#0a7a3f !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .item .tx b{font-size:11.5px;} .item .tx span{font-size:9.5px;color:#555;}
+    .sign .s{border-color:#333;color:#333;}
+  }
+</style>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="navback" href="/menu">☰ Menu</a>
+  <div class="sheet">
+    <div class="head">
+      <div><div class="co">Deluxe Heavy Equipment Rental L.L.C · Deluxe Energy Solutions L.L.C</div>
+        <h1>Pre-Delivery Checklist — Generator Leaving Yard</h1>
+        <div class="hi">डिलीवरी से पहले जाँच — जनरेटर यार्ड से निकलने से पहले</div></div>
+    </div>
+    <div class="body">
+      <div class="fields">
+        <div class="f"><label>DG number</label><input id="dg" placeholder="DG-XXX"></div>
+        <div class="f"><label>kVA / Brand</label><input id="kva" placeholder="e.g. 100 kVA Kirlosker"></div>
+        <div class="f"><label>Customer</label><input id="cust" placeholder="Customer name"></div>
+        <div class="f"><label>Site / location</label><input id="site" placeholder="Delivery site"></div>
+        <div class="f"><label>Meter reading (hours out)</label><input id="meter" placeholder="e.g. 1234 h"></div>
+        <div class="f"><label>Date out</label><input id="date" type="date"></div>
+        <div class="f"><label>Checked by (yard)</label><input id="by" placeholder="Name"></div>
+        <div class="f"><label>Driver / vehicle</label><input id="driver" placeholder="Name / plate"></div>
+      </div>
+
+      <div class="bar">
+        <button class="btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn all" id="tickAll">✓ Tick all</button>
+        <button class="btn clr" id="clrAll">Clear</button>
+      </div>
+
+      <div id="list"></div>
+
+      <h2>📝 Notes / existing damage <span class="hi">— नोट / पुराना नुकसान</span></h2>
+      <textarea class="notes" id="notes" placeholder="Any existing scratches/dents, missing items, or remarks…"></textarea>
+
+      <div class="sign">
+        <div class="s">Yard in-charge — signature &amp; date<br><span style="color:var(--faint)">यार्ड इंचार्ज</span></div>
+        <div class="s">Driver — received, condition OK<br><span style="color:var(--faint)">ड्राइवर — मिला, ठीक है</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  $('date').value=new Date().toISOString().slice(0,10);
+  var SECTIONS=[
+    {t:'Engine, oil & cooling', hi:'इंजन, ऑयल और कूलिंग', items:[
+      {en:'Engine oil level & clean',hi:'इंजन ऑयल लेवल और साफ़'},
+      {en:'Coolant / radiator water full',hi:'कूलेंट / रेडिएटर पानी भरा'},
+      {en:'No oil / fuel / coolant leaks',hi:'कोई लीक नहीं (ऑयल/डीज़ल/पानी)'},
+      {en:'Fan belt OK & tight',hi:'फैन बेल्ट ठीक और टाइट'},
+      {en:'Air filter clean / new',hi:'एयर फ़िल्टर साफ़ / नया'},
+      {en:'Fuel filter OK, water drained',hi:'फ़्यूल फ़िल्टर ठीक, पानी निकाला'},
+    ]},
+    {t:'Fuel', hi:'डीज़ल', items:[
+      {en:'Fuel tank filled / level noted',hi:'टैंक भरा / लेवल लिखा'},
+      {en:'Fuel lines & cap tight',hi:'फ़्यूल लाइन और ढक्कन टाइट'},
+    ]},
+    {t:'Battery & control panel', hi:'बैटरी और कंट्रोल पैनल', items:[
+      {en:'Battery charged, terminals tight',hi:'बैटरी चार्ज, टर्मिनल टाइट'},
+      {en:'Battery water level OK',hi:'बैटरी पानी ठीक'},
+      {en:'Controller ON, no fault / alarm',hi:'कंट्रोलर चालू, कोई फ़ॉल्ट नहीं'},
+      {en:'Emergency STOP working',hi:'इमरजेंसी स्टॉप काम कर रहा'},
+      {en:'Charging alternator OK',hi:'चार्जिंग अल्टरनेटर ठीक'},
+    ]},
+    {t:'Test run', hi:'टेस्ट रन', items:[
+      {en:'Starts on first try',hi:'पहली बार में चालू'},
+      {en:'Voltage & frequency correct (400V / 50Hz)',hi:'वोल्टेज और फ्रीक्वेंसी सही'},
+      {en:'No abnormal noise / smoke / vibration',hi:'कोई आवाज़ / धुआँ / कंपन नहीं'},
+      {en:'Auto & Manual mode OK',hi:'ऑटो और मैनुअल ठीक'},
+      {en:'Ran on load (if possible)',hi:'लोड पर चलाया (हो सके तो)'},
+    ]},
+    {t:'Canopy, body & safety', hi:'बॉडी और सेफ्टी', items:[
+      {en:'Canopy doors, locks & keys',hi:'कैनोपी दरवाज़े, लॉक और चाबी'},
+      {en:'Body clean, damage noted below',hi:'बॉडी साफ़, नुकसान नीचे लिखा'},
+      {en:'Silencer / exhaust OK',hi:'साइलेंसर / एग्ज़ॉस्ट ठीक'},
+      {en:'Earthing cable & neutral link',hi:'अर्थिंग केबल और न्यूट्रल'},
+      {en:'Lifting hook / forklift slots OK',hi:'लिफ्टिंग हुक / फोर्कलिफ्ट ठीक'},
+    ]},
+    {t:'Accessories & documents', hi:'सामान और कागज़', items:[
+      {en:'Output cable / socket / MCCB OK',hi:'आउटपुट केबल / सॉकेट / MCCB'},
+      {en:'Service card fitted & updated',hi:'सर्विस कार्ड लगा और अपडेट'},
+      {en:'Delivery note / gate pass ready',hi:'डिलीवरी नोट / गेट पास तैयार'},
+      {en:'GPS tracker working',hi:'GPS ट्रैकर चालू'},
+      {en:'Tool kit / funnel (as agreed)',hi:'टूल किट / फनल (तय अनुसार)'},
+      {en:'Fire extinguisher (if required)',hi:'अग्निशामक (ज़रूरत हो तो)'},
+    ]},
+  ];
+  var html='';
+  SECTIONS.forEach(function(s,si){
+    html+='<h2>'+esc(s.t)+' <span class="hi">— '+esc(s.hi)+'</span></h2>';
+    s.items.forEach(function(it,ii){
+      html+='<div class="item" data-k="'+si+'-'+ii+'"><div class="bx">✓</div><div class="tx"><b>'+esc(it.en)+'</b><span>'+esc(it.hi)+'</span></div></div>';
+    });
+  });
+  $('list').innerHTML=html;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  $('list').querySelectorAll('.item').forEach(function(el){ el.addEventListener('click',function(){ el.classList.toggle('on'); }); });
+  $('tickAll').addEventListener('click',function(){ $('list').querySelectorAll('.item').forEach(function(el){ el.classList.add('on'); }); });
+  $('clrAll').addEventListener('click',function(){ $('list').querySelectorAll('.item').forEach(function(el){ el.classList.remove('on'); }); });
+})();
+</script>
+</body>
+</html>
