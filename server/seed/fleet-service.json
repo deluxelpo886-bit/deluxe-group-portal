@@ -2680,18 +2680,18 @@
  },
  {
   "dg": "DG-448",
-  "hours": 8243,
-  "date": "2026-09-13",
-  "technician": "SONU&HUSSAIN",
+  "hours": 8511,
+  "date": "2026-09-28",
+  "technician": "IMRAN HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 16.5,
-  "nextService": 8593,
-  "nextServiceDate": "2026-10-04",
+  "dailyHours": 17.9,
+  "nextService": 8861,
+  "nextServiceDate": "2026-10-18",
   "interval": 350,
-  "notes": "Service 13/09/2026 by Team 1 (Sonu & Hussain) at 8243h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE (2nd time - also skipped on 24/08). Next at 8593h. Exact KIZAD pin set."
+  "notes": "Serviced 28/09/2026 by Imran Hussain at 8511h. Oil + oil filter + fuel filter done; AIR FILTER NOT DONE AGAIN (3rd time - skipped 24/08, 13/09, 28/09). Heavy use ~18 h/day (268h in 15 days) at dusty KIZAD - the AIR FILTER is overdue for a change, carry one next visit. Next service 8861h -> due ~18/10/2026."
  },
  {
   "dg": "DG-537",
