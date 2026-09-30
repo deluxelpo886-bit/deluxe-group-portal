@@ -300,7 +300,10 @@
   "dailyHours": 17.17,
   "nextService": 3884,
   "nextServiceDate": "2026-09-16",
-  "interval": 450
+  "interval": 450,
+  "currentHours": 3514,
+  "currentHoursDate": "2026-09-30",
+  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 3514h. 370h left to next service (3884). Repair cleared before dispatch."
  },
  {
   "dg": "DG-806",
@@ -2978,9 +2981,9 @@
   "nextService": 29664,
   "nextServiceDate": "2026-10-02",
   "interval": 350,
-  "currentHours": 29403,
-  "currentHoursDate": "2026-09-16",
-  "notes": "Returned to yard 16/09/2026 at meter 29403h (off-hire)."
+  "currentHours": 29405,
+  "currentHoursDate": "2026-09-30",
+  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 29405h. Off-hired 16/09 at 29403h, back out with EMDAD."
  },
  {
   "dg": "DG-481",

@@ -157,7 +157,9 @@
  },
  {
   "dg": "DG-827",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-09-30",
+  "note": "On hire 30/09 - EMDAD (Al Dhafra). 725 kVA Caterpillar. Meter 3514h. Repair cleared before dispatch."
  },
  {
   "dg": "DG-829",
@@ -231,9 +233,9 @@
  },
  {
   "dg": "DG-529",
-  "offHire": true,
-  "since": "2026-09-16",
-  "note": "Returned to yard 16/09 at meter 29403h"
+  "offHire": false,
+  "since": "2026-09-30",
+  "note": "On hire 30/09 - EMDAD (Al Dhafra). Meter 29405h."
  },
  {
   "dg": "DG-450",
