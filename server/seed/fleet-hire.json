@@ -238,6 +238,12 @@
   "note": "On hire 30/09 - EMDAD (Al Dhafra). Meter 29405h."
  },
  {
+  "dg": "DG-538",
+  "offHire": true,
+  "since": "2026-09-30",
+  "note": "Off hire 30/09 - returned to yard from Aswar (Mussafah M11). Air filter still pending."
+ },
+ {
   "dg": "DG-450",
   "offHire": true,
   "since": "2026-09-16",
