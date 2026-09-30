@@ -3061,8 +3061,12 @@
   "fuelFilter": false,
   "airFilter": true,
   "nextService": 13830,
-  "nextServiceDate": "2026-10-11",
-  "interval": 350
+  "nextServiceDate": "2026-10-02",
+  "interval": 350,
+  "dailyHours": 15.2,
+  "currentHours": 13800,
+  "currentHoursDate": "2026-09-30",
+  "notes": "Serviced 09/09/2026 at 13480h by Adeel & Mir - oil, oil filter, air filter done; FUEL FILTER NOT done (pending). Controller confirmed 13800h on 30/09/2026 (3886 starts) -> only 30h to next service (13830), ~15.2 h/day. SERVICE DUE ~02/10. 150 kVA, Hashim Contracting."
  },
  {
   "dg": "DG-508",
