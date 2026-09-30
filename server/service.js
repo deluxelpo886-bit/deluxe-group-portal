@@ -88,6 +88,34 @@ function logService(rec) {
   const recFixedDays = (rec.fixedDays != null && isFinite(Number(rec.fixedDays)) && Number(rec.fixedDays) > 0)
     ? Math.round(Number(rec.fixedDays))
     : null;
+  // Real MEASURED running rate (not the 12 h/day contract default): only an
+  // explicit technician value or an observed meter-gap counts. Used to band the
+  // unit's usage the way the ops head reads it: heavy >=12 h/day, moderate 6-12,
+  // light <6.
+  const measuredDaily = explicitDaily || observedDailyHours;
+  const HEAVY_DAILY = 12;
+  const usage = (measuredDaily == null) ? null
+    : (measuredDaily >= HEAVY_DAILY ? 'heavy' : (measuredDaily >= 6 ? 'moderate' : 'light'));
+  const isHeavyUse = usage === 'heavy';
+
+  // Ops-head rule: a HEAVY-USE machine burns through the service interval far
+  // faster than the calendar, so its next-service DATE is projected from the real
+  // hours (counting down from the latest confirmed reading when we have one) - NOT
+  // from a fixed calendar gap or an imported date. Moderate- and light-use
+  // machines KEEP their recorded date exactly as it was.
+  let heavyDate = null;
+  if (isHeavyUse) {
+    const baseHours = (rec.currentHours != null && isFinite(Number(rec.currentHours)) && Number(rec.currentHours) >= 0)
+      ? Number(rec.currentHours) : hours;
+    const baseDate = (rec.currentHoursDate && /^\d{4}-\d\d-\d\d/.test(String(rec.currentHoursDate)))
+      ? String(rec.currentHoursDate).slice(0, 10) : date;
+    const remaining = Number(nextService) - baseHours;
+    const days = Math.max(1, Math.round(remaining / measuredDaily));
+    const hd = new Date(baseDate + 'T00:00:00');
+    hd.setDate(hd.getDate() + days);
+    heavyDate = hd.toISOString().slice(0, 10);
+  }
+
   const daysToService = recFixedDays
     ? recFixedDays
     : ((interval === 450)
@@ -95,17 +123,21 @@ function logService(rec) {
       : Math.max(1, Math.round(interval / effectiveDailyHours)));
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
-  // Next-service date: a fixedDays cycle wins; else for 450-hour machines it is
-  // the contract 12-14 h/day projection (~35 days); otherwise an explicit date
-  // wins (authoritative asset-list / Netsonic date), else the observed-rate
-  // projection.
+  // Next-service DATE priority:
+  //  1. a per-record fixedDays cycle the office set (wins for any interval),
+  //  2. HEAVY-USE machines -> hours-projected date (ops-head rule),
+  //  3. 450-hour machines -> contract 12-14 h/day projection (~38 days),
+  //  4. an explicit recorded/imported date (moderate & light use keep this),
+  //  5. the observed-rate projection.
   const nextServiceDate = recFixedDays
     ? nsd.toISOString().slice(0, 10)
-    : ((interval === 450)
-      ? nsd.toISOString().slice(0, 10)
-      : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
-        ? String(rec.nextServiceDate).slice(0, 10)
-        : nsd.toISOString().slice(0, 10)));
+    : (heavyDate
+      ? heavyDate
+      : ((interval === 450)
+        ? nsd.toISOString().slice(0, 10)
+        : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
+          ? String(rec.nextServiceDate).slice(0, 10)
+          : nsd.toISOString().slice(0, 10))));
   const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
 
   const entry = {
@@ -117,6 +149,12 @@ function logService(rec) {
     dailyHours: explicitDaily,
     observedDailyHours: round1(observedDailyHours),
     effectiveDailyHours: round1(effectiveDailyHours),
+    // Usage band (from the real measured rate): 'heavy' >=12 h/day, 'moderate'
+    // 6-12, 'light' <6, null when we have no measured rate yet.
+    usage,
+    // True when the next-service date was projected from real hours (heavy-use
+    // rule) rather than a calendar date.
+    dateFromHours: !!heavyDate,
     daysToService,
     date,
     checks: {

@@ -60,6 +60,7 @@
   .stale{background:#fdf3e0;border:1px solid #e8c98a;color:#8a5a12;border-radius:10px;padding:11px 14px;font-size:12.5px;line-height:1.7;margin-bottom:16px;}
   .stale b{color:#7a3d00;}
   .flt{font-size:11px;color:var(--muted);}
+  .byhrs{display:inline-block;background:#3a2417;color:#e8a13a;font-size:9.5px;font-weight:700;padding:0 5px;border-radius:8px;white-space:nowrap;}
   .zfoot{padding:11px 16px;background:#fbfdff;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .maplink{color:var(--brand);text-decoration:none;font-weight:700;font-size:13px;}
   .empty{padding:40px;text-align:center;color:var(--muted);}
@@ -260,7 +261,7 @@
       if(hasConf) urg=hl/rate;            // confirmed -> hours drive urgency, stale date ignored
       else if(inWindow) urg=daysTo;
       if(urgent) urg=-999;                // office-flagged units sort to the very top
-      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urgent:urgent,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass),usage:(g.effectiveDailyHours||g.observedDailyHours||null),usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null)});
+      picked.push({dg:g.dg,daysTo:(hasConf?null:daysTo),hoursLeft:hl,confirmed:hasConf,urgent:urgent,urg:urg,nextHours:g.nextService,nextDate:g.nextServiceDate,zone:d.zone||'Unknown',location:d.location||'',customer:d.customer||'',lat:d.lat,lon:d.lon,kva:d.kva,brand:d.brand,noPin:!(d.maps_link),gatePass:!!(g.gatePass||d.gatePass),usage:(g.effectiveDailyHours||g.observedDailyHours||null),usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null),dateByHours:!!g.dateFromHours});
     });
     if(!picked.length){ $('out').innerHTML='<div class="empty">✅ Nothing due in this window for on-hire units.'+(paused?'<br><small>'+paused+' off-hire units paused in the yard are not shown.</small>':'')+'</div>'; $('totBadge').textContent='0 units'; $('signRow').style.display='none'; return; }
     var zones={}; picked.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
@@ -303,7 +304,7 @@
           +'<td>'+esc(u.customer||'—')+(u.gatePass?' <span style="display:inline-block;background:#8a6d1a;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:9px;">🎫 GATE PASS</span>':'')+'<div class="flt">'+esc(u.location||'')+'</div></td>'
           +'<td>'+(u.kva?esc(u.kva)+' kVA':'')+'<div class="flt">'+esc(u.brand||'')+'</div></td>'
           +'<td>'+usageCell(u)+'</td>'
-          +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+'</div></td>'
+          +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+(u.dateByHours?' <span class="byhrs" title="date set by real running hours (heavy use)">⏱ by hours</span>':'')+'</div></td>'
           +'<td>'+pill(u)+'</td></tr>';
         var bd=BDMAP[String(u.dg).toUpperCase()];
         if(bd) html+='<tr><td colspan="6" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
