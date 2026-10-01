@@ -3052,8 +3052,8 @@
   "nextServiceDate": "2026-10-10",
   "interval": 450,
   "currentHours": 31057,
-  "currentHoursDate": "2026-09-28",
-  "notes": "Controller confirmed 31057.2h on 28/09/2026 (Adeel) -> 322h to next service (31379). Low use ~2 h/day recently (18h in 9 days since 19/09). Trojan, Al Reem RT8 (same site as DG-505 & DG-819)."
+  "currentHoursDate": "2026-10-01",
+  "notes": "Serviced 09/09/2026 at 30929h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller re-confirmed 31057.2h on 01/10/2026 - unchanged since 28/09 (near-standby, not running). 322h to next service (31379). Trojan, Al Reem RT8 (same site as DG-505 & DG-819)."
  },
  {
   "dg": "DG-545",
