@@ -72,6 +72,25 @@ function seedDefaultUser() {
 }
 seedDefaultUser();
 
+// ---- Seed the Operations admin login ----
+// The password is NEVER stored in plain text here - only a one-way bcrypt hash,
+// so the repo cannot reveal it. Set an OPS_PASSWORD environment variable to
+// rotate the password (applied on the next restart) without touching code.
+function seedOperationsUser() {
+  const envPw = process.env.OPS_PASSWORD;
+  const existing = db.prepare('SELECT username FROM users WHERE username = ?').get('operations');
+  if (!existing) {
+    const hash = envPw ? bcrypt.hashSync(envPw, 10)
+      : '$2a$10$SSHnH3W/oCyLUl4ERhrdPeVltD7iahKgQMpNT6aB77MvtamdlXAoa';
+    db.prepare('INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, 1)').run('operations', hash);
+    console.log('Seeded Operations admin login: operations');
+  } else if (envPw) {
+    db.prepare('UPDATE users SET password_hash = ?, is_admin = 1 WHERE username = ?')
+      .run(bcrypt.hashSync(envPw, 10), 'operations');
+  }
+}
+seedOperationsUser();
+
 // ---- User helpers ----
 function findUser(username) {
   return db.prepare('SELECT * FROM users WHERE username = ?').get(username);
