@@ -2082,11 +2082,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 11.81,
+  "dailyHours": 11.3,
   "nextService": 4876,
   "nextServiceDate": "2026-10-27",
   "interval": 450,
-  "notes": "Serviced 19/09/2026 at 4426h by Adil & Jayaraj (oil + all three filters). Controller 4426h (1438 starts). Next service 4876h. 810 kVA, Noor Al Shahra, Al Faya."
+  "currentHours": 4561,
+  "currentHoursDate": "2026-10-01",
+  "notes": "Serviced 19/09/2026 at 4426h by Adil & Jayaraj (oil + all three filters). Controller confirmed 4561h (~1474 starts) on 01/10/2026 -> 315h left to next (4876), ~11.3 h/day (moderate). Next service ~27/10. 810 kVA, Noor Al Shahra, Al Faya."
  },
  {
   "dg": "DG-860",
