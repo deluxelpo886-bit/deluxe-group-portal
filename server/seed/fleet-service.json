@@ -2779,12 +2779,14 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
-  "dailyHours": 6,
+  "airFilter": false,
+  "dailyHours": 8.4,
   "nextService": 6148,
   "nextServiceDate": "2026-11-20",
   "interval": 350,
-  "notes": "Serviced 23/09/2026 at 5798h by IK & Jayaraj (service card) - all filters done. Next 6148h (350h cycle). ~6 h/day, ICAD-1, Rock Star Scrap. 40 kVA Weber."
+  "currentHours": 5865,
+  "currentHoursDate": "2026-10-01",
+  "notes": "Serviced 23/09/2026 at 5798h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller confirmed 5865h on 01/10/2026 -> 283h left to next (6148), ~8.4 h/day (moderate). ICAD-1, Rock Star Scrap. 40 kVA Weber."
  },
  {
   "dg": "DG-844",
