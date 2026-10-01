@@ -332,13 +332,27 @@
       var isiOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
       x.addEventListener('click',function(){banner.style.display='none';try{localStorage.setItem('deluxeInstallDismissed','1');}catch(e){}});
       var deferred=null;
-      window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;btn.hidden=false;txt.innerHTML='<b>Install the app</b><span>One tap to add Deluxe Ops to your device.</span>';banner.style.display='flex';});
-      btn.addEventListener('click',function(){if(!deferred)return;deferred.prompt();(deferred.userChoice||Promise.resolve()).then(function(){}).catch(function(){}).then(function(){deferred=null;btn.hidden=true;banner.style.display='none';});});
-      window.addEventListener('appinstalled',function(){banner.style.display='none';try{localStorage.setItem('deluxeInstallDismissed','1');}catch(e){}});
-      if(isiOS){
-        txt.innerHTML='<b>Install on your iPhone</b><span>Tap <span class="shr">Share ⬆</span>, then <span class="shr">Add to Home Screen</span>.</span>';
-        banner.style.display='flex';
+      function showHowTo(){
+        var m=isiOS
+          ? 'Install Deluxe Ops on your iPhone:\n\n1. Tap the Share button (the box with ⬆) at the bottom of Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap Add'
+          : 'Install Deluxe Ops on your phone:\n\n1. RELOAD this page first — swipe down from the top (important: the option only appears after one reload)\n2. Tap the ⋮ menu at the top-right of Chrome\n3. Tap "Add to Home screen" (or "Install app")\n4. Tap Add / Install\n\nMake sure you are in Chrome itself, not inside WhatsApp.';
+        try{alert(m);}catch(e){}
       }
+      window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;txt.innerHTML='<b>Install the app</b><span>One tap to add Deluxe Ops to your device.</span>';banner.style.display='flex';});
+      btn.addEventListener('click',function(){
+        if(deferred){deferred.prompt();(deferred.userChoice||Promise.resolve()).then(function(){}).catch(function(){}).then(function(){deferred=null;banner.style.display='none';});}
+        else{showHowTo();}
+      });
+      window.addEventListener('appinstalled',function(){banner.style.display='none';try{localStorage.setItem('deluxeInstallDismissed','1');}catch(e){}});
+      // Always show the banner + Install button, even when Chrome does not fire
+      // its native prompt - tapping Install then shows clear step-by-step help.
+      btn.hidden=false;
+      if(isiOS){
+        txt.innerHTML='<b>Install on your iPhone</b><span>Tap <span class="shr">Install</span> for steps — or Share ⬆ then Add to Home Screen.</span>';
+      }else{
+        txt.innerHTML='<b>Install the app</b><span>Tap <span class="shr">Install</span> — one tap, or follow the quick steps.</span>';
+      }
+      banner.style.display='flex';
     }
   }
 
