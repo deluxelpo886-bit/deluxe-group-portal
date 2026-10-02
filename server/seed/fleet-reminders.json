@@ -1,5 +1,26 @@
 [
  {
+  "key": "DG-470-collect-offhire-2026-09-30",
+  "dg": "DG-470",
+  "note": "OFF-HIRED but NOT COLLECTED. Arrange pickup of DG-470 (220 kVA) from CLASSIC NAAZ REAL ESTATE, Musaffah ME-11 (Building C-37) and return to yard. 📞 +971 55 155 7443. Netsonic OFF2-000036.",
+  "dueDate": "2026-10-02",
+  "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-538-collect-offhire-2026-09-30",
+  "dg": "DG-538",
+  "note": "OFF-HIRED but NOT COLLECTED. Arrange pickup of DG-538 (60 kVA) from ASWAR AL GARBIA GENERAL TRANSPORTING, Saeed Khalifa Bldg Floor 1, Musaffah and return to yard. 📞 +971 50 936 9499. Netsonic OFF2-000035.",
+  "dueDate": "2026-10-02",
+  "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-842-collect-offhire-2026-09-30",
+  "dg": "DG-842",
+  "note": "OFF-HIRED but NOT COLLECTED. Arrange pickup of DG-842 (200 kVA) from BASHUNDHARA PROPERTY MANAGEMENT, Plot 118, Musaffah M40 and return to yard. 📞 +971 56 604 0421. Netsonic OFF2-000037.",
+  "dueDate": "2026-10-02",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-476-crosscheck-2026-09-19-v2",
   "dg": "DG-476",
   "note": "Ran ~24h in the last run (heavy use). Cross-check the current hour-meter reading and update hours. 📞 Customer contact: 058 100 4641. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
