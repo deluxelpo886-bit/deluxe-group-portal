@@ -1,0 +1,20 @@
+{
+  "name": "Deluxe Generators for Rent",
+  "short_name": "Deluxe Rentals",
+  "description": "Diesel generators for rent in Abu Dhabi — delivery, service and 24/7 support.",
+  "start_url": "/rent",
+  "scope": "/rent",
+  "id": "/rent",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0c1016",
+  "theme_color": "#0e1216",
+  "categories": ["business", "utilities"],
+  "icons": [
+    { "src": "/icon-192.png?v=2", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png?v=2", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-192.png?v=2", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512.png?v=2", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
