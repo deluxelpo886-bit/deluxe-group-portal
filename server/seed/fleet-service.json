@@ -1319,11 +1319,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 8,
+  "dailyHours": 18,
   "nextService": 10396,
-  "nextServiceDate": "2026-11-02",
+  "nextServiceDate": "2026-10-08",
   "interval": 350,
-  "notes": "Serviced 19/09/2026 at 10046h by IK & Main Khan (oil + all three filters). Controller ~10040h. Next service 10396h. Trojan, Al Reem."
+  "currentHours": 10280,
+  "currentHoursDate": "2026-10-02",
+  "notes": "Serviced 19/09/2026 at 10046h by IK & Main Khan (oil + all three filters). Controller confirmed 10280h on 02/10/2026 -> 116h left to next (10396), ~18 h/day (heavy) -> due ~08/10. 40 kVA, Trojan, Al Reem RT8."
  },
  {
   "dg": "DG-830",
