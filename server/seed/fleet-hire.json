@@ -41,9 +41,9 @@
  },
  {
   "dg": "DG-470",
-  "offHire": false,
-  "since": "2026-07-28",
-  "note": "On hire - Classic Naaz Real Estate & General Maintenance, Mussafah-37 (HPP2-000047)"
+  "offHire": true,
+  "since": "2026-09-30",
+  "note": "OFF-HIRED 30/09 (Netsonic OFF2-000036) - Classic Naaz Real Estate, Musaffah ME-11. NOT YET COLLECTED - pending pickup to yard."
  },
  {
   "dg": "DG-473",
@@ -241,7 +241,19 @@
   "dg": "DG-538",
   "offHire": true,
   "since": "2026-09-30",
-  "note": "Off hire 30/09 - returned to yard from Aswar (Mussafah M11). Air filter still pending."
+  "note": "OFF-HIRED 30/09 (Netsonic OFF2-000035) - Aswar Al Garbia General Transporting, Musaffah. NOT YET COLLECTED - pending pickup to yard. Air filter still pending."
+ },
+ {
+  "dg": "DG-842",
+  "offHire": true,
+  "since": "2026-09-30",
+  "note": "OFF-HIRED 30/09 (Netsonic OFF2-000037) - Bashundhara Property Management, Musaffah M40. NOT YET COLLECTED - pending pickup to yard."
+ },
+ {
+  "dg": "DG-834",
+  "offHire": true,
+  "since": "2026-09-30",
+  "note": "OFF-HIRED 30/09 - Grand Falcon, Musaffah. COLLECTED and returned to yard at 6286h."
  },
  {
   "dg": "DG-450",
