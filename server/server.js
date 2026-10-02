@@ -50,6 +50,7 @@ const reminders = require('./reminders');
 const rentals = require('./rentals');
 const lpo = require('./lpo');
 const costs = require('./costs');
+const enquiries = require('./enquiries');
 const technicians = require('./technicians');
 const jobs = require('./jobs');
 const push = require('./push');
@@ -1078,6 +1079,28 @@ app.get('/pnl', (req, res) => {
   res.sendFile(path.join(__dirname, 'pnl.html'), { cacheControl: false });
 });
 
+// Public rental marketing site (no login) - also installable as an app.
+app.get('/rent', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; worker-src 'self' blob:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'rent.html'), { cacheControl: false });
+});
+
+// Office view of incoming rental enquiries.
+app.get('/enquiries', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'enquiries.html'), { cacheControl: false });
+});
+
 // Office dispatch board: assign a job (service / breakdown / other) to a
 // technician and watch their live status. Fleet login.
 app.get('/dispatch', (req, res) => {
@@ -1265,6 +1288,43 @@ app.post('/api/costs/add', fleetProtect, (req, res) => {
 });
 app.post('/api/costs/remove', fleetProtect, (req, res) => {
   res.json({ ok: !!costs.remove((req.body || {}).id) });
+});
+
+// ---------- Public rental enquiries (from the /rent marketing site) ----------
+// Public (no login) but rate-limited: a visitor submits a rental request and the
+// office sees it in the portal. Best-effort WhatsApp + email notify to sales.
+const enquiryLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, max: 20,
+  standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Too many requests. Please try again in a few minutes.' },
+});
+app.post('/api/enquiry', enquiryLimiter, async (req, res) => {
+  try {
+    const item = enquiries.add(req.body || {});
+    res.json({ ok: true, id: item.id });
+    // Notify sales (best-effort, never blocks the response).
+    const summary = 'New rental enquiry\n'
+      + 'Name: ' + (item.name || '-') + '\n'
+      + 'Phone: ' + (item.phone || '-') + '\n'
+      + (item.company ? ('Company: ' + item.company + '\n') : '')
+      + (item.kva ? ('Needs: ' + item.kva + '\n') : '')
+      + (item.message ? ('Message: ' + item.message + '\n') : '');
+    const waTo = process.env.ENQUIRY_WHATSAPP_TO;
+    if (waTo) { try { await sendWhatsApp({ to: waTo, body: summary }); } catch (_) { /* best-effort */ } }
+    const mailTo = process.env.ENQUIRY_EMAIL_TO || 'sales@deluxehe.com';
+    try { await sendEmail({ to: mailTo, subject: 'New rental enquiry — ' + (item.name || item.phone || 'website'), text: summary }); } catch (_) { /* best-effort */ }
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid request' }); }
+});
+app.get('/api/enquiries', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ enquiries: enquiries.getAll(), stats: enquiries.stats() });
+});
+app.post('/api/enquiries/status', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  res.json({ ok: true, item: enquiries.setStatus(b.id, b.status) });
+});
+app.post('/api/enquiries/remove', fleetProtect, (req, res) => {
+  res.json({ ok: !!enquiries.remove((req.body || {}).id) });
 });
 
 // Get (creating if needed) the secret customer-tracker link for one breakdown.

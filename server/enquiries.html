@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rental Enquiries</title>
+<style>
+  :root{--bg:#0e1116;--panel:#161c25;--line:#273141;--ink:#eaf0f7;--muted:#8da2b8;--amber:#e8a13a;--green:#39b36a;--red:#e0644a;--sans:'Trebuchet MS','Segoe UI',system-ui,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);padding:16px;overflow-x:hidden;}
+  .wrap{max-width:820px;margin:0 auto;}
+  h1{font-size:21px;}
+  .co{font-size:12px;color:var(--muted);margin:2px 0 14px;}
+  .bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+  .pillcount{background:rgba(232,161,58,.16);color:var(--amber);font-weight:800;font-size:13px;padding:5px 12px;border-radius:20px;}
+  .btn{background:var(--amber);color:#231500;border:none;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:800;font-family:var(--sans);cursor:pointer;}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+  .card.new{border-left:4px solid var(--amber);}
+  .card .h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card .nm{font-size:16px;font-weight:800;}
+  .card .when{color:var(--muted);font-size:12px;margin-left:auto;}
+  .card .meta{color:var(--muted);font-size:13px;margin-top:4px;}
+  .card .msg{margin-top:8px;font-size:14px;background:#0f141b;border:1px solid var(--line);border-radius:10px;padding:9px 11px;white-space:pre-wrap;}
+  .card .act{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:9px;}
+  .chip.New{background:rgba(232,161,58,.18);color:var(--amber);}
+  .chip.Contacted{background:rgba(57,179,106,.16);color:#7fd6a0;}
+  .chip.Closed{background:#222b38;color:var(--muted);}
+  .link{color:var(--amber);font-weight:700;}
+  select{background:#0f141b;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 8px;font-size:12px;font-family:var(--sans);}
+  .x{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;}
+  .empty{color:var(--muted);text-align:center;padding:40px 0;}
+  #overlay{position:fixed;inset:0;background:rgba(13,30,50,.78);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{background:#fff;color:#111;border-radius:14px;padding:24px;max-width:340px;width:100%;}
+  #overlay input{width:100%;border:1px solid #ccc;border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:14px;color:#111;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📨 Rental Enquiries</h1>
+  <div class="co">Requests from the public rental site (/rent)</div>
+  <div class="bar">
+    <span class="pillcount" id="cnt">—</span>
+    <select id="filter"><option value="">All</option><option value="New">New</option><option value="Contacted">Contacted</option><option value="Closed">Closed</option></select>
+    <span style="flex:1;"></span>
+    <button class="btn ghost" id="refresh">↻ Refresh</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <h2 style="margin:0 0 4px;font-size:18px;">Enquiries — Sign in</h2>
+    <p style="color:#666;font-size:13px;margin:0 0 14px;">Sign in to view rental enquiries.</p>
+    <input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username">
+    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+    <div style="color:#c0392b;font-size:13px;min-height:18px;" id="loginErr"></div>
+    <button class="btn" style="width:100%;" id="loginBtn">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  var ALL=[];
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value; $('loginErr').textContent='';
+    try{ var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json(); if(!r.ok){ $('loginErr').textContent=d.message||d.error||'Sign in failed'; return; }
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent='Network error'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('loginPass').addEventListener('keydown',function(e){ if(e.key==='Enter')doLogin(); });
+
+  function waLink(phone){ var p=String(phone||'').replace(/[^0-9]/g,''); if(p.charAt(0)==='0')p='971'+p.slice(1); if(p.indexOf('971')!==0 && p.length<=9)p='971'+p; return 'https://wa.me/'+p; }
+  function fmt(iso){ try{ return new Date(iso).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return iso;} }
+
+  async function load(){
+    try{
+      var r=await fetch('/api/enquiries',{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin(); return; }
+      var d=await r.json(); ALL=d.enquiries||[];
+      $('cnt').textContent=(d.stats?d.stats.new:0)+' new · '+(d.stats?d.stats.total:ALL.length)+' total';
+      render();
+    }catch(e){ $('list').innerHTML='<div class="empty">Failed to load.</div>'; }
+  }
+
+  function render(){
+    var f=$('filter').value;
+    var rows=ALL.filter(function(e){ return !f || e.status===f; });
+    if(!rows.length){ $('list').innerHTML='<div class="empty">No enquiries'+(f?(' ('+f+')'):'')+'.</div>'; return; }
+    $('list').innerHTML=rows.map(function(e){
+      var phone=esc(e.phone||'');
+      var phoneHtml=e.phone?('<a class="link" href="tel:'+phone+'">'+phone+'</a> · <a class="link" href="'+waLink(e.phone)+'" target="_blank" rel="noopener">WhatsApp</a>'):'<span style="color:var(--muted)">no phone</span>';
+      return '<div class="card '+(e.status==='New'?'new':'')+'">'
+        +'<div class="h"><span class="nm">'+(esc(e.name)||'(no name)')+'</span><span class="chip '+esc(e.status)+'">'+esc(e.status)+'</span><span class="when">'+fmt(e.at)+'</span></div>'
+        +'<div class="meta">'+phoneHtml+(e.company?(' · '+esc(e.company)):'')+(e.kva?(' · needs <b>'+esc(e.kva)+'</b>'):'')+'</div>'
+        +(e.message?('<div class="msg">'+esc(e.message)+'</div>'):'')
+        +'<div class="act">'
+          +'<select data-id="'+e.id+'" class="st"><option'+(e.status==='New'?' selected':'')+'>New</option><option'+(e.status==='Contacted'?' selected':'')+'>Contacted</option><option'+(e.status==='Closed'?' selected':'')+'>Closed</option></select>'
+          +'<span style="flex:1;"></span>'
+          +'<button class="x" data-del="'+e.id+'">Delete</button>'
+        +'</div></div>';
+    }).join('');
+    $('list').querySelectorAll('select.st').forEach(function(s){ s.addEventListener('change',function(){ setStatus(s.getAttribute('data-id'),s.value); }); });
+    $('list').querySelectorAll('[data-del]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Delete this enquiry?'))del(b.getAttribute('data-del')); }); });
+  }
+
+  async function setStatus(id,status){
+    try{ await fetch('/api/enquiries/status',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({id:id,status:status})}); load(); }catch(e){}
+  }
+  async function del(id){
+    try{ await fetch('/api/enquiries/remove',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({id:id})}); load(); }catch(e){}
+  }
+  $('filter').addEventListener('change',render);
+  $('refresh').addEventListener('click',load);
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
