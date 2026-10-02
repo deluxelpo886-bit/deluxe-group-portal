@@ -49,6 +49,7 @@ const breakdowns = require('./breakdowns');
 const reminders = require('./reminders');
 const rentals = require('./rentals');
 const lpo = require('./lpo');
+const costs = require('./costs');
 const technicians = require('./technicians');
 const jobs = require('./jobs');
 const push = require('./push');
@@ -1066,6 +1067,17 @@ app.get('/lpo', (req, res) => {
   res.sendFile(path.join(__dirname, 'lpo.html'), { cacheControl: false });
 });
 
+// Fleet P&L: rental income (rate x time on hire) vs costs (service / breakdown / parts).
+app.get('/pnl', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'pnl.html'), { cacheControl: false });
+});
+
 // Office dispatch board: assign a job (service / breakdown / other) to a
 // technician and watch their live status. Fleet login.
 app.get('/dispatch', (req, res) => {
@@ -1240,6 +1252,19 @@ app.post('/api/breakdowns/update', fleetProtect, (req, res) => {
 app.post('/api/breakdowns/remove', fleetProtect, (req, res) => {
   breakdowns.remove((req.body || {}).id);
   res.json({ ok: true });
+});
+
+// ---------- Cost ledger (fleet P&L) ----------
+app.get('/api/costs', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ costs: costs.getAll() });
+});
+app.post('/api/costs/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: costs.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/costs/remove', fleetProtect, (req, res) => {
+  res.json({ ok: !!costs.remove((req.body || {}).id) });
 });
 
 // Get (creating if needed) the secret customer-tracker link for one breakdown.

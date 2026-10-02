@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fleet P&amp;L</title>
+<style>
+  :root{--bg:#0e1116;--panel:#161c25;--line:#273141;--ink:#eaf0f7;--muted:#8da2b8;--faint:#5f7084;--amber:#e8a13a;--green:#39b36a;--red:#e0644a;--sans:'Trebuchet MS','Segoe UI',system-ui,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);padding:16px;max-width:100%;overflow-x:hidden;}
+  .wrap{max-width:1200px;margin:0 auto;}
+  h1{font-size:21px;letter-spacing:.3px;}
+  .co{font-size:12px;color:var(--muted);margin-top:2px;}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;}
+  select,input{background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font-size:13px;font-family:var(--sans);}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0;}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .kpi .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);}
+  .kpi .v{font-size:25px;font-weight:800;margin-top:4px;}
+  .kpi small{font-size:12px;color:var(--muted);font-weight:600;}
+  .pos{color:var(--green);}.neg{color:var(--red);}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px;}
+  th,td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th:nth-child(1),th:nth-child(2),th:nth-child(3),td:nth-child(1),td:nth-child(2),td:nth-child(3){text-align:left;}
+  thead th{background:#1b2330;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0;cursor:pointer;user-select:none;}
+  tbody tr:hover{background:#19212c;}
+  td .sub{font-size:11px;color:var(--muted);}
+  tfoot td{font-weight:800;background:#1b2330;border-top:2px solid var(--amber);}
+  .dg{font-weight:700;}
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:9px;background:#223;color:var(--muted);}
+  .badge.on{background:rgba(57,179,106,.16);color:#7fd6a0;}
+  .badge.off{background:rgba(224,100,74,.16);color:#f0a08c;}
+  .net.pos{color:var(--green);font-weight:800;}.net.neg{color:var(--red);font-weight:800;}
+  .add{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:16px 0;}
+  .add h3{font-size:14px;margin-bottom:10px;}
+  .add .row{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
+  .add .f{display:flex;flex-direction:column;gap:3px;}
+  .add .f label{font-size:11px;color:var(--muted);}
+  .btn{background:var(--amber);color:#231500;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:800;font-family:var(--sans);cursor:pointer;}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);}
+  .x{background:none;border:none;color:var(--faint);cursor:pointer;font-size:14px;}
+  .note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+  .seg button{background:var(--panel);border:none;color:var(--muted);padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);}
+  .seg button.on{background:var(--amber);color:#231500;}
+  #overlay{position:fixed;inset:0;background:rgba(13,30,50,.78);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{background:#fff;color:#111;border-radius:14px;padding:24px;max-width:340px;width:100%;}
+  #overlay input{width:100%;border:1px solid #ccc;border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:14px;color:#111;}
+  @media(max-width:720px){.cards{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💰 Fleet P&amp;L</h1>
+  <div class="co">Deluxe Heavy Equipment Rental L.L.C · Deluxe Energy Solutions L.L.C — rental income vs running costs</div>
+
+  <div class="bar">
+    <div class="seg" id="period"></div>
+    <select id="co"><option value="">All companies</option><option value="Heavy">Heavy</option><option value="Energy">Energy</option></select>
+    <label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><input type="checkbox" id="onlyHire" style="width:auto;"> On-hire only</label>
+    <span style="flex:1;"></span>
+    <button class="btn ghost" id="refresh">↻ Refresh</button>
+  </div>
+
+  <div class="cards" id="kpis"></div>
+
+  <div class="add">
+    <h3>+ Add a cost</h3>
+    <div class="row">
+      <div class="f"><label>Generator (DG)</label><input id="cDg" list="dgList" placeholder="DG-xxx" style="width:120px;"><datalist id="dgList"></datalist></div>
+      <div class="f"><label>Type</label><select id="cType"><option value="service">Service</option><option value="breakdown">Breakdown</option><option value="parts">Parts</option><option value="other">Other</option></select></div>
+      <div class="f"><label>Amount (AED)</label><input id="cAmt" type="number" min="0" step="0.01" placeholder="0.00" style="width:120px;"></div>
+      <div class="f"><label>Date</label><input id="cDate" type="date"></div>
+      <div class="f" style="flex:1;min-width:160px;"><label>Note (optional)</label><input id="cNote" placeholder="e.g. oil + 3 filters + labour"></div>
+      <button class="btn" id="cAdd">Add cost</button>
+    </div>
+    <div class="note" id="addMsg"></div>
+  </div>
+
+  <div class="tablewrap">
+    <table id="tbl">
+      <thead><tr>
+        <th data-s="dg">DG</th><th data-s="customer">Customer</th><th data-s="company">Co</th>
+        <th data-s="rate">Rate/mo</th><th data-s="months">Months</th><th data-s="income">Income</th>
+        <th data-s="service">Service</th><th data-s="breakdown">Breakdown</th><th data-s="parts">Parts</th>
+        <th data-s="cost">Total cost</th><th data-s="net">Net</th><th data-s="margin">Margin</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+      <tfoot id="foot"></tfoot>
+    </table>
+  </div>
+  <div class="note">Income = monthly rate × time on hire (estimate from the stored rate). Costs are what the office enters here (service, breakdown repairs, parts). Switch to Netsonic actual invoices later for exact income. Tap a column header to sort.</div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <h2 style="margin:0 0 4px;font-size:18px;">Fleet P&amp;L — Sign in</h2>
+    <p style="color:#666;font-size:13px;margin:0 0 14px;">Sign in to view the fleet P&amp;L.</p>
+    <input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username">
+    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+    <div style="color:#c0392b;font-size:13px;min-height:18px;" id="loginErr"></div>
+    <button class="btn" style="width:100%;" id="loginBtn">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function money(n){ n=Math.round(Number(n)||0); return n.toLocaleString('en-US'); }
+  function pad(n){return (n<10?'0':'')+n;}
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value; $('loginErr').textContent='';
+    try{ var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json(); if(!r.ok){ $('loginErr').textContent=d.message||d.error||'Sign in failed'; return; }
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent='Network error'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('loginPass').addEventListener('keydown',function(e){ if(e.key==='Enter')doLogin(); });
+
+  var DATA=[]; var SORT={key:'net',dir:1}; var PERIOD='all';
+  var today=new Date(); var todayStr=today.getFullYear()+'-'+pad(today.getMonth()+1)+'-'+pad(today.getDate());
+  $('cDate').value=todayStr;
+
+  // period segmented control: All + last 4 months
+  (function(){
+    var segs=[{k:'all',l:'To date'}];
+    for(var i=0;i<4;i++){ var d=new Date(today.getFullYear(),today.getMonth()-i,1); var k=d.getFullYear()+'-'+pad(d.getMonth()+1); segs.push({k:k,l:d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}); }
+    $('period').innerHTML=segs.map(function(s){return '<button data-k="'+s.k+'"'+(s.k==='all'?' class="on"':'')+'>'+s.l+'</button>';}).join('');
+    $('period').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ PERIOD=b.getAttribute('data-k'); $('period').querySelectorAll('button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); render(); }); });
+  })();
+
+  function monthsOnHire(since){ if(!since)return 0; var a=new Date(since+'T00:00:00'); if(isNaN(a))return 0; var m=(today-a)/(1000*60*60*24*30.44); return m>0?m:0; }
+
+  async function load(){
+    try{
+      var sr=await fetch('/api/service/status',{cache:'no-store',headers:authHeaders()});
+      if(sr.status===401){ showLogin(); return; }
+      var sd=await sr.json();
+      var dd=await (await fetch('/api/fleet/directory',{cache:'no-store',headers:authHeaders()})).json();
+      var cd=await (await fetch('/api/costs',{cache:'no-store',headers:authHeaders()})).json();
+      var dir=dd.directory||{};
+      // hire since + offHire from service status generators (and hire array)
+      var hireMap={};
+      (sd.hire||[]).forEach(function(h){ hireMap[String(h.dg).toUpperCase()]={offHire:!!h.offHire,since:h.since}; });
+      (sd.generators||[]).forEach(function(g){ var k=String(g.dg).toUpperCase(); hireMap[k]=hireMap[k]||{}; if(g.hireSince)hireMap[k].since=g.hireSince; if(g.offHire!=null)hireMap[k].offHire=!!g.offHire; });
+      // costs grouped by DG
+      var COSTS=cd.costs||[];
+      // build row set from directory (every known unit with a rate or any cost)
+      var dgs={};
+      Object.keys(dir).forEach(function(k){ dgs[k]=true; });
+      COSTS.forEach(function(c){ dgs[String(c.dg).toUpperCase()]=true; });
+      DATA=Object.keys(dgs).map(function(k){
+        var d=dir[k]||{}; var h=hireMap[k]||{};
+        return { dg:k, kva:d.kva||null, customer:d.customer||'', company:d.company||'', status:d.status||'', rate:Number(d.rate)||0, offHire:!!h.offHire, since:h.since||'' , _costs:COSTS.filter(function(c){return String(c.dg).toUpperCase()===k;}) };
+      });
+      // datalist of DGs for the add form
+      $('dgList').innerHTML=Object.keys(dgs).sort().map(function(k){return '<option value="'+k+'">';}).join('');
+      render();
+    }catch(e){ $('rows').innerHTML='<tr><td colspan="12" style="padding:16px;color:var(--red);">Failed to load ('+esc(e.message)+')</td></tr>'; }
+  }
+
+  function computeRow(r){
+    var monthlyRate=r.rate||0;
+    var income=0, months=0;
+    if(PERIOD==='all'){
+      months=monthsOnHire(r.since);
+      // only count income while genset earns (on hire). Off-hire units: income still = rate*months they ran (approx to now).
+      income= monthlyRate * months;
+    } else {
+      // single month: earns a full month if on-hire and hire started on/before that month
+      months = r.offHire ? 0 : 1;
+      var startsBy = !r.since || r.since.slice(0,7) <= PERIOD;
+      income = (!r.offHire && startsBy) ? monthlyRate : 0;
+    }
+    var cs={service:0,breakdown:0,parts:0,other:0};
+    r._costs.forEach(function(c){ if(PERIOD!=='all' && String(c.date||'').slice(0,7)!==PERIOD) return; cs[c.type]=(cs[c.type]||0)+(Number(c.amount)||0); });
+    var cost=cs.service+cs.breakdown+cs.parts+cs.other;
+    var net=income-cost;
+    var margin= income>0 ? (net/income*100) : (cost>0? -100 : 0);
+    return {r:r,monthlyRate:monthlyRate,months:months,income:income,service:cs.service,breakdown:cs.breakdown,parts:cs.parts,other:cs.other,cost:cost,net:net,margin:margin};
+  }
+
+  function render(){
+    var coF=$('co').value, onlyHire=$('onlyHire').checked;
+    var rows=DATA.filter(function(r){
+      if(coF && r.company!==coF) return false;
+      if(onlyHire && r.offHire) return false;
+      return true;
+    }).map(computeRow);
+    // sort
+    rows.sort(function(a,b){
+      var k=SORT.key, av,bv;
+      if(k==='dg'||k==='customer'||k==='company'){ av=(a.r[k]||'').toString(); bv=(b.r[k]||'').toString(); return SORT.dir*av.localeCompare(bv); }
+      if(k==='rate')k='monthlyRate';
+      av=a[k]; bv=b[k]; if(av==null)av=0; if(bv==null)bv=0; return SORT.dir*(bv-av);
+    });
+    // KPIs
+    var tInc=0,tCost=0,tSvc=0,tBd=0,tParts=0,onHireCount=0,monthRun=0;
+    rows.forEach(function(x){ tInc+=x.income; tCost+=x.cost; tSvc+=x.service; tBd+=x.breakdown; tParts+=x.parts+x.other; if(!x.r.offHire && x.monthlyRate>0){onHireCount++; monthRun+=x.monthlyRate;} });
+    var tNet=tInc-tCost;
+    $('kpis').innerHTML=
+      kpi('Monthly income run-rate','AED '+money(monthRun),onHireCount+' units on hire')
+      +kpi(PERIOD==='all'?'Income (to date)':'Income (month)','AED '+money(tInc),'rate × time on hire')
+      +kpi('Running costs','AED '+money(tCost),'svc '+money(tSvc)+' · bd '+money(tBd)+' · parts '+money(tParts))
+      +kpi('Net '+(PERIOD==='all'?'(to date)':'(month)'),'AED '+money(tNet),(tInc>0?Math.round(tNet/tInc*100)+'% margin':''),tNet>=0?'pos':'neg');
+    // rows
+    $('rows').innerHTML=rows.map(function(x){
+      var r=x.r;
+      return '<tr>'
+        +'<td class="dg">'+esc(r.dg)+'<div class="sub">'+(r.kva?esc(r.kva)+' kVA':'')+'</div></td>'
+        +'<td>'+esc(r.customer||'—')+' <span class="badge '+(r.offHire?'off':'on')+'">'+(r.offHire?'off-hire':'on hire')+'</span></td>'
+        +'<td>'+esc(r.company||'')+'</td>'
+        +'<td>'+(x.monthlyRate?money(x.monthlyRate):'—')+'</td>'
+        +'<td>'+(x.months?x.months.toFixed(1):'—')+'</td>'
+        +'<td>'+money(x.income)+'</td>'
+        +'<td>'+(x.service?money(x.service):'·')+'</td>'
+        +'<td>'+(x.breakdown?money(x.breakdown):'·')+'</td>'
+        +'<td>'+((x.parts+x.other)?money(x.parts+x.other):'·')+'</td>'
+        +'<td>'+(x.cost?money(x.cost):'·')+'</td>'
+        +'<td class="net '+(x.net>=0?'pos':'neg')+'">'+(x.net<0?'-':'')+money(Math.abs(x.net))+'</td>'
+        +'<td>'+(x.income>0||x.cost>0?Math.round(x.margin)+'%':'—')+'</td>'
+        +'</tr>';
+    }).join('')||'<tr><td colspan="12" style="padding:16px;color:var(--muted);">No units match.</td></tr>';
+    $('foot').innerHTML='<tr><td colspan="5">TOTAL — '+rows.length+' units</td><td>'+money(tInc)+'</td><td>'+money(tSvc)+'</td><td>'+money(tBd)+'</td><td>'+money(tParts)+'</td><td>'+money(tCost)+'</td><td class="net '+(tNet>=0?'pos':'neg')+'">'+(tNet<0?'-':'')+money(Math.abs(tNet))+'</td><td>'+(tInc>0?Math.round(tNet/tInc*100)+'%':'—')+'</td></tr>';
+  }
+  function kpi(k,v,sub,cls){ return '<div class="kpi"><div class="k">'+k+'</div><div class="v '+(cls||'')+'">'+v+'</div><small>'+(sub||'')+'</small></div>'; }
+
+  // sorting
+  document.querySelectorAll('thead th').forEach(function(th){ th.addEventListener('click',function(){ var k=th.getAttribute('data-s'); if(SORT.key===k)SORT.dir*=-1; else {SORT.key=k;SORT.dir=1;} render(); }); });
+  $('co').addEventListener('change',render);
+  $('onlyHire').addEventListener('change',render);
+  $('refresh').addEventListener('click',load);
+
+  // add cost
+  $('cAdd').addEventListener('click',async function(){
+    var dg=$('cDg').value.trim().toUpperCase(), type=$('cType').value, amt=$('cAmt').value, date=$('cDate').value, note=$('cNote').value.trim();
+    $('addMsg').textContent='';
+    if(!dg){ $('addMsg').textContent='Enter a DG number.'; return; }
+    if(!(Number(amt)>=0)){ $('addMsg').textContent='Enter a valid amount.'; return; }
+    try{
+      var r=await fetch('/api/costs/add',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),body:JSON.stringify({dg:dg,type:type,amount:Number(amt),date:date,note:note,createdBy:'Operations'})});
+      var d=await r.json(); if(!r.ok){ $('addMsg').textContent=d.error||'Failed'; return; }
+      $('cAmt').value=''; $('cNote').value='';
+      $('addMsg').textContent='✓ Added AED '+money(amt)+' '+type+' cost to '+dg;
+      load();
+    }catch(e){ $('addMsg').textContent='Network error'; }
+  });
+
+  if(TOKEN){ hideLogin(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
