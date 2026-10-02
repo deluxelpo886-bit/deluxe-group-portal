@@ -2662,16 +2662,20 @@
  },
  {
   "dg": "DG-467",
-  "hours": 29672,
-  "date": "2026-08-21",
+  "hours": 30028,
+  "date": "2026-10-02",
   "technician": "SONU",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "nextService": 30022,
-  "nextServiceDate": "2026-09-22",
-  "interval": 350
+  "dailyHours": 8.5,
+  "nextService": 30378,
+  "nextServiceDate": "2026-11-12",
+  "interval": 350,
+  "currentHours": 30028,
+  "currentHoursDate": "2026-10-02",
+  "notes": "Serviced 02/10/2026 at 30028h by Sonu - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 30378h (350h cycle). ~8.5 h/day (moderate). 100 kVA, Dafoos Fire, Emirates Steel (ICAD Mussafah)."
  },
  {
   "dg": "DG-448",
