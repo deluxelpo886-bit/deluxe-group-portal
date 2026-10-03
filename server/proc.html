@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deluxe Procurement</title>
+<link rel="manifest" href="/manifest-proc.json">
+<meta name="theme-color" content="#0e1216">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Deluxe Procurement">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{--bg:#0c1016;--card:#161c25;--line:#273141;--ink:#eef3f9;--mut:#8da2b8;--amber:#e8a13a;--wa:#25D366;--sans:'Trebuchet MS','Segoe UI',system-ui,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);overflow-x:hidden;}
+  .bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:10;}
+  .bar .logos img{height:30px;vertical-align:middle;}
+  .bar .who{margin-left:4px;line-height:1.15;}
+  .bar .who b{font-size:14px;} .bar .who span{display:block;font-size:11px;color:var(--mut);}
+  .bar .out{margin-left:auto;font-size:20px;color:var(--mut);cursor:pointer;}
+  .wrap{padding:14px;max-width:680px;margin:0 auto;}
+  h1{font-size:19px;margin:2px 2px 12px;} h1 span{color:var(--mut);font-size:14px;}
+  .req{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;}
+  .req.sent{opacity:.7;}
+  .rh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .dg{font-size:19px;font-weight:900;color:var(--amber);}
+  .for{font-size:12px;color:var(--mut);}
+  .st{margin-left:auto;font-size:11px;font-weight:800;padding:2px 9px;border-radius:9px;}
+  .st.Pending{background:rgba(232,161,58,.18);color:var(--amber);}
+  .st.Sent{background:rgba(37,211,102,.16);color:#8ff0b6;}
+  .st.Received{background:#223;color:var(--mut);}
+  .pl{display:flex;align-items:center;gap:7px;border-top:1px solid var(--line);padding:7px 0;font-size:14.5px;}
+  .pl:first-of-type{border-top:none;} .pl .hi{color:var(--mut);font-size:12.5px;} .pl .q{margin-left:auto;background:#0d3b66;color:#cfe3f6;font-weight:800;font-size:13px;padding:3px 10px;border-radius:999px;}
+  .acts{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap;}
+  .acts button,.acts a{flex:1;min-width:130px;text-align:center;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;text-decoration:none;font-family:var(--sans);}
+  .wabtn{background:var(--wa);color:#063019;}
+  .recv{background:#223044;color:#bfe3d0;border:1px solid #2b5a4a!important;}
+  .empty{text-align:center;color:var(--mut);padding:50px 0;} .empty .ic{font-size:44px;}
+  .banner-info{display:flex;gap:10px;align-items:center;background:#17313f;border:1px solid #2b5a4a;border-radius:12px;padding:12px;margin-bottom:12px;cursor:pointer;}
+  .banner-info .ic{font-size:22px;}
+  .noti{position:fixed;left:14px;right:14px;top:-120px;background:#1f6b3b;color:#fff;border-radius:14px;padding:13px 15px;display:flex;gap:10px;align-items:center;z-index:60;transition:top .3s;box-shadow:0 10px 30px rgba(0,0,0,.4);}
+  .noti.show{top:12px;} .noti b{font-size:15px;} .noti span{display:block;font-size:12px;opacity:.9;}
+  .alarm-stop{position:fixed;left:0;right:0;bottom:0;background:#b3261e;color:#fff;text-align:center;padding:16px;font-size:16px;font-weight:800;z-index:300;display:none;cursor:pointer;}
+  .alarm-stop.on{display:block;animation:deFlash .7s infinite;} @keyframes deFlash{50%{background:#e8920a;}}
+  /* login */
+  #loginView{max-width:420px;margin:0 auto;padding:30px 20px;text-align:center;}
+  .logos-l img{height:40px;margin:0 5px;}
+  #loginView h1{font-size:22px;margin:18px 0 4px;} #loginView .hi{color:var(--mut);font-size:14px;}
+  .who-pick{display:grid;gap:10px;margin-top:22px;}
+  .who-pick button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:16px;font-size:17px;font-weight:700;cursor:pointer;}
+  .pindots{display:flex;gap:12px;justify-content:center;margin:20px 0;} .pindots i{width:16px;height:16px;border-radius:50%;background:var(--line);} .pindots i.on{background:var(--amber);}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;}
+  .pad button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:18px;font-size:22px;font-weight:800;cursor:pointer;}
+  .lErr{color:#e0644a;min-height:20px;margin-top:10px;font-size:14px;}
+  .installbtn{display:none;position:fixed;left:14px;right:14px;bottom:14px;background:var(--amber);color:#231500;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:800;z-index:40;cursor:pointer;}
+  .done{position:fixed;inset:0;background:rgba(6,10,16,.95);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:200;}
+  .done.on{display:flex;} .done .big{font-size:60px;} .done h2{margin:10px 0 4px;} .done button{margin-top:22px;background:var(--amber);color:#231500;border:none;border-radius:12px;padding:14px 26px;font-size:16px;font-weight:800;cursor:pointer;}
+</style>
+</head>
+<body>
+  <div class="noti" id="noti"><div class="ic">🛒</div><div><b id="notiT">New</b><span id="notiS"></span></div></div>
+
+  <!-- Login -->
+  <div id="loginView">
+    <div class="logos-l"><img src="/logo-heavy.png" alt="Deluxe Heavy"><img src="/logo-energy.png" alt="Deluxe Energy"></div>
+    <h1 id="lTitle">Who are you?</h1>
+    <div class="hi" id="lSub">आप कौन हैं?</div>
+    <div class="who-pick" id="whoPick"></div>
+    <div id="pinWrap" style="display:none;">
+      <div class="pindots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+      <div class="pad" id="pad"></div>
+      <div class="lErr" id="lErr"></div>
+      <div style="margin-top:14px;color:var(--mut);font-size:13px;cursor:pointer;" id="lBackName">‹ Change name</div>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="appView" style="display:none;">
+    <div class="bar">
+      <div class="logos"><img src="/logo-heavy.png" alt=""></div>
+      <div class="who"><b id="uName">…</b><span>Procurement · खरीद</span></div>
+      <div class="out" id="logout">⎋</div>
+    </div>
+    <div class="wrap"><div id="screen"></div></div>
+  </div>
+
+  <button class="installbtn" id="installBtn">⬇️ Install app · ऐप इंस्टॉल करें</button>
+  <div class="done" id="doneOv"><div class="big">✅</div><h2>Done!</h2><button onclick="document.getElementById('doneOv').classList.remove('on')">OK</button></div>
+  <div class="alarm-stop" id="alarmStop">🔔 TAP TO STOP · बंद करें</div>
+
+<script>
+(function(){
+  var TSTORE='deluxeProcToken';
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  var TOKEN='', OFFICER=null, REQS=[], known={}, first=true, pollT=null, GROUP='';
+
+  // alarm
+  var audioCtx=null, alarmTimer=null, ac=0;
+  function unlockAudio(){ try{ if(!audioCtx){var AC=window.AudioContext||window.webkitAudioContext; if(AC)audioCtx=new AC();} if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume(); }catch(e){} }
+  function beep(f){ if(!audioCtx)return; try{var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=f||900;o.connect(g);g.connect(audioCtx.destination);var n=audioCtx.currentTime;g.gain.setValueAtTime(0.0001,n);g.gain.exponentialRampToValueAtTime(0.6,n+0.02);g.gain.exponentialRampToValueAtTime(0.0001,n+0.33);o.start(n);o.stop(n+0.4);}catch(e){} }
+  function startAlarm(){ unlockAudio(); if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} ac=0; $('alarmStop').classList.add('on'); beep(988); alarmTimer=setInterval(function(){beep(ac%2?660:988);ac++;if(ac>55)stopAlarm();},560); try{if(navigator.vibrate)navigator.vibrate([500,200,500,200,500]);}catch(e){} }
+  function stopAlarm(){ if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} $('alarmStop').classList.remove('on'); try{if(navigator.vibrate)navigator.vibrate(0);}catch(e){} }
+  $('alarmStop').addEventListener('click',stopAlarm);
+  ['touchstart','click'].forEach(function(ev){ document.addEventListener(ev,function(){ unlockAudio(); if(alarmTimer)stopAlarm(); },{passive:true}); });
+
+  async function api(url,opt){ var r=await fetch(url,opt); if(!r.ok) throw new Error('http'+r.status); return r.json(); }
+  function urlToken(){ var p=location.pathname.replace(/\/+$/,'').split('/'); var last=p[p.length-1]; return (last&&last!=='proc')?last:''; }
+  function boot(){ var t=urlToken()||localStorage.getItem(TSTORE)||''; if(t){ TOKEN=t; try{localStorage.setItem(TSTORE,t);}catch(e){} startApp(); } else showLogin(); }
+
+  // login
+  var pickId='', pin='';
+  async function showLogin(){ $('appView').style.display='none'; $('loginView').style.display='block';
+    try{ var d=await api('/api/proc/names'); renderWho(d.officers||[]); }catch(e){ $('whoPick').innerHTML='<div class="hi">Cannot reach office.</div>'; } }
+  function renderWho(list){ $('pinWrap').style.display='none'; $('whoPick').style.display='grid'; $('lTitle').textContent='Who are you?'; $('lSub').textContent='नाम चुनो';
+    $('whoPick').innerHTML=list.map(function(o){return '<button data-id="'+esc(o.id)+'">🧑‍💼 '+esc(o.name)+'</button>';}).join('');
+    $('whoPick').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ pickId=b.getAttribute('data-id'); startPin(b.textContent.trim()); }); }); }
+  function startPin(name){ pin=''; $('whoPick').style.display='none'; $('pinWrap').style.display='block'; $('lTitle').textContent=name; $('lSub').textContent='Enter PIN · PIN डालो'; $('lErr').textContent=''; renderPad(); renderDots(); }
+  function renderPad(){ var keys=['1','2','3','4','5','6','7','8','9','','0','⌫'];
+    $('pad').innerHTML=keys.map(function(k){return k===''?'<span></span>':'<button data-k="'+k+'">'+k+'</button>';}).join('');
+    $('pad').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ var k=b.getAttribute('data-k'); if(k==='⌫')pin=pin.slice(0,-1); else if(pin.length<4)pin+=k; renderDots(); if(pin.length===4)submitPin(); }); }); }
+  function renderDots(){ $('pinDots').querySelectorAll('i').forEach(function(d,i){ d.classList.toggle('on',i<pin.length); }); }
+  async function submitPin(){ try{ var d=await api('/api/proc/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({officer:pickId,pin:pin})}); TOKEN=d.token; try{localStorage.setItem(TSTORE,TOKEN);}catch(e){} startApp(); }catch(e){ $('lErr').textContent='Wrong PIN · गलत PIN'; pin=''; renderDots(); } }
+  $('lBackName').addEventListener('click',showLogin);
+
+  // app
+  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; registerSW(); load(); if(pollT)clearInterval(pollT); pollT=setInterval(load,20000); if(!isStandalone())setTimeout(function(){$('installBtn').style.display='block';},800); }
+  $('logout').addEventListener('click',function(){ if(confirm('Sign out?')){ try{localStorage.removeItem(TSTORE);}catch(e){} TOKEN=''; first=true; known={}; showLogin(); } });
+
+  async function load(){ try{
+      var d=await api('/api/proc/'+encodeURIComponent(TOKEN));
+      OFFICER=d.officer; REQS=d.requests||[]; GROUP=d.supplierGroup||''; $('uName').textContent=OFFICER.name;
+      if(!first){ REQS.forEach(function(r){ if(!known[r.id] && r.status==='Pending') notify(r); }); }
+      REQS.forEach(function(r){ known[r.id]=true; }); first=false;
+      render();
+    }catch(e){ if(e.message==='http404'){ try{localStorage.removeItem(TSTORE);}catch(x){} showLogin(); } } }
+  function notify(r){ showBanner('🛒 New parts to buy · '+(r.dg||''),'खरीदने के लिए पुर्ज़े'); startAlarm();
+    try{ if(window.Notification&&Notification.permission==='granted') new Notification('Deluxe — Buy parts / पुर्ज़े खरीदो',{body:(r.dg||'')+' — '+(r.parts||[]).map(function(p){return p.en;}).join(', '),icon:'/icon-192.png'}); }catch(e){} }
+  var bTimer; function showBanner(t,s){ $('notiT').textContent=t; $('notiS').textContent=s; $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},5000); }
+
+  function rfqText(r){
+    var lines=['*Deluxe — Parts Enquiry (RFQ)*',''];
+    lines.push('Generator: '+(r.dg||'-'));
+    lines.push('Parts needed:');
+    (r.parts||[]).forEach(function(p){ lines.push('• '+p.en+(p.qty?(' × '+p.qty):'')); });
+    lines.push('');
+    lines.push('Please share *price* and *availability*.');
+    lines.push('— Deluxe Heavy Equipment Rental / Deluxe Energy Solutions');
+    return lines.join('\n');
+  }
+
+  function render(){
+    var pend=REQS.filter(function(r){return r.status==='Pending'||r.status==='Sent';});
+    var done=REQS.filter(function(r){return r.status==='Received'||r.status==='Cancelled';});
+    var html=notifBanner()+'<h1>Parts to buy <span>खरीदने के लिए ('+pend.filter(function(r){return r.status==='Pending';}).length+')</span></h1>';
+    if(!pend.length&&!done.length) html+='<div class="empty"><div class="ic">✅</div><b>Nothing to buy</b><div class="hi">कुछ नहीं</div></div>';
+    pend.forEach(function(r){ html+=card(r); });
+    if(done.length){ html+='<h1 style="font-size:15px;color:var(--mut);margin-top:18px;">Done · पूरा</h1>'; done.slice(0,20).forEach(function(r){ html+=card(r); }); }
+    $('screen').innerHTML=html;
+    $('screen').querySelectorAll('[data-wa]').forEach(function(b){ b.addEventListener('click',function(){ sendRfq(b.getAttribute('data-wa')); }); });
+    $('screen').querySelectorAll('[data-recv]').forEach(function(b){ b.addEventListener('click',function(){ setStatus(b.getAttribute('data-recv'),'Received'); }); });
+  }
+  function notifBanner(){ if(!('Notification'in window)||Notification.permission==='granted') return '';
+    return '<div class="banner-info" onclick="enablePush()"><div class="ic">🔔</div><div><b>Turn on alerts</b><div class="hi">नई माँग की घंटी चालू करो</div></div></div>'; }
+  function card(r){
+    var acts='';
+    if(r.status==='Pending'||r.status==='Sent'){
+      acts='<div class="acts"><button class="wabtn" data-wa="'+esc(r.id)+'">'+(r.status==='Sent'?'📤 Send again':'📤 Send RFQ (WhatsApp)')+'</button>'+
+        '<button class="recv" data-recv="'+esc(r.id)+'">✓ Received</button></div>';
+    }
+    return '<div class="req'+(r.status!=='Pending'?' sent':'')+'"><div class="rh"><span class="dg">'+esc(r.dg||'—')+'</span><span class="for">'+esc(r.tech||'')+(r.location?' · '+esc(r.location):'')+'</span><span class="st '+esc(r.status)+'">'+esc(r.status)+'</span></div>'+
+      (r.parts||[]).map(function(p){ return '<div class="pl">🔧 '+esc(p.en)+' <span class="hi">'+esc(p.hi||'')+'</span>'+(p.qty?'<span class="q">'+esc(p.qty)+'</span>':'')+'</div>'; }).join('')+
+      acts+'</div>';
+  }
+  function sendRfq(id){ var r=REQS.filter(function(x){return x.id===id;})[0]; if(!r) return;
+    var txt=rfqText(r);
+    try{ if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){}); }catch(e){}
+    // Open WhatsApp with the RFQ pre-typed -> pick the supplier group and send.
+    var url='https://wa.me/?text='+encodeURIComponent(txt);
+    window.open(url,'_blank');
+    setStatus(id,'Sent');
+    if(GROUP){ showBanner('RFQ copied · open your supplier group',''); }
+  }
+  async function setStatus(id,status){ try{ await api('/api/proc/'+encodeURIComponent(TOKEN)+'/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,status:status})});
+      for(var i=0;i<REQS.length;i++){ if(REQS[i].id===id) REQS[i].status=status; } if(status==='Received') $('doneOv').classList.add('on'); render();
+    }catch(e){ showBanner('Could not save','') ; } }
+
+  // push
+  var swReg=null;
+  function registerSW(){ if(!('serviceWorker'in navigator))return; navigator.serviceWorker.register('/proc-sw.js',{scope:'/proc'}).then(function(reg){swReg=reg;}).catch(function(){}); }
+  window.enablePush=async function(){ try{ await Notification.requestPermission(); render(); }catch(e){} };
+
+  // install
+  var deferred=null;
+  function isStandalone(){ return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true; }
+  function isiOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; if(!isStandalone())$('installBtn').style.display='block'; });
+  $('installBtn').addEventListener('click',function(){ if(deferred){ deferred.prompt(); deferred.userChoice.finally(function(){deferred=null;$('installBtn').style.display='none';}); } else { alert(isiOS()?'Tap Share ⬆ then Add to Home Screen.':'Tap ⋮ menu then Add to Home screen / Install app.'); } });
+  window.addEventListener('appinstalled',function(){ $('installBtn').style.display='none'; });
+
+  boot();
+})();
+</script>
+</body>
+</html>

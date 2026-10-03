@@ -55,6 +55,9 @@ function add(rec) {
     // Store-keeper side: have the parts for this job been issued yet?
     partsIssued: false,
     partsIssuedAt: null,
+    // Store keeper didn't have the parts -> sent to Procurement (Hafeez).
+    sentToProc: false,
+    sentToProcAt: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     history: [{ status: 'new', at: new Date().toISOString() }],
@@ -107,6 +110,15 @@ function setPartsIssued(id, issued) {
   persist();
   return it;
 }
+function setSentToProc(id, sent) {
+  const it = items.find((x) => x.id === id);
+  if (!it) throw new Error('Job not found');
+  it.sentToProc = !!sent;
+  it.sentToProcAt = sent ? new Date().toISOString() : null;
+  it.updatedAt = new Date().toISOString();
+  persist();
+  return it;
+}
 
 // All jobs (office monitor), active first then recent done.
 function all() {
@@ -119,4 +131,4 @@ function stats() {
   return { total: items.length, active: active.length };
 }
 
-module.exports = { add, get, forTech, forStore, setStatus, setPartsIssued, remove, all, stats, TYPES, STATUSES };
+module.exports = { add, get, forTech, forStore, setStatus, setPartsIssued, setSentToProc, remove, all, stats, TYPES, STATUSES };

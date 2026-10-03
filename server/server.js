@@ -57,6 +57,8 @@ const push = require('./push');
 const techalert = require('./techalert');
 const storekeepers = require('./storekeepers');
 const stock = require('./stock');
+const procurers = require('./procurers');
+const procurement = require('./procurement');
 const repairs = require('./repairs');
 const delivery = require('./delivery');
 const returnNote = require('./returnnote');
@@ -1159,6 +1161,17 @@ app.get(['/store', '/store/:token'], (req, res) => {
   res.sendFile(path.join(__dirname, 'store.html'), { cacheControl: false });
 });
 
+// Procurement app (Hafeez): installed app opens at /proc, signs in with a PIN.
+app.get(['/proc', '/proc/:token'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; worker-src 'self' blob:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'proc.html'), { cacheControl: false });
+});
+
 // Generator size advisor: a customer says what they need to run (ACs, pumps,
 // other load) and the page recommends the right kVA and lists which yard units
 // are available to match. Static page + it uses /api/fleet/directory for stock.
@@ -1515,6 +1528,19 @@ app.post('/api/store/:token/issue', (req, res) => {
   try { res.json({ ok: true, item: jobs.setPartsIssued((req.body || {}).id, true) }); }
   catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
+// Store keeper doesn't have the parts -> send the request to Procurement (Hafeez).
+app.post('/api/store/:token/procure', (req, res) => {
+  const k = keeperFromToken(req);
+  if (!k) return res.status(404).json({ error: 'Unknown link' });
+  try {
+    const job = jobs.get((req.body || {}).id);
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    const techName = (technicians.byId(job.tech) || {}).name || job.tech || '';
+    const item = procurement.add({ dg: job.dg, parts: job.parts, tech: techName, location: job.location, fromJobId: job.id, sentBy: k.name });
+    jobs.setSentToProc(job.id, true);
+    res.json({ ok: true, item });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
 app.post('/api/store/:token/stock', (req, res) => {
   const k = keeperFromToken(req);
   if (!k) return res.status(404).json({ error: 'Unknown link' });
@@ -1532,6 +1558,34 @@ app.post('/api/store/:token/subscribe', (req, res) => {
   if (!k) return res.status(404).json({ error: 'Unknown link' });
   const ok = push.subscribe(storekeepers.pushKey(k.id), (req.body || {}).subscription);
   res.json({ ok: ok });
+});
+
+// ---------- Procurement app (Hafeez): parts to buy -> RFQ to supplier group ----------
+function procFromToken(req) { return procurers.byToken(req.params.token); }
+app.get('/api/proc/names', (req, res) => { res.json({ officers: procurers.names() }); });
+app.post('/api/proc/login', (req, res) => {
+  const b = req.body || {};
+  const o = procurers.login(b.officer, b.pin);
+  if (!o) return res.status(401).json({ error: 'Wrong PIN' });
+  res.json({ token: o.token, name: o.name });
+});
+app.get('/api/proc/:token', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const o = procFromToken(req);
+  if (!o) return res.status(404).json({ error: 'Unknown link' });
+  res.json({ officer: { id: o.id, name: o.name }, requests: procurement.all(), stats: procurement.stats(),
+    supplierGroup: process.env.PROC_SUPPLIER_GROUP || '' });
+});
+app.post('/api/proc/:token/status', (req, res) => {
+  const o = procFromToken(req);
+  if (!o) return res.status(404).json({ error: 'Unknown link' });
+  const b = req.body || {};
+  res.json({ ok: true, item: procurement.setStatus(b.id, b.status) });
+});
+// Office list of procurement requests (read-only, fleet login).
+app.get('/api/procurement', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ requests: procurement.all(), stats: procurement.stats() });
 });
 app.get('/api/tech/:token', (req, res) => {
   res.set('Cache-Control', 'no-store');
