@@ -126,7 +126,9 @@ try {
 // hire stores on every boot. remove() is idempotent, so this guarantees they can
 // never reappear from an older persisted record on the ephemeral disk.
 try {
-  const PRUNE = ['DC-804', 'G-54', 'DG-544'];
+  const PRUNE = ['DC-804', 'G-54', 'DG-544',
+    // Sold 03/10/2026 - removed from the fleet (map, service plan, hire).
+    'DG-418', 'DG-404', 'DG-455', 'DG-483', 'DG-543', 'DG-496', 'DG-811', 'DG-452', 'DG-559', 'DG-863'];
   let pruned = 0;
   PRUNE.forEach((dg) => { if (serviceLog.remove(dg)) pruned += 1; hire.remove(dg); });
   if (pruned) console.log('[prune] removed ' + pruned + ' non-DG unit(s) from the service store');
