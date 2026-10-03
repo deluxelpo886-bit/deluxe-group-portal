@@ -167,14 +167,30 @@
   var TOKEN='', TECH=null, JOBS=[], known={}, knownIssued={}, openId=null, first=true, pollT=null;
   var hrsDataUrl=null;
 
-  // ---------- Alarm (loud repeating beep + vibrate until tapped) ----------
-  var audioCtx=null, alarmTimer=null, alarmCount=0;
-  function unlockAudio(){ try{ if(!audioCtx){ var AC=window.AudioContext||window.webkitAudioContext; if(AC) audioCtx=new AC(); } if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); }catch(e){} }
-  function beep(freq){ if(!audioCtx) return; try{ var o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='square'; o.frequency.value=freq||900; o.connect(g); g.connect(audioCtx.destination); var n=audioCtx.currentTime; g.gain.setValueAtTime(0.0001,n); g.gain.exponentialRampToValueAtTime(0.6,n+0.02); g.gain.exponentialRampToValueAtTime(0.0001,n+0.33); o.start(n); o.stop(n+0.4);}catch(e){} }
-  function startAlarm(){ unlockAudio(); if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} alarmCount=0; var el=$('alarmStop'); if(el)el.classList.add('on'); beep(988); setTimeout(function(){beep(660);},180);
-    alarmTimer=setInterval(function(){ beep(alarmCount%2?660:988); alarmCount++; if(alarmCount>55) stopAlarm(); },560);
-    try{ if(navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500]); }catch(e){} }
+  // ---------- Alarm (loud repeating siren + vibrate until tapped) ----------
+  var audioCtx=null, alarmTimer=null, alarmCount=0, audioReady=false;
+  function unlockAudio(){ try{
+      if(!audioCtx){ var AC=window.AudioContext||window.webkitAudioContext; if(AC) audioCtx=new AC(); }
+      if(!audioCtx) return;
+      if(audioCtx.state==='suspended') audioCtx.resume();
+      // iOS/Safari unlock: play one silent sample inside the gesture.
+      if(!audioReady){ try{ var b=audioCtx.createBuffer(1,1,22050); var s=audioCtx.createBufferSource(); s.buffer=b; s.connect(audioCtx.destination); s.start(0); audioReady=true; }catch(e){} }
+    }catch(e){} }
+  function beep(freq){ if(!audioCtx) return; try{
+      var o=audioCtx.createOscillator(), o2=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type='sawtooth'; o.frequency.value=freq||900; o2.type='square'; o2.frequency.value=(freq||900)*1.5;
+      o.connect(g); o2.connect(g); g.connect(audioCtx.destination);
+      var n=audioCtx.currentTime;
+      g.gain.setValueAtTime(0.0001,n); g.gain.exponentialRampToValueAtTime(0.9,n+0.02); g.gain.setValueAtTime(0.9,n+0.4); g.gain.exponentialRampToValueAtTime(0.0001,n+0.52);
+      o.start(n); o2.start(n); o.stop(n+0.55); o2.stop(n+0.55);
+    }catch(e){} }
+  function startAlarm(){ unlockAudio(); if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} alarmCount=0; var el=$('alarmStop'); if(el)el.classList.add('on'); beep(988);
+    alarmTimer=setInterval(function(){ beep(alarmCount%2?620:988); alarmCount++; if(alarmCount>70) stopAlarm(); },560);
+    try{ if(navigator.vibrate) navigator.vibrate([600,200,600,200,600,200,600,200,600]); }catch(e){} }
   function stopAlarm(){ if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} var el=$('alarmStop'); if(el)el.classList.remove('on'); try{ if(navigator.vibrate) navigator.vibrate(0);}catch(e){} }
+  window.testAlarm=function(){ unlockAudio(); startAlarm(); };
+  // Re-prime audio whenever the app returns to the foreground.
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) unlockAudio(); });
 
   var TYPE={svc:{cls:'svc',en:'Service',hi:'सर्विस',ic:'🔧'},bd:{cls:'bd',en:'Breakdown',hi:'ब्रेकडाउन',ic:'🚨'},other:{cls:'other',en:'Job',hi:'काम',ic:'📋'}};
   function tkey(t){ return t==='service'?'svc':(t==='breakdown'?'bd':'other'); }
@@ -215,7 +231,7 @@
   $('lBackName').addEventListener('click',function(){ showLogin(); });
 
   // ---------- App ----------
-  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; registerSW(); load(); if(pollT) clearInterval(pollT); pollT=setInterval(load,20000); }
+  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; unlockAudio(); registerSW(); load(); if(pollT) clearInterval(pollT); pollT=setInterval(load,20000); }
   $('logout').addEventListener('click',function(){ if(confirm('Sign out? · साइन आउट?')){ try{localStorage.removeItem(TSTORE);}catch(e){} TOKEN=''; first=true; known={}; showLogin(); } });
 
   async function load(){
@@ -245,7 +261,10 @@
   function renderList(){ openId=null;
     var active=JOBS.filter(function(j){return j.status!=='done';});
     var done=JOBS.filter(function(j){return j.status==='done';});
-    var html=pushBanner()+'<button class="hours-list" onclick="openHoursFor(\'\')">📷 Send meter hours · मीटर के घंटे भेजो</button><div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
+    var html=pushBanner()+'<div style="display:flex;gap:8px;margin-bottom:12px;">'+
+      '<button class="hours-list" style="margin:0;flex:1;" onclick="openHoursFor(\'\')">📷 Send hours · घंटे</button>'+
+      '<button class="hours-list" style="margin:0;flex:0 0 auto;background:#3a2417;color:#f0b48c;border-color:#7a4a2a;" onclick="testAlarm()">🔔 Test alarm · घंटी चेक</button>'+
+      '</div><div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
     if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं</span></div>';
     active.forEach(function(j){ html+=jobCard(j); });
     if(done.length){ html+='<div class="h" style="margin-top:18px;"><b>Done today</b><span>आज पूरा हुआ</span></div>'; done.forEach(function(j){ html+=jobCard(j); }); }
