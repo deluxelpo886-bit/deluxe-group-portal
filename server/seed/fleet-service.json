@@ -2915,20 +2915,20 @@
  },
  {
   "dg": "DG-554",
-  "hours": 5295,
-  "date": "2026-09-05",
-  "technician": "SONU&HUSSAIN",
+  "hours": 5917,
+  "date": "2026-10-03",
+  "technician": "IK & IMRAN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
+  "airFilter": true,
   "dailyHours": 22.2,
-  "nextService": 5645,
-  "nextServiceDate": "2026-10-04",
+  "nextService": 6267,
+  "nextServiceDate": "2026-10-19",
   "interval": 350,
   "currentHours": 5917,
   "currentHoursDate": "2026-10-03",
-  "notes": "Serviced 05/09/2026 at 5295h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller confirmed 5917h (985 starts, 72 trips) on 03/10/2026 -> OVERDUE by 272h (next was 5645). ~22 h/day (heavy). SERVICE DUE NOW. 40 kVA, Aswar, Mafraq (Jarn Yafour)."
+  "notes": "Serviced 03/10/2026 at 5917h by IK & Imran - oil, oil filter, fuel filter AND air filter all done (air filter now cleared). Next 6267h (350h cycle). ~22 h/day (heavy) -> due ~19/10. Cleared the previous overdue. 40 kVA, Aswar, Mafraq (Jarn Yafour)."
  },
  {
   "dg": "DG-828",
