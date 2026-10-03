@@ -119,12 +119,62 @@
   <div class="done" id="doneOv"><div class="big">✅</div><h2>Job done!</h2><p class="hi">काम पूरा हुआ!</p><p>Office has been told · ऑफिस को बता दिया</p><button onclick="closeDone()">OK · ठीक है</button></div>
   <div class="done" id="installHelp"><div class="big">⬇️</div><h2>Install the app</h2><p class="hi">ऐप इंस्टॉल करें</p><p id="installSteps" style="max-width:340px;line-height:1.7;"></p><button onclick="document.getElementById('installHelp').classList.remove('on')">OK · ठीक है</button></div>
 
+  <!-- Tap-to-stop alarm bar -->
+  <div class="alarm-stop" id="alarmStop">🔔 TAP TO STOP ALARM · बंद करने के लिए दबाओ</div>
+
+  <!-- Send current hours (photo + meter) -->
+  <input type="file" accept="image/*" capture="environment" id="hrsFile" style="display:none;">
+  <div class="hov" id="hrsOv">
+    <div class="hbox">
+      <div class="htitle">📷 Send current hours<span class="hi">अभी के घंटे भेजो</span></div>
+      <label class="hlbl">Generator · DG</label>
+      <input type="text" id="hrsDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
+      <button class="hcam" id="hrsCam">📷 Take photo of meter · मीटर की फोटो लो</button>
+      <img id="hrsPrev" alt="" style="display:none;">
+      <label class="hlbl">Running hours (meter) · घंटे</label>
+      <input type="number" inputmode="numeric" id="hrsVal" placeholder="e.g. 5917">
+      <div class="herr" id="hrsErr"></div>
+      <div class="hbtns"><button class="hcancel" id="hrsCancel">Cancel · रद्द</button><button class="hsend" id="hrsSend">Send · भेजो</button></div>
+    </div>
+  </div>
+  <style>
+    .alarm-stop{position:fixed;left:0;right:0;bottom:0;background:#b3261e;color:#fff;text-align:center;padding:16px;font-size:16px;font-weight:800;z-index:300;display:none;cursor:pointer;border:none;}
+    .alarm-stop.on{display:block;animation:deFlash .7s infinite;}
+    @keyframes deFlash{50%{background:#e8920a;}}
+    .hov{position:fixed;inset:0;background:rgba(6,10,16,.93);display:none;align-items:center;justify-content:center;padding:18px;z-index:250;}
+    .hov.on{display:flex;}
+    .hbox{background:#161c25;border:1px solid #273141;border-radius:18px;padding:20px;max-width:380px;width:100%;color:#eaf0f7;}
+    .htitle{font-size:19px;font-weight:800;text-align:center;}
+    .htitle .hi{display:block;font-size:13px;color:#8da2b8;font-weight:600;margin-top:2px;}
+    .hlbl{font-size:12px;color:#8da2b8;display:block;margin:10px 0 3px;}
+    #hrsDg,#hrsVal{width:100%;background:#0f141b;border:1px solid #273141;color:#eaf0f7;border-radius:12px;padding:13px;font-size:20px;font-weight:800;text-align:center;}
+    #hrsPrev{width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin:10px 0;background:#000;}
+    .hcam{width:100%;background:#223044;color:#eaf0f7;border:1px solid #38516e;border-radius:12px;padding:13px;font-size:15px;font-weight:700;margin-top:10px;cursor:pointer;}
+    .herr{color:#e0644a;font-size:13px;min-height:18px;text-align:center;margin-top:6px;}
+    .hbtns{display:flex;gap:10px;margin-top:8px;}
+    .hbtns button{flex:1;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;}
+    .hcancel{background:#223044;color:#8da2b8;}
+    .hsend{background:#39b36a;color:#06240f;}
+    .hours-full{width:100%;background:#1f6b3b;color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;margin-top:10px;cursor:pointer;}
+    .hours-list{width:100%;background:#17313f;color:#bfe3d0;border:1px solid #2b5a4a;border-radius:12px;padding:12px;font-size:14px;font-weight:700;margin-bottom:12px;cursor:pointer;}
+  </style>
+
 <script>
 (function(){
   var TSTORE='deluxeTechToken';
   var $=function(id){return document.getElementById(id);};
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  var TOKEN='', TECH=null, JOBS=[], known={}, openId=null, first=true, pollT=null;
+  var TOKEN='', TECH=null, JOBS=[], known={}, knownIssued={}, openId=null, first=true, pollT=null;
+  var hrsDataUrl=null;
+
+  // ---------- Alarm (loud repeating beep + vibrate until tapped) ----------
+  var audioCtx=null, alarmTimer=null, alarmCount=0;
+  function unlockAudio(){ try{ if(!audioCtx){ var AC=window.AudioContext||window.webkitAudioContext; if(AC) audioCtx=new AC(); } if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); }catch(e){} }
+  function beep(freq){ if(!audioCtx) return; try{ var o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='square'; o.frequency.value=freq||900; o.connect(g); g.connect(audioCtx.destination); var n=audioCtx.currentTime; g.gain.setValueAtTime(0.0001,n); g.gain.exponentialRampToValueAtTime(0.6,n+0.02); g.gain.exponentialRampToValueAtTime(0.0001,n+0.33); o.start(n); o.stop(n+0.4);}catch(e){} }
+  function startAlarm(){ unlockAudio(); if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} alarmCount=0; var el=$('alarmStop'); if(el)el.classList.add('on'); beep(988); setTimeout(function(){beep(660);},180);
+    alarmTimer=setInterval(function(){ beep(alarmCount%2?660:988); alarmCount++; if(alarmCount>55) stopAlarm(); },560);
+    try{ if(navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500]); }catch(e){} }
+  function stopAlarm(){ if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;} var el=$('alarmStop'); if(el)el.classList.remove('on'); try{ if(navigator.vibrate) navigator.vibrate(0);}catch(e){} }
 
   var TYPE={svc:{cls:'svc',en:'Service',hi:'सर्विस',ic:'🔧'},bd:{cls:'bd',en:'Breakdown',hi:'ब्रेकडाउन',ic:'🚨'},other:{cls:'other',en:'Job',hi:'काम',ic:'📋'}};
   function tkey(t){ return t==='service'?'svc':(t==='breakdown'?'bd':'other'); }
@@ -174,14 +224,18 @@
       TECH=d.tech; JOBS=d.jobs||[]; $('uName').textContent=TECH.name;
       var active=JOBS.filter(function(j){return j.status!=='done';});
       $('badge').textContent=active.length; $('badge').style.display=active.length?'grid':'none';
-      if(!first){ JOBS.forEach(function(j){ if(!known[j.id] && j.status==='new') notify(j); }); }
-      JOBS.forEach(function(j){ known[j.id]=true; }); first=false;
+      if(!first){ JOBS.forEach(function(j){
+        if(!known[j.id] && j.status==='new') notify(j);
+        else if(j.partsIssued && knownIssued[j.id]===false) notifyParts(j);
+      }); }
+      JOBS.forEach(function(j){ known[j.id]=true; knownIssued[j.id]=!!j.partsIssued; }); first=false;
       if(openId){ var j=JOBS.filter(function(x){return x.id===openId;})[0]; if(j) renderDetail(j); else renderList(); } else renderList();
     }catch(e){ if(e.message==='http404'){ try{localStorage.removeItem(TSTORE);}catch(x){} showLogin(); } }
   }
-  function notify(j){ var T=TYPE[tkey(j.type)]; showBanner('New '+T.en+' · '+(j.dg||''),'नया काम — '+(j.dg||T.hi));
-    try{ if(window.Notification && Notification.permission==='granted') new Notification('Deluxe — New job / नया काम',{body:(j.dg||'')+' · '+T.en+' · '+(j.location||''),icon:'/icon-192.png'}); }catch(e){}
-    try{ if(navigator.vibrate) navigator.vibrate([200,80,200]); }catch(e){} }
+  function notify(j){ var T=TYPE[tkey(j.type)]; showBanner('🆕 New '+T.en+' · '+(j.dg||''),'नया काम — '+(j.dg||T.hi)); startAlarm();
+    try{ if(window.Notification && Notification.permission==='granted') new Notification('Deluxe — New job / नया काम',{body:(j.dg||'')+' · '+T.en+' · '+(j.location||''),icon:'/icon-192.png'}); }catch(e){} }
+  function notifyParts(j){ showBanner('🧰 Parts ready · '+(j.dg||''),'पुर्ज़े तैयार — स्टोर से लो'); startAlarm();
+    try{ if(window.Notification && Notification.permission==='granted') new Notification('Deluxe — Parts issued / पुर्ज़े तैयार',{body:(j.dg||'')+' — collect from store / स्टोर से लो',icon:'/icon-192.png'}); }catch(e){} }
   var bTimer; function showBanner(t,s){ $('notiT').textContent=t; $('notiS').textContent=s; $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},6000); }
 
   function pushBanner(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)) return '';
@@ -191,7 +245,7 @@
   function renderList(){ openId=null;
     var active=JOBS.filter(function(j){return j.status!=='done';});
     var done=JOBS.filter(function(j){return j.status==='done';});
-    var html=pushBanner()+'<div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
+    var html=pushBanner()+'<button class="hours-list" onclick="openHoursFor(\'\')">📷 Send meter hours · मीटर के घंटे भेजो</button><div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
     if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं</span></div>';
     active.forEach(function(j){ html+=jobCard(j); });
     if(done.length){ html+='<div class="h" style="margin-top:18px;"><b>Done today</b><span>आज पूरा हुआ</span></div>'; done.forEach(function(j){ html+=jobCard(j); }); }
@@ -210,7 +264,8 @@
       '<div class="banner '+T.cls+'"><div class="bdg">'+T.ic+' '+T.en.toUpperCase()+' · '+T.hi+'</div><div class="dg">'+esc(j.dg||'—')+'</div>'+(j.title?'<div class="task">'+esc(j.title)+'</div>':'')+'</div>'+
       '<div class="two">'+
         '<a class="act map" href="'+(j.mapLink?esc(j.mapLink):('https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')))+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span></a>'+
-        '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span></a></div>';
+        '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span></a></div>'+
+      '<button class="hours-full" onclick="openHoursFor(\''+esc(j.dg||'')+'\')">📷 Send current hours · अभी के घंटे भेजो</button>';
     if(j.parts && j.parts.length){ html+='<div class="sec">🧰 Parts to carry <span class="hi">— पुर्ज़े ले जाओ</span></div><div class="parts">'+
       j.parts.map(function(p){ return '<div class="part" onclick="this.classList.toggle(\'got\')"><div class="ic">🔧</div><div class="tx"><b>'+esc(p.en)+'</b>'+(p.hi?'<span>'+esc(p.hi)+'</span>':'')+'</div>'+(p.qty?'<div class="qty">'+esc(p.qty)+'</div>':'')+'</div>'; }).join('')+'</div>'; }
     if(j.note) html+='<div class="note">📝 '+esc(j.note)+'</div>';
@@ -228,6 +283,27 @@
     }catch(e){ showBanner('Could not save · फिर कोशिश करो',''); } }
   window.closeDone=function(){ $('doneOv').classList.remove('on'); renderList(); };
   $('bell').addEventListener('click',function(){ enablePush(); });
+
+  // ---------- Alarm + audio unlock ----------
+  $('alarmStop').addEventListener('click',stopAlarm);
+  ['touchstart','click'].forEach(function(ev){ document.addEventListener(ev,function(){ unlockAudio(); if(alarmTimer) stopAlarm(); },{passive:true}); });
+
+  // ---------- Send current hours (photo of the meter) ----------
+  window.openHoursFor=function(dg){ hrsDataUrl=null; $('hrsDg').value=(dg||''); $('hrsPrev').style.display='none'; $('hrsPrev').removeAttribute('src'); $('hrsVal').value=''; $('hrsErr').textContent=''; $('hrsOv').classList.add('on'); };
+  $('hrsCancel').addEventListener('click',function(){ $('hrsOv').classList.remove('on'); });
+  $('hrsCam').addEventListener('click',function(){ $('hrsFile').click(); });
+  function resizeImg(file,cb){ try{ var img=new Image(); var u=URL.createObjectURL(file); img.onload=function(){ var max=1000,w=img.width,h=img.height; if(w>h&&w>max){h=Math.round(h*max/w);w=max;} else if(h>max){w=Math.round(w*max/h);h=max;} var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(u); cb(c.toDataURL('image/jpeg',0.6)); }; img.onerror=function(){cb(null);}; img.src=u; }catch(e){cb(null);} }
+  $('hrsFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(f) resizeImg(f,function(url){ if(url){ hrsDataUrl=url; $('hrsPrev').src=url; $('hrsPrev').style.display='block'; } }); this.value=''; });
+  $('hrsSend').addEventListener('click',async function(){
+    var dg=$('hrsDg').value.trim().toUpperCase(), hours=$('hrsVal').value.trim(); $('hrsErr').textContent='';
+    if(!dg){ $('hrsErr').textContent='Enter DG · DG डालो'; return; }
+    if(!(Number(hours)>=0)){ $('hrsErr').textContent='Enter the meter hours · घंटे डालो'; return; }
+    $('hrsSend').disabled=true; $('hrsSend').textContent='Sending… · भेज रहे';
+    try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/hours',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dg:dg,hours:Number(hours),photo:hrsDataUrl})});
+      $('hrsOv').classList.remove('on'); showBanner('✓ Hours sent to office · घंटे भेज दिए','');
+    }catch(e){ $('hrsErr').textContent='Failed — try again · फिर कोशिश करो'; }
+    $('hrsSend').disabled=false; $('hrsSend').textContent='Send · भेजो';
+  });
 
   // ---------- Push ----------
   var swReg=null;
