@@ -36,6 +36,8 @@
   .pl:first-of-type{border-top:none;} .pl .hi{color:var(--mut);font-size:12.5px;} .pl .q{margin-left:auto;background:#0d3b66;color:#cfe3f6;font-weight:800;font-size:13px;padding:3px 10px;border-radius:999px;}
   .issue{width:100%;margin-top:11px;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;background:var(--amber);color:#1a1200;cursor:pointer;}
   .issue.done{background:var(--greenD);color:#bbf7d0;}
+  .noStock{width:100%;margin-top:9px;border:1px solid #7a4a2a;border-radius:12px;padding:12px;font-size:14.5px;font-weight:800;background:#3a2417;color:#f0b48c;cursor:pointer;}
+  .procd{margin-top:11px;background:#2a2030;border:1px solid #5a4a6a;color:#d8c4ea;border-radius:12px;padding:10px;font-size:13.5px;font-weight:800;text-align:center;}
   .stk{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:9px;}
   .stk.low{border-color:rgba(245,158,11,.5);}
   .stk .tx b{font-size:15.5px;display:block;} .stk .tx span{font-size:12.5px;color:var(--mut);}
@@ -144,15 +146,24 @@
     if(done.length){ html+='<div style="margin:16px 2px 8px;font-size:15px;font-weight:800;color:var(--mut);">Issued · दे दिए</div>'; done.forEach(function(r){ html+=reqCard(r); }); }
     $('screen').innerHTML=html;
     $('screen').querySelectorAll('[data-issue]').forEach(function(b){ b.addEventListener('click',function(){ issue(b.getAttribute('data-issue')); }); });
+    $('screen').querySelectorAll('[data-proc]').forEach(function(b){ b.addEventListener('click',function(){ if(confirm('Not in stock? Send to Hafeez (procurement)?\\nस्टॉक में नहीं? हफीज़ को भेजें?')) procure(b.getAttribute('data-proc')); }); });
   }
   function reqCard(r){ var T=TYPE[r.type]||TYPE.other;
+    var foot;
+    if(r.partsIssued){ foot='<button class="issue done" disabled>✓ Issued · दे दिया</button>'; }
+    else if(r.sentToProc){ foot='<div class="procd">📤 Sent to Hafeez · खरीद को भेजा</div><button class="issue" data-issue="'+esc(r.id)+'">Got it — Issue parts · अब दे दो</button>'; }
+    else { foot='<button class="issue" data-issue="'+esc(r.id)+'">Issue parts · पुर्ज़े दे दो</button>'+
+      '<button class="noStock" data-proc="'+esc(r.id)+'">📤 Not in stock → Hafeez · स्टॉक नहीं → हफीज़</button>'; }
     return '<div class="req'+(r.partsIssued?' done':'')+'"><div class="rh"><span class="dg">'+esc(r.dg||'—')+'</span><span class="for">'+esc(cap(r.tech))+(r.location?' · '+esc(r.location):'')+'</span><span class="tp '+T.c+'">'+T.t+'</span></div>'+
       (r.parts||[]).map(function(p){ return '<div class="pl">🔧 '+esc(p.en)+' <span class="hi">'+esc(p.hi||'')+'</span>'+(p.qty?'<span class="q">'+esc(p.qty)+'</span>':'')+'</div>'; }).join('')+
-      '<button class="issue'+(r.partsIssued?' done':'')+'" data-issue="'+esc(r.id)+'"'+(r.partsIssued?' disabled':'')+'>'+(r.partsIssued?'✓ Issued · दे दिया':'Issue parts · पुर्ज़े दे दो')+'</button></div>';
+      foot+'</div>';
   }
   async function issue(id){ try{ await api('/api/store/'+encodeURIComponent(TOKEN)+'/issue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})});
       for(var i=0;i<DATA.requests.length;i++){ if(DATA.requests[i].id===id){ DATA.requests[i].partsIssued=true; } } $('doneOv').classList.add('on'); render();
     }catch(e){ showBanner('Could not save · फिर कोशिश',''); } }
+  async function procure(id){ try{ await api('/api/store/'+encodeURIComponent(TOKEN)+'/procure',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})});
+      for(var i=0;i<DATA.requests.length;i++){ if(DATA.requests[i].id===id){ DATA.requests[i].sentToProc=true; } } showBanner('📤 Sent to Hafeez · हफीज़ को भेजा',''); render();
+    }catch(e){ showBanner('Could not send · फिर कोशिश',''); } }
   window.closeDone=function(){ $('doneOv').classList.remove('on'); };
 
   function renderStock(){ var html='<div style="margin:2px 2px 12px;font-size:19px;font-weight:800;">Stock <span style="color:var(--mut);font-size:14px;">स्टॉक</span></div>';
