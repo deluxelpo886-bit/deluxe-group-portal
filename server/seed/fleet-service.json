@@ -2922,10 +2922,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "dailyHours": 22.2,
   "nextService": 5645,
   "nextServiceDate": "2026-10-04",
-  "notes": "Air filter not changed",
-  "interval": 350
+  "interval": 350,
+  "currentHours": 5917,
+  "currentHoursDate": "2026-10-03",
+  "notes": "Serviced 05/09/2026 at 5295h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller confirmed 5917h (985 starts, 72 trips) on 03/10/2026 -> OVERDUE by 272h (next was 5645). ~22 h/day (heavy). SERVICE DUE NOW. 40 kVA, Aswar, Mafraq (Jarn Yafour)."
  },
  {
   "dg": "DG-828",
