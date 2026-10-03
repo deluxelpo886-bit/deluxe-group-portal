@@ -297,13 +297,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 17.17,
-  "nextService": 3884,
-  "nextServiceDate": "2026-09-16",
+  "dailyHours": 12,
+  "nextService": 3964,
+  "nextServiceDate": "2026-11-07",
   "interval": 450,
   "currentHours": 3514,
   "currentHoursDate": "2026-09-30",
-  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 3514h. 370h left to next service (3884). Repair cleared before dispatch."
+  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 3514h. Fresh 450h cycle from hire-out @ ~12 h/day -> next service 3964h, due ~07/11. 725 kVA Caterpillar. Repair cleared before dispatch."
  },
  {
   "dg": "DG-806",
@@ -2995,12 +2995,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "nextService": 29664,
-  "nextServiceDate": "2026-10-02",
+  "dailyHours": 12,
+  "nextService": 29755,
+  "nextServiceDate": "2026-10-29",
   "interval": 350,
   "currentHours": 29405,
   "currentHoursDate": "2026-09-30",
-  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 29405h. Off-hired 16/09 at 29403h, back out with EMDAD."
+  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 29405h. Fresh 350h cycle from hire-out @ ~12 h/day -> next service 29755h, due ~29/10. 82.5 kVA Kirlosker."
  },
  {
   "dg": "DG-481",
