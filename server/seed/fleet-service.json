@@ -3210,17 +3210,19 @@
  },
  {
   "dg": "DG-563",
-  "hours": 0,
-  "date": "2026-09-26",
-  "technician": "ADEEL & MJ.K",
+  "hours": 145,
+  "date": "2026-10-03",
+  "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
+  "currentHours": 145,
+  "currentHoursDate": "2026-10-03",
   "dailyHours": 24,
-  "nextService": 350,
-  "nextServiceDate": "2026-10-10",
+  "nextService": 495,
+  "nextServiceDate": "2026-10-17",
   "interval": 350,
-  "notes": "NEW ASSET added 26/09/2026 - 82.5 kVA Kirloskar. Deployed to EL MASRIA CEMENT (Shakhbout City), replacing DG-473 (off-hired to yard). 24-HOUR site - enter the actual controller meter on the first reading, then keep a tight ~2-week cycle. 350h interval."
+  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). Next service due 495h. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT. 24-HOUR site - keep a tight ~2-week cycle. 350h interval. Co-located with DG-850 (same El Masria / Al Masriya site)."
  }
 ]
