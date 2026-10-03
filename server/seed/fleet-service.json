@@ -2583,18 +2583,20 @@
  },
  {
   "dg": "DG-535",
-  "hours": 34291,
-  "date": "2026-08-26",
-  "technician": "SERVICE",
+  "hours": 13851,
+  "date": "2026-10-03",
+  "technician": "JK",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "currentHours": 13851,
+  "currentHoursDate": "2026-10-03",
   "dailyHours": 5.3,
-  "nextService": 34641,
-  "nextServiceDate": "2026-12-21",
+  "nextService": 14201,
+  "nextServiceDate": "2026-12-08",
   "interval": 350,
-  "notes": "Low-use standby at Al Bahyah (Hydro Power) - next service date skipped to 21/12/2026, same as DG-491 at the same site (ops-head decision). Runs ~5 h/day, so not due yet; the 15/09 date was only an estimate. Send a controller reading to confirm exact hours left to the 34641h service."
+  "notes": "Serviced 03/10/2026 @ 13851h by JK - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). Next service 14201h. HOURS CORRECTED: previously recorded 34291h was an unconfirmed/erroneous figure; real controller reading from the service card is 13851h. 165 kVA, low-use standby at Al Bahia (Hydro Power), ~5 h/day."
  },
  {
   "dg": "DG-494",
