@@ -1549,6 +1549,21 @@ app.post('/api/tech/:token/status', (req, res) => {
     res.json({ ok: true, item: jobs.setStatus(b.id, b.status) });
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
+// Technician uploads the current running hours (with a controller photo) from the
+// field - updates the unit's real-time reading so the office/service plan sees it.
+app.post('/api/tech/:token/hours', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  try {
+    const b = req.body || {};
+    const dg = String(b.dg || '').trim().toUpperCase();
+    const hours = Number(b.hours);
+    if (!dg) return res.status(400).json({ error: 'DG number required' });
+    if (!isFinite(hours) || hours < 0) return res.status(400).json({ error: 'Valid hours required' });
+    const entry = serviceLog.logReading({ dg, hours, photo: b.photo, technician: t.name, source: 'manual' });
+    res.json({ ok: true, dg, hours, hoursToService: entry.hoursToService });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
 
 // ---------- Workshop repair tracking ----------
 // Generators in the workshop: queued / repairing / awaiting parts / completed.

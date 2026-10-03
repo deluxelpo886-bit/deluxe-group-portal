@@ -268,6 +268,13 @@ function logReading(rec) {
   const target = Number(entry.nextService);
   entry.hoursToService = isFinite(target) ? Math.round(target - hours) : null;
   if (observed) entry.readingDailyHours = round1(observed);
+  // Optional controller photo the technician uploaded with the reading (small
+  // JPEG data URL, already resized on the phone). Lets the office verify the meter.
+  if (typeof rec.photo === 'string' && rec.photo.slice(0, 11) === 'data:image/' && rec.photo.length < 3000000) {
+    entry.photo = rec.photo;
+    entry.photoAt = entry.updatedAt;
+    entry.photoBy = String((rec.technician) || '').trim();
+  }
   // A person logged this hours reading in the app, so protect it from seed re-import.
   if (rec.source !== 'seed') entry.source = 'manual';
   entry.updatedAt = new Date().toISOString();
