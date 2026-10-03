@@ -2852,16 +2852,20 @@
  },
  {
   "dg": "DG-861",
-  "hours": 4051,
-  "date": "2026-09-03",
-  "technician": "LK/SABIR",
+  "hours": 4397,
+  "date": "2026-10-03",
+  "technician": "SHAFI",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
-  "nextService": 4401,
-  "nextServiceDate": "2026-09-27",
-  "interval": 350
+  "airFilter": false,
+  "currentHours": 4397,
+  "currentHoursDate": "2026-10-03",
+  "dailyHours": 11.5,
+  "nextService": 4747,
+  "nextServiceDate": "2026-11-02",
+  "interval": 350,
+  "notes": "Serviced 03/10/2026 @ 4397h by Shafi - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). Next service 4747h. 160 kVA on hire to Green Ston, Al Ain. ~11.5h/day."
  },
  {
   "dg": "DG-819",
