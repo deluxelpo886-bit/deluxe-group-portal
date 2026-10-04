@@ -91,6 +91,9 @@ function add(rec) {
     nextService: String((rec && rec.nextService) || '').trim(),
     reportedBy: String((rec && rec.reportedBy) || '').trim(),
     reportedAt: (rec && rec.reportedAt) ? new Date(rec.reportedAt).toISOString() : new Date().toISOString(),
+    // Optional photo of the fault / machine, resized to a small JPEG data URL on
+    // the client. Rejected if not an image or unreasonably large.
+    photo: (typeof (rec && rec.photo) === 'string' && rec.photo.slice(0, 11) === 'data:image/' && rec.photo.length < 3000000) ? rec.photo : null,
     status: 'Open',
     resolvedAt: null,
     // Timeline of status changes (customer tracker). First entry is "Open".

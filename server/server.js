@@ -1621,6 +1621,66 @@ app.post('/api/tech/:token/hours', (req, res) => {
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 
+// Technician submits a completed SERVICE from the field - a digital version of
+// the paper service card (hours + which filters were done + next-service hours +
+// optional photo). Flows straight into the service log / service plan as a
+// 'manual' record (protected from seed re-imports), so the office does not have
+// to hand-enter the paper card.
+app.post('/api/tech/:token/service', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  try {
+    const b = req.body || {};
+    const dg = String(b.dg || '').trim().toUpperCase();
+    const hours = Number(b.hours);
+    if (!dg) return res.status(400).json({ error: 'DG number required' });
+    if (!isFinite(hours) || hours < 0) return res.status(400).json({ error: 'Valid hours required' });
+    const today = new Date().toISOString().slice(0, 10);
+    const entry = serviceLog.logService({
+      dg,
+      hours,
+      date: today,
+      oil: !!b.oil,
+      oilFilter: !!b.oilFilter,
+      fuelFilter: !!b.fuelFilter,
+      airFilter: !!b.airFilter,
+      nextService: Number(b.nextService) > 0 ? Number(b.nextService) : undefined,
+      interval: Number(b.interval) > 0 ? Number(b.interval) : undefined,
+      notes: String(b.notes || '').trim(),
+      photo: b.photo,
+      technician: t.name,
+      currentHours: hours,
+      currentHoursDate: today,
+      source: 'manual',
+    });
+    res.json({ ok: true, dg, hours, nextService: entry.nextService, nextServiceDate: entry.nextServiceDate });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+
+// Technician reports a BREAKDOWN from the field. Opens an entry in the breakdown
+// log (Open) that the office then assigns/chases. Supports an optional photo of
+// the fault.
+app.post('/api/tech/:token/breakdown', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  try {
+    const b = req.body || {};
+    const dg = String(b.dg || '').trim().toUpperCase();
+    if (!dg) return res.status(400).json({ error: 'DG number required' });
+    const it = breakdowns.add({
+      dg,
+      location: String(b.location || '').trim(),
+      symptom: String(b.symptom || '').trim(),
+      category: String(b.category || '').trim(),
+      priority: b.priority,
+      notes: String(b.notes || '').trim(),
+      photo: b.photo,
+      reportedBy: t.name,
+    });
+    res.json({ ok: true, id: it.id, dg });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+
 // ---------- Workshop repair tracking ----------
 // Generators in the workshop: queued / repairing / awaiting parts / completed.
 // Same fleet login. See server/repairs.js. Its own page at /workshop.

@@ -137,6 +137,79 @@
       <div class="hbtns"><button class="hcancel" id="hrsCancel">Cancel · रद्द</button><button class="hsend" id="hrsSend">Send · भेजो</button></div>
     </div>
   </div>
+
+  <!-- Log a service (digital service card) -->
+  <input type="file" accept="image/*" capture="environment" id="svcFile" style="display:none;">
+  <div class="hov" id="svcOv">
+    <div class="hbox tall">
+      <div class="htitle">🔧 Log a service<span class="hi">सर्विस दर्ज करो</span></div>
+      <label class="hlbl">Generator · DG</label>
+      <input type="text" id="svcDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
+      <label class="hlbl">Hours now (meter) · अभी के घंटे</label>
+      <input type="number" inputmode="numeric" id="svcHrs" placeholder="e.g. 4397">
+      <label class="hlbl">What did you change? · क्या बदला</label>
+      <div class="chips" id="svcChecks">
+        <button type="button" class="chip" data-k="oil">🛢️ Oil<span>ऑयल</span></button>
+        <button type="button" class="chip" data-k="oilFilter">🧩 Oil filter<span>ऑयल फ़िल्टर</span></button>
+        <button type="button" class="chip" data-k="fuelFilter">⛽ Fuel filter<span>फ्यूल फ़िल्टर</span></button>
+        <button type="button" class="chip" data-k="airFilter">💨 Air filter<span>एयर फ़िल्टर</span></button>
+      </div>
+      <label class="hlbl">Next service due (hours) · अगली सर्विस घंटे</label>
+      <input type="number" inputmode="numeric" id="svcNext" placeholder="optional — e.g. 4747">
+      <button class="hcam" id="svcCam">📷 Photo of card / meter · फोटो लो</button>
+      <img id="svcPrev" class="ovprev" alt="" style="display:none;">
+      <label class="hlbl">Notes · नोट (optional)</label>
+      <input type="text" id="svcNote" placeholder="">
+      <div class="herr" id="svcErr"></div>
+      <div class="hbtns"><button class="hcancel" id="svcCancel">Cancel · रद्द</button><button class="hsend" id="svcSend">Save service · सेव</button></div>
+    </div>
+  </div>
+
+  <!-- Report a breakdown -->
+  <input type="file" accept="image/*" capture="environment" id="bdFile" style="display:none;">
+  <div class="hov" id="bdOv">
+    <div class="hbox tall">
+      <div class="htitle">🚨 Report breakdown<span class="hi">ब्रेकडाउन बताओ</span></div>
+      <label class="hlbl">Generator · DG</label>
+      <input type="text" id="bdDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
+      <label class="hlbl">Where · जगह (site / location)</label>
+      <input type="text" id="bdLoc" placeholder="e.g. Musaffah M40">
+      <label class="hlbl">What is the problem? · क्या दिक्कत</label>
+      <div class="chips" id="bdCat">
+        <button type="button" class="chip" data-v="Electrical">⚡ Electrical<span>बिजली</span></button>
+        <button type="button" class="chip" data-v="Mechanical">⚙️ Mechanical<span>इंजन</span></button>
+        <button type="button" class="chip" data-v="Fuel">⛽ Fuel<span>फ्यूल</span></button>
+        <button type="button" class="chip" data-v="Cooling">🌡️ Cooling<span>कूलिंग</span></button>
+        <button type="button" class="chip" data-v="Control panel">🎛️ Panel<span>पैनल</span></button>
+        <button type="button" class="chip" data-v="Other">❓ Other<span>और</span></button>
+      </div>
+      <label class="hlbl">How urgent? · कितना ज़रूरी</label>
+      <div class="chips pri" id="bdPri">
+        <button type="button" class="chip" data-v="Critical">🔴 Critical<span>बहुत ज़रूरी</span></button>
+        <button type="button" class="chip" data-v="High">🟠 High<span>ज़रूरी</span></button>
+        <button type="button" class="chip" data-v="Normal">🟢 Normal<span>सामान्य</span></button>
+      </div>
+      <label class="hlbl">Describe · बताओ (what happened)</label>
+      <input type="text" id="bdSym" placeholder="e.g. not starting / overheating / low power">
+      <button class="hcam" id="bdCam">📷 Photo of fault · फोटो लो</button>
+      <img id="bdPrev" class="ovprev" alt="" style="display:none;">
+      <div class="herr" id="bdErr"></div>
+      <div class="hbtns"><button class="hcancel" id="bdCancel">Cancel · रद्द</button><button class="hsend bd" id="bdSend">Send to office · भेजो</button></div>
+    </div>
+  </div>
+  <style>
+    .hbox.tall{max-height:92vh;overflow:auto;}
+    .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:3px 0 2px;}
+    .chips.pri{grid-template-columns:1fr 1fr 1fr;}
+    .chips .chip{background:#0f141b;border:1px solid #273141;color:#9fb0c0;border-radius:12px;padding:11px 8px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;line-height:1.2;}
+    .chips .chip span{display:block;font-size:11px;font-weight:500;opacity:.8;margin-top:2px;}
+    .chips .chip.on{background:#13432a;border-color:#2f8a55;color:#8ff0b4;}
+    .chips.pri .chip.on{background:#1e3a8a;border-color:#3b82f6;color:#bfdbfe;}
+    .chips.pri .chip.on[data-v="Critical"]{background:#4a1410;border-color:#b3261e;color:#ffb4a8;}
+    .chips.pri .chip.on[data-v="High"]{background:#4a2c0a;border-color:#d08b1e;color:#ffd9a0;}
+    .ovprev{width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin:10px 0;background:#000;}
+    .hsend.bd{background:#e0644a;color:#2a0b05;}
+  </style>
   <style>
     .alarm-stop{position:fixed;left:0;right:0;bottom:0;background:#b3261e;color:#fff;text-align:center;padding:16px;font-size:16px;font-weight:800;z-index:300;display:none;cursor:pointer;border:none;}
     .alarm-stop.on{display:block;animation:deFlash .7s infinite;}
@@ -261,7 +334,12 @@
   function renderList(){ openId=null;
     var active=JOBS.filter(function(j){return j.status!=='done';});
     var done=JOBS.filter(function(j){return j.status==='done';});
-    var html=pushBanner()+'<div style="display:flex;gap:8px;margin-bottom:12px;">'+
+    var html=pushBanner()+
+      '<div class="two" style="margin-bottom:10px;">'+
+      '<button class="act" style="background:#1f6b3b;" onclick="openService(\'\')"><span class="ic">🔧</span>Log service<span class="hi">सर्विस दर्ज करो</span></button>'+
+      '<button class="act" style="background:#b3261e;" onclick="openBreakdown(\'\')"><span class="ic">🚨</span>Report breakdown<span class="hi">ब्रेकडाउन बताओ</span></button>'+
+      '</div>'+
+      '<div style="display:flex;gap:8px;margin-bottom:12px;">'+
       '<button class="hours-list" style="margin:0;flex:1;" onclick="openHoursFor(\'\')">📷 Send hours · घंटे</button>'+
       '<button class="hours-list" style="margin:0;flex:0 0 auto;background:#3a2417;color:#f0b48c;border-color:#7a4a2a;" onclick="testAlarm()">🔔 Test alarm · घंटी चेक</button>'+
       '</div><div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
@@ -284,7 +362,11 @@
       '<div class="two">'+
         '<a class="act map" href="'+(j.mapLink?esc(j.mapLink):('https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')))+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span></a>'+
         '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span></a></div>'+
-      '<button class="hours-full" onclick="openHoursFor(\''+esc(j.dg||'')+'\')">📷 Send current hours · अभी के घंटे भेजो</button>';
+      '<button class="hours-full" onclick="openHoursFor(\''+esc(j.dg||'')+'\')">📷 Send current hours · अभी के घंटे भेजो</button>'+
+      '<div class="two" style="margin-top:10px;">'+
+        '<button class="act" style="background:#1f6b3b;" onclick="openService(\''+esc(j.dg||'')+'\')"><span class="ic">🔧</span>Log service<span class="hi">सर्विस दर्ज</span></button>'+
+        '<button class="act" style="background:#b3261e;" onclick="openBreakdown(\''+esc(j.dg||'')+'\')"><span class="ic">🚨</span>Report breakdown<span class="hi">ब्रेकडाउन</span></button>'+
+      '</div>';
     if(j.parts && j.parts.length){ html+='<div class="sec">🧰 Parts to carry <span class="hi">— पुर्ज़े ले जाओ</span></div><div class="parts">'+
       j.parts.map(function(p){ return '<div class="part" onclick="this.classList.toggle(\'got\')"><div class="ic">🔧</div><div class="tx"><b>'+esc(p.en)+'</b>'+(p.hi?'<span>'+esc(p.hi)+'</span>':'')+'</div>'+(p.qty?'<div class="qty">'+esc(p.qty)+'</div>':'')+'</div>'; }).join('')+'</div>'; }
     if(j.note) html+='<div class="note">📝 '+esc(j.note)+'</div>';
@@ -322,6 +404,57 @@
       $('hrsOv').classList.remove('on'); showBanner('✓ Hours sent to office · घंटे भेज दिए','');
     }catch(e){ $('hrsErr').textContent='Failed — try again · फिर कोशिश करो'; }
     $('hrsSend').disabled=false; $('hrsSend').textContent='Send · भेजो';
+  });
+
+  // ---------- Log a service (digital service card) ----------
+  var svcPhoto=null;
+  window.openService=function(dg){ svcPhoto=null; $('svcDg').value=(dg||''); $('svcHrs').value=''; $('svcNext').value=''; $('svcNote').value='';
+    $('svcErr').textContent=''; $('svcPrev').style.display='none'; $('svcPrev').removeAttribute('src');
+    $('svcChecks').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); $('svcOv').classList.add('on'); };
+  $('svcCancel').addEventListener('click',function(){ $('svcOv').classList.remove('on'); });
+  $('svcChecks').addEventListener('click',function(e){ var b=e.target.closest('.chip'); if(b) b.classList.toggle('on'); });
+  $('svcCam').addEventListener('click',function(){ $('svcFile').click(); });
+  $('svcFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(f) resizeImg(f,function(url){ if(url){ svcPhoto=url; $('svcPrev').src=url; $('svcPrev').style.display='block'; } }); this.value=''; });
+  function checked(id,k){ var b=$(id).querySelector('.chip[data-k="'+k+'"]'); return !!(b&&b.classList.contains('on')); }
+  $('svcSend').addEventListener('click',async function(){
+    var dg=$('svcDg').value.trim().toUpperCase(), hrs=$('svcHrs').value.trim(), next=$('svcNext').value.trim(); $('svcErr').textContent='';
+    if(!dg){ $('svcErr').textContent='Enter DG · DG डालो'; return; }
+    if(!(Number(hrs)>=0)){ $('svcErr').textContent='Enter the meter hours · घंटे डालो'; return; }
+    var body={ dg:dg, hours:Number(hrs), oil:checked('svcChecks','oil'), oilFilter:checked('svcChecks','oilFilter'),
+      fuelFilter:checked('svcChecks','fuelFilter'), airFilter:checked('svcChecks','airFilter'),
+      notes:$('svcNote').value.trim(), photo:svcPhoto };
+    if(Number(next)>0) body.nextService=Number(next);
+    $('svcSend').disabled=true; $('svcSend').textContent='Saving… · सेव';
+    try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/service',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      $('svcOv').classList.remove('on'); showBanner('✓ Service saved · सर्विस सेव हो गई',(dg)); $('doneOv').classList.add('on');
+    }catch(e){ $('svcErr').textContent='Failed — try again · फिर कोशिश करो'; }
+    $('svcSend').disabled=false; $('svcSend').textContent='Save service · सेव';
+  });
+
+  // ---------- Report a breakdown ----------
+  var bdPhoto=null;
+  window.openBreakdown=function(dg){ bdPhoto=null; $('bdDg').value=(dg||''); $('bdLoc').value=''; $('bdSym').value=''; $('bdErr').textContent='';
+    $('bdPrev').style.display='none'; $('bdPrev').removeAttribute('src');
+    $('bdCat').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+    $('bdPri').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+    $('bdOv').classList.add('on'); };
+  $('bdCancel').addEventListener('click',function(){ $('bdOv').classList.remove('on'); });
+  function singleSelect(wrapId){ $(wrapId).addEventListener('click',function(e){ var b=e.target.closest('.chip'); if(!b) return;
+    $(wrapId).querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); b.classList.add('on'); }); }
+  singleSelect('bdCat'); singleSelect('bdPri');
+  function picked(wrapId){ var b=$(wrapId).querySelector('.chip.on'); return b?b.getAttribute('data-v'):''; }
+  $('bdCam').addEventListener('click',function(){ $('bdFile').click(); });
+  $('bdFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(f) resizeImg(f,function(url){ if(url){ bdPhoto=url; $('bdPrev').src=url; $('bdPrev').style.display='block'; } }); this.value=''; });
+  $('bdSend').addEventListener('click',async function(){
+    var dg=$('bdDg').value.trim().toUpperCase(); $('bdErr').textContent='';
+    if(!dg){ $('bdErr').textContent='Enter DG · DG डालो'; return; }
+    var body={ dg:dg, location:$('bdLoc').value.trim(), category:picked('bdCat'), priority:picked('bdPri')||'Normal',
+      symptom:$('bdSym').value.trim(), photo:bdPhoto };
+    $('bdSend').disabled=true; $('bdSend').textContent='Sending… · भेज रहे';
+    try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/breakdown',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      $('bdOv').classList.remove('on'); showBanner('✓ Breakdown sent to office · ऑफिस को भेज दिया',(dg)); $('doneOv').classList.add('on');
+    }catch(e){ $('bdErr').textContent='Failed — try again · फिर कोशिश करो'; }
+    $('bdSend').disabled=false; $('bdSend').textContent='Send to office · भेजो';
   });
 
   // ---------- Push ----------
