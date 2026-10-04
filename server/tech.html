@@ -59,6 +59,8 @@
   .step.next{border-color:var(--amber);background:rgba(245,158,11,.08);} .step.next .n{background:var(--amber);}
   .step.done .n{background:var(--green);} .step.done .tx b{color:#4ade80;} .step .chk{margin-left:auto;font-size:22px;color:var(--green);opacity:0;} .step.done .chk{opacity:1;}
   .hint{text-align:center;color:var(--mut);font-size:12px;margin-top:11px;line-height:1.6;}
+  .ur{direction:rtl;unicode-bidi:isolate;font-family:'Noto Naskh Arabic','Segoe UI',Tahoma,Arial,sans-serif;}
+  .u{display:block;direction:rtl;unicode-bidi:isolate;font-family:'Noto Naskh Arabic','Segoe UI',Tahoma,Arial,sans-serif;font-size:12px;color:var(--mut);font-weight:500;margin-top:1px;}
   .empty{text-align:center;color:var(--mut);padding:50px 20px;} .empty .ic{font-size:46px;} .empty b{display:block;margin-top:12px;font-size:17px;color:var(--ink);} .empty span{font-size:14px;}
   /* Login */
   .login{padding:30px 20px;text-align:center;}
@@ -94,12 +96,13 @@
       <div class="logoBig"><img src="/logo-heavy.png" alt=""><img src="/logo-energy.png" alt=""></div>
       <h1 id="lTitle">Who are you?</h1>
       <div class="hi" id="lSub">आप कौन हैं? — नाम चुनो</div>
+      <div class="u" id="lSubU">آپ کون ہیں؟ — نام چنیں</div>
       <div class="who-pick" id="whoPick"></div>
       <div class="pinwrap" id="pinWrap" style="display:none;">
         <div class="pindots" id="pinDots"><i></i><i></i><i></i><i></i></div>
         <div class="pad" id="pad"></div>
         <div class="lErr" id="lErr"></div>
-        <div style="margin-top:14px;color:var(--mut);font-size:13px;cursor:pointer;" id="lBackName">‹ Change name · नाम बदलो</div>
+        <div style="margin-top:14px;color:var(--mut);font-size:13px;cursor:pointer;" id="lBackName">‹ Change name · नाम बदलो · <span class="ur">نام بدلیں</span></div>
       </div>
     </div>
   </div>
@@ -108,33 +111,33 @@
   <div id="appView" style="display:none;">
     <div class="bar">
       <div class="logos"><img src="/logo-heavy.png" alt="Deluxe Heavy"><span class="sep"></span><img src="/logo-energy.png" alt="Deluxe Energy"></div>
-      <div class="who"><b id="uName">…</b><span id="uRole">Technician · टेक्नीशियन</span></div>
+      <div class="who"><b id="uName">…</b><span id="uRole">Technician · टेक्नीशियन · <span class="ur">ٹیکنیشن</span></span></div>
       <div class="bell" id="bell">🔔<b id="badge">0</b></div>
       <div class="out" id="logout">⎋</div>
     </div>
     <div class="wrap"><div id="screen"></div></div>
   </div>
 
-  <button class="installbtn" id="installBtn">⬇️ Install app · ऐप इंस्टॉल करें</button>
-  <div class="done" id="doneOv"><div class="big">✅</div><h2>Job done!</h2><p class="hi">काम पूरा हुआ!</p><p>Office has been told · ऑफिस को बता दिया</p><button onclick="closeDone()">OK · ठीक है</button></div>
-  <div class="done" id="installHelp"><div class="big">⬇️</div><h2>Install the app</h2><p class="hi">ऐप इंस्टॉल करें</p><p id="installSteps" style="max-width:340px;line-height:1.7;"></p><button onclick="document.getElementById('installHelp').classList.remove('on')">OK · ठीक है</button></div>
+  <button class="installbtn" id="installBtn">⬇️ Install app · ऐप इंस्टॉल करें · <span class="ur">ایپ انسٹال کریں</span></button>
+  <div class="done" id="doneOv"><div class="big">✅</div><h2>Done!</h2><p class="hi">काम पूरा हुआ!</p><p class="u" style="font-size:15px;">کام مکمل ہوا!</p><p>Office has been told · ऑफिस को बता दिया<span class="u">آفس کو بتا دیا</span></p><button onclick="closeDone()">OK · ठीक है · <span class="ur">ٹھیک ہے</span></button></div>
+  <div class="done" id="installHelp"><div class="big">⬇️</div><h2>Install the app</h2><p class="hi">ऐप इंस्टॉल करें</p><p class="u" style="font-size:15px;">ایپ انسٹال کریں</p><p id="installSteps" style="max-width:340px;line-height:1.7;"></p><button onclick="document.getElementById('installHelp').classList.remove('on')">OK · ठीक है · <span class="ur">ٹھیک ہے</span></button></div>
 
   <!-- Tap-to-stop alarm bar -->
-  <div class="alarm-stop" id="alarmStop">🔔 TAP TO STOP ALARM · बंद करने के लिए दबाओ</div>
+  <div class="alarm-stop" id="alarmStop">🔔 TAP TO STOP ALARM · बंद करने के लिए दबाओ · <span class="ur">الارم بند کریں</span></div>
 
   <!-- Send current hours (photo + meter) -->
   <input type="file" accept="image/*" capture="environment" id="hrsFile" style="display:none;">
   <div class="hov" id="hrsOv">
     <div class="hbox">
-      <div class="htitle">📷 Send current hours<span class="hi">अभी के घंटे भेजो</span></div>
-      <label class="hlbl">Generator · DG</label>
+      <div class="htitle">📷 Send current hours<span class="hi">अभी के घंटे भेजो</span><span class="u">ابھی کے گھنٹے بھیجیں</span></div>
+      <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="hrsDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
-      <button class="hcam" id="hrsCam">📷 Take photo of meter · मीटर की फोटो लो</button>
+      <button class="hcam" id="hrsCam">📷 Take photo of meter · मीटर की फोटो लो · <span class="ur">میٹر کی فوٹو</span></button>
       <img id="hrsPrev" alt="" style="display:none;">
-      <label class="hlbl">Running hours (meter) · घंटे</label>
+      <label class="hlbl">Running hours (meter) · घंटे · <span class="ur">گھنٹے</span></label>
       <input type="number" inputmode="numeric" id="hrsVal" placeholder="e.g. 5917">
       <div class="herr" id="hrsErr"></div>
-      <div class="hbtns"><button class="hcancel" id="hrsCancel">Cancel · रद्द</button><button class="hsend" id="hrsSend">Send · भेजो</button></div>
+      <div class="hbtns"><button class="hcancel" id="hrsCancel">Cancel · रद्द · <span class="ur">منسوخ</span></button><button class="hsend" id="hrsSend">Send · भेजो · <span class="ur">بھیجیں</span></button></div>
     </div>
   </div>
 
@@ -142,26 +145,26 @@
   <input type="file" accept="image/*" capture="environment" id="svcFile" style="display:none;">
   <div class="hov" id="svcOv">
     <div class="hbox tall">
-      <div class="htitle">🔧 Log a service<span class="hi">सर्विस दर्ज करो</span></div>
-      <label class="hlbl">Generator · DG</label>
+      <div class="htitle">🔧 Log a service<span class="hi">सर्विस दर्ज करो</span><span class="u">سروس درج کریں</span></div>
+      <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="svcDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
-      <label class="hlbl">Hours now (meter) · अभी के घंटे</label>
+      <label class="hlbl">Hours now (meter) · अभी के घंटे · <span class="ur">ابھی کے گھنٹے</span></label>
       <input type="number" inputmode="numeric" id="svcHrs" placeholder="e.g. 4397">
-      <label class="hlbl">What did you change? · क्या बदला</label>
+      <label class="hlbl">What did you change? · क्या बदला · <span class="ur">کیا بدلا</span></label>
       <div class="chips" id="svcChecks">
-        <button type="button" class="chip" data-k="oil">🛢️ Oil<span>ऑयल</span></button>
-        <button type="button" class="chip" data-k="oilFilter">🧩 Oil filter<span>ऑयल फ़िल्टर</span></button>
-        <button type="button" class="chip" data-k="fuelFilter">⛽ Fuel filter<span>फ्यूल फ़िल्टर</span></button>
-        <button type="button" class="chip" data-k="airFilter">💨 Air filter<span>एयर फ़िल्टर</span></button>
+        <button type="button" class="chip" data-k="oil">🛢️ Oil<span>ऑयल · <span class="ur">آئل</span></span></button>
+        <button type="button" class="chip" data-k="oilFilter">🧩 Oil filter<span>ऑयल फ़िल्टर · <span class="ur">آئل فلٹر</span></span></button>
+        <button type="button" class="chip" data-k="fuelFilter">⛽ Fuel filter<span>फ्यूल फ़िल्टर · <span class="ur">فیول فلٹر</span></span></button>
+        <button type="button" class="chip" data-k="airFilter">💨 Air filter<span>एयर फ़िल्टर · <span class="ur">ایئر فلٹر</span></span></button>
       </div>
-      <label class="hlbl">Next service due (hours) · अगली सर्विस घंटे</label>
+      <label class="hlbl">Next service due (hours) · अगली सर्विस घंटे · <span class="ur">اگلی سروس کے گھنٹے</span></label>
       <input type="number" inputmode="numeric" id="svcNext" placeholder="optional — e.g. 4747">
-      <button class="hcam" id="svcCam">📷 Photo of card / meter · फोटो लो</button>
+      <button class="hcam" id="svcCam">📷 Photo of card / meter · फोटो लो · <span class="ur">کارڈ/میٹر کی فوٹو</span></button>
       <img id="svcPrev" class="ovprev" alt="" style="display:none;">
-      <label class="hlbl">Notes · नोट (optional)</label>
+      <label class="hlbl">Notes · नोट (optional) · <span class="ur">نوٹ</span></label>
       <input type="text" id="svcNote" placeholder="">
       <div class="herr" id="svcErr"></div>
-      <div class="hbtns"><button class="hcancel" id="svcCancel">Cancel · रद्द</button><button class="hsend" id="svcSend">Save service · सेव</button></div>
+      <div class="hbtns"><button class="hcancel" id="svcCancel">Cancel · रद्द · <span class="ur">منسوخ</span></button><button class="hsend" id="svcSend">Save service · सेव · <span class="ur">محفوظ</span></button></div>
     </div>
   </div>
 
@@ -169,32 +172,32 @@
   <input type="file" accept="image/*" capture="environment" id="bdFile" style="display:none;">
   <div class="hov" id="bdOv">
     <div class="hbox tall">
-      <div class="htitle">🚨 Report breakdown<span class="hi">ब्रेकडाउन बताओ</span></div>
-      <label class="hlbl">Generator · DG</label>
+      <div class="htitle">🚨 Report breakdown<span class="hi">ब्रेकडाउन बताओ</span><span class="u">بریک ڈاؤن بتائیں</span></div>
+      <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="bdDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
-      <label class="hlbl">Where · जगह (site / location)</label>
+      <label class="hlbl">Where · जगह · <span class="ur">کہاں (جگہ)</span></label>
       <input type="text" id="bdLoc" placeholder="e.g. Musaffah M40">
-      <label class="hlbl">What is the problem? · क्या दिक्कत</label>
+      <label class="hlbl">What is the problem? · क्या दिक्कत · <span class="ur">کیا مسئلہ ہے</span></label>
       <div class="chips" id="bdCat">
-        <button type="button" class="chip" data-v="Electrical">⚡ Electrical<span>बिजली</span></button>
-        <button type="button" class="chip" data-v="Mechanical">⚙️ Mechanical<span>इंजन</span></button>
-        <button type="button" class="chip" data-v="Fuel">⛽ Fuel<span>फ्यूल</span></button>
-        <button type="button" class="chip" data-v="Cooling">🌡️ Cooling<span>कूलिंग</span></button>
-        <button type="button" class="chip" data-v="Control panel">🎛️ Panel<span>पैनल</span></button>
-        <button type="button" class="chip" data-v="Other">❓ Other<span>और</span></button>
+        <button type="button" class="chip" data-v="Electrical">⚡ Electrical<span>बिजली · <span class="ur">بجلی</span></span></button>
+        <button type="button" class="chip" data-v="Mechanical">⚙️ Mechanical<span>इंजन · <span class="ur">انجن</span></span></button>
+        <button type="button" class="chip" data-v="Fuel">⛽ Fuel<span>फ्यूल · <span class="ur">فیول</span></span></button>
+        <button type="button" class="chip" data-v="Cooling">🌡️ Cooling<span>कूलिंग · <span class="ur">کولنگ</span></span></button>
+        <button type="button" class="chip" data-v="Control panel">🎛️ Panel<span>पैनल · <span class="ur">پینل</span></span></button>
+        <button type="button" class="chip" data-v="Other">❓ Other<span>और · <span class="ur">دیگر</span></span></button>
       </div>
-      <label class="hlbl">How urgent? · कितना ज़रूरी</label>
+      <label class="hlbl">How urgent? · कितना ज़रूरी · <span class="ur">کتنا ضروری</span></label>
       <div class="chips pri" id="bdPri">
-        <button type="button" class="chip" data-v="Critical">🔴 Critical<span>बहुत ज़रूरी</span></button>
-        <button type="button" class="chip" data-v="High">🟠 High<span>ज़रूरी</span></button>
-        <button type="button" class="chip" data-v="Normal">🟢 Normal<span>सामान्य</span></button>
+        <button type="button" class="chip" data-v="Critical">🔴 Critical<span>बहुत ज़रूरी · <span class="ur">بہت ضروری</span></span></button>
+        <button type="button" class="chip" data-v="High">🟠 High<span>ज़रूरी · <span class="ur">ضروری</span></span></button>
+        <button type="button" class="chip" data-v="Normal">🟢 Normal<span>सामान्य · <span class="ur">عام</span></span></button>
       </div>
-      <label class="hlbl">Describe · बताओ (what happened)</label>
+      <label class="hlbl">Describe · बताओ · <span class="ur">بتائیں (کیا ہوا)</span></label>
       <input type="text" id="bdSym" placeholder="e.g. not starting / overheating / low power">
-      <button class="hcam" id="bdCam">📷 Photo of fault · फोटो लो</button>
+      <button class="hcam" id="bdCam">📷 Photo of fault · फोटो लो · <span class="ur">خرابی کی فوٹو</span></button>
       <img id="bdPrev" class="ovprev" alt="" style="display:none;">
       <div class="herr" id="bdErr"></div>
-      <div class="hbtns"><button class="hcancel" id="bdCancel">Cancel · रद्द</button><button class="hsend bd" id="bdSend">Send to office · भेजो</button></div>
+      <div class="hbtns"><button class="hcancel" id="bdCancel">Cancel · रद्द · <span class="ur">منسوخ</span></button><button class="hsend bd" id="bdSend">Send to office · भेजो · <span class="ur">آفس کو بھیجیں</span></button></div>
     </div>
   </div>
   <style>
@@ -265,9 +268,9 @@
   // Re-prime audio whenever the app returns to the foreground.
   document.addEventListener('visibilitychange',function(){ if(!document.hidden) unlockAudio(); });
 
-  var TYPE={svc:{cls:'svc',en:'Service',hi:'सर्विस',ic:'🔧'},bd:{cls:'bd',en:'Breakdown',hi:'ब्रेकडाउन',ic:'🚨'},other:{cls:'other',en:'Job',hi:'काम',ic:'📋'}};
+  var TYPE={svc:{cls:'svc',en:'Service',hi:'सर्विस',ur:'سروس',ic:'🔧'},bd:{cls:'bd',en:'Breakdown',hi:'ब्रेकडाउन',ur:'بریک ڈاؤن',ic:'🚨'},other:{cls:'other',en:'Job',hi:'काम',ur:'کام',ic:'📋'}};
   function tkey(t){ return t==='service'?'svc':(t==='breakdown'?'bd':'other'); }
-  var STEPS=[{k:'otw',ic:'🚗',en:'On the way',hi:'निकल गया'},{k:'reached',ic:'📍',en:'Reached site',hi:'पहुँच गया'},{k:'done',ic:'✅',en:'Job done',hi:'काम पूरा हुआ'}];
+  var STEPS=[{k:'otw',ic:'🚗',en:'On the way',hi:'निकल गया',ur:'روانہ ہوا'},{k:'reached',ic:'📍',en:'Reached site',hi:'पहुँच गया',ur:'پہنچ گیا'},{k:'done',ic:'✅',en:'Job done',hi:'काम पूरा हुआ',ur:'کام مکمل ہوا'}];
   function stepIndex(s){ return s==='new'?0:(s==='otw'?1:(s==='reached'?2:3)); }
   async function api(url,opt){ var r=await fetch(url,opt); if(!r.ok) throw new Error('http'+r.status); return r.json(); }
 
@@ -285,11 +288,11 @@
     $('appView').style.display='none'; $('loginView').style.display='block';
     try{ var d=await api('/api/tech/names'); renderWho(d.techs||[]); }catch(e){ $('whoPick').innerHTML='<div class="hi">Cannot reach office. Try again.<br>ऑफिस से कनेक्ट नहीं हुआ।</div>'; }
   }
-  function renderWho(techs){ $('pinWrap').style.display='none'; $('whoPick').style.display='grid'; $('lTitle').textContent='Who are you?'; $('lSub').textContent='आप कौन हैं? — नाम चुनो';
+  function renderWho(techs){ $('pinWrap').style.display='none'; $('whoPick').style.display='grid'; $('lTitle').textContent='Who are you?'; $('lSub').textContent='आप कौन हैं? — नाम चुनो'; if($('lSubU'))$('lSubU').textContent='آپ کون ہیں؟ — نام چنیں';
     $('whoPick').innerHTML=techs.map(function(t){return '<button data-id="'+esc(t.id)+'">👷 '+esc(t.name)+'</button>';}).join('');
     $('whoPick').querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ pickId=b.getAttribute('data-id'); startPin(b.textContent.trim()); }); });
   }
-  function startPin(name){ pin=''; $('whoPick').style.display='none'; $('pinWrap').style.display='block'; $('lTitle').textContent=name; $('lSub').textContent='Enter your PIN · अपना PIN डालो'; $('lErr').textContent=''; renderPad(); renderDots();
+  function startPin(name){ pin=''; $('whoPick').style.display='none'; $('pinWrap').style.display='block'; $('lTitle').textContent=name; $('lSub').textContent='Enter your PIN · अपना PIN डालो'; if($('lSubU'))$('lSubU').textContent='اپنا پِن ڈالیں'; $('lErr').textContent=''; renderPad(); renderDots();
   }
   function renderPad(){ var keys=['1','2','3','4','5','6','7','8','9','','0','⌫'];
     $('pad').innerHTML=keys.map(function(k){ return k===''?'<span></span>':'<button data-k="'+k+'">'+k+'</button>'; }).join('');
@@ -321,58 +324,58 @@
       if(openId){ var j=JOBS.filter(function(x){return x.id===openId;})[0]; if(j) renderDetail(j); else renderList(); } else renderList();
     }catch(e){ if(e.message==='http404'){ try{localStorage.removeItem(TSTORE);}catch(x){} showLogin(); } }
   }
-  function notify(j){ var T=TYPE[tkey(j.type)]; showBanner('🆕 New '+T.en+' · '+(j.dg||''),'नया काम — '+(j.dg||T.hi)); startAlarm();
+  function notify(j){ var T=TYPE[tkey(j.type)]; showBanner('🆕 New '+T.en+' · '+(j.dg||''),'नया काम — '+(j.dg||T.hi),'نیا کام — '+(j.dg||T.ur)); startAlarm();
     try{ if(window.Notification && Notification.permission==='granted') new Notification('Deluxe — New job / नया काम',{body:(j.dg||'')+' · '+T.en+' · '+(j.location||''),icon:'/icon-192.png'}); }catch(e){} }
-  function notifyParts(j){ showBanner('🧰 Parts ready · '+(j.dg||''),'पुर्ज़े तैयार — स्टोर से लो'); startAlarm();
+  function notifyParts(j){ showBanner('🧰 Parts ready · '+(j.dg||''),'पुर्ज़े तैयार — स्टोर से लो','پرزے تیار — اسٹور سے لیں'); startAlarm();
     try{ if(window.Notification && Notification.permission==='granted') new Notification('Deluxe — Parts issued / पुर्ज़े तैयार',{body:(j.dg||'')+' — collect from store / स्टोर से लो',icon:'/icon-192.png'}); }catch(e){} }
-  var bTimer; function showBanner(t,s){ $('notiT').textContent=t; $('notiS').textContent=s; $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},6000); }
+  var bTimer; function showBanner(t,s,u){ $('notiT').textContent=t; $('notiS').innerHTML=esc(s)+(u?'<span class="u">'+esc(u)+'</span>':''); $('noti').classList.add('show'); clearTimeout(bTimer); bTimer=setTimeout(function(){$('noti').classList.remove('show');},6000); }
 
   function pushBanner(){ if(!('serviceWorker' in navigator)||!('PushManager' in window)) return '';
     if(window.Notification && Notification.permission==='granted') return '';
-    return '<div class="banner-info" onclick="enablePush()"><div class="ic">🔔</div><div><b>Turn on job alerts</b><span>नए काम की घंटी चालू करो — दबाओ</span></div></div>'; }
+    return '<div class="banner-info" onclick="enablePush()"><div class="ic">🔔</div><div><b>Turn on job alerts</b><span>नए काम की घंटी चालू करो — दबाओ<span class="u">نئے کام کی گھنٹی چالو کریں</span></span></div></div>'; }
 
   function renderList(){ openId=null;
     var active=JOBS.filter(function(j){return j.status!=='done';});
     var done=JOBS.filter(function(j){return j.status==='done';});
     var html=pushBanner()+
       '<div class="two" style="margin-bottom:10px;">'+
-      '<button class="act" style="background:#1f6b3b;" onclick="openService(\'\')"><span class="ic">🔧</span>Log service<span class="hi">सर्विस दर्ज करो</span></button>'+
-      '<button class="act" style="background:#b3261e;" onclick="openBreakdown(\'\')"><span class="ic">🚨</span>Report breakdown<span class="hi">ब्रेकडाउन बताओ</span></button>'+
+      '<button class="act" style="background:#1f6b3b;" onclick="openService(\'\')"><span class="ic">🔧</span>Log service<span class="hi">सर्विस दर्ज करो</span><span class="u">سروس درج کریں</span></button>'+
+      '<button class="act" style="background:#b3261e;" onclick="openBreakdown(\'\')"><span class="ic">🚨</span>Report breakdown<span class="hi">ब्रेकडाउन बताओ</span><span class="u">بریک ڈاؤن بتائیں</span></button>'+
       '</div>'+
       '<div style="display:flex;gap:8px;margin-bottom:12px;">'+
-      '<button class="hours-list" style="margin:0;flex:1;" onclick="openHoursFor(\'\')">📷 Send hours · घंटे</button>'+
-      '<button class="hours-list" style="margin:0;flex:0 0 auto;background:#3a2417;color:#f0b48c;border-color:#7a4a2a;" onclick="testAlarm()">🔔 Test alarm · घंटी चेक</button>'+
-      '</div><div class="h"><b>My jobs</b><span>मेरे काम ('+active.length+')</span></div>';
-    if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं</span></div>';
+      '<button class="hours-list" style="margin:0;flex:1;" onclick="openHoursFor(\'\')">📷 Send hours · घंटे · <span class="ur">گھنٹے</span></button>'+
+      '<button class="hours-list" style="margin:0;flex:0 0 auto;background:#3a2417;color:#f0b48c;border-color:#7a4a2a;" onclick="testAlarm()">🔔 Test · जाँच · <span class="ur">چیک</span></button>'+
+      '</div><div class="h"><b>My jobs</b><span>मेरे काम · <span class="ur">میرے کام</span> ('+active.length+')</span></div>';
+    if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं<span class="u">ابھی کوئی کام نہیں</span></span></div>';
     active.forEach(function(j){ html+=jobCard(j); });
-    if(done.length){ html+='<div class="h" style="margin-top:18px;"><b>Done today</b><span>आज पूरा हुआ</span></div>'; done.forEach(function(j){ html+=jobCard(j); }); }
+    if(done.length){ html+='<div class="h" style="margin-top:18px;"><b>Done today</b><span>आज पूरा हुआ · <span class="ur">آج مکمل</span></span></div>'; done.forEach(function(j){ html+=jobCard(j); }); }
     $('screen').innerHTML=html;
     $('screen').querySelectorAll('[data-open]').forEach(function(el){ el.addEventListener('click',function(){ var j=JOBS.filter(function(x){return x.id===el.getAttribute('data-open');})[0]; if(j) renderDetail(j); }); });
   }
   function jobCard(j){ var T=TYPE[tkey(j.type)]; var si=stepIndex(j.status);
     var stx=(j.status==='done')?'<span class="st done">✅ Done</span>':(j.status==='new')?'<span class="st">🆕 New</span>':'<span class="st go">'+esc(STEPS[si-1]?STEPS[si-1].en:'Working')+'</span>';
-    return '<div class="job '+T.cls+'" data-open="'+esc(j.id)+'"><div class="tagrow"><div class="type">'+T.ic+' '+T.en+' · '+T.hi+'</div>'+stx+'</div>'+
+    return '<div class="job '+T.cls+'" data-open="'+esc(j.id)+'"><div class="tagrow"><div class="type">'+T.ic+' '+T.en+' · '+T.hi+' · <span class="ur">'+T.ur+'</span></div>'+stx+'</div>'+
       '<div class="dg">'+esc(j.dg||'—')+(j.kva?' <small>'+esc(j.kva)+' kVA</small>':'')+'</div>'+
       (j.title?'<div class="task">'+esc(j.title)+'</div>':'')+(j.location?'<div class="loc">📍 '+esc(j.location)+'</div>':'')+
-      '<div class="go2">Open · खोलें</div></div>';
+      '<div class="go2">Open · खोलें · <span class="ur">کھولیں</span></div></div>';
   }
   function renderDetail(j){ openId=j.id; var T=TYPE[tkey(j.type)]; var si=stepIndex(j.status);
     var html='<div class="back" onclick="goList()">‹ Back · वापस</div>'+
-      '<div class="banner '+T.cls+'"><div class="bdg">'+T.ic+' '+T.en.toUpperCase()+' · '+T.hi+'</div><div class="dg">'+esc(j.dg||'—')+'</div>'+(j.title?'<div class="task">'+esc(j.title)+'</div>':'')+'</div>'+
+      '<div class="banner '+T.cls+'"><div class="bdg">'+T.ic+' '+T.en.toUpperCase()+' · '+T.hi+' · <span class="ur">'+T.ur+'</span></div><div class="dg">'+esc(j.dg||'—')+'</div>'+(j.title?'<div class="task">'+esc(j.title)+'</div>':'')+'</div>'+
       '<div class="two">'+
-        '<a class="act map" href="'+(j.mapLink?esc(j.mapLink):('https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')))+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span></a>'+
-        '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span></a></div>'+
-      '<button class="hours-full" onclick="openHoursFor(\''+esc(j.dg||'')+'\')">📷 Send current hours · अभी के घंटे भेजो</button>'+
+        '<a class="act map" href="'+(j.mapLink?esc(j.mapLink):('https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')))+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span><span class="u">راستہ دیکھیں</span></a>'+
+        '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span><span class="u">آفس کو کال</span></a></div>'+
+      '<button class="hours-full" onclick="openHoursFor(\''+esc(j.dg||'')+'\')">📷 Send current hours · अभी के घंटे भेजो · <span class="ur">گھنٹے بھیجیں</span></button>'+
       '<div class="two" style="margin-top:10px;">'+
-        '<button class="act" style="background:#1f6b3b;" onclick="openService(\''+esc(j.dg||'')+'\')"><span class="ic">🔧</span>Log service<span class="hi">सर्विस दर्ज</span></button>'+
-        '<button class="act" style="background:#b3261e;" onclick="openBreakdown(\''+esc(j.dg||'')+'\')"><span class="ic">🚨</span>Report breakdown<span class="hi">ब्रेकडाउन</span></button>'+
+        '<button class="act" style="background:#1f6b3b;" onclick="openService(\''+esc(j.dg||'')+'\')"><span class="ic">🔧</span>Log service<span class="hi">सर्विस दर्ज</span><span class="u">سروس درج کریں</span></button>'+
+        '<button class="act" style="background:#b3261e;" onclick="openBreakdown(\''+esc(j.dg||'')+'\')"><span class="ic">🚨</span>Report breakdown<span class="hi">ब्रेकडाउन</span><span class="u">بریک ڈاؤن</span></button>'+
       '</div>';
-    if(j.parts && j.parts.length){ html+='<div class="sec">🧰 Parts to carry <span class="hi">— पुर्ज़े ले जाओ</span></div><div class="parts">'+
+    if(j.parts && j.parts.length){ html+='<div class="sec">🧰 Parts to carry <span class="hi">— पुर्ज़े ले जाओ · <span class="ur">پرزے لے جائیں</span></span></div><div class="parts">'+
       j.parts.map(function(p){ return '<div class="part" onclick="this.classList.toggle(\'got\')"><div class="ic">🔧</div><div class="tx"><b>'+esc(p.en)+'</b>'+(p.hi?'<span>'+esc(p.hi)+'</span>':'')+'</div>'+(p.qty?'<div class="qty">'+esc(p.qty)+'</div>':'')+'</div>'; }).join('')+'</div>'; }
     if(j.note) html+='<div class="note">📝 '+esc(j.note)+'</div>';
-    html+='<div class="sec">✔️ Do the job <span class="hi">— काम करो</span></div><div class="steps">'+
-      STEPS.map(function(s,i){ var idx=i+1; var cls=(idx<si)?'done':((idx===si)?'next':''); return '<div class="step '+cls+'" data-k="'+s.k+'" data-i="'+idx+'"><div class="n">'+s.ic+'</div><div class="tx"><b>'+s.en+'</b><span>'+s.hi+'</span></div><div class="chk">✔</div></div>'; }).join('')+
-      '</div><div class="hint">Tap the yellow button when you do that step.<br>वो काम करने पर पीला बटन दबाओ।</div>';
+    html+='<div class="sec">✔️ Do the job <span class="hi">— काम करो · <span class="ur">کام کریں</span></span></div><div class="steps">'+
+      STEPS.map(function(s,i){ var idx=i+1; var cls=(idx<si)?'done':((idx===si)?'next':''); return '<div class="step '+cls+'" data-k="'+s.k+'" data-i="'+idx+'"><div class="n">'+s.ic+'</div><div class="tx"><b>'+s.en+'</b><span>'+s.hi+'</span><span class="u">'+s.ur+'</span></div><div class="chk">✔</div></div>'; }).join('')+
+      '</div><div class="hint">Tap the yellow button when you do that step.<br>वो काम करने पर पीला बटन दबाओ।<br><span class="ur">وہ کام کرنے پر پیلا بٹن دبائیں۔</span></div>';
     $('screen').innerHTML=html;
     $('screen').querySelectorAll('.step').forEach(function(el){ el.addEventListener('click',function(){ var idx=+el.getAttribute('data-i'); if(idx!==si) return; setStatus(j.id, el.getAttribute('data-k')); }); });
   }
@@ -381,7 +384,7 @@
       for(var i=0;i<JOBS.length;i++){ if(JOBS[i].id===id) JOBS[i]=d.item; }
       if(status==='done') $('doneOv').classList.add('on');
       var j=JOBS.filter(function(x){return x.id===id;})[0]; if(j) renderDetail(j);
-    }catch(e){ showBanner('Could not save · फिर कोशिश करो',''); } }
+    }catch(e){ showBanner('Could not save · फिर कोशिश करो','','دوبارہ کوشش کریں'); } }
   window.closeDone=function(){ $('doneOv').classList.remove('on'); renderList(); };
   $('bell').addEventListener('click',function(){ enablePush(); });
 
@@ -397,12 +400,12 @@
   $('hrsFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(f) resizeImg(f,function(url){ if(url){ hrsDataUrl=url; $('hrsPrev').src=url; $('hrsPrev').style.display='block'; } }); this.value=''; });
   $('hrsSend').addEventListener('click',async function(){
     var dg=$('hrsDg').value.trim().toUpperCase(), hours=$('hrsVal').value.trim(); $('hrsErr').textContent='';
-    if(!dg){ $('hrsErr').textContent='Enter DG · DG डालो'; return; }
-    if(!(Number(hours)>=0)){ $('hrsErr').textContent='Enter the meter hours · घंटे डालो'; return; }
+    if(!dg){ $('hrsErr').textContent='Enter DG · DG डालो · DG ڈالیں'; return; }
+    if(!(Number(hours)>=0)){ $('hrsErr').textContent='Enter hours · घंटे डालो · گھنٹے ڈالیں'; return; }
     $('hrsSend').disabled=true; $('hrsSend').textContent='Sending… · भेज रहे';
     try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/hours',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dg:dg,hours:Number(hours),photo:hrsDataUrl})});
-      $('hrsOv').classList.remove('on'); showBanner('✓ Hours sent to office · घंटे भेज दिए','');
-    }catch(e){ $('hrsErr').textContent='Failed — try again · फिर कोशिश करो'; }
+      $('hrsOv').classList.remove('on'); showBanner('✓ Hours sent to office · घंटे भेज दिए','','گھنٹے بھیج دیے');
+    }catch(e){ $('hrsErr').textContent='Failed — try again · फिर कोशिश करो · دوبارہ کوشش کریں'; }
     $('hrsSend').disabled=false; $('hrsSend').textContent='Send · भेजो';
   });
 
@@ -418,16 +421,16 @@
   function checked(id,k){ var b=$(id).querySelector('.chip[data-k="'+k+'"]'); return !!(b&&b.classList.contains('on')); }
   $('svcSend').addEventListener('click',async function(){
     var dg=$('svcDg').value.trim().toUpperCase(), hrs=$('svcHrs').value.trim(), next=$('svcNext').value.trim(); $('svcErr').textContent='';
-    if(!dg){ $('svcErr').textContent='Enter DG · DG डालो'; return; }
-    if(!(Number(hrs)>=0)){ $('svcErr').textContent='Enter the meter hours · घंटे डालो'; return; }
+    if(!dg){ $('svcErr').textContent='Enter DG · DG डालो · DG ڈالیں'; return; }
+    if(!(Number(hrs)>=0)){ $('svcErr').textContent='Enter hours · घंटे डालो · گھنٹے ڈالیں'; return; }
     var body={ dg:dg, hours:Number(hrs), oil:checked('svcChecks','oil'), oilFilter:checked('svcChecks','oilFilter'),
       fuelFilter:checked('svcChecks','fuelFilter'), airFilter:checked('svcChecks','airFilter'),
       notes:$('svcNote').value.trim(), photo:svcPhoto };
     if(Number(next)>0) body.nextService=Number(next);
     $('svcSend').disabled=true; $('svcSend').textContent='Saving… · सेव';
     try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/service',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      $('svcOv').classList.remove('on'); showBanner('✓ Service saved · सर्विस सेव हो गई',(dg)); $('doneOv').classList.add('on');
-    }catch(e){ $('svcErr').textContent='Failed — try again · फिर कोशिश करो'; }
+      $('svcOv').classList.remove('on'); showBanner('✓ Service saved · सर्विस सेव हो गई',(dg),'سروس محفوظ ہو گئی'); $('doneOv').classList.add('on');
+    }catch(e){ $('svcErr').textContent='Failed — try again · फिर कोशिश करो · دوبارہ کوشش کریں'; }
     $('svcSend').disabled=false; $('svcSend').textContent='Save service · सेव';
   });
 
@@ -447,13 +450,13 @@
   $('bdFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(f) resizeImg(f,function(url){ if(url){ bdPhoto=url; $('bdPrev').src=url; $('bdPrev').style.display='block'; } }); this.value=''; });
   $('bdSend').addEventListener('click',async function(){
     var dg=$('bdDg').value.trim().toUpperCase(); $('bdErr').textContent='';
-    if(!dg){ $('bdErr').textContent='Enter DG · DG डालो'; return; }
+    if(!dg){ $('bdErr').textContent='Enter DG · DG डालो · DG ڈالیں'; return; }
     var body={ dg:dg, location:$('bdLoc').value.trim(), category:picked('bdCat'), priority:picked('bdPri')||'Normal',
       symptom:$('bdSym').value.trim(), photo:bdPhoto };
     $('bdSend').disabled=true; $('bdSend').textContent='Sending… · भेज रहे';
     try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/breakdown',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      $('bdOv').classList.remove('on'); showBanner('✓ Breakdown sent to office · ऑफिस को भेज दिया',(dg)); $('doneOv').classList.add('on');
-    }catch(e){ $('bdErr').textContent='Failed — try again · फिर कोशिश करो'; }
+      $('bdOv').classList.remove('on'); showBanner('✓ Breakdown sent to office · ऑफिस को भेज दिया',(dg),'آفس کو بھیج دیا'); $('doneOv').classList.add('on');
+    }catch(e){ $('bdErr').textContent='Failed — try again · फिर कोशिश करो · دوبارہ کوشش کریں'; }
     $('bdSend').disabled=false; $('bdSend').textContent='Send to office · भेजो';
   });
 
@@ -470,7 +473,7 @@
     var sub=await swReg.pushManager.getSubscription();
     if(!sub){ sub=await swReg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:urlB64ToUint8(vd.key)}); }
     await api('/api/tech/'+encodeURIComponent(TOKEN)+'/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub})});
-    showBanner('Alerts ON · घंटी चालू ✓',''); }
+    showBanner('Alerts ON · घंटी चालू ✓','','گھنٹی چالو'); }
 
   // ---------- Install prompt ----------
   var deferred=null;
