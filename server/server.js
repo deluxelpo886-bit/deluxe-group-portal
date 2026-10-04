@@ -38,6 +38,7 @@ const { sendEmail } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
 const positions = require('./positions');
+const netsonic = require('./netsonic');
 const serviceLog = require('./service');
 const overrides = require('./overrides');
 const schedule = require('./schedule');
@@ -626,6 +627,25 @@ function fleetProtect(req, res, next) {
 app.get('/api/positions', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json(positions.getSnapshot());
+});
+
+// ---------- Netsonic (rental ERP) integration ----------
+// Connector status + verify data (counts + sample rows) so the office can confirm
+// the field mapping before enabling auto-apply. See server/netsonic.js. Disabled
+// unless the NETSONIC_* env vars are set.
+app.get('/api/netsonic/status', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(netsonic.getStatus());
+});
+// Full fetched rows for verification (office only).
+app.get('/api/netsonic/payloads', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(netsonic.getPayloads());
+});
+// Trigger a sync on demand (otherwise it polls on its own interval).
+app.post('/api/netsonic/sync', fleetProtect, async (req, res) => {
+  try { res.json({ ok: true, status: await netsonic.syncNow() }); }
+  catch (e) { res.status(400).json({ ok: false, error: (e && e.message) || 'sync failed' }); }
 });
 
 // Daily STOPS report: where each van stopped on a given day and for how long,
@@ -2140,6 +2160,7 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
 // TRACCAR_* env vars are set). Runs in the background; failures never crash the
 // server - the last good positions stay on the map and the badge shows status.
 positions.startPolling();
+netsonic.startPolling();
 
 // ---------- Keep-alive (stop the free instance sleeping) ----------
 // A free Render web service sleeps after ~15 min without inbound traffic, which
