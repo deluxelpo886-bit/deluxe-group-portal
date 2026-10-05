@@ -1932,7 +1932,7 @@
   "currentHoursDate": "2026-10-05",
   "nextService": 24007,
   "nextServiceDate": "2026-11-01",
-  "notes": "Serviced 05/10/2026 @ 23657h by IK & Jayvis (controller confirmed 23657h) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X). Next service 24007h per card (+350). NOTE: this 250 kVA unit was previously on a 450h interval; the card used 350 - confirm with ops head which interval to keep. ~13 h/day. Bright Accord, Al Jubail Island JS."
+  "notes": "Serviced 05/10/2026 @ 23657h by IK & Jayvis (controller confirmed 23657h) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X). Next service 24007h (+350). Interval CONFIRMED 350h: DG-802 is 100 kVA FG Wilson per Netsonic (SER2-000157) - portal kVA corrected from 250 to 100. ~13 h/day. Bright Accord, Al Jubail Island JS."
  },
  {
   "dg": "DG-803",
