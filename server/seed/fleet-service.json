@@ -2658,14 +2658,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 15.1,
+  "dailyHours": 11,
   "nextService": 6824,
-  "nextServiceDate": "2026-10-06",
+  "nextServiceDate": "2026-10-24",
   "interval": 350,
-  "fixedDays": 14,
   "currentHours": 6616,
   "currentHoursDate": "2026-10-05",
-  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513). Oil + oil + fuel filters done; AIR FILTER NOT done (card shows X - corrected from earlier record). Controller reading 6616h on 05/10 -> 208h left to the 6824h service. 24-HOUR USE -> kept on a fixed 14-DAY cycle: next 06/10/2026. Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
+  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513). Oil + oil + fuel filters done; AIR FILTER NOT done (card shows X). Controller 6616h on 05/10 -> 208h left to the 6824h service. Real running rate ~11 h/day (142h over 13 days), NOT 24h - so next service date recalculated from hours to ~24/10/2026 (was a premature 06/10 from a fixed 14-day cycle). Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
  },
  {
   "dg": "DG-467",
