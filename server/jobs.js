@@ -48,6 +48,10 @@ function add(rec) {
     location: clean(rec && rec.location),
     mapLink: clean(rec && rec.mapLink),
     note: clean(rec && rec.note),
+    // Optional scheduled/target date (YYYY-MM-DD) for a planned service that is
+    // not urgent today - shown on the technician card as "Due: ..." so he knows
+    // it is a planned visit, not a drop-everything job.
+    dueDate: (rec && /^\d{4}-\d\d-\d\d/.test(String(rec.dueDate || ''))) ? String(rec.dueDate).slice(0, 10) : '',
     parts: Array.isArray(rec && rec.parts) ? rec.parts.map((p) => ({
       en: clean(p.en), hi: clean(p.hi), qty: clean(p.qty),
     })).filter((p) => p.en) : [],
