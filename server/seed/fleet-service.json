@@ -1305,13 +1305,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 3.5,
+  "dailyHours": 6,
   "nextService": 8789,
-  "nextServiceDate": "2026-11-04",
+  "nextServiceDate": "2026-10-19",
   "interval": 350,
-  "currentHours": 8659,
-  "currentHoursDate": "2026-09-28",
-  "notes": "Serviced 28/07/2026 @ 8439h by Sonu Hussain (oil + oil & fuel filters; air filter NOT changed). Controller confirmed 8659h @ 28/09/2026 -> 130h left to the 8789h service. Very low use ~3.5 h/day (only 16h in the 11 days since 17/09) -> due ~04/11/2026. Khalifa Industrial City B, KIZAD."
+  "currentHours": 8703,
+  "currentHoursDate": "2026-10-05",
+  "notes": "Serviced 28/07/2026 @ 8439h by Sonu Hussain (oil + oil & fuel filters; air filter NOT changed). Controller reading 8703h on 05/10 (212 starts) -> only 86h left to the 8789h service, due ~19/10. ~6 h/day. Khalifa Industrial City B, KIZAD (OSAI)."
  },
  {
   "dg": "DG-817",
@@ -2657,13 +2657,15 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
   "dailyHours": 15.1,
   "nextService": 6824,
   "nextServiceDate": "2026-10-06",
   "interval": 350,
   "fixedDays": 14,
-  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513) - clears the 89h overdue. 24-HOUR USE -> kept on a fixed 14-DAY service cycle: next 06/10/2026 (22/09 + 14 days). Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
+  "currentHours": 6616,
+  "currentHoursDate": "2026-10-05",
+  "notes": "Serviced 22/09/2026 at 6474h by IK & Jayaraj (Netsonic SER1-000513). Oil + oil + fuel filters done; AIR FILTER NOT done (card shows X - corrected from earlier record). Controller reading 6616h on 05/10 -> 208h left to the 6824h service. 24-HOUR USE -> kept on a fixed 14-DAY cycle: next 06/10/2026. Six Sigma, KIZAD - KHIA 8. 100 kVA CAT."
  },
  {
   "dg": "DG-467",
