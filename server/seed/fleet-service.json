@@ -2404,13 +2404,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 13.17,
+  "dailyHours": 8.2,
   "nextService": 608,
-  "nextServiceDate": "2026-10-08",
-  "notes": "New genset - first service 22/08 at 158h (oil + all three filters). 450h running-in interval. Controller reading 349h on 18/09 -> 259h to next service (608). Yas Island YN7.",
+  "nextServiceDate": "2026-10-20",
+  "notes": "New genset - first service 22/08 at 158h (oil + all three filters). 450h running-in interval. Controller reading 488h on 05/10 (Sonu) -> 330h run since service, 120h left to next (608), ~8.2 h/day -> due ~20/10. Yas Island YN7.",
   "interval": 450,
-  "currentHours": 349,
-  "currentHoursDate": "2026-09-18"
+  "currentHours": 488,
+  "currentHoursDate": "2026-10-05"
  },
  {
   "dg": "DG-822",
