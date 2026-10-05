@@ -354,8 +354,18 @@ function applySeed(records, version) {
     if (cur && cur.source === 'manual' && !rebuilt.has(dg)) {
       const seedDate = String((r && r.date) || '').slice(0, 10);
       const curDate = String((cur && cur.date) || '').slice(0, 10);
-      // Keep the operator's manual entry unless this seed row is strictly newer.
-      if (!seedDate || curDate >= seedDate) { kept += 1; continue; }
+      const seedHrsDate = String((r && r.currentHoursDate) || '').slice(0, 10);
+      const curHrsDate = String((cur && cur.currentHoursDate) || '').slice(0, 10);
+      // The seed (office data) should win over a manual entry when it is fresher by
+      // EITHER measure: a newer service date, OR a newer confirmed hour-meter reading
+      // (currentHoursDate). The latter matters because a manual entry can be an old
+      // service with no reading, while the office has since logged a current meter -
+      // without this, that fresh reading would never land and the unit would show a
+      // stale (often false "overdue") estimate date on the service plan.
+      const seedServiceNewer = seedDate && curDate < seedDate;
+      const seedReadingNewer = seedHrsDate && (!curHrsDate || curHrsDate < seedHrsDate);
+      // Keep the operator's manual entry only when the seed brings nothing fresher.
+      if (!seedServiceNewer && !seedReadingNewer) { kept += 1; continue; }
     }
     if (store[dg] && !rebuilt.has(dg)) { delete store[dg]; rebuilt.add(dg); }
     try { logService(Object.assign({}, r, { source: 'seed' })); n += 1; } catch (_) { /* skip an unparseable row */ }
