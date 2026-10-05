@@ -519,9 +519,9 @@
   "nextService": 14474,
   "nextServiceDate": "2026-10-12",
   "interval": 350,
-  "currentHours": 14278,
-  "currentHoursDate": "2026-09-18",
-  "notes": "Controller reading 14278h on 18/09. Next service scheduled 12/10/2026 (office). Low use (~1.4 h/day since the 30/05 service). Mushayrif U32, Ramah."
+  "currentHours": 14294,
+  "currentHoursDate": "2026-10-05",
+  "notes": "Controller reading 14294h on 05/10 -> 180h to next service (14474). Very low use (~1 h/day: only 16h added 18/09 to 05/10), so not due for a long time despite the 12/10 office date. Mushayrif U32, Ramah."
  },
  {
   "dg": "DG-490",
@@ -1607,18 +1607,20 @@
  },
  {
   "dg": "DG-858",
-  "hours": 16350,
+  "hours": 16358,
   "date": "2026-09-18",
   "technician": "IK&JAGRAJ",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 15.2,
+  "dailyHours": 10,
   "nextService": 16800,
-  "nextServiceDate": "2026-10-18",
+  "nextServiceDate": "2026-11-01",
   "interval": 450,
-  "notes": "Serviced 18/09/2026 at 16350h by IK & Jagraj (oil + oil filter + fuel filter; air filter NOT). Next service 16800h, projected ~18/10. Mushayrif U32, Ramah."
+  "currentHours": 16528,
+  "currentHoursDate": "2026-10-05",
+  "notes": "Serviced 18/09/2026 @ 16358h by IK & Jagraj (oil + oil filter + fuel filter; AIR FILTER NOT done). Next service 16800h. Controller reading 16528h on 05/10 -> 272h to next, ~10 h/day. Mushayrif U32, Ramah."
  },
  {
   "dg": "DG-500",
