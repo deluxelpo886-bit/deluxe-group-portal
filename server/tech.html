@@ -357,11 +357,13 @@
     return '<div class="job '+T.cls+'" data-open="'+esc(j.id)+'"><div class="tagrow"><div class="type">'+T.ic+' '+T.en+' · '+T.hi+' · <span class="ur">'+T.ur+'</span></div>'+stx+'</div>'+
       '<div class="dg">'+esc(j.dg||'—')+(j.kva?' <small>'+esc(j.kva)+' kVA</small>':'')+'</div>'+
       (j.title?'<div class="task">'+esc(j.title)+'</div>':'')+(j.location?'<div class="loc">📍 '+esc(j.location)+'</div>':'')+
+      (j.dueDate?'<div class="loc" style="color:#f0b48c;">📅 Due · तारीख · <span class="ur">تاریخ</span>: '+esc(j.dueDate)+'</div>':'')+
       '<div class="go2">Open · खोलें · <span class="ur">کھولیں</span></div></div>';
   }
   function renderDetail(j){ openId=j.id; var T=TYPE[tkey(j.type)]; var si=stepIndex(j.status);
     var html='<div class="back" onclick="goList()">‹ Back · वापस</div>'+
       '<div class="banner '+T.cls+'"><div class="bdg">'+T.ic+' '+T.en.toUpperCase()+' · '+T.hi+' · <span class="ur">'+T.ur+'</span></div><div class="dg">'+esc(j.dg||'—')+'</div>'+(j.title?'<div class="task">'+esc(j.title)+'</div>':'')+'</div>'+
+      (j.dueDate?'<div class="note">📅 Scheduled service — Due '+esc(j.dueDate)+'<br>तय तारीख · <span class="ur">طے شدہ سروس کی تاریخ</span></div>':'')+
       '<div class="two">'+
         '<a class="act map" href="'+(j.mapLink?esc(j.mapLink):('https://www.google.com/maps/search/'+encodeURIComponent(j.location||j.dg||'')))+'" target="_blank" rel="noopener"><span class="ic">🧭</span>Navigate<span class="hi">रास्ता देखें</span><span class="u">راستہ دیکھیں</span></a>'+
         '<a class="act call" href="tel:0553356428"><span class="ic">📞</span>Call office<span class="hi">ऑफिस कॉल</span><span class="u">آفس کو کال</span></a></div>'+
