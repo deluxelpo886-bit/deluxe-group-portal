@@ -75,5 +75,12 @@
   "note": "City Construction, RUWAIS - at DG-860's NEXT SERVICE (18575h / 19-10-2026) we need to GIVE the agreed AMOUNT to the customer. 400 kVA. (Fill in the exact figure.)",
   "dueDate": "2026-10-19",
   "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-847-offhire-october-2026-10",
+  "dg": "DG-847",
+  "note": "DG-847 (375 kVA) OFF-HIRE expected in OCTOBER - FANTASTIC, Musaffah M40 (near Lucky Choice Baqala). Confirm the exact off-hire date with the customer / Netsonic, then off-hire it and arrange collection back to the yard.",
+  "dueDate": "2026-10-25",
+  "createdBy": "Operations Head"
  }
 ]
