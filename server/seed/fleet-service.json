@@ -3163,17 +3163,19 @@
  {
   "dg": "DG-866",
   "hours": 0,
-  "date": "2026-09-09",
+  "date": "2026-10-06",
   "technician": "WORKSHOP",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 0,
-  "nextService": 450,
-  "nextServiceDate": null,
-  "interval": 450,
-  "notes": "In yard (workshop) - available. Confirm hours before it goes back on hire."
+  "dailyHours": 12,
+  "nextService": 350,
+  "nextServiceDate": "2026-11-04",
+  "interval": 350,
+  "currentHours": 0,
+  "currentHoursDate": "2026-10-06",
+  "notes": "Deployed 06/10 from yard to NOOR AL SHAHRA (Al Faya), replacing DG-836. Hour meter ZERO at deployment. First service at 350h (+350, per ops head), assuming ~12 h/day -> due ~04/11/2026. 380 kVA. Send a controller reading as it runs to confirm the exact due date."
  },
  {
   "dg": "DG-430",
