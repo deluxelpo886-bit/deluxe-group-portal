@@ -1276,16 +1276,20 @@
  },
  {
   "dg": "DG-852",
-  "hours": 2719,
-  "date": "2026-09-02",
-  "technician": "SONU&HUSSAIN",
+  "hours": 3042,
+  "date": "2026-10-06",
+  "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "nextService": 3069,
-  "nextServiceDate": "2026-10-08",
-  "interval": 350
+  "nextService": 3392,
+  "nextServiceDate": "2026-11-12",
+  "interval": 350,
+  "dailyHours": 9.5,
+  "currentHours": 3042,
+  "currentHoursDate": "2026-10-06",
+  "notes": "Serviced 06/10/2026 @ 3042h by Sonu Hussain - oil, oil filter, fuel filter AND air filter all done. Next service 3392h (+350). ~9.5 h/day. 40 kVA, Six Sigma, Dubai Jumeirah 1 (La Mer)."
  },
  {
   "dg": "DG-505",
@@ -2242,10 +2246,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "dailyHours": 13.6,
   "nextService": 6628,
-  "nextServiceDate": "2026-10-27",
+  "nextServiceDate": "2026-10-25",
   "interval": 450,
-  "notes": "Serviced 22/09/2026 at 6178h by IK & Jayaraj (oil + oil filter + fuel filter; air filter NOT). Next service 6628h. Controller: 1528 RPM, 28.1V, 41C, running normal. 375 kVA Weichai, Al Farjhan, Al Rahah."
+  "currentHours": 6368,
+  "currentHoursDate": "2026-10-06",
+  "notes": "Serviced 22/09/2026 at 6178h by IK & Jayaraj (oil + oil filter + fuel filter; AIR FILTER NOT done). Next service 6628h. Controller (Caolei) RunHours 6368h on 06/10 (1708 starts, 371129 kWh, running normal) -> 260h to next, ~13.6 h/day -> due ~25/10. 375 kVA Weichai, Al Farjhan, Al Rahah."
  },
  {
   "dg": "DG-548",
@@ -2736,19 +2743,19 @@
  },
  {
   "dg": "DG-505",
-  "hours": 17884,
-  "date": "2026-08-31",
-  "technician": "LK/JAYARAJ",
+  "hours": 18164,
+  "date": "2026-10-06",
+  "technician": "ADEEL",
   "oil": true,
   "oilFilter": true,
-  "fuelFilter": false,
-  "airFilter": false,
-  "nextService": 18234,
-  "nextServiceDate": "2026-11-05",
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 18514,
+  "nextServiceDate": "2026-11-20",
   "interval": 350,
   "currentHours": 18164,
   "currentHoursDate": "2026-10-06",
-  "notes": "Controller 18164h on 06/10 -> 70h to next service (18234). BARELY RUNNING: only 10h in the 17 days since 19/09 (status Breakdown) - not due while down. Trojan, Al Reem RT8 (same site as DG-835 & DG-819)."
+  "notes": "Serviced 06/10/2026 @ 18164h by Adeel - oil, oil filter, fuel filter AND air filter all done. Next service 18514h (+350). Back running normally (was flagged Breakdown; now running). 40 kVA, Trojan, Al Reem RT8."
  },
  {
   "dg": "DG-450",
