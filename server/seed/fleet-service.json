@@ -1250,16 +1250,20 @@
  },
  {
   "dg": "DG-489",
-  "hours": 6564,
-  "date": "2026-09-02",
-  "technician": "SONU&HUSSAIN",
+  "hours": 6878,
+  "date": "2026-10-06",
+  "technician": "SONU HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
-  "nextService": 6914,
-  "nextServiceDate": "2026-10-01",
-  "interval": 350
+  "airFilter": false,
+  "nextService": 7228,
+  "nextServiceDate": "2026-11-13",
+  "interval": 350,
+  "dailyHours": 9.2,
+  "currentHours": 6878,
+  "currentHoursDate": "2026-10-06",
+  "notes": "Serviced 06/10/2026 @ 6878h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (box blank). Next service 7228h (+350). ~9.2 h/day. 25 kVA Weber, Six Sigma, Dubai Jumeirah 1 (La Mer)."
  },
  {
   "dg": "DG-852",
