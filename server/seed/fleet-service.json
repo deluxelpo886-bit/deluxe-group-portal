@@ -375,7 +375,9 @@
   "dailyHours": 19.2,
   "nextService": 5089,
   "nextServiceDate": "2026-10-07",
-  "notes": "Serviced 19/09/2026 at 4739h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT). Next service 5089h. Heavy use ~19 h/day. Joseph Industries, Dubai (JVC).",
+  "currentHours": 5074,
+  "currentHoursDate": "2026-10-06",
+  "notes": "Serviced 19/09/2026 at 4739h by Sonu & Hussain (oil + oil filter + fuel filter; AIR FILTER NOT done). Next service 5089h. Controller 5074h on 06/10 -> only 15h left, DUE ~07/10. Heavy use ~19.7 h/day. Joseph Industries, Dubai (JVC).",
   "interval": 350
  },
  {
