@@ -89,5 +89,12 @@
   "note": "OFF-HIRE DG-459 (62.5 kVA) TOMORROW 07/10 - COVER GENERAL, ICAD. Off-hire in Netsonic + portal, note the meter reading, and arrange collection back to the yard.",
   "dueDate": "2026-10-07",
   "createdBy": "Operations Head"
+ },
+ {
+  "key": "DG-459-collect-offhire-2026-10-09",
+  "dg": "DG-459",
+  "note": "DG-459 (62.5 kVA) off-hired ~07/10 - CONFIRM COLLECTED. Check the truck picked it up from COVER GENERAL (ICAD) and it reached the yard; if still there, chase the pickup.",
+  "dueDate": "2026-10-09",
+  "createdBy": "Operations Head"
  }
 ]
