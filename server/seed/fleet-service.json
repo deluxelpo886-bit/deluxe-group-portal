@@ -2744,11 +2744,11 @@
   "fuelFilter": false,
   "airFilter": false,
   "nextService": 18234,
-  "nextServiceDate": "2026-10-04",
+  "nextServiceDate": "2026-11-05",
   "interval": 350,
-  "currentHours": 18154,
-  "currentHoursDate": "2026-09-19",
-  "notes": "Controller 18154h on 19/09 -> 80h to next service (18234). Next date ~04/10 (office). Trojan, Al Reem RT8 (same site as DG-835 & DG-819)."
+  "currentHours": 18164,
+  "currentHoursDate": "2026-10-06",
+  "notes": "Controller 18164h on 06/10 -> 70h to next service (18234). BARELY RUNNING: only 10h in the 17 days since 19/09 (status Breakdown) - not due while down. Trojan, Al Reem RT8 (same site as DG-835 & DG-819)."
  },
  {
   "dg": "DG-450",
