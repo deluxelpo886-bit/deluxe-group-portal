@@ -1496,7 +1496,7 @@ refreshAll();
   ov.addEventListener('click', function(e){ if(e.target && e.target.id==='loginBtn') doLogin(); });
   ov.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
 
-  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='none'; if(typeof reportBtn!=='undefined' && reportBtn) reportBtn.style.display='none'; showLogin('Signed out.'); }
+  function logout(){ TOKEN=''; localStorage.removeItem(LS_KEY); polling=false; if(typeof trailsBtn!=='undefined' && trailsBtn) trailsBtn.style.display='none'; if(typeof reportBtn!=='undefined' && reportBtn) reportBtn.style.display='none'; fetch('/api/fleet/logout',{method:'POST'}).catch(function(){}).then(function(){ location.reload(); }); }
   // Visible "Sign out" button, fixed at the top-right. Hidden while the login screen is showing.
   var signOutBtn = document.createElement('button');
   signOutBtn.id='fleetSignOut';
