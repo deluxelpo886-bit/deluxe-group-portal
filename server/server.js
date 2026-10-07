@@ -217,6 +217,20 @@ try {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Gzip every response. The map and dashboard HTML are large (fleet.html is
+// ~460 KB of inline data + script); gzip shrinks that ~6x so the page fully
+// downloads - and its closing <script> actually runs - even on a very slow
+// site connection (the cause of the map page loading its header but never its
+// map). Registered first so it also compresses static files. Wrapped in a
+// try/catch so a missing dependency degrades to uncompressed, never a crash.
+try {
+  const compression = require('compression');
+  app.use(compression());
+  console.log('[http] gzip compression enabled');
+} catch (e) {
+  console.warn('[http] compression unavailable - serving uncompressed:', e.message);
+}
 // JWT signing secret. It MUST come from the environment - the old hardcoded
 // fallback was public in the repo, so anyone could forge admin tokens. If it's
 // missing (or still the placeholder), generate a strong random secret at
@@ -251,7 +265,7 @@ app.use(helmet({
     useDefaults: true,
     directives: {
       scriptSrc: ["'self'", INLINE_SCRIPT_HASH, 'https://cdn.jsdelivr.net'],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
       imgSrc: ["'self'", 'data:'],
       fontSrc: ["'self'", 'data:'],
       connectSrc: ["'self'", 'https://api.emailjs.com'],
