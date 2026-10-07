@@ -3168,11 +3168,10 @@
   "airFilter": false,
   "dailyHours": 14.6,
   "nextService": 400,
-  "nextServiceDate": "2026-10-09",
+  "nextServiceDate": "2026-10-25",
+  "fixedDays": 39,
   "interval": 350,
-  "currentHours": 262,
-  "currentHoursDate": "2026-09-30",
-  "notes": "New unit (from 12/09/2026 @ 0h). Break-in (running-in) service done at 50h by Aadil Hussain - oil, oil filter, fuel filter changed; AIR FILTER NOT done (pending). Next service 400h (50+350 cycle). Controller confirmed 262h on 30/09/2026 -> ~14.6 h/day (heavy - weddings/events), 138h left to next, due ~09/10. 125 kVA Kirlosker, Malik Al Ghabah Weddings, Madinat Zayed."
+  "notes": "New unit (from 12/09/2026 @ 0h). Break-in (running-in) service done at 50h by Aadil Hussain - oil, oil filter, fuel filter changed; AIR FILTER NOT done (pending). NEXT SERVICE DATE PINNED TO 25/10/2026 by ops head (fixedDays=39 from the 16/09 service, overriding the heavy-use hours projection that otherwise landed ~09/10). Last controller reading 262h on 30/09/2026 (~14.6 h/day, heavy - weddings/events). 125 kVA Kirlosker, Malik Al Ghabah Weddings, Madinat Zayed Shopping Centre."
  },
  {
   "dg": "DG-561",
