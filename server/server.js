@@ -723,6 +723,30 @@ function setFleetCookie(req, res, token) {
   });
 }
 
+// ---------- Fleet page gating (serve the map's data only to signed-in users) ----------
+// The fleet map used to be served to anyone with the link, with the generator
+// data embedded in the page - so a visitor could read it from "view source"
+// without logging in. Now the page itself is gated: a request with a valid
+// fleet session COOKIE gets the real page; everyone else gets a small sign-in
+// page that contains no fleet data. Escape hatch: set FLEET_PAGE_OPEN=1 to
+// serve the old open page (so a gating bug can never permanently lock you out).
+const FLEET_PAGE_OPEN = /^(1|true|on|yes)$/i.test(String(process.env.FLEET_PAGE_OPEN || '').trim());
+const FLEET_COOKIE = 'fleet_tok';
+function readCookie(req, name) {
+  const h = req.headers.cookie || '';
+  const m = h.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+function fleetAuthed(req) {
+  try { jwt.verify(readCookie(req, FLEET_COOKIE), FLEET_SECRET); return true; } catch (_) { return false; }
+}
+function setFleetCookie(req, res, token) {
+  res.cookie(FLEET_COOKIE, token, {
+    httpOnly: true, sameSite: 'lax', secure: !!req.secure, path: '/',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+}
+
 app.post('/api/fleet/login', loginLimiter, (req, res) => {
   const email = String((req.body && req.body.email) || '').trim().toLowerCase();
   const password = String((req.body && req.body.password) || '');
