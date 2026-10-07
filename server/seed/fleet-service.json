@@ -3050,9 +3050,10 @@
   "nextService": 23958,
   "nextServiceDate": "2026-10-11",
   "interval": 350,
-  "currentHours": 23787,
-  "currentHoursDate": "2026-09-26",
-  "notes": "Serviced 09/09 at 23608h (oil + oil filter + fuel filter; air filter NOT). Controller meter confirmed 23787h on 26/09/2026 (5985 starts) -> 171h left to next (23958), ~10.5 h/day, due ~12/10. Al Nahyan (E25), Six Sigma. 100 kVA Weber."
+  "currentHours": 23893,
+  "currentHoursDate": "2026-10-07",
+  "dailyHours": 9.6,
+  "notes": "Serviced 09/09 at 23608h (oil + oil filter + fuel filter; air filter NOT). Controller meter confirmed 23893h on 07/10/2026 (6020 starts) -> 65h left to next (23958), ~9.6 h/day, due ~14/10. Al Nahyan (E25), Six Sigma. 100 kVA Weber."
  },
  {
   "dg": "DG-548",
