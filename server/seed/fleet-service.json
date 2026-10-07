@@ -472,13 +472,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 1.19,
-  "currentHours": 11086,
-  "currentHoursDate": "2026-09-25",
+  "dailyHours": 4.7,
+  "currentHours": 11142,
+  "currentHoursDate": "2026-10-07",
   "nextService": 11270,
   "nextServiceDate": "2026-10-18",
   "interval": 350,
-  "notes": "Service card: serviced 10920h (oil, oil filter, fuel filter; air filter not changed), next 11270h on a 350h cycle (card written by tech). Controller meter confirmed 11086h on 25/09/2026 -> 184h left. VERY LOW USE ~1.2 h/day (standby, NOV Mussafah). Note: card uses a 350h interval although this is a 250 kVA unit (rule default is 450h) - kept to the card. 250 kVA Kirlosker."
+  "notes": "Service card: serviced 10920h (oil, oil filter, fuel filter; air filter not changed), next 11270h on a 350h cycle (card written by tech). Controller meter confirmed 11142h on 07/10/2026 -> 128h left. Usage ~4.7 h/day over the last 12 days (up from ~1.2). Note: card uses a 350h interval although this is a 250 kVA unit (rule default is 450h) - kept to the card. 250 kVA Kirlosker. (Controller marked 'DG473' in paint but owner confirms this reading is DG-480.)"
  },
  {
   "dg": "DG-847",
