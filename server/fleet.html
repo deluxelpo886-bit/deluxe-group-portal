@@ -13,6 +13,10 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/vendor/leaflet.css"/>
 <script src="/vendor/leaflet.js"></script>
+<!-- If the vendored Leaflet fails to download (e.g. a very slow connection or a
+     half-finished deploy), pull it from a public CDN before the page script runs,
+     so the map engine is always available and the page never blanks out. -->
+<script>window.L||document.write('<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><scr'+'ipt src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/scr'+'ipt>');</script>
 <style>
   :root{
     --bg:#14181c; --panel:#1c2126; --panel2:#20262c; --line:#2c333a;
