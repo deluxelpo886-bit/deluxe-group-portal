@@ -690,26 +690,100 @@ const FLEET_EMAIL = (process.env.FLEET_LOGIN_EMAIL || 'deluxeoperationhead').tri
 const FLEET_PASSWORD = process.env.FLEET_LOGIN_PASSWORD || 'Deluxe123';
 const FLEET_SECRET = process.env.JWT_SECRET || 'deluxe-fleet-dev-secret-change-me';
 
+// ---------- Fleet page gating (serve the map's data only to signed-in users) ----------
+// The fleet map used to be served to anyone with the link, with the generator
+// data embedded in the page - so a visitor could read it from "view source"
+// without logging in. Now the page itself is gated: a request with a valid
+// fleet session COOKIE gets the real page; everyone else gets a small sign-in
+// page that contains no fleet data. Escape hatch: set FLEET_PAGE_OPEN=1 to
+// serve the old open page (so a gating bug can never permanently lock you out).
+const FLEET_PAGE_OPEN = /^(1|true|on|yes)$/i.test(String(process.env.FLEET_PAGE_OPEN || '').trim());
+const FLEET_COOKIE = 'fleet_tok';
+function readCookie(req, name) {
+  const h = req.headers.cookie || '';
+  const m = h.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+function fleetAuthed(req) {
+  try { jwt.verify(readCookie(req, FLEET_COOKIE), FLEET_SECRET); return true; } catch (_) { return false; }
+}
+function setFleetCookie(req, res, token) {
+  res.cookie(FLEET_COOKIE, token, {
+    httpOnly: true, sameSite: 'lax', secure: !!req.secure, path: '/',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+}
+
 app.post('/api/fleet/login', loginLimiter, (req, res) => {
   const email = String((req.body && req.body.email) || '').trim().toLowerCase();
   const password = String((req.body && req.body.password) || '');
   if (email === FLEET_EMAIL && password === FLEET_PASSWORD) {
     const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+    setFleetCookie(req, res, token);
     return res.json({ token });
   }
   return res.status(401).json({ error: 'Wrong email or password' });
 });
 
-// Require a valid fleet login token (sent as "Authorization: Bearer <token>").
+// Silent upgrade: a visitor who still has a valid Bearer token in localStorage
+// (from before page-gating) can exchange it for the session cookie without
+// re-typing the password.
+app.post('/api/fleet/session', (req, res) => {
+  const auth = req.get('authorization') || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  try { jwt.verify(token, FLEET_SECRET); setFleetCookie(req, res, token); return res.json({ ok: true }); }
+  catch (_) { return res.status(401).json({ error: 'invalid token' }); }
+});
+
+// Full sign-out: clear the session cookie so the next page load shows sign-in.
+app.post('/api/fleet/logout', (req, res) => {
+  res.clearCookie(FLEET_COOKIE, { path: '/' });
+  res.json({ ok: true });
+});
+
+// Require a valid fleet login token (Bearer header, ?token=, or the cookie).
 function fleetProtect(req, res, next) {
   const auth = req.get('authorization') || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || '');
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || readCookie(req, FLEET_COOKIE) || '');
   try {
     jwt.verify(token, FLEET_SECRET);
     return next();
   } catch (_) {
     return res.status(401).json({ error: 'login required' });
   }
+}
+
+// The standalone sign-in page served when the fleet map is locked and the
+// visitor has no valid session. Contains NO fleet data.
+function fleetLoginPageHtml() {
+  return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+    + '<meta name="viewport" content="width=device-width, initial-scale=1">'
+    + '<title>Deluxe Fleet — Sign in</title><style>'
+    + '*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;'
+    + 'background:#14181c;color:#e8ecef;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:20px}'
+    + '.card{width:360px;max-width:100%;background:#1c2126;border:1px solid #2c333a;border-radius:14px;padding:28px}'
+    + '.k{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#e8a13a;margin-bottom:8px}'
+    + 'h1{margin:0 0 4px;font-size:20px}p.sub{margin:0 0 20px;color:#8b95a1;font-size:13px}'
+    + 'label{display:block;font-size:11px;color:#8b95a1;text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px}'
+    + 'input{width:100%;background:#20262c;border:1px solid #2c333a;color:#e8ecef;padding:11px 13px;border-radius:8px;font-size:14px;margin-bottom:14px;outline:none}'
+    + '#err{color:#e0644a;font-size:12.5px;min-height:18px;margin-bottom:10px}'
+    + 'button{width:100%;background:#e8a13a;color:#1a1300;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}'
+    + '</style></head><body><div class="card">'
+    + '<div class="k">Deluxe Operations</div><h1>Fleet &amp; Dispatch</h1>'
+    + '<p class="sub">Sign in to view the fleet map and live dispatch.</p>'
+    + '<label>Email</label><input id="e" type="text" autocomplete="username" placeholder="deluxeoperationhead">'
+    + '<label>Password</label><input id="p" type="password" autocomplete="current-password" placeholder="Password">'
+    + '<div id="err"></div><button id="b">Sign in</button></div><script>'
+    + 'var E=document.getElementById("e"),P=document.getElementById("p"),B=document.getElementById("b"),X=document.getElementById("err");'
+    + 'try{var t=localStorage.getItem("deluxeFleetToken");if(t){fetch("/api/fleet/session",{method:"POST",headers:{Authorization:"Bearer "+t}}).then(function(r){if(r.ok)location.reload();});}}catch(e){}'
+    + 'function go(){X.textContent="";B.disabled=true;B.textContent="Signing in...";'
+    + 'fetch("/api/fleet/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:E.value.trim(),password:P.value})})'
+    + '.then(function(r){return r.json().then(function(b){return{ok:r.ok,b:b};});})'
+    + '.then(function(res){if(!res.ok){X.textContent=res.b.error||"Wrong email or password";B.disabled=false;B.textContent="Sign in";return;}'
+    + 'try{localStorage.setItem("deluxeFleetToken",res.b.token);}catch(e){}location.reload();})'
+    + '.catch(function(){X.textContent="Could not reach the server";B.disabled=false;B.textContent="Sign in";});}'
+    + 'B.addEventListener("click",go);P.addEventListener("keydown",function(e){if(e.key==="Enter")go();});E.focus();'
+    + '</script></body></html>';
 }
 
 app.get('/api/positions', fleetProtect, (req, res) => {
@@ -2109,8 +2183,8 @@ app.get('/fleet', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; "
-      + "script-src 'self' 'unsafe-inline' https://unpkg.com; "
-      + "style-src 'self' 'unsafe-inline' https://unpkg.com; "
+      + "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; "
+      + "style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; "
       + "img-src 'self' data: https:; "
       + "connect-src 'self' https://router.project-osrm.org; "
       + "font-src 'self' data:; "
@@ -2118,6 +2192,10 @@ app.get('/fleet', (req, res) => {
       + "worker-src 'self';"
   );
   res.set('Cache-Control', 'no-cache');
+  // Locked: without a valid fleet session, serve the sign-in page (no data).
+  if (!FLEET_PAGE_OPEN && !fleetAuthed(req)) {
+    return res.type('html').send(fleetLoginPageHtml());
+  }
   res.sendFile(path.join(__dirname, 'fleet.html'), { cacheControl: false });
 });
 
