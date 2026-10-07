@@ -242,6 +242,15 @@ if (!JWT_SECRET || JWT_SECRET === 'CHANGE_THIS_SECRET_BEFORE_DEPLOYING') {
   console.warn('[SECURITY] JWT_SECRET is not set (or is the placeholder). Generated a random secret for this run. ' +
     'Set a strong JWT_SECRET environment variable so login sessions survive restarts and cannot be forged.');
 }
+
+// Global sign-out lever. Every portal and fleet login token is signed with the
+// secret PLUS this salt, so bumping the salt (or setting SESSION_SALT in the
+// env to a new value) instantly invalidates ALL existing sessions and forces
+// everyone to sign in again on the next deploy. Bumped 2026-10-07 to sign all
+// current logins out at the owner's request.
+const SESSION_SALT = (process.env.SESSION_SALT || '2026-10-07-signout-1').trim();
+JWT_SECRET = JWT_SECRET + '|' + SESSION_SALT;
+
 const VALID_COMPANIES = ['energy', 'heavy'];
 
 // ---------- Login OTP (email one-time code) ----------
@@ -688,7 +697,7 @@ app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISO
 // to change it for real use.
 const FLEET_EMAIL = (process.env.FLEET_LOGIN_EMAIL || 'deluxeoperationhead').trim().toLowerCase();
 const FLEET_PASSWORD = process.env.FLEET_LOGIN_PASSWORD || 'Deluxe123';
-const FLEET_SECRET = process.env.JWT_SECRET || 'deluxe-fleet-dev-secret-change-me';
+const FLEET_SECRET = (process.env.JWT_SECRET || 'deluxe-fleet-dev-secret-change-me') + '|' + SESSION_SALT;
 
 // ---------- Fleet page gating (serve the map's data only to signed-in users) ----------
 // The fleet map used to be served to anyone with the link, with the generator
