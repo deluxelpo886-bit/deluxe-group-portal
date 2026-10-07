@@ -231,10 +231,19 @@ body.dark #calDetails .calItm{border-color:var(--border);}
     </div>
     <h2>DELUXE GROUP</h2>
     <p>Unified Business Management Portal</p>
-    <input type="text" id="lu" placeholder="Username" autocomplete="off"/>
-    <input type="password" id="lp" placeholder="Password"/>
-    <button id="loginBtn">Sign In</button>
-    <div class="loginErr" id="lErr">Invalid username or password</div>
+    <div id="credStep">
+      <input type="text" id="lu" placeholder="Username" autocomplete="off"/>
+      <input type="password" id="lp" placeholder="Password"/>
+      <button id="loginBtn">Sign In</button>
+      <div class="loginErr" id="lErr">Invalid username or password</div>
+    </div>
+    <div id="otpStep" style="display:none;">
+      <p id="otpMsg" style="font-size:13.5px;color:#cbd5e1;margin:0 0 12px;line-height:1.5;">We emailed a 6-digit code to <b id="otpTo"></b>. Enter it to finish signing in.</p>
+      <input type="text" id="lotp" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code" style="letter-spacing:6px;text-align:center;font-size:20px;"/>
+      <button id="otpBtn">Verify &amp; Sign In</button>
+      <div class="loginErr" id="otpErr"></div>
+      <div id="otpBack" style="margin-top:12px;font-size:13px;color:#9fb6d6;cursor:pointer;text-align:center;">&larr; Back to sign in</div>
+    </div>
   </div>
 </div>
 
@@ -918,6 +927,35 @@ function backToCompanySelect(){
   document.getElementById('companySelect').classList.add('open');
 }
 
+var otpPendingId = null;
+
+function finishLogin(body){
+  authToken = body.token;
+  try{ localStorage.setItem('dlxgrp_token', authToken); }catch(e){}
+  currentUser = body.username; isAdminUser = !!body.isAdmin; applyUserAdminUI();
+  otpPendingId = null;
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('credStep').style.display = 'block';
+  document.getElementById('otpStep').style.display = 'none';
+  document.getElementById('lotp').value = '';
+  document.getElementById('companySelect').classList.add('open');
+}
+
+function showOtpStep(sentTo){
+  document.getElementById('credStep').style.display = 'none';
+  document.getElementById('otpStep').style.display = 'block';
+  document.getElementById('otpTo').textContent = sentTo || 'your email';
+  document.getElementById('otpErr').style.display = 'none';
+  var f = document.getElementById('lotp'); f.value = ''; f.focus();
+}
+
+function backToCred(){
+  otpPendingId = null;
+  document.getElementById('otpStep').style.display = 'none';
+  document.getElementById('credStep').style.display = 'block';
+  document.getElementById('lErr').style.display = 'none';
+}
+
 function doLogin(){
   var u = document.getElementById('lu').value.trim();
   var p = document.getElementById('lp').value.trim();
@@ -933,17 +971,44 @@ function doLogin(){
         errEl.style.display = 'block';
         return;
       }
-      authToken = res.body.token;
-      try{ localStorage.setItem('dlxgrp_token', authToken); }catch(e){}
-      currentUser = res.body.username; isAdminUser = !!res.body.isAdmin; applyUserAdminUI();
-      document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('companySelect').classList.add('open');
+      if(res.body.otpRequired){
+        otpPendingId = res.body.pendingId;
+        showOtpStep(res.body.sentTo);
+        return;
+      }
+      finishLogin(res.body);
     })
     .catch(function(){
       errEl.textContent = 'Could not reach the server - check your connection';
       errEl.style.display = 'block';
     })
     .then(function(){ btn.disabled = false; btn.textContent = 'Sign In'; });
+}
+
+function verifyOtp(){
+  var code = document.getElementById('lotp').value.trim();
+  var btn = document.getElementById('otpBtn');
+  var errEl = document.getElementById('otpErr');
+  errEl.style.display = 'none';
+  if(!/^[0-9]{6}$/.test(code)){ errEl.textContent = 'Enter the 6-digit code.'; errEl.style.display = 'block'; return; }
+  if(!otpPendingId){ errEl.textContent = 'Session expired - go back and sign in again.'; errEl.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Verifying...';
+  fetch(API_BASE+'/api/login/verify', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pendingId:otpPendingId, code:code}) })
+    .then(function(r){ return r.json().then(function(body){ return {ok:r.ok, body:body}; }); })
+    .then(function(res){
+      if(!res.ok){
+        errEl.textContent = res.body.error || 'Incorrect code';
+        errEl.style.display = 'block';
+        if(/sign in again|expired/i.test(res.body.error||'')) backToCred();
+        return;
+      }
+      finishLogin(res.body);
+    })
+    .catch(function(){
+      errEl.textContent = 'Could not reach the server - check your connection';
+      errEl.style.display = 'block';
+    })
+    .then(function(){ btn.disabled = false; btn.textContent = 'Verify & Sign In'; });
 }
 
 function doLogout(){
@@ -957,6 +1022,9 @@ function doLogout(){
   document.getElementById('loginPage').style.display = 'flex';
   document.getElementById('lu').value = '';
   document.getElementById('lp').value = '';
+  otpPendingId = null;
+  var cs = document.getElementById('credStep'); if(cs) cs.style.display = 'block';
+  var os = document.getElementById('otpStep'); if(os) os.style.display = 'none';
 }
 function handleAuthExpired(){
   toast('danger','Your session expired - please sign in again');
@@ -2758,6 +2826,9 @@ window.addEventListener('DOMContentLoaded', function(){
   document.getElementById('loginBtn').addEventListener('click', doLogin);
   document.getElementById('lu').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
   document.getElementById('lp').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+  document.getElementById('otpBtn').addEventListener('click', verifyOtp);
+  document.getElementById('lotp').addEventListener('keydown', function(e){ if(e.key==='Enter') verifyOtp(); });
+  document.getElementById('otpBack').addEventListener('click', backToCred);
   document.getElementById('logoutBtn').addEventListener('click', doLogout);
   document.getElementById('switchCoBtn').addEventListener('click', backToCompanySelect);
   document.getElementById('cs-energy').addEventListener('click', function(){ selectCompany('energy'); });

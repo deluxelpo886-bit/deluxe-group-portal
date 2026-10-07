@@ -34,7 +34,7 @@ const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAd
 const { extractFields, extractServiceCard } = require('./extract');
 const { diagnosePanel } = require('./diagnose');
 const { sendWhatsApp } = require('./whatsapp');
-const { sendEmail } = require('./email');
+const { sendEmail, isConfigured: emailConfigured } = require('./email');
 const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
 const positions = require('./positions');
@@ -244,6 +244,29 @@ if (!JWT_SECRET || JWT_SECRET === 'CHANGE_THIS_SECRET_BEFORE_DEPLOYING') {
 }
 const VALID_COMPANIES = ['energy', 'heavy'];
 
+// ---------- Login OTP (email one-time code) ----------
+// When turned on, a correct username+password does NOT log you in directly:
+// the server emails a 6-digit code to a fixed address (sales@deluxehe.com by
+// default) and the login is only completed once that code is entered. This is
+// a second factor on top of the password.
+//
+// FAIL-SAFE BY DESIGN - it can never lock you out:
+//   * It is OFF unless LOGIN_OTP is explicitly enabled AND email (SMTP) is
+//     configured. Deploying this code changes nothing until you opt in.
+//   * To turn it on in Render: set SMTP_HOST/SMTP_USER/SMTP_PASS (so mail can
+//     be sent) and LOGIN_OTP=on. Optionally LOGIN_OTP_EMAIL to change the
+//     address the codes go to.
+//   * To turn it off again (e.g. if email ever fails): remove LOGIN_OTP.
+const OTP_EMAIL = (process.env.LOGIN_OTP_EMAIL || 'sales@deluxehe.com').trim();
+const OTP_FLAG_ON = /^(1|true|on|yes)$/i.test(String(process.env.LOGIN_OTP || '').trim());
+function loginOtpActive() { return OTP_FLAG_ON && emailConfigured(); }
+const OTP_TTL_MS = 10 * 60 * 1000;   // a code is valid for 10 minutes
+const OTP_MAX_ATTEMPTS = 5;          // wrong-code tries before the pending login is void
+const loginOtps = new Map();         // pendingId -> { username, isAdmin, codeHash, expires, attempts }
+function pruneOtps() { const now = Date.now(); for (const [k, v] of loginOtps) { if (v.expires < now) loginOtps.delete(k); } }
+function hashCode(code) { return crypto.createHash('sha256').update(String(code)).digest('hex'); }
+function maskEmail(e) { const m = String(e).match(/^(.)(.*)(@.*)$/); return m ? (m[1] + '***' + m[3]) : e; }
+
 // Render (and most PaaS hosts) terminate TLS at a proxy and forward the real
 // client IP in X-Forwarded-For. Trust the first proxy hop so req.ip reflects
 // the actual visitor - required for the login rate limiter below to work per
@@ -259,7 +282,7 @@ app.set('trust proxy', 1);
 // style-src 'unsafe-inline' (low XSS risk, and there are ~100 of them).
 // NOTE: if the inline <script> in public/index.html changes, recompute this
 // hash (npm run csp-hash) or the page's own script will be blocked.
-const INLINE_SCRIPT_HASH = "'sha256-BsFdV3Yzo2LfjIfAeLwy6x54vwvZ1d48RXYqV9ITrH4='";
+const INLINE_SCRIPT_HASH = "'sha256-StPdvtwulVGqn8wa/HLW6n+CjlOxxUpXM+f5LOb71EQ='";
 app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
@@ -331,15 +354,66 @@ function validCompany(req, res, next) {
 }
 
 // ---------- Auth routes ----------
-app.post('/api/login', loginLimiter, (req, res) => {
+app.post('/api/login', loginLimiter, async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
   const user = findUser(username);
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
     return res.status(401).json({ error: 'Invalid username or password' });
   }
+
+  // Password is correct. If the email OTP second factor is active, don't issue
+  // a token yet - email a one-time code and return a pending login id instead.
+  if (loginOtpActive()) {
+    pruneOtps();
+    const code = String(crypto.randomInt(100000, 1000000)); // 6 digits
+    const pendingId = crypto.randomBytes(18).toString('hex');
+    loginOtps.set(pendingId, {
+      username, isAdmin: !!user.is_admin,
+      codeHash: hashCode(code), expires: Date.now() + OTP_TTL_MS, attempts: 0,
+    });
+    try {
+      await sendEmail({
+        to: OTP_EMAIL,
+        subject: 'Deluxe Portal login code: ' + code,
+        text: 'Your Deluxe Group Portal login code is ' + code + '\n\n'
+          + 'Requested for user "' + username + '". The code expires in 10 minutes.\n\n'
+          + 'If you did NOT just try to sign in, ignore this email and change the portal password.',
+        html: '<div style="font-family:Arial,sans-serif;max-width:460px;margin:auto">'
+          + '<h2 style="color:#0b3d6e;margin:0 0 6px">Deluxe Group Portal</h2>'
+          + '<p style="margin:0 0 14px;color:#555">Login verification code</p>'
+          + '<div style="font-size:34px;font-weight:700;letter-spacing:8px;background:#f4f7fb;'
+          + 'border:1px solid #cdd6e0;border-radius:10px;padding:16px;text-align:center;color:#0b3d6e">' + code + '</div>'
+          + '<p style="color:#555;font-size:13px;margin:14px 0 0">Requested for user <b>' + username + '</b>. '
+          + 'Expires in 10 minutes. If this was not you, ignore this email and change the portal password.</p></div>',
+      });
+    } catch (e) {
+      loginOtps.delete(pendingId);
+      console.error('[login-otp] failed to email code:', e && e.message);
+      return res.status(502).json({ error: 'Could not send the login code by email. Please try again in a moment.' });
+    }
+    return res.json({ otpRequired: true, pendingId, sentTo: maskEmail(OTP_EMAIL) });
+  }
+
   const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30d' });
   res.json({ token, username, isAdmin: !!user.is_admin });
+});
+
+// Second step of OTP login: exchange the pending id + emailed code for a token.
+app.post('/api/login/verify', loginLimiter, (req, res) => {
+  const { pendingId, code } = req.body || {};
+  const rec = pendingId && loginOtps.get(pendingId);
+  if (!rec) return res.status(400).json({ error: 'Login session expired - please sign in again.' });
+  if (rec.expires < Date.now()) { loginOtps.delete(pendingId); return res.status(400).json({ error: 'Code expired - please sign in again.' }); }
+  rec.attempts += 1;
+  if (rec.attempts > OTP_MAX_ATTEMPTS) { loginOtps.delete(pendingId); return res.status(429).json({ error: 'Too many wrong codes - please sign in again.' }); }
+  if (hashCode(code || '') !== rec.codeHash) {
+    const left = OTP_MAX_ATTEMPTS - rec.attempts + 1;
+    return res.status(401).json({ error: 'Incorrect code. ' + Math.max(0, left) + ' attempt(s) left.' });
+  }
+  loginOtps.delete(pendingId);
+  const token = jwt.sign({ username: rec.username }, JWT_SECRET, { expiresIn: '30d' });
+  res.json({ token, username: rec.username, isAdmin: rec.isAdmin });
 });
 
 app.post('/api/change-password', authRequired, (req, res) => {
@@ -2196,6 +2270,14 @@ if (KEEPALIVE_URL && KEEPALIVE_URL.toLowerCase() !== 'off') {
   setInterval(ping, 5 * 60 * 1000); // every 5 minutes, well under the ~15 min sleep timer
   setTimeout(ping, 30 * 1000);       // first ping shortly after startup
   console.log('[keepalive] self-ping enabled -> ' + pingUrl + ' (every 5 min)');
+}
+
+if (loginOtpActive()) {
+  console.log('[login-otp] ENABLED - a 6-digit code is emailed to ' + maskEmail(OTP_EMAIL) + ' on every portal login.');
+} else if (OTP_FLAG_ON && !emailConfigured()) {
+  console.warn('[login-otp] requested (LOGIN_OTP set) but EMAIL IS NOT CONFIGURED - OTP is OFF so no one is locked out. Set SMTP_HOST/SMTP_USER/SMTP_PASS to activate.');
+} else {
+  console.log('[login-otp] off (set LOGIN_OTP=on and configure SMTP email to require a login code).');
 }
 
 app.listen(PORT, () => {
