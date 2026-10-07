@@ -280,13 +280,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.1,
-  "currentHours": 3618,
-  "currentHoursDate": "2026-09-26",
+  "dailyHours": 8.8,
+  "currentHours": 3715,
+  "currentHoursDate": "2026-10-07",
   "nextService": 3813,
   "nextServiceDate": "2026-10-14",
   "interval": 350,
-  "notes": "Service 12/09/2026 by Team 3 (Imran & Jayaraj) at 3463h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE - pending. Controller meter confirmed 3618h on 26/09/2026 -> 195h left to next (3813). ~11 h/day, due ~14/10. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
+  "notes": "Service 12/09/2026 by Team 3 (Imran & Jayaraj) at 3463h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE - pending. Controller meter confirmed 3715h on 07/10/2026 -> 98h left to next (3813). ~8.8 h/day, due ~18/10. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
  },
  {
   "dg": "DG-827",
