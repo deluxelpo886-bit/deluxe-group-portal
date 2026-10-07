@@ -2994,16 +2994,20 @@
  },
  {
   "dg": "DG-851",
-  "hours": 2836,
-  "date": "2026-09-07",
-  "technician": "IK&JAYARAJ",
+  "hours": 3190,
+  "date": "2026-10-07",
+  "technician": "SONU&HUSSAIN",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "nextService": 3186,
-  "nextServiceDate": "2026-10-21",
-  "interval": 350
+  "dailyHours": 11.8,
+  "currentHours": 3190,
+  "currentHoursDate": "2026-10-07",
+  "nextService": 3540,
+  "nextServiceDate": "2026-11-06",
+  "interval": 350,
+  "notes": "Serviced 07/10 at 3190h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT changed). Hit the previous 3186h due target on time. Next 3540h on a 350h cycle, ~11.8 h/day heavy use -> due ~06/11."
  },
  {
   "dg": "DG-375",
