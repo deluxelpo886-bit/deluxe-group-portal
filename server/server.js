@@ -48,6 +48,7 @@ const hire = require('./hire');
 const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
 const reminders = require('./reminders');
+const leads = require('./leads');
 const rentals = require('./rentals');
 const lpo = require('./lpo');
 const costs = require('./costs');
@@ -1592,6 +1593,24 @@ app.post('/api/reminders/remove', fleetProtect, (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------- Sales leads / direct-marketing tracker ----------
+app.get('/api/leads', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ leads: leads.getAll(), stages: leads.STAGES });
+});
+app.post('/api/leads/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, item: leads.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/leads/update', fleetProtect, (req, res) => {
+  try { const b = req.body || {}; res.json({ ok: true, item: leads.update(b.id, b) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/leads/remove', fleetProtect, (req, res) => {
+  leads.remove((req.body || {}).id);
+  res.json({ ok: true });
+});
+
 // ---------- LPO / billing tracker ----------
 // Per-generator LPO (PO) number and the monthly timesheet + invoice status,
 // so portal customers (e.g. Trojan) are always billed against a valid PO.
@@ -2155,6 +2174,16 @@ app.get('/dashboard', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'dashboard.html'), { cacheControl: false });
+});
+
+app.get(['/growth', '/sales', '/marketing'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'growth.html'), { cacheControl: false });
 });
 
 // Operations menu (a simple home page linking to all the tools).
