@@ -2866,16 +2866,19 @@
  {
   "dg": "DG-862",
   "hours": 0,
-  "date": "2026-09-03",
+  "date": "2026-10-08",
   "technician": "",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "nextService": 350,
-  "nextServiceDate": "2027-01-01",
-  "notes": "Workshop - engine overhauling (under repair); added to fleet count",
-  "interval": 350
+  "dailyHours": 12,
+  "currentHours": 0,
+  "currentHoursDate": "2026-10-08",
+  "nextService": 450,
+  "nextServiceDate": "2026-11-15",
+  "interval": 450,
+  "notes": "On hire to ADNOC fuel station from 08/10/2026 (out of workshop overhaul). Meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service due ~15/11. 60 kVA Cummins."
  },
  {
   "dg": "DG-861",
@@ -3238,17 +3241,19 @@
  {
   "dg": "DG-562",
   "hours": 0,
-  "date": "2026-09-22",
+  "date": "2026-10-08",
   "technician": "WORKSHOP",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 0,
+  "dailyHours": 12,
+  "currentHours": 0,
+  "currentHoursDate": "2026-10-08",
   "nextService": 450,
-  "nextServiceDate": null,
+  "nextServiceDate": "2026-11-15",
   "interval": 450,
-  "notes": "New genset added 22/09/2026 - 500 kVA Perkins. In yard, available for hire. New unit (450h service interval); confirm hours before first hire."
+  "notes": "On hire to ADNOC fuel station from 08/10/2026 (was new 500 kVA Perkins genset in yard). Meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service due ~15/11."
  },
  {
   "dg": "DG-563",
