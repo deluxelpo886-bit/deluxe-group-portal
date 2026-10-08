@@ -2250,11 +2250,18 @@ refreshAll();
 })();
 
 
-/* Register the service worker so this map is installable on phones. */
+/* Service worker REMOVED. It was caching the page and showing stale copies, so
+   we now unregister any worker that a browser still has and clear all its
+   caches. From now on the page always loads fresh from the server. */
 if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/fleet-sw.js').catch(function(){});
-  });
+  try{
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){ r.unregister(); });
+    }).catch(function(){});
+  }catch(e){}
+  try{
+    if(window.caches && caches.keys){ caches.keys().then(function(keys){ keys.forEach(function(k){ caches.delete(k); }); }).catch(function(){}); }
+  }catch(e){}
 }
 
 // Keep the header counts (total / exact-GPS / company split) in sync with the

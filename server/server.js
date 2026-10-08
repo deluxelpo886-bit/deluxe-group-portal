@@ -2188,7 +2188,7 @@ app.get(['/ops', '/ops/*'], (req, res) => {
 // positions from Total Secure. Served with a page-scoped Content-Security-Policy
 // that permits exactly what this map page needs (Leaflet from unpkg, Esri map
 // tiles, OSRM routing). The strict global CSP still applies to every other page.
-app.get('/fleet', (req, res) => {
+function serveFleetPage(req, res, noStore) {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; "
@@ -2200,13 +2200,19 @@ app.get('/fleet', (req, res) => {
       + "manifest-src 'self'; "
       + "worker-src 'self';"
   );
-  res.set('Cache-Control', 'no-cache');
+  res.set('Cache-Control', noStore ? 'no-store, no-cache, must-revalidate' : 'no-cache');
   // Locked: without a valid fleet session, serve the sign-in page (no data).
   if (!FLEET_PAGE_OPEN && !fleetAuthed(req)) {
     return res.type('html').send(fleetLoginPageHtml());
   }
-  res.sendFile(path.join(__dirname, 'fleet.html'), { cacheControl: false });
-});
+  return res.sendFile(path.join(__dirname, 'fleet.html'), { cacheControl: false });
+}
+
+app.get('/fleet', (req, res) => serveFleetPage(req, res, false));
+// Fresh alias at a never-before-cached URL, served with no-store so it can
+// never be held in any browser/service-worker cache. Same page, same login.
+app.get('/livemap', (req, res) => serveFleetPage(req, res, true));
+app.get('/map', (req, res) => serveFleetPage(req, res, true));
 
 // Everything else falls back to the original LPO/invoice portal.
 app.get('*', (req, res) => {
