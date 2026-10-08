@@ -21,13 +21,6 @@
   "createdBy": "Operations Head"
  },
  {
-  "key": "DG-476-crosscheck-2026-09-19-v2",
-  "dg": "DG-476",
-  "note": "Ran ~24h in the last run (heavy use). Cross-check the current hour-meter reading and update hours. 📞 Customer contact: 058 100 4641. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
-  "dueDate": "2026-09-19",
-  "createdBy": "Operations Head"
- },
- {
   "key": "DG-549-speak-customer-usage-2026-09-24",
   "dg": "DG-549",
   "note": "SPEAK TO CUSTOMER (SIX SIGMA, KIZAD - KHIA 8) about how they are running DG-549 - 24 HOURS/day (~15 h/day avg, 439h in 29 days) and it went 89h past service. Now serviced 22/09 and kept on a FIXED 14-DAY service cycle -> next due 06/10/2026. Review the usage, explain the 14-day cycle, and agree on-site access. 100 kVA CAT. (Utilisation notice already prepared.)",
@@ -46,20 +39,6 @@
   "dg": "DG-473",
   "note": "DG-473 (EL MASRIA CEMENT, Shakhbout City) runs 24 HOURS/day. Serviced 24/09 @ 10639h -> next 10989h. Keep it on a TIGHT 14-DAY CYCLE - next service due ~08/10/2026 (14 days from 24/09). Check hours before then. 100 kVA Weber.",
   "dueDate": "2026-10-08",
-  "createdBy": "Operations Head"
- },
- {
-  "key": "DG-812-14day-cycle-2026-09-26",
-  "dg": "DG-812",
-  "note": "DG-812 (MOTOR WAY, ICAD III) runs 24 HOURS/day. Now kept on a FIXED 14-DAY service cycle. Serviced 12/09 @ 10527h -> next service due 26/09/2026 (12/09 + 14 days). Check hours before then. 30 kVA Kirlosker.",
-  "dueDate": "2026-09-26",
-  "createdBy": "Operations Head"
- },
- {
-  "key": "DG-494-24h-service-2026-10-06",
-  "dg": "DG-494",
-  "note": "DG-494 customer (KAT, Dubai - Al Jadaf) is running it 24 HOURS/day, so it reaches the next 350h service much faster than the estimate. Serviced 21/09 @ 7328h -> next 7678h. Plan/service within ~15 days (by ~06/10/2026). Check hours before then. 160 kVA Kirlosker.",
-  "dueDate": "2026-10-06",
   "createdBy": "Operations Head"
  },
  {
