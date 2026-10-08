@@ -643,17 +643,17 @@ function getFiltered(){
 
 /* ---------- MAP SETUP (once) ---------- */
 const map = L.map('mapEl', {scrollWheelZoom:true}).setView([24.42,54.55], 9);
-// Base map tiles are served from our OWN server (/tiles/...), which the browser
-// can always reach even when third-party tile CDNs are blocked by the network.
-// If the proxy ever fails, fall back to loading OpenStreetMap directly.
-const baseTiles = L.tileLayer('/tiles/{z}/{x}/{y}.png', {
+// Base map tiles load DIRECTLY from OpenStreetMap in the browser (reliable - the
+// browser can reach OSM even when our server on Render cannot). If the browser's
+// own network blocks OSM, fall back to this server's /tiles proxy.
+const baseTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution:'&copy; OpenStreetMap contributors', maxZoom:19
 }).addTo(map);
 let triedTileFallback = false;
 baseTiles.on('tileerror', function(){
   if(triedTileFallback) return;
   triedTileFallback = true;
-  baseTiles.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+  baseTiles.setUrl('/tiles/{z}/{x}/{y}.png');
 });
 
 // The map sits below the fold inside a flex panel, so Leaflet can measure its
@@ -674,7 +674,9 @@ try{
 
 // Satellite (aerial) view, Google-Maps style, via our own /sat proxy. A button
 // on the map toggles between the street map and the satellite imagery.
-const satTiles = L.tileLayer('/sat/{z}/{x}/{y}.png', { attribution:'Imagery &copy; Esri', maxZoom:19 });
+const satTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'Imagery &copy; Esri', maxZoom:19 });
+let triedSatFallback = false;
+satTiles.on('tileerror', function(){ if(triedSatFallback) return; triedSatFallback = true; satTiles.setUrl('/sat/{z}/{x}/{y}.png'); });
 let satOn = false;
 function setSatellite(on){
   satOn = on;
