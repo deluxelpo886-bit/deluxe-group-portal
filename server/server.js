@@ -2208,6 +2208,22 @@ function serveFleetPage(req, res, noStore) {
   return res.sendFile(path.join(__dirname, 'fleet.html'), { cacheControl: false });
 }
 
+// Simple, bulletproof full-screen map: tiny page (~23KB), Leaflet + OSM tiles
+// loaded directly in the browser, all generator pins with Google Maps links and
+// a DG search. No login, no service worker, no caching - always loads fresh.
+app.get(['/quickmap', '/m', '/locate'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; "
+      + "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+      + "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+      + "img-src 'self' data: https:; "
+      + "connect-src 'self'; font-src 'self' data:;"
+  );
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.sendFile(path.join(__dirname, 'quickmap.html'), { cacheControl: false });
+});
+
 app.get('/fleet', (req, res) => serveFleetPage(req, res, false));
 // Fresh alias at a never-before-cached URL, served with no-store so it can
 // never be held in any browser/service-worker cache. Same page, same login.
