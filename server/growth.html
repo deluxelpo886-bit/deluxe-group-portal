@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Growth & Direct Sales — Deluxe</title>
+<style>
+:root{--bg:#0f1419;--panel:#171d24;--panel2:#1c232b;--line:#2c333a;--text:#e8ecef;--muted:#8b95a1;--amber:#e8a13a;--green:#2ec27e;--red:#e0644a;--blue:#4a90d9;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;line-height:1.5;padding:16px;max-width:1100px;margin:0 auto}
+h1{font-size:22px;margin:0 0 2px}h2{font-size:16px;color:var(--amber);margin:22px 0 10px;border-left:4px solid var(--amber);padding-left:9px}
+h3{font-size:14px;margin:12px 0 6px;color:#cdd6e0}
+.sub{color:var(--muted);font-size:13px;margin-bottom:6px}
+a{color:var(--amber)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tile{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.tile b{color:var(--amber)}
+ul{margin:4px 0 4px 18px}li{margin:3px 0}
+.pill{display:inline-block;background:#223; border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-size:11px;margin:2px 3px 2px 0}
+.step{display:flex;gap:10px;align-items:flex-start;margin:8px 0}.step .n{background:var(--amber);color:#1a1300;font-weight:800;min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px}
+input,select,textarea{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:8px;font-size:13.5px;font-family:inherit;outline:none;width:100%}
+label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 4px}
+.btn{background:var(--amber);color:#1a1300;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:13.5px;cursor:pointer}
+.btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{border-bottom:1px solid var(--line);padding:8px 8px;text-align:left;vertical-align:top;font-size:13px}
+th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.stage{padding:2px 8px;border-radius:9px;font-size:11px;font-weight:700;border:1px solid transparent}
+.s-lead{background:#2a3340;color:#aebdce}.s-visiting{background:#3a3016;color:#e8c37a}.s-quoted{background:#15324a;color:#8fc4ef}.s-won{background:#143524;color:#6fe0a0}.s-lost{background:#3a1b18;color:#e9937f}.s-hold{background:#2d2a16;color:#d8cf86}
+.row-actions button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px}
+#overlay{position:fixed;inset:0;background:#0d1116;display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+#overlay .box{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px}
+.loginErr{color:var(--red);font-size:12.5px;min-height:16px;margin:6px 0}
+.muted{color:var(--muted)}.right{text-align:right}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.filters button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:16px;padding:5px 12px;font-size:12px;cursor:pointer}
+.filters button.on{background:var(--amber);color:#1a1300;border-color:var(--amber);font-weight:700}
+</style></head>
+<body>
+<div id="overlay"><div class="box">
+  <div style="color:var(--amber);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Deluxe Operations</div>
+  <h1 style="font-size:19px">Growth &amp; Sales</h1>
+  <p class="sub">Sign in to view the sales plan and your leads.</p>
+  <label>Email</label><input id="loginEmail" autocomplete="username" placeholder="deluxeoperationhead" style="margin-bottom:12px">
+  <label>Password</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Password">
+  <div class="loginErr" id="loginErr"></div>
+  <button class="btn" id="loginBtn" style="width:100%">Sign in</button>
+</div></div>
+
+<nav style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px"><a href="/menu" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a">🏠 Home</a><a href="/dashboard" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a">📊 Dashboard</a><a href="/fleet" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a">🗺️ Map</a><a href="/service" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a">🔧 Service</a><a href="/growth" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#e8a13a;color:#1a1300;border:1px solid #e8a13a">📈 Growth</a><a href="/serviceplan" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a">📋 Service Plan</a><a href="/rentals" style="text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#20262c;color:#e8ecef;border:1px solid #2c333a">💰 Rentals</a></nav>
+<button id="signOut" class="btn sec" style="position:fixed;top:14px;right:14px;display:none;font-size:12px;padding:6px 12px">Sign out</button>
+
+<h1>📈 Growth &amp; Direct Sales Plan</h1>
+<p class="sub">Winning more long-term orders from good-paying companies — face to face, not online.</p>
+
+<div class="card">
+  <h2 style="margin-top:0">🎯 The goal</h2>
+  More generators out on hire, to <b>reliable paying companies</b>, on <b>long-term contracts</b>. Grow by meeting decision-makers in person at new project sites and companies across the UAE — the way rental business is really won here.
+</div>
+
+<h2>🌅 Your daily routine</h2>
+<div class="card">
+  <div class="step"><div class="n">1</div><div><b>Morning — fix the schedule.</b> Open <a href="/serviceplan">Service Plan</a> + <a href="/fleet">Map</a>. Clear today's services, breakdowns and deliveries so the fleet runs clean. 30–45 min.</div></div>
+  <div class="step"><div class="n">2</div><div><b>Check what's idle.</b> On the Map, filter <span class="pill">Ready to rent</span>. Every <b>Available</b> unit in the yard is money sitting still — those are your push list for today's visits.</div></div>
+  <div class="step"><div class="n">3</div><div><b>Visit 3–5 companies / sites.</b> From the target list below + your leads. Meet the right person, leave a card + rate card, log it here.</div></div>
+  <div class="step"><div class="n">4</div><div><b>End of day — log every visit</b> in the Leads tracker (stage + next action date). Follow-ups are where orders actually close.</div></div>
+</div>
+
+<h2>🏗️ Who to target (highest generator demand in the UAE)</h2>
+<div class="grid">
+  <div class="tile"><b>Construction &amp; infrastructure</b><br><span class="muted">Towers, villas, roads, bridges. Main contractors + subcontractors. Biggest, longest hires.</span></div>
+  <div class="tile"><b>Oil &amp; gas / energy</b><br><span class="muted">ADNOC projects, plants, pipelines, <b>fuel stations</b> (like your new DG-862/562 hire). Good payers.</span></div>
+  <div class="tile"><b>Events &amp; hospitality</b><br><span class="muted">Weddings, concerts, exhibitions, Ramadan tents, festivals. High rates, seasonal.</span></div>
+  <div class="tile"><b>Industrial / factories</b><br><span class="muted">Mussafah, ICAD, KIZAD. Standby + backup power, continuous hires.</span></div>
+  <div class="tile"><b>Facilities &amp; real estate</b><br><span class="muted">Malls, compounds, towers — backup &amp; temporary power during works.</span></div>
+  <div class="tile"><b>Farms &amp; remote sites</b><br><span class="muted">Off-grid farms (like Al Bahyah), camps, telecom towers.</span></div>
+  <div class="tile"><b>Government / municipality</b><br><span class="muted">Road works, public projects, utilities. Slow to start, very reliable payers.</span></div>
+  <div class="tile"><b>Scrap, metal &amp; logistics yards</b><br><span class="muted">ICAD / Mussafah yards (existing customers) — ask them for referrals.</span></div>
+</div>
+
+<h2>🔎 Where to find new projects &amp; companies</h2>
+<div class="card">
+  <ul>
+    <li><b>Drive the industrial zones</b> — Mussafah, ICAD, KIZAD. Any site with cranes/hoarding = a contractor who needs power. Walk into the site office.</li>
+    <li><b>Spot new construction</b> — tower cranes, excavation, new hoarding boards (the board names the main contractor — go find them).</li>
+    <li><b>Project &amp; tender news</b> — MEED Projects, Zawya Projects, Construction Week, Abu Dhabi Municipality &amp; ADNOC tender portals for upcoming UAE projects.</li>
+    <li><b>Trade shows</b> — The Big 5, ADIPEC (oil &amp; gas), WETEX — meet contractors &amp; buyers in one place.</li>
+    <li><b>Referrals</b> — ask every happy customer: "who else do you know who needs a generator?" Best &amp; cheapest leads.</li>
+    <li><b>Event organizers &amp; wedding companies</b> — build a list for the season; repeat business every year.</li>
+  </ul>
+</div>
+
+<h2>💬 The pitch (why Deluxe)</h2>
+<div class="card">
+  <ul>
+    <li><b>Reliable, maintained fleet</b> — show the service records &amp; live map; you track every unit professionally.</li>
+    <li><b>Fast breakdown response</b> — 24/7 teams, nearest-vehicle dispatch (no downtime for the customer).</li>
+    <li><b>Full range</b> — 45 kVA to 500+ kVA, two companies (Heavy + Energy) — one supplier for all sites.</li>
+    <li><b>Quick delivery</b> + flexible terms. Competitive monthly rates.</li>
+    <li>Leave a <b>company profile + rate card + business card</b> every visit. Offer a free site survey.</li>
+  </ul>
+</div>
+
+<h2>💰 Only chase GOOD-paying companies</h2>
+<div class="card">
+  <p class="muted" style="margin-bottom:6px">Growth means nothing if you don't get paid. Screen before you commit a unit:</p>
+  <ul>
+    <li><b>Prefer</b> — established contractors, large reputable firms, government-backed projects, ADNOC/oil-&amp;-gas.</li>
+    <li><b>New / unknown customer</b> → take an <b>advance or security deposit</b>, agree clear terms, get the LPO in writing.</li>
+    <li>Use <b>post-dated cheques (PDC)</b> for long hires; agree 30-day payment.</li>
+    <li>Check trade-license age and ask for a trade reference.</li>
+    <li><b>Red flags</b> — pushes for no deposit, very new tiny company, delays signing the LPO, haggles only on price.</li>
+  </ul>
+</div>
+
+<h2>📊 Weekly targets (keep it simple)</h2>
+<div class="grid">
+  <div class="tile"><b>10–15 visits / week</b><br><span class="muted">2–3 a day. Consistency wins.</span></div>
+  <div class="tile"><b>5+ new quotes / week</b><br><span class="muted">Every serious visit → a rate quote.</span></div>
+  <div class="tile"><b>Push idle units</b><br><span class="muted">Target: &lt; 10% of fleet sitting in the yard.</span></div>
+  <div class="tile"><b>Follow up in 3 days</b><br><span class="muted">Most orders close on the 2nd/3rd contact, not the first.</span></div>
+</div>
+
+<h2>🗂️ Leads &amp; visits tracker</h2>
+<p class="sub">Add every company/site you plan to visit. Update the stage as it moves. This is your living pipeline.</p>
+<div class="card">
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+    <div><label>Company / site *</label><input id="f_company" placeholder="e.g. National Projects LLC"></div>
+    <div><label>Sector</label><input id="f_sector" placeholder="Construction"></div>
+    <div><label>Contact person</label><input id="f_contact" placeholder="Site engineer name"></div>
+    <div><label>Phone</label><input id="f_phone" placeholder="05x xxx xxxx"></div>
+    <div><label>Location / area</label><input id="f_location" placeholder="Mussafah / ICAD / Yas..."></div>
+    <div><label>Possible need</label><input id="f_need" placeholder="e.g. 2× 250 kVA, 6 months"></div>
+    <div><label>Stage</label><select id="f_stage"><option value="lead">Lead</option><option value="visiting">Visiting</option><option value="quoted">Quoted</option><option value="won">Won</option><option value="hold">On hold</option><option value="lost">Lost</option></select></div>
+    <div><label>Next visit / follow-up</label><input id="f_nextDate" type="date"></div>
+  </div>
+  <div style="margin-top:8px"><label>Notes</label><textarea id="f_notes" rows="2" placeholder="What was discussed, next step..."></textarea></div>
+  <div style="margin-top:10px"><button class="btn" id="addBtn">+ Add to pipeline</button> <span class="loginErr" id="addErr" style="display:inline"></span></div>
+</div>
+
+<div class="filters" id="filters"></div>
+<div class="card" style="overflow-x:auto">
+  <table id="tbl"><thead><tr><th>Company</th><th>Sector</th><th>Contact</th><th>Need</th><th>Stage</th><th>Next</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+  <p class="muted" id="empty" style="display:none;padding:10px 2px">No leads yet — add your first company above. 👆</p>
+</div>
+
+<p class="muted" style="margin:18px 0;font-size:12px">Tip: on the Map, filter "Ready to rent" every morning — those idle units are what today's visits should aim to hire out. Good hunting. 💪</p>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken'; var TOKEN=localStorage.getItem(LS)||'';
+  function $(id){return document.getElementById(id);}
+  function authH(){return {'Authorization':'Bearer '+TOKEN};}
+  function showLogin(m){$('overlay').style.display='flex'; if(m)$('loginErr').textContent=m; $('signOut').style.display='none';}
+  function hideLogin(){$('overlay').style.display='none'; $('signOut').style.display=''; load();}
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value; $('loginErr').textContent='';
+    try{ var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json(); if(!r.ok){$('loginErr').textContent=d.error||'Wrong email or password';return;}
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){$('loginErr').textContent='Could not reach the server';}
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('loginPass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  $('signOut').addEventListener('click',function(){TOKEN='';localStorage.removeItem(LS);showLogin('Signed out.');});
+
+  var ALL=[]; var FILTER='all'; var STAGES=['lead','visiting','quoted','won','hold','lost'];
+  var LABEL={lead:'Lead',visiting:'Visiting',quoted:'Quoted',won:'Won',hold:'On hold',lost:'Lost'};
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  async function load(){
+    try{
+      var r=await fetch('/api/leads',{cache:'no-store',headers:authH()});
+      if(r.status===401){showLogin();return;}
+      var d=await r.json(); ALL=d.leads||[]; render();
+    }catch(e){}
+  }
+  function render(){
+    var counts={all:ALL.length}; STAGES.forEach(function(s){counts[s]=ALL.filter(function(x){return x.stage===s;}).length;});
+    var fh='<button class="'+(FILTER==='all'?'on':'')+'" data-f="all">All ('+counts.all+')</button>';
+    STAGES.forEach(function(s){ fh+='<button class="'+(FILTER===s?'on':'')+'" data-f="'+s+'">'+LABEL[s]+' ('+(counts[s]||0)+')</button>'; });
+    $('filters').innerHTML=fh;
+    Array.prototype.forEach.call($('filters').children,function(b){b.addEventListener('click',function(){FILTER=b.getAttribute('data-f');render();});});
+    var rows=ALL.filter(function(x){return FILTER==='all'||x.stage===FILTER;});
+    $('empty').style.display=ALL.length?'none':'block';
+    $('rows').innerHTML=rows.map(function(x){
+      var opts=STAGES.map(function(s){return '<option value="'+s+'"'+(x.stage===s?' selected':'')+'>'+LABEL[s]+'</option>';}).join('');
+      return '<tr>'
+        +'<td><b>'+esc(x.company)+'</b>'+(x.location?('<br><span class=muted style="font-size:11px">'+esc(x.location)+'</span>'):'')+(x.notes?('<br><span class=muted style="font-size:11px">'+esc(x.notes)+'</span>'):'')+'</td>'
+        +'<td>'+esc(x.sector||'')+'</td>'
+        +'<td>'+esc(x.contact||'')+(x.phone?('<br><a href="tel:'+esc(x.phone)+'">'+esc(x.phone)+'</a>'):'')+'</td>'
+        +'<td>'+esc(x.need||'')+'</td>'
+        +'<td><select data-id="'+x.id+'" class="stageSel" style="padding:4px 6px;font-size:12px">'+opts+'</select></td>'
+        +'<td><input type="date" class="dateSel" data-id="'+x.id+'" value="'+(x.nextDate||'')+'" style="padding:4px;font-size:12px"></td>'
+        +'<td class="row-actions"><button data-del="'+x.id+'">Delete</button></td></tr>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('.stageSel'),function(sel){sel.addEventListener('change',function(){upd(sel.getAttribute('data-id'),{stage:sel.value});});});
+    Array.prototype.forEach.call(document.querySelectorAll('.dateSel'),function(d){d.addEventListener('change',function(){upd(d.getAttribute('data-id'),{nextDate:d.value});});});
+    Array.prototype.forEach.call(document.querySelectorAll('[data-del]'),function(b){b.addEventListener('click',function(){ if(confirm('Delete this lead?')) del(b.getAttribute('data-del')); });});
+  }
+  async function upd(id,patch){ patch.id=id; try{ await fetch('/api/leads/update',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH()),body:JSON.stringify(patch)}); load(); }catch(e){} }
+  async function del(id){ try{ await fetch('/api/leads/remove',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH()),body:JSON.stringify({id:id})}); load(); }catch(e){} }
+  $('addBtn').addEventListener('click',async function(){
+    var body={company:$('f_company').value,sector:$('f_sector').value,contact:$('f_contact').value,phone:$('f_phone').value,location:$('f_location').value,need:$('f_need').value,stage:$('f_stage').value,nextDate:$('f_nextDate').value,notes:$('f_notes').value};
+    $('addErr').textContent='';
+    if(!body.company.trim()){$('addErr').textContent='Enter a company name.';return;}
+    try{ var r=await fetch('/api/leads/add',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH()),body:JSON.stringify(body)});
+      if(r.status===401){showLogin();return;}
+      var d=await r.json(); if(!r.ok){$('addErr').textContent=d.error||'Could not add';return;}
+      ['f_company','f_sector','f_contact','f_phone','f_location','f_need','f_notes'].forEach(function(id){$(id).value='';});
+      load();
+    }catch(e){$('addErr').textContent='Could not reach the server';}
+  });
+
+  if(TOKEN) hideLogin(); else showLogin();
+})();
+</script>
+</body></html>
