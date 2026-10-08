@@ -201,7 +201,15 @@
  },
  {
   "dg": "DG-862",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-10-08",
+  "note": "On hire - ADNOC fuel station (0-450h cycle, 12h/day)"
+ },
+ {
+  "dg": "DG-562",
+  "offHire": false,
+  "since": "2026-10-08",
+  "note": "On hire - ADNOC fuel station (0-450h cycle, 12h/day)"
  },
  {
   "dg": "DG-863",
