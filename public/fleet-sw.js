@@ -1,11 +1,11 @@
 /* Service worker for the Deluxe Fleet Live map (/fleet).
  *
- * Purpose: make /fleet installable on phones and load fast. It caches the page
- * shell (network-first, so updates are picked up when online) but NEVER caches
- * the live data or login endpoints - those always go straight to the network so
- * vehicle positions are always fresh.
+ * Purpose: make /fleet installable on phones and load fast. It caches STATIC
+ * ASSETS (leaflet, images, css) for speed, but it NEVER caches the HTML page
+ * itself or the live data/login endpoints - those always come straight from the
+ * network so you can never be shown a stale page (e.g. an old unit count).
  */
-const CACHE = 'deluxe-fleet-v6';
+const CACHE = 'deluxe-fleet-v7';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
@@ -28,8 +28,18 @@ self.addEventListener('fetch', (e) => {
   // Live data + auth: always network, never cached.
   if (url.origin === location.origin && url.pathname.startsWith('/api/')) return;
 
-  // Everything else: network-first, fall back to cache when offline. Only
-  // same-origin responses are cached (keeps it simple and avoids opaque caches).
+  // The HTML page itself (any navigation, or anything asking for text/html):
+  // ALWAYS go to the network so the page is never stale. Only fall back to a
+  // cached copy if the network is genuinely unreachable (offline).
+  const accept = req.headers.get('accept') || '';
+  const isPage = req.mode === 'navigate' || accept.includes('text/html');
+  if (isPage) {
+    e.respondWith(fetch(req).catch(() => caches.match(req)));
+    return;
+  }
+
+  // Everything else (static assets: leaflet, css, images): network-first, cache
+  // the fresh copy, fall back to cache when offline.
   e.respondWith(
     fetch(req)
       .then((resp) => {
