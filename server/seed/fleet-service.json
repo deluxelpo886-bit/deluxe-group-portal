@@ -2122,11 +2122,13 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 13.2,
+  "currentHours": 18376,
+  "currentHoursDate": "2026-10-08",
   "nextService": 18575,
   "nextServiceDate": "2026-10-19",
   "interval": 450,
   "urgent": true,
-  "notes": "URGENT flag (office): keep RED / top of the service plan - City Construction, RUWAIS (far site). Next 18575h / 19-10-2026, and the agreed AMOUNT is due to the customer at this service. 400 kVA Kirloskar."
+  "notes": "URGENT flag (office): keep RED / top of the service plan - City Construction, RUWAIS (far site). Next 18575h / 19-10-2026, and the agreed AMOUNT is due to the customer at this service. 400 kVA Kirloskar. Controller 08/10 @ 18376h (2411 starts) -> 199h to next service, ~11 h/day."
  },
  {
   "dg": "DG-850",
