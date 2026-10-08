@@ -182,7 +182,7 @@ try {
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {
-  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27', 'DG-501-heavy-use-2026-10-07', 'DG-834-offhire-contract-end-2026-09-28', 'DG-470-collect-offhire-2026-09-30', 'DG-538-collect-offhire-2026-09-30', 'DG-842-collect-offhire-2026-09-30', 'DG-549-speak-customer-usage-2026-09-24'];
+  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27', 'DG-501-heavy-use-2026-10-07', 'DG-834-offhire-contract-end-2026-09-28', 'DG-470-collect-offhire-2026-09-30', 'DG-538-collect-offhire-2026-09-30', 'DG-842-collect-offhire-2026-09-30', 'DG-549-speak-customer-usage-2026-09-24', 'DG-459-offhire-2026-10-07', 'DG-459-collect-offhire-2026-10-09'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }

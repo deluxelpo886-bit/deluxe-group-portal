@@ -82,19 +82,5 @@
   "note": "DG-847 (375 kVA) OFF-HIRE expected in OCTOBER - FANTASTIC, Musaffah M40 (near Lucky Choice Baqala). Confirm the exact off-hire date with the customer / Netsonic, then off-hire it and arrange collection back to the yard.",
   "dueDate": "2026-10-25",
   "createdBy": "Operations Head"
- },
- {
-  "key": "DG-459-offhire-2026-10-07",
-  "dg": "DG-459",
-  "note": "OFF-HIRE DG-459 (62.5 kVA) TOMORROW 07/10 - COVER GENERAL, ICAD. Off-hire in Netsonic + portal, note the meter reading, and arrange collection back to the yard.",
-  "dueDate": "2026-10-07",
-  "createdBy": "Operations Head"
- },
- {
-  "key": "DG-459-collect-offhire-2026-10-09",
-  "dg": "DG-459",
-  "note": "DG-459 (62.5 kVA) off-hired ~07/10 - CONFIRM COLLECTED. Check the truck picked it up from COVER GENERAL (ICAD) and it reached the yard; if still there, chase the pickup.",
-  "dueDate": "2026-10-09",
-  "createdBy": "Operations Head"
  }
 ]
