@@ -656,6 +656,22 @@ baseTiles.on('tileerror', function(){
   baseTiles.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 });
 
+// The map sits below the fold inside a flex panel, so Leaflet can measure its
+// container as zero-size when it first loads and render completely blank (no
+// tiles, no markers) until something resizes it. Nudge Leaflet to re-measure
+// after the layout settles, on window resize, and when the map scrolls into
+// view - this is what makes the map actually draw.
+function nudgeMap(){ try{ map.invalidateSize(); }catch(e){} }
+window.addEventListener('load', function(){ [150,500,1200,2500,4000].forEach(function(t){ setTimeout(nudgeMap, t); }); });
+window.addEventListener('resize', nudgeMap);
+window.addEventListener('scroll', function(){ clearTimeout(window.__nmg); window.__nmg=setTimeout(nudgeMap,120); }, {passive:true});
+try{
+  if('IntersectionObserver' in window){
+    var _mo=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ nudgeMap(); setTimeout(nudgeMap,250); } }); });
+    _mo.observe(document.getElementById('mapEl'));
+  }
+}catch(e){}
+
 // Satellite (aerial) view, Google-Maps style, via our own /sat proxy. A button
 // on the map toggles between the street map and the satellite imagery.
 const satTiles = L.tileLayer('/sat/{z}/{x}/{y}.png', { attribution:'Imagery &copy; Esri', maxZoom:19 });
