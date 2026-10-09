@@ -633,14 +633,13 @@ function getFiltered(){
 
 /* ---------- MAP SETUP (once) ---------- */
 const map = L.map('mapEl', {scrollWheelZoom:true}).setView([24.42,54.55], 9);
-// Base map tiles load DIRECTLY from Carto's CDN in the browser (a clean,
-// Google-Maps-style "Voyager" street map). OpenStreetMap's own volunteer servers
-// now BLOCK app / datacenter traffic and return a 403 "Access blocked" tile, so
-// we must NOT request tile.openstreetmap.org. If Carto ever fails to load a tile,
-// fall back to Esri's street map - the same provider as the satellite layer,
-// which is known to work for this app on the restricted network.
-const baseTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
-  subdomains:'abcd', attribution:'&copy; OpenStreetMap contributors &copy; CARTO', maxZoom:19
+// Base map tiles load through our own same-origin /tiles proxy (Esri World Street
+// Map upstream - a clean, keyless street map). Proxying keeps the map reliable on
+// mobile/office networks that block third-party tile CDNs, lets the browser and
+// service worker cache tiles, and avoids Carto's new "API KEY REQUIRED" watermark.
+// If the proxy is ever unreachable, fall back to Esri's street map direct.
+const baseTiles = L.tileLayer('/tiles/{z}/{x}/{y}.png', {
+  attribution:'&copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors', maxZoom:19
 }).addTo(map);
 let triedTileFallback = false;
 baseTiles.on('tileerror', function(){
