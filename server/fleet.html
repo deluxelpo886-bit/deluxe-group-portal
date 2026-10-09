@@ -633,17 +633,20 @@ function getFiltered(){
 
 /* ---------- MAP SETUP (once) ---------- */
 const map = L.map('mapEl', {scrollWheelZoom:true}).setView([24.42,54.55], 9);
-// Base map tiles load DIRECTLY from OpenStreetMap in the browser (reliable - the
-// browser can reach OSM even when our server on Render cannot). If the browser's
-// own network blocks OSM, fall back to this server's /tiles proxy.
-const baseTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution:'&copy; OpenStreetMap contributors', maxZoom:19
+// Base map tiles load DIRECTLY from Carto's CDN in the browser (a clean,
+// Google-Maps-style "Voyager" street map). OpenStreetMap's own volunteer servers
+// now BLOCK app / datacenter traffic and return a 403 "Access blocked" tile, so
+// we must NOT request tile.openstreetmap.org. If Carto ever fails to load a tile,
+// fall back to Esri's street map - the same provider as the satellite layer,
+// which is known to work for this app on the restricted network.
+const baseTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+  subdomains:'abcd', attribution:'&copy; OpenStreetMap contributors &copy; CARTO', maxZoom:19
 }).addTo(map);
 let triedTileFallback = false;
 baseTiles.on('tileerror', function(){
   if(triedTileFallback) return;
   triedTileFallback = true;
-  baseTiles.setUrl('/tiles/{z}/{x}/{y}.png');
+  baseTiles.setUrl('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}');
 });
 
 // The map sits below the fold inside a flex panel, so Leaflet can measure its
