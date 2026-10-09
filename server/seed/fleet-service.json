@@ -14,7 +14,7 @@
   "nextService": 50,
   "nextServiceDate": "2026-10-14",
   "interval": 350,
-  "notes": "NEW 100 kVA genset on hire to EMDAD (KIZAD-B) from 10/10/2026, replacing DG-492. FIRST running-in service due at 50h (~14/10/2026, ~12 h/day) - FLAGGED RED, do not miss. Brand/serial TBC."
+  "notes": "NEW 100 kVA genset on hire to EMDAD (KIZAD-B) from 10/10/2026, replacing DG-492. FIRST running-in service due at 50h (~14/10/2026, ~12 h/day) - FLAGGED RED, do not miss. 100 kVA Kirloskar; serial TBC."
  },
  {
   "dg": "DG-455",
