@@ -3139,9 +3139,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "nextService": 33559,
-  "nextServiceDate": "2026-10-22",
-  "interval": 450
+  "dailyHours": 11.8,
+  "currentHours": 33451,
+  "currentHoursDate": "2026-10-09",
+  "nextService": 33451,
+  "nextServiceDate": "2026-10-09",
+  "interval": 450,
+  "notes": "Meter 33451h 51m on 09/10/2026 (7092 starts), ~11.8 h/day. GASKET LEAK - next service pulled forward and flagged RED (service now; 450h-interval target was 33559h / 22-10). ARRANGE gasket + oil seal BEFORE servicing and fit during the service. 250 kVA Kirloskar Green, TROJAN, AL BAHYAH."
  },
  {
   "dg": "DG-501",

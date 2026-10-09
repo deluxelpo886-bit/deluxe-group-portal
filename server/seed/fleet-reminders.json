@@ -1,5 +1,12 @@
 [
  {
+  "key": "DG-508-gasket-seal-before-service-2026-10-09",
+  "dg": "DG-508",
+  "note": "DG-508 GASKET LEAK at 33451h (09/10). ARRANGE gasket + oil seal BEFORE servicing, then service the unit. Next service pulled forward and flagged RED (due now; 450h-interval target was 33559h/22-10). 250 kVA Kirloskar, TROJAN, AL BAHYAH.",
+  "dueDate": "2026-10-12",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-470-collect-offhire-2026-09-30",
   "dg": "DG-470",
   "note": "OFF-HIRED but NOT COLLECTED. Arrange pickup of DG-470 (220 kVA) from CLASSIC NAAZ REAL ESTATE, Musaffah ME-11 (Building C-37) and return to yard. 📞 +971 55 155 7443. Netsonic OFF2-000036.",
