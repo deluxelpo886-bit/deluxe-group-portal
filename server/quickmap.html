@@ -28,7 +28,7 @@ var PTS=[{"dg":"DG-35","kva":45,"brand":"JET","div":"HEAVY","status":"On Hire","
 function err(t){var e=document.getElementById("msg");e.textContent=t;e.style.display="block";}
 if(typeof L==="undefined"){err("Map engine did not load - please reload.");}else{
 var map=L.map("map",{zoomControl:true}).setView([24.42,54.55],9);
-var osm=L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",{subdomains:"abcd",maxZoom:19,attribution:"(c) OpenStreetMap (c) CARTO"}).addTo(map);
+var osm=L.tileLayer("/tiles/{z}/{x}/{y}.png",{maxZoom:19,attribution:"(c) Esri, HERE, Garmin, (c) OpenStreetMap contributors"}).addTo(map);
 var switched=false; osm.on("tileerror",function(){ if(switched)return; switched=true; osm.setUrl("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"); });
 function statusColor(s){s=(s||"").toLowerCase();if(s.indexOf("break")>=0)return "#e0443a";if(s.indexOf("hire")>=0)return "#2ec27e";if(s.indexOf("repair")>=0||s.indexOf("service")>=0)return "#e8a13a";return "#9aa7b4";}
 function parseD(d){var m=/^(\d{2})\/(\d{2})\/(\d{4})/.exec(d||"");return m?new Date(+m[3],+m[2]-1,+m[1]):null;}

@@ -886,10 +886,14 @@ app.get('/tiles/:z/:x/:y.png', async (req, res) => {
     return res.end(hit.buf);
   }
   try {
-    // Carto's basemap CDN (OpenStreetMap blocks app/datacenter traffic to its
-    // own volunteer servers, so we never proxy tile.openstreetmap.org).
-    const sub = ['a', 'b', 'c', 'd'][(Number(x) + Number(y)) % 4];
-    const url = 'https://' + sub + '.basemaps.cartocdn.com/rastertiles/voyager/' + z + '/' + x + '/' + y + '.png';
+    // Esri's World Street Map - a clean, keyless street basemap on the same
+    // ArcGIS Online infrastructure we already use for the satellite layer.
+    // (Carto's basemaps.cartocdn.com now requires an API key and stamps an
+    // "API KEY REQUIRED" watermark on every tile served without one; OpenStreetMap
+    // blocks app/datacenter traffic to its own volunteer servers - so we use Esri.)
+    // Note Esri's tile order is z/y/x.
+    const url = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/'
+      + z + '/' + y + '/' + x;
     const r = await fetch(url, { headers: { 'User-Agent': 'DeluxeFleet/1.0 (deluxe-group-portal)' } });
     if (!r.ok) return res.status(502).end();
     const buf = Buffer.from(await r.arrayBuffer());
