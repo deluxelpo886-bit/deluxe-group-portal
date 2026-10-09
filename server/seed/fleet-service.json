@@ -1,5 +1,22 @@
 [
  {
+  "dg": "DG-564",
+  "hours": 0,
+  "date": "2026-10-10",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 12,
+  "currentHours": 0,
+  "currentHoursDate": "2026-10-10",
+  "nextService": 50,
+  "nextServiceDate": "2026-10-14",
+  "interval": 350,
+  "notes": "NEW 100 kVA genset on hire to EMDAD (KIZAD-B) from 10/10/2026, replacing DG-492. FIRST running-in service due at 50h (~14/10/2026, ~12 h/day) - FLAGGED RED, do not miss. Brand/serial TBC."
+ },
+ {
   "dg": "DG-455",
   "hours": 2254,
   "date": "2024-09-05",

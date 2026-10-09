@@ -1,5 +1,16 @@
 [
  {
+  "dg": "DG-564",
+  "offHire": false,
+  "since": "2026-10-10",
+  "note": "On hire from 10/10/2026 - EMDAD, KIZAD-B (EMDAD METAL SOLUTION). NEW 100 kVA genset, replaced DG-492. Starts at 0h; first service at 50h."
+ },
+ {
+  "dg": "DG-492",
+  "offHire": true,
+  "note": "Off-hire 10/10/2026 - replaced by DG-564 at EMDAD; bringing to yard."
+ },
+ {
   "dg": "DG-833",
   "offHire": false,
   "since": "2026-09-09",
