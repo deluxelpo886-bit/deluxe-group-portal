@@ -886,8 +886,10 @@ app.get('/tiles/:z/:x/:y.png', async (req, res) => {
     return res.end(hit.buf);
   }
   try {
-    const sub = ['a', 'b', 'c'][(Number(x) + Number(y)) % 3];
-    const url = 'https://' + sub + '.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
+    // Carto's basemap CDN (OpenStreetMap blocks app/datacenter traffic to its
+    // own volunteer servers, so we never proxy tile.openstreetmap.org).
+    const sub = ['a', 'b', 'c', 'd'][(Number(x) + Number(y)) % 4];
+    const url = 'https://' + sub + '.basemaps.cartocdn.com/rastertiles/voyager/' + z + '/' + x + '/' + y + '.png';
     const r = await fetch(url, { headers: { 'User-Agent': 'DeluxeFleet/1.0 (deluxe-group-portal)' } });
     if (!r.ok) return res.status(502).end();
     const buf = Buffer.from(await r.arrayBuffer());
