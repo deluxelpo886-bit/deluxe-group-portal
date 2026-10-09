@@ -2868,19 +2868,16 @@
  {
   "dg": "DG-862",
   "hours": 0,
-  "date": "2026-10-08",
+  "date": "2026-09-03",
   "technician": "",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 12,
-  "currentHours": 0,
-  "currentHoursDate": "2026-10-08",
-  "nextService": 450,
-  "nextServiceDate": "2026-11-15",
-  "interval": 450,
-  "notes": "On hire to ADNOC fuel station from 08/10/2026 (out of workshop overhaul). Meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service due ~15/11. 60 kVA Cummins."
+  "nextService": 350,
+  "nextServiceDate": "2027-01-01",
+  "interval": 350,
+  "notes": "Workshop - engine overhauling (under repair); added to fleet count"
  },
  {
   "dg": "DG-861",
@@ -3228,17 +3225,19 @@
  {
   "dg": "DG-868",
   "hours": 0,
-  "date": "2026-09-18",
-  "technician": "WORKSHOP",
+  "date": "2026-10-08",
+  "technician": "",
   "oil": false,
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 0,
+  "dailyHours": 12,
+  "currentHours": 0,
+  "currentHoursDate": "2026-10-08",
   "nextService": 450,
-  "nextServiceDate": null,
+  "nextServiceDate": "2026-11-15",
   "interval": 450,
-  "notes": "New genset added 18/09/2026 - 500 kVA CAT. In yard. New unit (450h service interval); confirm hours before first hire."
+  "notes": "On hire to ADNOC fuel station (Al Shamkha) from 08/10/2026. New 500 kVA CAT; meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service ~15/11."
  },
  {
   "dg": "DG-562",
