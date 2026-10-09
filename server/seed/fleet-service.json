@@ -2139,13 +2139,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 13.2,
-  "currentHours": 2416,
-  "currentHoursDate": "2026-09-24",
+  "dailyHours": 10.4,
+  "currentHours": 2572,
+  "currentHoursDate": "2026-10-09",
   "nextService": 2695,
   "nextServiceDate": "2026-10-21",
   "interval": 450,
-  "notes": "Serviced 11/09/2026 at 2245h by Adeel & MJ.K. Meter confirmed 2416h on 24/09 (QUARTZ engine-hours meter, 2416.5h) -> 279h left to next (2695h). ~13 h/day. 440 kVA Cummins, Al Masriya, Khalifa Industrial City B."
+  "notes": "Serviced 11/09/2026 at 2245h by Adeel & MJ.K. QUARTZ meter 2572h on 09/10 (was 2416h on 24/09) -> 123h left to next (2695h). ~10.4 h/day. 440 kVA Cummins, Al Masriya, Khalifa Industrial City B."
  },
  {
   "dg": "DG-842",
@@ -3265,12 +3265,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "currentHours": 145,
-  "currentHoursDate": "2026-10-03",
-  "dailyHours": 24,
+  "currentHours": 225.9,
+  "currentHoursDate": "2026-10-09",
+  "dailyHours": 13.5,
   "nextService": 495,
-  "nextServiceDate": "2026-10-17",
+  "nextServiceDate": "2026-10-29",
   "interval": 350,
-  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). Next service due 495h. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT. 24-HOUR site - keep a tight ~2-week cycle. 350h interval. Co-located with DG-850 (same El Masria / Al Masriya site)."
+  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). DSE meter 225.9h on 09/10 -> 269h left to next (495h), ~13.5 h/day. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT. 350h interval. Co-located with DG-850 (same El Masria / Al Masriya site)."
  }
 ]
