@@ -594,8 +594,8 @@
   "currentHours": 20860,
   "currentHoursDate": "2026-10-09",
   "nextService": 21185,
-  "nextServiceDate": "2028-09-30",
-  "notes": "Current meter 20860h 45m on 09/10/2026 (5184 starts). +25h since the 16/06 service @ 20835h; ~0.45 h/day while on hire (since 14/08) -> 325h left to next service at 21185h. 30 kVA Kirloskar on hire to SILVER SCREEN, AL AIN (Ain Al Fayda).",
+  "nextServiceDate": "2026-11-09",
+  "notes": "Current meter 20860h 45m on 09/10/2026 (5184 starts). +25h since the 16/06 service @ 20835h; ~0.45 h/day while on hire (since 14/08). Low-use standby: service skipped to a calendar check on 09/11/2026 (hours target 21185h still far off). 30 kVA Kirloskar on hire to SILVER SCREEN, AL AIN (Ain Al Fayda).",
   "interval": 350
  },
  {
