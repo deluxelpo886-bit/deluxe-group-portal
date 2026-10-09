@@ -1,5 +1,12 @@
 [
  {
+  "key": "DG-564-first-service-50h-2026-10-14",
+  "dg": "DG-564",
+  "note": "DG-564 (NEW 100 kVA, EMDAD/KIZAD-B, replaced DG-492) FIRST running-in service due at 50h (~14/10/2026, ~12 h/day). RED/critical - arrange and do not miss. Confirm brand & serial.",
+  "dueDate": "2026-10-14",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-508-gasket-seal-before-service-2026-10-09",
   "dg": "DG-508",
   "note": "DG-508 GASKET LEAK at 33451h (09/10). ARRANGE gasket + oil seal BEFORE servicing, then service the unit. Next service pulled forward and flagged RED (due now; 450h-interval target was 33559h/22-10). 250 kVA Kirloskar, TROJAN, AL BAHYAH.",
