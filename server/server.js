@@ -106,7 +106,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r99');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r100');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -143,7 +143,7 @@ try {
   const flagSeedPath = path.join(__dirname, 'seed', 'fleet-dataflags.json');
   if (fs.existsSync(flagSeedPath)) {
     const fseed = JSON.parse(fs.readFileSync(flagSeedPath, 'utf8'));
-    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-09-16a');
+    const r = dataflags.applySeed(fseed, 'fleet-dataflags-2026-10-09-dg508');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' data flags to resolve');
   }
 } catch (e) { console.warn('[seed] data-flags import skipped:', e && e.message); }
@@ -154,7 +154,7 @@ try {
   const spareSeedPath = path.join(__dirname, 'seed', 'fleet-spares.json');
   if (fs.existsSync(spareSeedPath)) {
     const sseed = JSON.parse(fs.readFileSync(spareSeedPath, 'utf8'));
-    const r = spares.applySeed(sseed, 'fleet-spares-2026-09-14c');
+    const r = spares.applySeed(sseed, 'fleet-spares-2026-10-09-dg508');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' spare-part requests');
   }
 } catch (e) { console.warn('[seed] spares import skipped:', e && e.message); }
@@ -175,7 +175,7 @@ try {
   const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
   if (fs.existsSync(rmSeedPath)) {
     const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
-    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-10-06-459b');
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-10-09-dg508');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
