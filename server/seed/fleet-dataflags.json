@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-817",
+  "type": "air-filter-pending",
+  "severity": "medium",
+  "source": "service-card",
+  "message": "Service 10/10/2026 (Roland/Emir) at 10354h: oil, oil filter & fuel filter changed but AIR FILTER NOT done. Carry an air filter on the next visit to DG-817 (Al Reem Island RT8, Trojan) and fit it. 40 kVA Kirloskar."
+ },
+ {
   "dg": "DG-564",
   "type": "other",
   "severity": "high",
