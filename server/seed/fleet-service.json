@@ -894,13 +894,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 4,
+  "dailyHours": 3.3,
   "currentHours": 9893,
-  "currentHoursDate": "2026-09-23",
+  "currentHoursDate": "2026-10-07",
   "nextService": 9973,
-  "nextServiceDate": "2026-10-13",
+  "nextServiceDate": "2026-10-31",
   "interval": 350,
-  "notes": "Serviced 18/07/2026 at 9623h by Velu & Bakhtamal (all filters). Meter confirmed 9893h on 23/09 (controller) -> 80h left to next (9973h). Light recent use ~4 h/day (270h in ~67 days). 60 kVA Jet, Trojan, Yas Island."
+  "notes": "Serviced 18/07/2026 at 9623h by Velu & Bakhtamal. Meter 9893h confirmed 07/10/2026 (same reading as 23/09 - idle ~2 weeks) -> 80h left to next (9973h). ~3.3 h/day. 60 kVA Jet, Trojan, Yas Island. NOTE: 18/07 service card shows AIR FILTER not done - confirm."
  },
  {
   "dg": "DG-836",
