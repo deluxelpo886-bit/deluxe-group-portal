@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-817",
+  "part": "Air filter",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Service card 10/10/2026 (Roland/Emir)",
+  "notes": "Air filter NOT changed at the 10/10/2026 service @ 10354h (card marked blank). Carry it on the next visit to DG-817 (Al Reem Island RT8, Trojan) and fit it. 40 kVA Kirloskar."
+ },
+ {
   "dg": "DG-508",
   "part": "Head gasket + oil seal (leak)",
   "qty": 1,
