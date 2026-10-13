@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-481",
+  "part": "Air filter",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Service card 12/10/2026 (Jayraj/Imran)",
+  "notes": "Air filter NOT changed at the 12/10/2026 service @ 23935h (card marked X). Carry it on the next visit to DG-481 (Al Nahyan E25, Six Sigma) and fit it. 100 kVA Weber."
+ },
+ {
   "dg": "DG-817",
   "part": "Air filter",
   "qty": 1,
