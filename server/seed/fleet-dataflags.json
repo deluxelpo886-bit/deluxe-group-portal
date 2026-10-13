@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-481",
+  "type": "air-filter-pending",
+  "severity": "medium",
+  "source": "service-card",
+  "message": "Service 12/10/2026 (Jayraj/Imran) at 23935h: oil, oil filter & fuel filter done but AIR FILTER NOT done (card marked X). Carry an air filter on the next visit to DG-481 (Al Nahyan E25, Six Sigma) and fit it. 100 kVA Weber."
+ },
+ {
   "dg": "DG-817",
   "type": "air-filter-pending",
   "severity": "medium",
