@@ -581,11 +581,12 @@
   "airFilter": true,
   "dailyHours": 1,
   "nextService": 14474,
-  "nextServiceDate": "2027-04-03",
+  "nextServiceDate": "2026-10-25",
   "interval": 350,
   "currentHours": 14294,
   "currentHoursDate": "2026-10-05",
-  "notes": "Controller reading 14294h on 05/10 -> 180h to next service (14474). VERY LOW USE ~1 h/day (only 16h added 18/09 to 05/10), so next service is ~180 days out (~Apr-2027), NOT due now - removed from the near-term plan (the old 12/10 office date was a wrong high-use estimate). Re-confirm with a fresh meter reading before planning. Mushayrif U32, Ramah."
+  "urgent": true,
+  "notes": "Controller reading 14294h on 05/10 -> 180h to next service (14474). Very low use ~1 h/day, so not hours-due - but the office SCHEDULED a time-based service for 25/10/2026 (bundled with DG-858 at the same site, Mushayrif U32). Forced onto the 25/10 plan. Ramah, Mushayrif U32."
  },
  {
   "dg": "DG-490",
