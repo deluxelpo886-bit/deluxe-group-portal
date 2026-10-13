@@ -2146,6 +2146,21 @@
   "notes": "Serviced 15/09/2026 at 9209h by Sonu (per Netsonic service list SER1-000497; oil + oil filter + fuel filter). Next service 9559h / 17/10/2026. 100 kVA, Mirfaq, Ruwais / Al Dhannah."
  },
  {
+  "dg": "DG-38",
+  "hours": 9543,
+  "date": "2026-10-13",
+  "technician": "SONU",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 11.9,
+  "nextService": 9893,
+  "nextServiceDate": "2026-11-11",
+  "interval": 350,
+  "notes": "Serviced 13/10/2026 at 9543h by Sonu (service card). On-time (previous target 9559h). ~11.9 h/day (334h in 28 days since 9209h/15-09). Next 9893h / ~11/11. Card logged 'Service - Sonu' without itemising filters - recorded as routine oil + oil/fuel filter; air filter not confirmed. 100 kVA JET, Mirfaq, Ruwais."
+ },
+ {
   "dg": "DG-481",
   "hours": 23309,
   "date": "2026-08-13",
