@@ -1064,13 +1064,28 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
     // Manual office entry wins: a hand-typed current meter reading drives the
     // hours-left calculation (and therefore the plan) exactly like a technician
     // reading, and a forced next-service date is honoured too.
+    //
+    // BUT a service or reading the operator logged LATER must never be masked by
+    // an older override - otherwise entering a fresh service in the app does not
+    // update the map, the dashboard or the plan (the stale override keeps
+    // winning). The most recently entered value wins: compare the override's
+    // "as of" date (its confirmed-reading date, else the day it was saved) with
+    // the service log's date (its service date, else its reading/updated date).
+    // The override only overrides when it is strictly newer; on a tie or an older
+    // override, the freshly logged service wins.
     const o = ov[String(g.dg || '').toUpperCase()];
     if (o) {
-      if (o.currentHours != null && isFinite(Number(o.currentHours))) {
-        g.currentHours = Number(o.currentHours);
-        if (o.currentHoursDate) g.currentHoursDate = o.currentHoursDate;
+      const dOnly = (s) => String(s || '').slice(0, 10);
+      const ovrDate = dOnly(o.currentHoursDate || o.updatedAt);
+      const svcDate = dOnly(g.date || g.currentHoursDate || g.updatedAt);
+      const overrideNewer = ovrDate && (!svcDate || ovrDate > svcDate);
+      if (overrideNewer) {
+        if (o.currentHours != null && isFinite(Number(o.currentHours))) {
+          g.currentHours = Number(o.currentHours);
+          if (o.currentHoursDate) g.currentHoursDate = o.currentHoursDate;
+        }
+        if (o.nextServiceDate) g.nextServiceDate = o.nextServiceDate;
       }
-      if (o.nextServiceDate) g.nextServiceDate = o.nextServiceDate;
     }
     const h = hm[g.dg];
     if (h) { g.offHire = !!h.offHire; g.hireSince = h.since; g.hireNote = h.note; }

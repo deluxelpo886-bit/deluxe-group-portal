@@ -552,8 +552,25 @@ function mergeOverrides(ovMap){
     if(o.coordsLocked){ r.coordsLocked=true; }
     if(o.location){ r.location=o.location; }
     if(o.customer){ r.customer=o.customer; }
-    if(o.nextServiceDate){ var p=String(o.nextServiceDate).split('-'); if(p.length===3) r.next_service=p[2]+'/'+p[1]+'/'+p[0]; }
-    if(o.currentHours!=null){ r.currentHours=Number(o.currentHours); r.currentHoursDate=o.currentHoursDate||r.currentHoursDate; applyDerived(r); }
+    // A hand-typed meter / forced next-date only wins when it is NEWER than the
+    // latest service logged for this unit - otherwise a fresh service entered in
+    // the app would stay masked by an old override on the map. Compare the
+    // override's "as of" date with the live service log's date (same rule the
+    // server uses for the plan and dashboard).
+    // Defer the meter / next-date override until the live service log is loaded,
+    // so the recency gate has real dates to compare (loadServiceInfo re-runs this
+    // merge once SERVICE_BY_DG is populated). Skipping here only delays the value
+    // by one fetch; the embedded baseline shows meanwhile.
+    if(!window.SERVICE_BY_DG) return;
+    var dOnly=function(s){ return String(s||'').slice(0,10); };
+    var svc=window.SERVICE_BY_DG[String(r.dg||'').toUpperCase()];
+    var ovrDate=dOnly(o.currentHoursDate||o.updatedAt);
+    var svcDate=svc?dOnly(svc.date||svc.currentHoursDate||svc.updatedAt):'';
+    var overrideNewer=ovrDate && (!svcDate || ovrDate>svcDate);
+    if(overrideNewer){
+      if(o.nextServiceDate){ var p=String(o.nextServiceDate).split('-'); if(p.length===3) r.next_service=p[2]+'/'+p[1]+'/'+p[0]; }
+      if(o.currentHours!=null){ r.currentHours=Number(o.currentHours); r.currentHoursDate=o.currentHoursDate||r.currentHoursDate; applyDerived(r); }
+    }
   });
 }
 function loadOverrides(){
@@ -561,7 +578,7 @@ function loadOverrides(){
   if(!tok) return Promise.resolve();
   return fetch('/api/fleet/overrides',{cache:'no-store',headers:{Authorization:'Bearer '+tok}})
     .then(function(r){ return r.ok?r.json():null; })
-    .then(function(d){ if(d&&d.overrides){ mergeOverrides(d.overrides); recalcDates(); } })
+    .then(function(d){ if(d&&d.overrides){ window.OV_MAP=d.overrides; mergeOverrides(d.overrides); recalcDates(); } })
     .catch(function(){ /* map still works on the base list */ });
 }
 const TODAY = new Date(2026,7,13);
@@ -1740,6 +1757,11 @@ refreshAll();
       var map={};
       (d.generators||[]).forEach(function(g){ map[g.dg]=g; });
       window.SERVICE_BY_DG=map;
+      // Re-apply the office overrides now that the live service log is loaded, so
+      // the "override only wins when newer than the logged service" gate can
+      // actually compare dates (on first load the overrides arrive before the
+      // service status, when SERVICE_BY_DG is still empty).
+      if(window.OV_MAP) mergeOverrides(window.OV_MAP);
       if(typeof rebuildMap==='function') rebuildMap();
       if(typeof renderTable==='function') renderTable();
       updateServiceAlert(d.generators||[]);
