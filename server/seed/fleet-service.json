@@ -1585,10 +1585,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
+  "dailyHours": 0.25,
+  "currentHours": 37264,
+  "currentHoursDate": "2026-10-10",
   "nextService": 37611,
-  "nextServiceDate": "2026-10-25",
+  "nextServiceDate": "2027-08-23",
   "interval": 350,
-  "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD (Khalifa Ind. City B). Checked/serviced at 37261h, next 37611h. Per Netsonic SER1-000528. 30 kVA Perkins."
+  "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins."
  },
  {
   "dg": "DG-542",
