@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-822",
+  "type": "other",
+  "severity": "high",
+  "source": "whatsapp-group",
+  "message": "⚠ BREAKDOWN - DG-822 (380 kVA CAT, City Const, Al Faya Industrial / Al Asheesh) reported broken down in the WhatsApp group (13/10). Attend and confirm the fault. Last meter 6977h (13/10); service was due ~24/10 - hold/re-confirm after the breakdown is fixed."
+ },
+ {
   "dg": "DG-481",
   "type": "air-filter-pending",
   "severity": "medium",
