@@ -36,6 +36,12 @@
   "startDate": ""
  },
  {
+  "dg": "DG-450",
+  "customer": "TROJAN",
+  "rate": 4200,
+  "startDate": "2026-10-13"
+ },
+ {
   "dg": "DG-453",
   "customer": "KHALIQ NOOR SCRAP LLC",
   "rate": 1700,
