@@ -217,7 +217,7 @@ try {
   const rentalSeedPath = path.join(__dirname, 'seed', 'fleet-rentals.json');
   if (fs.existsSync(rentalSeedPath)) {
     const rs = JSON.parse(fs.readFileSync(rentalSeedPath, 'utf8'));
-    const r = rentals.applySeed(rs, 'fleet-rentals-2026-09-10a');
+    const r = rentals.applySeed(rs, 'fleet-rentals-2026-10-13-dg450');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' rental contracts');
   }
 } catch (e) { console.warn('[seed] rentals import skipped:', e && e.message); }
