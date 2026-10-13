@@ -394,7 +394,7 @@
   "currentHoursDate": "2026-10-13",
   "nextService": 17545,
   "nextServiceDate": "2026-10-23",
-  "notes": "Meter confirmed 17464h on 13/10/2026 (controller photo, Adeel Store). Last service 14/02 @ 17195h -> 81h left to next (17545h). USAGE JUMPED: 142h in 17 days since 17322h/26-09 (~8.35 h/day) vs the earlier ~0.58 h/day standby - now running hard, so the service that was a year out is due ~23/10. On hire to Hashim, Al Bahia. 40 kVA Tata.",
+  "notes": "Meter confirmed 17464h on 13/10/2026 (controller photo, Adeel Store). Last service 14/02 @ 17195h -> 81h left to next (17545h). USAGE JUMPED: 142h in 17 days since 17322h/26-09 (~8.35 h/day) vs the earlier ~0.58 h/day standby - now running hard, so the service that was a year out is due ~23/10. ARRANGE head gasket + oil seal and fit at that service (flagged in the WhatsApp group). On hire to Hashim, Al Bahia. 40 kVA Tata.",
   "interval": 350
  },
  {

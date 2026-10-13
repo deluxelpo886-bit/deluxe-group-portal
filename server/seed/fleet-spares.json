@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-506",
+  "part": "Head gasket + oil seal",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Office 13/10/2026 (WhatsApp group)",
+  "notes": "Arrange/procure the head gasket + oil seal for DG-506 and fit them at the NEXT service (due ~23/10 at 17545h). Gasket issue flagged in the WhatsApp group - see group for details. 40 kVA Tata, Hashim Contracting, Al Bahia."
+ },
+ {
   "dg": "DG-481",
   "part": "Air filter",
   "qty": 1,

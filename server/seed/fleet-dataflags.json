@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-506",
+  "type": "other",
+  "severity": "medium",
+  "source": "whatsapp-group",
+  "message": "DG-506 (40 kVA Tata, Hashim Contracting, Al Bahia) - ARRANGE head gasket + oil seal and fit at the NEXT service (due ~23/10 at 17545h, 81h left). Gasket flagged in the WhatsApp group - see group for details."
+ },
+ {
   "dg": "DG-822",
   "type": "other",
   "severity": "high",
