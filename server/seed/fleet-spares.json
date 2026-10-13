@@ -21,7 +21,7 @@
   "qty": 1,
   "status": "Needed",
   "requestedBy": "Controller reading 09/10/2026 (Adeel Store)",
-  "notes": "GASKET LEAK seen at 33451h (7092 starts). ARRANGE/procure the gasket + oil seal BEFORE the next service and fit them during the service. Next service pulled forward and flagged RED (service now). 250 kVA Kirloskar Green, TROJAN, AL BAHYAH."
+  "notes": "Gasket leak seen at 33451h (7092 starts). Procure the head gasket + oil seal and fit them during the next REGULAR service (normal 450h schedule: 33559h / 22-10-2026). No longer pulled forward / RED. 250 kVA Kirloskar Green, TROJAN, AL BAHYAH."
  },
  {
   "dg": "DG-846",

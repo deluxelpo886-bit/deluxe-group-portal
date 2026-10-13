@@ -63,6 +63,22 @@ function update(id, status) {
   return it;
 }
 
+// One-time maintenance helper: refresh the notes (and optionally status) of an
+// already-seeded part, matched by DG + part name. The seed replay only ADDS by
+// key, so this is how a previously-seeded spare's wording gets corrected on the
+// live, persistent disk. No-op when the part is not present. Returns true if it
+// changed something.
+function setByKey(dg, part, patch) {
+  const k = seedKey(dg, part);
+  const it = items.find((x) => seedKey(x.dg, x.part) === k);
+  if (!it) return false;
+  if (patch && patch.notes != null) it.notes = String(patch.notes).trim();
+  if (patch && patch.status && STATUSES.indexOf(patch.status) >= 0) it.status = patch.status;
+  it.updatedAt = new Date().toISOString();
+  persist();
+  return true;
+}
+
 function remove(id) {
   items = items.filter((x) => x.id !== id);
   persist();
@@ -117,4 +133,4 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { add, update, remove, getAll, applySeed, STATUSES };
+module.exports = { add, update, setByKey, remove, getAll, applySeed, STATUSES };

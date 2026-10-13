@@ -106,7 +106,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r106');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r107');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -183,13 +183,31 @@ try {
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {
-  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27', 'DG-501-heavy-use-2026-10-07', 'DG-834-offhire-contract-end-2026-09-28', 'DG-470-collect-offhire-2026-09-30', 'DG-538-collect-offhire-2026-09-30', 'DG-842-collect-offhire-2026-09-30', 'DG-549-speak-customer-usage-2026-09-24', 'DG-459-offhire-2026-10-07', 'DG-459-collect-offhire-2026-10-09', 'DG-476-crosscheck-2026-09-19-v2', 'DG-812-14day-cycle-2026-09-26', 'DG-494-24h-service-2026-10-06'];
+  const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27', 'DG-501-heavy-use-2026-10-07', 'DG-834-offhire-contract-end-2026-09-28', 'DG-470-collect-offhire-2026-09-30', 'DG-538-collect-offhire-2026-09-30', 'DG-842-collect-offhire-2026-09-30', 'DG-549-speak-customer-usage-2026-09-24', 'DG-459-offhire-2026-10-07', 'DG-459-collect-offhire-2026-10-09', 'DG-476-crosscheck-2026-09-19-v2', 'DG-812-14day-cycle-2026-09-26', 'DG-494-24h-service-2026-10-06',
+    // DG-508 gasket pulled-forward RED nudge - cleared to the normal 33559h/22-10 schedule (gasket now fitted at that regular service).
+    'DG-508-gasket-seal-before-service-2026-10-09'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }
   });
   if (removed) console.log('[prune] removed ' + removed + ' superseded reminder(s)');
 } catch (e) { console.warn('[prune] reminders skipped:', e && e.message); }
+
+// DG-508 gasket leak: the office cleared it from the pulled-forward RED "service
+// now" state back to the NORMAL 450h schedule (33559h / 22-10). The service
+// record replaces on the seed version bump, but the data-flag and spare note
+// were seeded once and only ever add by key, so clear/refresh them in place on
+// the live, persistent disk. Idempotent - resolveKeys only touches an OPEN flag
+// and setByKey is a no-op if the part is gone, so this is safe to leave wired in.
+try {
+  const n = dataflags.resolveKeys(['DG-508|other'],
+    'Cleared to the normal 450h schedule (33559h / 22-10). Gasket + oil seal to be fitted at that regular service - see spare-part list.');
+  if (n) console.log('[dg-508] resolved ' + n + ' RED gasket flag(s) - back to normal schedule');
+  spares.setByKey('DG-508', 'Head gasket + oil seal (leak)', {
+    status: 'Needed',
+    notes: 'Gasket leak seen at 33451h (7092 starts). Procure the head gasket + oil seal and fit them during the next REGULAR service (normal 450h schedule: 33559h / 22-10-2026). No longer pulled forward / RED. 250 kVA Kirloskar Green, TROJAN, AL BAHYAH.',
+  });
+} catch (e) { console.warn('[dg-508] gasket clear skipped:', e && e.message); }
 
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
@@ -1076,8 +1094,12 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
     const o = ov[String(g.dg || '').toUpperCase()];
     if (o) {
       const dOnly = (s) => String(s || '').slice(0, 10);
-      const ovrDate = dOnly(o.currentHoursDate || o.updatedAt);
-      const svcDate = dOnly(g.date || g.currentHoursDate || g.updatedAt);
+      const maxDate = (...xs) => xs.map(dOnly).filter(Boolean).sort().pop() || '';
+      const ovrDate = maxDate(o.currentHoursDate, o.updatedAt);
+      // The service log's freshness is the LATEST of its service date and its
+      // confirmed-reading date (a service dated earlier can still carry a newer
+      // meter reading), falling back to when it was last touched.
+      const svcDate = maxDate(g.date, g.currentHoursDate) || dOnly(g.updatedAt);
       const overrideNewer = ovrDate && (!svcDate || ovrDate > svcDate);
       if (overrideNewer) {
         if (o.currentHours != null && isFinite(Number(o.currentHours))) {
