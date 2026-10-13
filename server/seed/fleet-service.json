@@ -389,12 +389,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 0.58,
-  "currentHours": 17322,
-  "currentHoursDate": "2026-09-26",
+  "dailyHours": 8.35,
+  "currentHours": 17464,
+  "currentHoursDate": "2026-10-13",
   "nextService": 17545,
-  "nextServiceDate": "2027-10-13",
-  "notes": "Meter confirmed 17322h on 22/09/2026 (controller photo). Last service 14/02 @ 17195h -> 223h left to next (17545h). Light standby use ~0.58 h/day (127h in ~7 months). On hire to Hashim, Al Bahia. 40 kVA Tata.",
+  "nextServiceDate": "2026-10-23",
+  "notes": "Meter confirmed 17464h on 13/10/2026 (controller photo, Adeel Store). Last service 14/02 @ 17195h -> 81h left to next (17545h). USAGE JUMPED: 142h in 17 days since 17322h/26-09 (~8.35 h/day) vs the earlier ~0.58 h/day standby - now running hard, so the service that was a year out is due ~23/10. On hire to Hashim, Al Bahia. 40 kVA Tata.",
   "interval": 350
  },
  {
