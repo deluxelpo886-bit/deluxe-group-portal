@@ -394,7 +394,8 @@
   "currentHoursDate": "2026-10-13",
   "nextService": 17545,
   "nextServiceDate": "2026-10-23",
-  "notes": "Meter confirmed 17464h on 13/10/2026 (controller photo, Adeel Store). Last service 14/02 @ 17195h -> 81h left to next (17545h). USAGE JUMPED: 142h in 17 days since 17322h/26-09 (~8.35 h/day) vs the earlier ~0.58 h/day standby - now running hard, so the service that was a year out is due ~23/10. ARRANGE head gasket + oil seal and fit at that service (flagged in the WhatsApp group). On hire to Hashim, Al Bahia. 40 kVA Tata.",
+  "urgent": true,
+  "notes": "UNDER CHECK - check the WhatsApp group BEFORE attending the service. Meter confirmed 17464h on 13/10/2026 (controller photo, Adeel Store). Last service 14/02 @ 17195h -> 81h left to next (17545h). USAGE JUMPED: 142h in 17 days since 17322h/26-09 (~8.35 h/day) vs the earlier ~0.58 h/day standby - now running hard, so the service that was a year out is due ~23/10. ARRANGE head gasket + oil seal and fit at that service (flagged in the WhatsApp group). On hire to Hashim, Al Bahia. 40 kVA Tata.",
   "interval": 350
  },
  {
@@ -2538,7 +2539,8 @@
   "nextService": 7139,
   "nextServiceDate": "2026-10-24",
   "interval": 450,
-  "notes": "Serviced 24/09/2026 at 6689h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Meter 6977h confirmed 13/10/2026 (controller photo, Adeel Store) -> 162h left to next (7139h). ~15.2 h/day (288h in 19 days) -> due ~24/10. Heavy 450h cycle. 380 kVA CAT, City Const, Al Faya."
+  "urgent": true,
+  "notes": "UNDER CHECK - check the WhatsApp group BEFORE attending the service. BREAKDOWN flagged 13/10. Serviced 24/09/2026 at 6689h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Meter 6977h confirmed 13/10/2026 (controller photo, Adeel Store) -> 162h left to next (7139h). ~15.2 h/day (288h in 19 days) -> due ~24/10. Heavy 450h cycle. 380 kVA CAT, City Const, Al Faya."
  },
  {
   "dg": "DG-492",
