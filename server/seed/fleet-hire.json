@@ -1,5 +1,25 @@
 [
  {
+  "dg": "DG-869",
+  "offHire": true,
+  "note": "New yard stock - available for hire."
+ },
+ {
+  "dg": "DG-870",
+  "offHire": true,
+  "note": "New yard stock - available for hire."
+ },
+ {
+  "dg": "DG-871",
+  "offHire": true,
+  "note": "New yard stock - available for hire."
+ },
+ {
+  "dg": "DG-872",
+  "offHire": true,
+  "note": "New yard stock - available for hire."
+ },
+ {
   "dg": "DG-564",
   "offHire": false,
   "since": "2026-10-10",

@@ -1,5 +1,49 @@
 [
  {
+  "dg": "DG-869",
+  "hours": 0,
+  "date": "2026-10-13",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "notes": "New yard stock - no service logged yet. 400 kVA Cummins, available in the yard."
+ },
+ {
+  "dg": "DG-870",
+  "hours": 0,
+  "date": "2026-10-13",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "notes": "New yard stock - no service logged yet. 380 kVA CAT, available in the yard."
+ },
+ {
+  "dg": "DG-871",
+  "hours": 0,
+  "date": "2026-10-13",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "notes": "New yard stock - no service logged yet. 160 kVA CAT, available in the yard."
+ },
+ {
+  "dg": "DG-872",
+  "hours": 0,
+  "date": "2026-10-13",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "notes": "New yard stock - no service logged yet. 400 kVA Cummins, available in the yard."
+ },
+ {
   "dg": "DG-564",
   "hours": 0,
   "date": "2026-10-10",
