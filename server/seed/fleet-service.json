@@ -2849,10 +2849,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
+  "dailyHours": 10.66,
+  "currentHours": 36152,
+  "currentHoursDate": "2026-10-13",
   "nextService": 36363,
-  "nextServiceDate": "2026-10-03",
+  "nextServiceDate": "2026-11-02",
   "interval": 350,
-  "notes": "As of 10/09/2026 (office update) ~250h still remaining to next service (current ~36113h, target 36363h). Next service ~03/10/2026. Trojan, Al Bahia, 200 kVA."
+  "notes": "Back ON HIRE to Trojan, Al Bahia (same site) from 13/10/2026 - meter 36152h confirmed. Was in yard since 16/09. Last service 31/08 @36013h -> 211h left to next (36363h). ~10.66 h/day on duty -> due ~02/11. 200 kVA Kirloskar."
  },
  {
   "dg": "DG-537",
