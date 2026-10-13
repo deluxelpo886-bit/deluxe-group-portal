@@ -300,9 +300,9 @@
  },
  {
   "dg": "DG-450",
-  "offHire": true,
-  "since": "2026-09-16",
-  "note": "Returned to yard 16/09 (off-hire)"
+  "offHire": false,
+  "since": "2026-10-13",
+  "note": "Back on hire 13/10/2026 to TROJAN, Al Bahia (same site). Meter 36152h; next service 36363h (~02/11)."
  },
  {
   "dg": "DG-456",
