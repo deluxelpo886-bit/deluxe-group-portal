@@ -2532,11 +2532,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 16.4,
+  "dailyHours": 15.2,
+  "currentHours": 6977,
+  "currentHoursDate": "2026-10-13",
   "nextService": 7139,
-  "nextServiceDate": "2026-11-03",
+  "nextServiceDate": "2026-10-24",
   "interval": 450,
-  "notes": "Serviced 24/09/2026 at 6689h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 7139h (450h cycle -> +40 days = 03/11). Heavy use ~16 h/day. 380 kVA CAT, City Const, Al Faya."
+  "notes": "Serviced 24/09/2026 at 6689h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Meter 6977h confirmed 13/10/2026 (controller photo, Adeel Store) -> 162h left to next (7139h). ~15.2 h/day (288h in 19 days) -> due ~24/10. Heavy 450h cycle. 380 kVA CAT, City Const, Al Faya."
  },
  {
   "dg": "DG-492",
