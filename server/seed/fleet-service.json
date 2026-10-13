@@ -579,13 +579,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 9.72,
+  "dailyHours": 1,
   "nextService": 14474,
-  "nextServiceDate": "2026-10-12",
+  "nextServiceDate": "2027-04-03",
   "interval": 350,
   "currentHours": 14294,
   "currentHoursDate": "2026-10-05",
-  "notes": "Controller reading 14294h on 05/10 -> 180h to next service (14474). Very low use (~1 h/day: only 16h added 18/09 to 05/10), so not due for a long time despite the 12/10 office date. Mushayrif U32, Ramah."
+  "notes": "Controller reading 14294h on 05/10 -> 180h to next service (14474). VERY LOW USE ~1 h/day (only 16h added 18/09 to 05/10), so next service is ~180 days out (~Apr-2027), NOT due now - removed from the near-term plan (the old 12/10 office date was a wrong high-use estimate). Re-confirm with a fresh meter reading before planning. Mushayrif U32, Ramah."
  },
  {
   "dg": "DG-490",
@@ -3059,11 +3059,11 @@
   "airFilter": true,
   "dailyHours": 10.65,
   "currentHours": 5371,
-  "currentHoursDate": "2026-10-10",
+  "currentHoursDate": "2026-10-11",
   "nextService": 5459,
   "nextServiceDate": "2026-10-14",
   "interval": 450,
-  "notes": "Meter 5371h 40m on 10/10/2026 (controller photo, 2481 starts). Last service 06/09 @5009h -> 88h left to next (5459h). ~10.65 h/day (362h in 34 days) -> hours estimate ~18/10; calendar target 14/10. Due mid-Oct. 800 kVA CAT, EMDAD, KIZAD."
+  "notes": "Meter 5371h 40m on 11/10/2026 (controller photo, Imran Deluxe, 2481 starts). Last service 06/09 @5009h -> 88h left to next (5459h). ~10.3 h/day (362h in 35 days) -> hours estimate ~19/10; calendar target 14/10. Due mid-Oct. 800 kVA CAT, EMDAD, KIZAD."
  },
  {
   "dg": "DG-453",
