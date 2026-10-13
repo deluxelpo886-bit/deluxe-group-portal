@@ -94,6 +94,27 @@ function resolve(id, note) {
   return it;
 }
 
+// One-time maintenance helper: resolve any OPEN seed flag whose stable key is in
+// the list (e.g. a RED alert the office has since downgraded to normal). The seed
+// replay only ever ADDS by key, so this is how a previously-seeded flag gets
+// cleared on the live, persistent disk. Idempotent - missing or already-resolved
+// keys are ignored. Returns the number resolved.
+function resolveKeys(keys, note) {
+  const want = new Set((keys || []).map((k) => String(k)));
+  let n = 0;
+  for (const it of items) {
+    if (it.status === 'open' && want.has(String(it.key))) {
+      it.status = 'resolved';
+      it.resolvedAt = new Date().toISOString();
+      if (note) it.resolvedNote = String(note).trim();
+      it.updatedAt = it.resolvedAt;
+      n += 1;
+    }
+  }
+  if (n) persist();
+  return n;
+}
+
 function reopen(id) {
   const it = items.find((x) => x.id === id);
   if (!it) throw new Error('Flag not found');
@@ -178,4 +199,4 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { add, resolve, reopen, remove, getAll, stats, applySeed, TYPES, SEVERITIES };
+module.exports = { add, resolve, resolveKeys, reopen, remove, getAll, stats, applySeed, TYPES, SEVERITIES };

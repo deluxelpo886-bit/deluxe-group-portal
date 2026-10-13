@@ -563,9 +563,10 @@ function mergeOverrides(ovMap){
     // by one fetch; the embedded baseline shows meanwhile.
     if(!window.SERVICE_BY_DG) return;
     var dOnly=function(s){ return String(s||'').slice(0,10); };
+    var maxDate=function(){ return [].slice.call(arguments).map(dOnly).filter(Boolean).sort().pop()||''; };
     var svc=window.SERVICE_BY_DG[String(r.dg||'').toUpperCase()];
-    var ovrDate=dOnly(o.currentHoursDate||o.updatedAt);
-    var svcDate=svc?dOnly(svc.date||svc.currentHoursDate||svc.updatedAt):'';
+    var ovrDate=maxDate(o.currentHoursDate,o.updatedAt);
+    var svcDate=svc?(maxDate(svc.date,svc.currentHoursDate)||dOnly(svc.updatedAt)):'';
     var overrideNewer=ovrDate && (!svcDate || ovrDate>svcDate);
     if(overrideNewer){
       if(o.nextServiceDate){ var p=String(o.nextServiceDate).split('-'); if(p.length===3) r.next_service=p[2]+'/'+p[1]+'/'+p[0]; }

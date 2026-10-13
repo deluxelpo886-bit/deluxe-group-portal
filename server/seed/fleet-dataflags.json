@@ -21,13 +21,6 @@
   "message": "NEW 100 kVA genset DG-564 on hire to EMDAD (KIZAD-B) from 10/10, replacing DG-492. FIRST running-in service is CRITICAL - due at 50h (~14/10 at ~12 h/day). MARK RED and do not miss. Brand & serial TBC - please confirm."
  },
  {
-  "dg": "DG-508",
-  "type": "other",
-  "severity": "high",
-  "source": "service-card",
-  "message": "DG-508 (250 kVA Kirloskar, TROJAN, AL BAHYAH) has a GASKET LEAK. Meter 33451h on 09/10 (7092 starts). Next service pulled forward and flagged RED (service now; 450h-interval target was 33559h/22-10). ARRANGE the gasket + oil seal BEFORE servicing and fit them during the service."
- },
- {
   "dg": "DG-547",
   "type": "other",
   "severity": "medium",
