@@ -2259,6 +2259,19 @@ app.get(['/quickmap', '/m', '/locate'], (req, res) => {
   res.sendFile(path.join(__dirname, 'quickmap.html'), { cacheControl: false });
 });
 
+// Service Report generator - fill a per-generator service report and print/save
+// as PDF (Deluxe Heavy Equipment Rental format). Self-contained page; genset
+// details (engine, serial, kVA, hours) auto-fill from the embedded asset list.
+app.get(['/service-report', '/report'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:;"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'service-report.html'), { cacheControl: false });
+});
+
 app.get('/fleet', (req, res) => serveFleetPage(req, res, false));
 // Fresh alias at a never-before-cached URL, served with no-store so it can
 // never be held in any browser/service-worker cache. Same page, same login.
