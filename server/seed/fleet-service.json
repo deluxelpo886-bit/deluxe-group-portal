@@ -3035,9 +3035,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
+  "dailyHours": 10.65,
+  "currentHours": 5371,
+  "currentHoursDate": "2026-10-10",
   "nextService": 5459,
-  "nextServiceDate": "2026-10-17",
-  "interval": 450
+  "nextServiceDate": "2026-10-14",
+  "interval": 450,
+  "notes": "Meter 5371h 40m on 10/10/2026 (controller photo, 2481 starts). Last service 06/09 @5009h -> 88h left to next (5459h). ~10.65 h/day (362h in 34 days) -> hours estimate ~18/10; calendar target 14/10. Due mid-Oct. 800 kVA CAT, EMDAD, KIZAD."
  },
  {
   "dg": "DG-453",
