@@ -1978,12 +1978,14 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": false,
-  "dailyHours": 15.67,
+  "airFilter": true,
+  "dailyHours": 9.3,
+  "currentHours": 1264,
+  "currentHoursDate": "2026-10-14",
   "nextService": 1435,
-  "nextServiceDate": "2026-10-13",
+  "nextServiceDate": "2026-10-22",
   "interval": 450,
-  "notes": "Service 14/09/2026 by Team 3 (Imran & Jayaraj) at 985h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE. Next at 1435h. 250 kVA Kirlosker, Hydro Power, Al Falah."
+  "notes": "Service 14/09/2026 by IK & Jayaraj at 985h - service card shows ALL FOUR done (oil, oil filter, fuel filter, air filter). Meter 1264h 42m confirmed 14/10/2026 (controller photo) -> 171h left to next (1435h). ~9.3 h/day (279h in 30 days) -> due ~01/11, NOT overdue (the old 13/10 date was a high-use estimate). 250 kVA Kirlosker, Hydro Power, Al Falah."
  },
  {
   "dg": "DG-802",
