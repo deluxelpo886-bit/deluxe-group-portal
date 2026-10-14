@@ -2948,6 +2948,21 @@
   "notes": "Serviced @ 30703h by Roland (oil, oil filter, fuel filter; air filter not). Controller meter confirmed 30907h on 26/09/2026 -> 146h left to next (31053). ~8 h/day, due ~14/10. Xdam Interior, Baniyas (Al Nahdhah School), 125 kVA."
  },
  {
+  "dg": "DG-844",
+  "hours": 31056,
+  "date": "2026-10-14",
+  "technician": "ADEEL&JAIRAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 8.2,
+  "nextService": 31406,
+  "nextServiceDate": "2026-11-26",
+  "interval": 350,
+  "notes": "Serviced 14/10/2026 at 31056h by Adeel & Jairaj - ALL FOUR done (oil, oil filter, fuel filter, air filter). Next 31406h (350h), ~8.2 h/day -> due ~26/11. 125 kVA Kirlosker, XDAM, Baniyas (Al Nahdhah School)."
+ },
+ {
   "dg": "DG-856",
   "hours": 21769,
   "date": "2026-09-01",
