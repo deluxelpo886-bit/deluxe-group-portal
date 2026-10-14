@@ -1,5 +1,12 @@
 [
  {
+  "dg": "DG-812",
+  "type": "other",
+  "severity": "high",
+  "source": "service-card",
+  "message": "DG-812 (30 kVA Kirlosker) OFF-HIRED to the yard 14/10 - has a LEAKAGE. Repair in the workshop before re-hire; fit the pending air filter too. Was at Motor Way (ICAD III) - a CROSS-HIRE genset was given to the customer as replacement."
+ },
+ {
   "dg": "DG-506",
   "type": "other",
   "severity": "medium",

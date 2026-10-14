@@ -342,10 +342,10 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 8.8,
-  "currentHours": 3715,
-  "currentHoursDate": "2026-10-07",
+  "currentHours": 3736,
+  "currentHoursDate": "2026-10-14",
   "nextService": 3813,
-  "nextServiceDate": "2026-10-14",
+  "nextServiceDate": "2026-10-23",
   "interval": 350,
   "notes": "Service 12/09/2026 by Team 3 (Imran & Jayaraj) at 3463h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE - pending. Controller meter confirmed 3715h on 07/10/2026 -> 98h left to next (3813). ~8.8 h/day, due ~18/10. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
  },
@@ -1833,6 +1833,23 @@
   "interval": 350,
   "fixedDays": 14,
   "notes": "Serviced 29/09/2026 at 10838h by Sonu Hussain - oil + oil & fuel filters done; AIR FILTER NOT changed. 24-HOUR USE (~18 h/day, 311h in 17 days) kept on a fixed 14-DAY cycle: next 11188h / ~13/10/2026 (29/09 + 14 days). 30 kVA Kirlosker, Motor Way, ICAD III."
+ },
+ {
+  "dg": "DG-812",
+  "hours": 11117,
+  "date": "2026-10-14",
+  "technician": "ADEEL&JAIRAJ",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 18.2,
+  "currentHours": 11117,
+  "currentHoursDate": "2026-10-14",
+  "nextService": 11467,
+  "nextServiceDate": "2026-11-01",
+  "interval": 350,
+  "notes": "Serviced 14/10/2026 at 11117h by Adeel & Jairaj - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card, pending). Next 11467h. THEN MOVED TO YARD - unit has a LEAKAGE; off-hired from Motor Way (ICAD III) for repair. A CROSS-HIRE genset was given to the customer as the replacement. 30 kVA Kirlosker."
  },
  {
   "dg": "DG-35",
