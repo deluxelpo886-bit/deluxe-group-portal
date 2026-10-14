@@ -1,5 +1,12 @@
 [
  {
+  "key": "DG-812-crosshire-motorway-2026-10-14",
+  "dg": "DG-812",
+  "note": "CROSS-HIRE genset given to MOTOR WAY (ICAD III) on 14/10/2026 as a temporary replacement for DG-812 (off-hired for leakage repair). Track the cross-hire rental cost and return the hired unit once DG-812 is repaired and redeployed.",
+  "dueDate": "2026-10-20",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "diesel-house-pump-fix-2026-10-14",
   "dg": "",
   "note": "⚠ FIX the diesel house pump - arrange the repair. Reported 14/10/2026 (with DG-479, Hydro Power / Al Falah). Confirm exact location & fault, assign a technician, and close out once repaired.",

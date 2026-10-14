@@ -1,5 +1,13 @@
 [
  {
+  "dg": "DG-812",
+  "part": "Air filter",
+  "qty": 1,
+  "status": "Needed",
+  "requestedBy": "Service card 14/10/2026 (Adeel & Jairaj)",
+  "notes": "Air filter NOT changed at the 14/10 service @11117h (X on card). Fit it during the leakage repair in the yard before re-hire. 30 kVA Kirlosker."
+ },
+ {
   "dg": "DG-506",
   "part": "Head gasket + oil seal",
   "qty": 1,
