@@ -106,7 +106,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r117');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r118');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -175,7 +175,7 @@ try {
   const rmSeedPath = path.join(__dirname, 'seed', 'fleet-reminders.json');
   if (fs.existsSync(rmSeedPath)) {
     const rseed = JSON.parse(fs.readFileSync(rmSeedPath, 'utf8'));
-    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-10-10-dg564');
+    const r = reminders.applySeed(rseed, 'fleet-reminders-2026-10-14-pump');
     if (r && r.applied) console.log('[seed] added ' + r.applied + ' reminder(s)');
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }

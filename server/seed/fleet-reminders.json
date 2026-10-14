@@ -1,5 +1,12 @@
 [
  {
+  "key": "diesel-house-pump-fix-2026-10-14",
+  "dg": "",
+  "note": "⚠ FIX the diesel house pump - arrange the repair. Reported 14/10/2026 (with DG-479, Hydro Power / Al Falah). Confirm exact location & fault, assign a technician, and close out once repaired.",
+  "dueDate": "2026-10-16",
+  "createdBy": "Operations Head"
+ },
+ {
   "key": "DG-564-first-service-50h-2026-10-14",
   "dg": "DG-564",
   "note": "DG-564 (NEW 100 kVA, EMDAD/KIZAD-B, replaced DG-492) FIRST running-in service due at 50h (~14/10/2026, ~12 h/day). RED/critical - arrange and do not miss. Confirm brand & serial.",
