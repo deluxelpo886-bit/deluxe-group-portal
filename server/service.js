@@ -116,6 +116,20 @@ function logService(rec) {
     heavyDate = hd.toISOString().slice(0, 10);
   }
 
+  // Ops-head rule: a LIGHT-USE / STANDBY machine (< 6 h/day) barely moves its
+  // meter, so an hours projection puts the next service months/years out and an
+  // imported date can read "overdue" wrongly. Instead give it a fixed MONTHLY
+  // check: next service date = the last confirmed meter-reading date (else the
+  // service date) + 30 days. Keeps standby units on a sensible 30-day cadence.
+  let lightDate = null;
+  if (usage === 'light') {
+    const lbase = (rec.currentHoursDate && /^\d{4}-\d\d-\d\d/.test(String(rec.currentHoursDate)))
+      ? String(rec.currentHoursDate).slice(0, 10) : date;
+    const ld = new Date(lbase + 'T00:00:00');
+    ld.setDate(ld.getDate() + 30);
+    lightDate = ld.toISOString().slice(0, 10);
+  }
+
   const daysToService = recFixedDays
     ? recFixedDays
     : ((interval === 450)
@@ -133,11 +147,13 @@ function logService(rec) {
     ? nsd.toISOString().slice(0, 10)
     : (heavyDate
       ? heavyDate
-      : ((interval === 450)
-        ? nsd.toISOString().slice(0, 10)
-        : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
-          ? String(rec.nextServiceDate).slice(0, 10)
-          : nsd.toISOString().slice(0, 10))));
+      : (lightDate
+        ? lightDate
+        : ((interval === 450)
+          ? nsd.toISOString().slice(0, 10)
+          : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
+            ? String(rec.nextServiceDate).slice(0, 10)
+            : nsd.toISOString().slice(0, 10)))));
   const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
 
   const entry = {
