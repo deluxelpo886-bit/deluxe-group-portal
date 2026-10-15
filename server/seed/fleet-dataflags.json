@@ -35,13 +35,6 @@
   "message": "Service 10/10/2026 (Roland/Emir) at 10354h: oil, oil filter & fuel filter changed but AIR FILTER NOT done. Carry an air filter on the next visit to DG-817 (Al Reem Island RT8, Trojan) and fit it. 40 kVA Kirloskar."
  },
  {
-  "dg": "DG-564",
-  "type": "other",
-  "severity": "high",
-  "source": "office",
-  "message": "NEW 100 kVA genset DG-564 on hire to EMDAD (KIZAD-B) from 10/10, replacing DG-492. FIRST running-in service is CRITICAL - due at 50h (~14/10 at ~12 h/day). MARK RED and do not miss. Brand & serial TBC - please confirm."
- },
- {
   "dg": "DG-547",
   "type": "other",
   "severity": "medium",
