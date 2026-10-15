@@ -303,14 +303,19 @@
       var hasConf=(hl!==null);
       var dateDays=g.nextServiceDate?dayDiff(when,g.nextServiceDate):null;
       var urgent=!!g.urgent;
-      var inHours=(hasConf && hl<=HRS_SOON);
-      var inWindow=(!hasConf && dateDays!==null && dateDays<=win);
-      if(!inHours && !inWindow && !urgent) return;
-      if(!hasConf && dateDays===null && !urgent) return; // nothing to plan against
-      // Days-to for sorting + badge: confirmed -> real hours / running rate;
-      // urgent or unconfirmed -> the (office/estimate) date.
       var rate=g.effectiveDailyHours||g.observedDailyHours||12; if(!(rate>0))rate=12;
-      var daysTo = (hasConf && !urgent) ? Math.round(hl/rate) : (dateDays!==null?dateDays:0);
+      // LIGHT / standby units (< 6 h/day) barely move their meter, so they are
+      // planned on their 30-day CALENDAR date (set from the last reading + 30
+      // days), NOT by hours. Everything else is hours-first when a reading is
+      // confirmed; the date window applies only to un-read (or light) units.
+      var isLight=(rate<6);
+      var inHours=(hasConf && !isLight && hl<=HRS_SOON);
+      var inWindow=((!hasConf || isLight) && dateDays!==null && dateDays<=win);
+      if(!inHours && !inWindow && !urgent) return;
+      if((!hasConf||isLight) && dateDays===null && !urgent) return; // nothing to plan against
+      // Days-to for sorting + badge: hours-first units -> real hours / rate;
+      // light, urgent or un-read -> the (calendar/estimate) date.
+      var daysTo = (hasConf && !isLight && !urgent) ? Math.round(hl/rate) : (dateDays!==null?dateDays:0);
       picked.push({
         dg:g.dg, daysTo:daysTo, nextHours:g.nextService, nextDate:g.nextServiceDate,
         hoursLeft:hl, confirmed:hasConf, urgent:urgent,
