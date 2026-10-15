@@ -454,8 +454,9 @@
   "nextServiceDate": "2026-10-24",
   "currentHours": 5074,
   "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 06/10/2026 at 5074h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (card shows X). Next service 5424h (+350). Heavy use ~19.7 h/day -> due ~24/10. 150 kVA Weber, Joseph Industries, Dubai (JVC).",
-  "interval": 350
+  "notes": "Serviced 06/10/2026 at 5074h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (card shows X). Next service 5424h (+350). Heavy use ~19.7 h/day -> due ~24/10. 150 kVA Weber, Joseph Industries, Dubai (JVC). TIGHT 24h CYCLE: service every 18 days (heavy/continuous use).",
+  "interval": 350,
+  "fixedDays": 18
  },
  {
   "dg": "DG-483",
@@ -2465,7 +2466,8 @@
   "nextService": 16509,
   "nextServiceDate": "2026-10-23",
   "interval": 350,
-  "notes": "Serviced 23/09/2026 at 16159h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 16509h (350h cycle). ~12 h/day. 50 kVA Perkins, Hydro Power, Mussafah MN1."
+  "notes": "Serviced 23/09/2026 at 16159h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 16509h (350h cycle). ~12 h/day. 50 kVA Perkins, Hydro Power, Mussafah MN1. TIGHT 24h CYCLE: service every 15 days (heavy/continuous use).",
+  "fixedDays": 15
  },
  {
   "dg": "DG-503",
@@ -2790,7 +2792,8 @@
   "interval": 350,
   "currentHours": 7687,
   "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 06/10/2026 at 7687h by Sonu Hussain - oil, oil filter, fuel filter AND AIR FILTER all done (air filter finally changed). Next service 8037h (+350). Customer KAT runs ~24 h/day -> due ~21/10. 160 kVA Kirloskar, Al Jadaf, Dubai."
+  "notes": "Serviced 06/10/2026 at 7687h by Sonu Hussain - oil, oil filter, fuel filter AND AIR FILTER all done (air filter finally changed). Next service 8037h (+350). Customer KAT runs ~24 h/day -> due ~21/10. 160 kVA Kirloskar, Al Jadaf, Dubai. TIGHT 24h CYCLE: service every 15 days (heavy/continuous use).",
+  "fixedDays": 15
  },
  {
   "dg": "DG-549",
@@ -3066,7 +3069,8 @@
   "nextService": 23067,
   "nextServiceDate": "2026-10-18",
   "interval": 350,
-  "notes": "Serviced 28/09/2026 @ 22717h by Adeel & Jairaz - oil + oil & fuel filters done; AIR FILTER NOT changed. Clears the overdue. Next 23067h (350h). Heavy use ~17 h/day -> due ~18/10/2026. Trojan, Al Reem."
+  "notes": "Serviced 28/09/2026 @ 22717h by Adeel & Jairaz - oil + oil & fuel filters done; AIR FILTER NOT changed. Clears the overdue. Next 23067h (350h). Heavy use ~17 h/day -> due ~18/10/2026. Trojan, Al Reem. TIGHT 24h CYCLE: service every 20 days (heavy/continuous use).",
+  "fixedDays": 20
  },
  {
   "dg": "DG-804",
@@ -3118,7 +3122,8 @@
   "interval": 350,
   "currentHours": 5917,
   "currentHoursDate": "2026-10-03",
-  "notes": "Serviced 03/10/2026 at 5917h by IK & Imran - oil, oil filter, fuel filter AND air filter all done (air filter now cleared). Next 6267h (350h cycle). ~22 h/day (heavy) -> due ~19/10. Cleared the previous overdue. 40 kVA, Aswar, Mafraq (Jarn Yafour)."
+  "notes": "Serviced 03/10/2026 at 5917h by IK & Imran - oil, oil filter, fuel filter AND air filter all done (air filter now cleared). Next 6267h (350h cycle). ~22 h/day (heavy) -> due ~19/10. Cleared the previous overdue. 40 kVA, Aswar, Mafraq (Jarn Yafour). TIGHT 24h CYCLE: service every 16 days (heavy/continuous use).",
+  "fixedDays": 16
  },
  {
   "dg": "DG-828",
@@ -3436,6 +3441,7 @@
   "nextService": 495,
   "nextServiceDate": "2026-10-18",
   "interval": 350,
-  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). DSE meter 420h 12m confirmed 15/10/2026 -> 75h left to next (495h). RUNNING ~24h/day: 275h in 12 days since the 03/10 service (~23 h/day) - due ~18/10, very soon. Air filter still pending. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT, KIZAD. 350h interval (NOTE: office master sheet uses 450h = next 595h - confirm). Co-located with DG-850."
+  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). DSE meter 420h 12m confirmed 15/10/2026 -> 75h left to next (495h). RUNNING ~24h/day: 275h in 12 days since the 03/10 service (~23 h/day) - due ~18/10, very soon. Air filter still pending. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT, KIZAD. 350h interval (NOTE: office master sheet uses 450h = next 595h - confirm). Co-located with DG-850. TIGHT 24h CYCLE: service every 15 days (heavy/continuous use).",
+  "fixedDays": 15
  }
 ]
