@@ -2412,11 +2412,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 12.8,
+  "dailyHours": 11.4,
+  "currentHours": 3542,
+  "currentHoursDate": "2026-10-15",
   "nextService": 3786,
   "nextServiceDate": "2026-11-04",
   "interval": 450,
-  "notes": "Serviced 27/09/2026 at 3336h by Sonu Hussain - oil + oil/fuel/air filters all done. Interval corrected to 450h (350 kVA machine) -> next service 3786h (3336+450). Ran 3272h @ 22/09 -> 3336h @ 27/09 (~12.8 h/day). Next due ~04/11/2026 (450h / 38-day cycle). 350 kVA, Gulf Contracting, Dubai (Hessyan First)."
+  "notes": "Serviced 27/09/2026 at 3336h by Sonu Hussain - oil + oil/fuel/air filters all done. Interval 450h (350 kVA machine) -> next service 3786h. Meter 3542h 40m confirmed 15/10/2026 (DSE controller, 484 starts) -> 244h left to next. ~11.4 h/day (206h in 18 days since 3336h/27-09) -> due ~04/11. 350 kVA, Gulf Contracting, Dubai (Hessyan First)."
  },
  {
   "dg": "DG-502",
