@@ -2833,11 +2833,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 17.9,
+  "dailyHours": 11.7,
+  "currentHours": 8663,
+  "currentHoursDate": "2026-10-11",
   "nextService": 8861,
-  "nextServiceDate": "2026-10-18",
+  "nextServiceDate": "2026-10-28",
   "interval": 350,
-  "notes": "Serviced 28/09/2026 by Imran Hussain at 8511h. Oil + oil filter + fuel filter done; AIR FILTER NOT DONE AGAIN (3rd time - skipped 24/08, 13/09, 28/09). Heavy use ~18 h/day (268h in 15 days) at dusty KIZAD - the AIR FILTER is overdue for a change, carry one next visit. Next service 8861h -> due ~18/10/2026."
+  "notes": "Serviced 28/09/2026 by Imran Hussain at 8511h. Oil + oil filter + fuel filter done; AIR FILTER NOT DONE AGAIN (3rd time - skipped 24/08, 13/09, 28/09) - overdue, carry one next visit (dusty KIZAD site). Meter 8663h confirmed 11/10/2026 (controller photo) -> 198h left to next (8861h), ~11.7 h/day (152h in 13 days) -> due ~28/10. 60 kVA Kirlosker, Mawaad, KIZAD."
  },
  {
   "dg": "DG-537",
