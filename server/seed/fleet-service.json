@@ -1439,6 +1439,21 @@
   "notes": "Service cycle reset from 22/09/2026 (ops-head). Controller confirmed 3442h @ 27/09/2026 (998 starts) -> 269h left to next (3711h). Running ~15 h/day (3365h @ 22/09 -> 3442h @ 27/09). 450h cycle. 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First) - replaced DG-824."
  },
  {
+  "dg": "DG-830",
+  "hours": 3661,
+  "date": "2026-10-15",
+  "technician": "SONU HUSSAIN & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 17.4,
+  "nextService": 4111,
+  "nextServiceDate": "2026-11-10",
+  "interval": 450,
+  "notes": "Serviced 15/10/2026 at 3661h by Sonu Hussain & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card). Next 4111h (450h cycle). Heavy use ~17.4 h/day (400h in 23 days since 3261h/22-09). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First)."
+ },
+ {
   "dg": "DG-834",
   "hours": 5962,
   "date": "2026-08-26",
