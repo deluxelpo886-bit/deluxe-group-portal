@@ -61,6 +61,21 @@
   "notes": "NEW 100 kVA genset on hire to EMDAD (KIZAD-B) from 10/10/2026, replacing DG-492. FIRST running-in service due at 50h (~14/10/2026, ~12 h/day) - FLAGGED RED, do not miss. 100 kVA Kirloskar; serial TBC."
  },
  {
+  "dg": "DG-564",
+  "hours": 83,
+  "date": "2026-10-15",
+  "technician": "SONU HUSSAIN & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 16.6,
+  "nextService": 433,
+  "nextServiceDate": "2026-11-05",
+  "interval": 350,
+  "notes": "FIRST running-in service DONE 15/10/2026 at 83h by Sonu Hussain & Imran - oil + oil filter changed (fuel filter & air filter not needed this round, X on card). Running-in complete - next service 433h (83+350), ~16.6 h/day -> due ~05/11. 100 kVA Kirloskar, EMDAD, KIZAD-B (replaced DG-492)."
+ },
+ {
   "dg": "DG-455",
   "hours": 2254,
   "date": "2024-09-05",
@@ -2256,13 +2271,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 10.4,
-  "currentHours": 2572,
-  "currentHoursDate": "2026-10-09",
+  "dailyHours": 10,
+  "currentHours": 2632,
+  "currentHoursDate": "2026-10-15",
   "nextService": 2695,
   "nextServiceDate": "2026-10-21",
   "interval": 450,
-  "notes": "Serviced 11/09/2026 at 2245h by Adeel & MJ.K. QUARTZ meter 2572h on 09/10 (was 2416h on 24/09) -> 123h left to next (2695h). ~10.4 h/day. 440 kVA Cummins, Al Masriya, Khalifa Industrial City B."
+  "notes": "Serviced 11/09/2026 at 2245h by Adeel & MJ.K. QUARTZ meter 2632h confirmed 15/10/2026 (was 2572h on 09/10) -> 63h left to next (2695h). ~10 h/day. Due ~21/10. 440 kVA Cummins, Al Masriya, Khalifa Industrial City B."
  },
  {
   "dg": "DG-842",

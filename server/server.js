@@ -106,7 +106,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r124');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r125');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -185,7 +185,9 @@ try {
 try {
   const PRUNE_RM = ['DG-476-crosscheck-2026-09-19', 'hydropower-deliver-2026-09-19', 'delcotech-40kva-ready-2026-09-19', 'DG-430-hire-details-2026-09-21', 'motherson-gatepass-2026-09-25', 'DG-868-arrival-to-yard-2026-09-23', 'DG-537-overdue-breakdown-replace-2026-09-25', 'DG-473-14day-cycle-2026-10-08', 'DG-849-temp-sensor-2026-09-27', 'DG-501-heavy-use-2026-10-07', 'DG-834-offhire-contract-end-2026-09-28', 'DG-470-collect-offhire-2026-09-30', 'DG-538-collect-offhire-2026-09-30', 'DG-842-collect-offhire-2026-09-30', 'DG-549-speak-customer-usage-2026-09-24', 'DG-459-offhire-2026-10-07', 'DG-459-collect-offhire-2026-10-09', 'DG-476-crosscheck-2026-09-19-v2', 'DG-812-14day-cycle-2026-09-26', 'DG-494-24h-service-2026-10-06',
     // DG-508 gasket pulled-forward RED nudge - cleared to the normal 33559h/22-10 schedule (gasket now fitted at that regular service).
-    'DG-508-gasket-seal-before-service-2026-10-09'];
+    'DG-508-gasket-seal-before-service-2026-10-09',
+    // DG-564 first running-in service done 15/10 @83h - reminder no longer needed.
+    'DG-564-first-service-50h-2026-10-14'];
   let removed = 0;
   reminders.getAll().forEach((r) => {
     if (r && r.seedKey && PRUNE_RM.indexOf(r.seedKey) !== -1) { reminders.remove(r.id); removed += 1; }
@@ -208,6 +210,14 @@ try {
     notes: 'Gasket leak seen at 33451h (7092 starts). Procure the head gasket + oil seal and fit them during the next REGULAR service (normal 450h schedule: 33559h / 22-10-2026). No longer pulled forward / RED. 250 kVA Kirloskar Green, TROJAN, AL BAHYAH.',
   });
 } catch (e) { console.warn('[dg-508] gasket clear skipped:', e && e.message); }
+
+// DG-564: the RED "FIRST running-in service CRITICAL" flag/reminder are done -
+// the running-in service was completed 15/10 @ 83h. Clear the live flag (seed
+// entries removed too). Idempotent - only resolves an OPEN flag.
+try {
+  const n = dataflags.resolveKeys(['DG-564|other'], 'First running-in service completed 15/10/2026 @ 83h (oil + oil filter). On the normal 350h schedule now - next 433h.');
+  if (n) console.log('[dg-564] resolved ' + n + ' RED first-service flag(s) - running-in done');
+} catch (e) { console.warn('[dg-564] flag clear skipped:', e && e.message); }
 
 // One-time import of rental contracts (monthly rate + customer per generator)
 // from the fleet's rate data, so the income tracker and dashboard show the real
