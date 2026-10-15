@@ -3415,12 +3415,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "currentHours": 225.9,
-  "currentHoursDate": "2026-10-09",
-  "dailyHours": 13.5,
+  "currentHours": 420,
+  "currentHoursDate": "2026-10-15",
+  "dailyHours": 23,
   "nextService": 495,
-  "nextServiceDate": "2026-10-29",
+  "nextServiceDate": "2026-10-18",
   "interval": 350,
-  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). DSE meter 225.9h on 09/10 -> 269h left to next (495h), ~13.5 h/day. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT. 350h interval. Co-located with DG-850 (same El Masria / Al Masriya site)."
+  "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). DSE meter 420h 12m confirmed 15/10/2026 -> 75h left to next (495h). RUNNING ~24h/day: 275h in 12 days since the 03/10 service (~23 h/day) - due ~18/10, very soon. Air filter still pending. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT, KIZAD. 350h interval (NOTE: office master sheet uses 450h = next 595h - confirm). Co-located with DG-850."
  }
 ]
