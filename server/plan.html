@@ -285,17 +285,35 @@
     // days, by next-service DATE (same basis as the dashboard). Skip anything
     // with no date yet.
     var picked=[]; var pausedCount=0;
+    var HRS_SOON=150; // a confirmed unit within this many hours of due always shows
     gens.forEach(function(g){
-      if(!g.nextServiceDate) return;
       var d=dir[String(g.dg).toUpperCase()]||{};
       // Off-hire / in-yard units are PAUSED — they're not running, so their
-      // service does not count. They keep their next-350-hours target and pick
-      // it back up when they go on hire again. Never dispatch them.
+      // service does not count. They keep their next-service target and pick it
+      // back up when they go on hire again. Never dispatch them.
       if(g.offHire || d.zone==='Yard'){ pausedCount++; return; }
-      var daysTo=dayDiff(when,g.nextServiceDate);
-      if(daysTo===null || daysTo>win) return;
+      // HOURS-FIRST (same basis as the Service Plan): a confirmed hour-meter
+      // reading is the source of truth. Include a confirmed unit only when its
+      // HOURS are close (<= HRS_SOON) and IGNORE the stored next-service date,
+      // which may be a stale calendar estimate (a low-use unit whose "+40 day"
+      // date passed long before the hours are actually due). The date window is
+      // used only for units with NO confirmed reading. 'urgent' always shows.
+      var due=g.due||{};
+      var hl=(due.confirmed && due.hoursLeft!=null)?due.hoursLeft:null;
+      var hasConf=(hl!==null);
+      var dateDays=g.nextServiceDate?dayDiff(when,g.nextServiceDate):null;
+      var urgent=!!g.urgent;
+      var inHours=(hasConf && hl<=HRS_SOON);
+      var inWindow=(!hasConf && dateDays!==null && dateDays<=win);
+      if(!inHours && !inWindow && !urgent) return;
+      if(!hasConf && dateDays===null && !urgent) return; // nothing to plan against
+      // Days-to for sorting + badge: confirmed -> real hours / running rate;
+      // urgent or unconfirmed -> the (office/estimate) date.
+      var rate=g.effectiveDailyHours||g.observedDailyHours||12; if(!(rate>0))rate=12;
+      var daysTo = (hasConf && !urgent) ? Math.round(hl/rate) : (dateDays!==null?dateDays:0);
       picked.push({
         dg:g.dg, daysTo:daysTo, nextHours:g.nextService, nextDate:g.nextServiceDate,
+        hoursLeft:hl, confirmed:hasConf, urgent:urgent,
         zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
         lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand,
         usage:(g.effectiveDailyHours||g.observedDailyHours||null),

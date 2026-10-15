@@ -128,7 +128,7 @@ try {
 // hire stores on every boot. remove() is idempotent, so this guarantees they can
 // never reappear from an older persisted record on the ephemeral disk.
 try {
-  const PRUNE = ['DC-804', 'G-54', 'DG-544',
+  const PRUNE = ['DC-804', 'G-54', 'DG-544', 'DG-999', 'DG-TEST',
     // Sold 03/10/2026 - removed from the fleet (map, service plan, hire).
     'DG-418', 'DG-404', 'DG-455', 'DG-483', 'DG-543', 'DG-496', 'DG-811', 'DG-452', 'DG-559', 'DG-863'];
   let pruned = 0;
