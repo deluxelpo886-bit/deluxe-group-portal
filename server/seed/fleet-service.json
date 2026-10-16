@@ -957,12 +957,12 @@
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 3.3,
-  "currentHours": 9893,
-  "currentHoursDate": "2026-10-07",
+  "currentHours": 9894,
+  "currentHoursDate": "2026-10-16",
   "nextService": 9973,
   "nextServiceDate": "2026-10-31",
   "interval": 350,
-  "notes": "Serviced 18/07/2026 at 9623h by Velu & Bakhtamal. Meter 9893h confirmed 07/10/2026 (same reading as 23/09 - idle ~2 weeks) -> 80h left to next (9973h). ~3.3 h/day. 60 kVA Jet, Trojan, Yas Island. NOTE: 18/07 service card shows AIR FILTER not done - confirm."
+  "notes": "Controller 9894h confirmed 16/10/2026 (was 9893h on 07/10 - only 1h in 9 days, nearly idle/standby lately). 79h left to next (9973); next service ~31/10. 60 kVA, Trojan, Yas Island."
  },
  {
   "dg": "DG-836",
@@ -2526,13 +2526,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 13,
-  "currentHours": 9336,
-  "currentHoursDate": "2026-09-27",
+  "dailyHours": 17.2,
+  "currentHours": 9680,
+  "currentHoursDate": "2026-10-16",
   "nextService": 9634,
   "nextServiceDate": "2026-10-20",
   "interval": 350,
-  "notes": "Serviced 23/09/2026 at 9284h by Sonu & Hussain - all filters done. Next 9634h (350h cycle). Controller confirmed 9336h @ 27/09/2026 (2157 starts, 41607 kWh) -> 298h left, ~13 h/day. WARNING: controller showing 'TEMP SENSOR OPEN' (27/09) - coolant-temp sensor / wiring open-circuit; NO high-temperature shutdown protection until fixed - check & replace the temp sensor. 125 kVA Weichai, Trojan, Yas Island."
+  "notes": "Controller 9680h 39m confirmed 16/10/2026 (86 starts) -> 46h PAST the next-service point (9634). Heavy use ~17.2 h/day (396h since the 23/09 service at 9284h). SERVICE NOW DUE/OVERDUE. 23/09 service all filters done. 125 kVA Weichai, Trojan, Yas Island."
  },
  {
   "dg": "DG-459",
