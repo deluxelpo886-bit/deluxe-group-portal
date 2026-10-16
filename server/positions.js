@@ -236,4 +236,67 @@ async function getStops(fromISO, toISO) {
   }
 }
 
-module.exports = { startPolling, getSnapshot, isConfigured, loadLastKnown, getStops };
+// Traccar TRIP report for all devices in a time window. A "trip" is a driving
+// segment (engine on, vehicle moving between two stops) with its distance and
+// duration - which is what tells the office how much time a van spent DRIVING
+// vs sitting. Returns [{deviceId, deviceName, startTime, endTime, durationMs,
+// distanceM, startAddress, endAddress, avgSpeed, maxSpeed}].
+async function getTrips(fromISO, toISO) {
+  if (!isConfigured()) return { configured: false, trips: [] };
+  try {
+    if (!cookie) await login();
+    let devices;
+    try { devices = await api('/api/devices'); }
+    catch (e) {
+      if (String(e.message).includes('unauthorized')) { await login(); devices = await api('/api/devices'); }
+      else throw e;
+    }
+    const ids = (devices || []).map((d) => d.id).filter((x) => x != null);
+    if (!ids.length) return { configured: true, trips: [] };
+    const q = ids.map((id) => 'deviceId=' + id).join('&')
+      + '&from=' + encodeURIComponent(fromISO) + '&to=' + encodeURIComponent(toISO);
+    let rows;
+    try { rows = await api('/api/reports/trips?' + q); }
+    catch (e) {
+      if (String(e.message).includes('unauthorized')) { await login(); rows = await api('/api/reports/trips?' + q); }
+      else throw e;
+    }
+    const nameById = {};
+    (devices || []).forEach((d) => { nameById[d.id] = d.name; });
+    const trips = (rows || []).map((t) => ({
+      deviceId: t.deviceId,
+      deviceName: t.deviceName || nameById[t.deviceId] || ('Device ' + t.deviceId),
+      startTime: t.startTime,
+      endTime: t.endTime,
+      durationMs: t.duration,
+      distanceM: t.distance,
+      startAddress: t.startAddress || '',
+      endAddress: t.endAddress || '',
+      avgSpeed: t.averageSpeed,
+      maxSpeed: t.maxSpeed,
+    }));
+    return { configured: true, trips };
+  } catch (e) {
+    return { configured: true, trips: [], error: (e && e.message) || 'trips fetch failed' };
+  }
+}
+
+// The list of tracked devices (vehicles), so a report can show every van even
+// if it logged no trips/stops in the window. [{id, name, status}].
+async function getDevices() {
+  if (!isConfigured()) return { configured: false, devices: [] };
+  try {
+    if (!cookie) await login();
+    let devices;
+    try { devices = await api('/api/devices'); }
+    catch (e) {
+      if (String(e.message).includes('unauthorized')) { await login(); devices = await api('/api/devices'); }
+      else throw e;
+    }
+    return { configured: true, devices: (devices || []).map((d) => ({ id: d.id, name: d.name, status: d.status })) };
+  } catch (e) {
+    return { configured: true, devices: [], error: (e && e.message) || 'devices fetch failed' };
+  }
+}
+
+module.exports = { startPolling, getSnapshot, isConfigured, loadLastKnown, getStops, getTrips, getDevices };

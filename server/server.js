@@ -106,7 +106,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r129');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r130');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -892,6 +892,117 @@ app.get('/api/positions/stops', fleetProtect, async (req, res) => {
   res.json({ date, configured: r.configured, error: r.error || null, stops });
 });
 
+// ---------- Service-team vehicle utilisation (last N days) ----------
+// Breaks each tracked service VEHICLE's time over the window into: SERVICING
+// (parked at a genset site), IDLE AT YARD (parked at the office/yard), OTHER
+// STOPS (parked elsewhere) and DRIVING (moving between stops). Pulls the Traccar
+// stop + trip reports once for the whole window and classifies each stop by
+// proximity to a genset location (<=300m = on a job) or the yard (<=250m). This
+// lets the office see whether a van's day is really spent on service vs parked
+// or driving around. Read-only; needs Total Secure (TRACCAR_*) configured.
+app.get('/api/team/utilisation', fleetProtect, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const tz = process.env.ALERT_TIMEZONE || 'Asia/Dubai';
+  let days = parseInt(req.query.days, 10);
+  if (!(days >= 1 && days <= 31)) days = 7;
+  // Dubai is UTC+4 with no DST, so a local day is a fixed +04:00 window.
+  const OFF = 4 * 3600 * 1000;
+  const localDate = (ms) => new Date(ms + OFF).toISOString().slice(0, 10);
+  const todayLocal = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  // Window: the last `days` local days, ending at the end of today.
+  const endMs = new Date(todayLocal + 'T23:59:59+04:00').getTime();
+  const startLocalDay = new Date(new Date(todayLocal + 'T00:00:00+04:00').getTime() - (days - 1) * 86400000);
+  const startMs = startLocalDay.getTime();
+  const fromISO = new Date(startMs).toISOString();
+  const toISO = new Date(endMs).toISOString();
+  // Ordered list of the local day strings in the window (for per-day columns).
+  const dayList = [];
+  for (let i = 0; i < days; i++) dayList.push(localDate(startMs + i * 86400000));
+
+  const R = 6371000, toRad = (d) => (d * Math.PI) / 180;
+  const distM = (aLat, aLon, bLat, bLon) => {
+    const dLat = toRad(bLat - aLat), dLon = toRad(bLon - aLon);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+  const OFFICE = { lat: 24.3462062, lon: 54.4998379 };
+  const dir = directory.getMap();
+  const gens = Object.keys(dir).map((k) => dir[k]).filter((g) => typeof g.lat === 'number' && typeof g.lon === 'number');
+  function nearestGen(lat, lon) {
+    let best = null;
+    gens.forEach((g) => { const d = distM(lat, lon, g.lat, g.lon); if (!best || d < best.d) best = { dg: g.dg, customer: g.customer, d }; });
+    return best;
+  }
+
+  const [sr, tr, dv] = await Promise.all([
+    positions.getStops(fromISO, toISO),
+    positions.getTrips(fromISO, toISO),
+    positions.getDevices(),
+  ]);
+  if (!sr.configured) {
+    return res.json({ configured: false, error: 'Total Secure (GPS tracking) is not configured on the server.', days, from: fromISO, to: toISO, dayList, vehicles: [] });
+  }
+
+  // vehicles keyed by deviceId
+  const V = {};
+  function veh(id, name) {
+    if (!V[id]) {
+      const perDay = {};
+      dayList.forEach((d) => { perDay[d] = { serviceMs: 0, yardMs: 0, otherMs: 0, driveMs: 0, distanceM: 0 }; });
+      V[id] = { deviceId: id, name: name || ('Device ' + id), serviceMs: 0, yardMs: 0, otherMs: 0, driveMs: 0, distanceM: 0, serviceVisits: 0, otherVisits: 0, sites: {}, perDay };
+    } else if (name && /^Device /.test(V[id].name)) { V[id].name = name; }
+    return V[id];
+  }
+  // Seed every known device so idle/absent vans still appear.
+  (dv.devices || []).forEach((d) => veh(d.id, d.name));
+
+  (sr.stops || []).forEach((s) => {
+    const v = veh(s.deviceId, s.deviceName);
+    const dur = Math.max(0, s.durationMs || 0);
+    const day = v.perDay[localDate(new Date(s.startTime).getTime())] || null;
+    const hasPos = (typeof s.lat === 'number' && typeof s.lon === 'number');
+    const atYard = hasPos && distM(s.lat, s.lon, OFFICE.lat, OFFICE.lon) < 250;
+    const near = hasPos ? nearestGen(s.lat, s.lon) : null;
+    const atGen = (near && near.d <= 300) ? near : null;
+    if (atYard) { v.yardMs += dur; if (day) day.yardMs += dur; }
+    else if (atGen) { v.serviceMs += dur; v.serviceVisits++; v.sites[atGen.dg] = (v.sites[atGen.dg] || 0) + dur; if (day) day.serviceMs += dur; }
+    else { v.otherMs += dur; v.otherVisits++; if (day) day.otherMs += dur; }
+  });
+  (tr.trips || []).forEach((t) => {
+    const v = veh(t.deviceId, t.deviceName);
+    const dur = Math.max(0, t.durationMs || 0);
+    const dist = Math.max(0, t.distanceM || 0);
+    v.driveMs += dur; v.distanceM += dist;
+    const day = v.perDay[localDate(new Date(t.startTime).getTime())] || null;
+    if (day) { day.driveMs += dur; day.distanceM += dist; }
+  });
+
+  const hrs = (ms) => Math.round((ms / 3600000) * 10) / 10;
+  const vehicles = Object.keys(V).map((id) => {
+    const v = V[id];
+    const totalMs = v.serviceMs + v.yardMs + v.otherMs + v.driveMs;
+    const sitesArr = Object.keys(v.sites).sort((a, b) => v.sites[b] - v.sites[a]);
+    const servicePct = totalMs > 0 ? Math.round((v.serviceMs / totalMs) * 100) : 0;
+    return {
+      deviceId: v.deviceId, name: v.name,
+      serviceHrs: hrs(v.serviceMs), yardHrs: hrs(v.yardMs), otherHrs: hrs(v.otherMs), driveHrs: hrs(v.driveMs),
+      trackedHrs: hrs(totalMs), distanceKm: Math.round(v.distanceM / 1000 * 10) / 10,
+      serviceVisits: v.serviceVisits, otherVisits: v.otherVisits,
+      siteCount: sitesArr.length, sites: sitesArr.slice(0, 12),
+      servicePct,
+      perDay: dayList.map((d) => ({ day: d, serviceHrs: hrs(v.perDay[d].serviceMs), yardHrs: hrs(v.perDay[d].yardMs), otherHrs: hrs(v.perDay[d].otherMs), driveHrs: hrs(v.perDay[d].driveMs), distanceKm: Math.round(v.perDay[d].distanceM / 1000 * 10) / 10 })),
+    };
+  }).sort((a, b) => b.serviceHrs - a.serviceHrs);
+
+  res.json({
+    configured: true,
+    error: sr.error || tr.error || dv.error || null,
+    days, from: fromISO, to: toISO, dayList,
+    generatedAt: new Date().toISOString(),
+    vehicles,
+  });
+});
+
 // ---------- Map tile proxy (same-origin tiles for the fleet map) ----------
 // Some mobile networks block third-party tile CDNs (OpenStreetMap etc.), which
 // leaves the fleet map with a blank grey background. Relaying tiles through our
@@ -1303,6 +1414,18 @@ app.get('/serviceplan', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'serviceplan.html'), { cacheControl: false });
+});
+// Service-team vehicle utilisation report: per tracked van, how the last N days
+// split between servicing (at a genset), idle at the yard, other stops and
+// driving. Reads /api/team/utilisation (Total Secure GPS). Print-to-PDF.
+app.get('/team', (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'team.html'), { cacheControl: false });
 });
 // LPO / billing tracker page: every on-hire genset with its PO number and the
 // monthly timesheet + invoice status (uses /api/service/status for the live
