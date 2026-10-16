@@ -3098,7 +3098,7 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
   "nextService": 13411,
   "nextServiceDate": "2026-10-31",
   "interval": 350,
@@ -3106,7 +3106,7 @@
   "dailyHours": 19.7,
   "currentHours": 13060,
   "currentHoursDate": "2026-10-16",
-  "notes": "Serviced 16/10/2026 at 13061h by Sonu Hussain - oil, oil filter, fuel filter & air filter all renewed (service card signed). Controller 13060h confirmed 16/10. Ran 296h since 01/10 service (12765h) = ~19.7 h/day heavy / near-24h use. Next 13411h (+350); office keeps it on a FIXED 15-DAY cycle -> next service 31/10/2026. 160 kVA FG Wilson, Trojan, ICAD III. 24-hour running report + proof issued 16/10."
+  "notes": "Serviced 16/10/2026 at 13061h by Sonu Hussain - oil, oil filter & fuel filter renewed. AIR FILTER NOT changed (pending) - must be fitted at the next service; carry an air filter. Controller 13060h confirmed 16/10. Ran 296h since 01/10 service (12765h) = ~19.7 h/day heavy / near-24h use. Next 13411h (+350); office keeps it on a FIXED 15-DAY cycle -> next service 31/10/2026. 160 kVA FG Wilson, Trojan, ICAD III. Service report + proof issued 16/10."
  },
  {
   "dg": "DG-35",
