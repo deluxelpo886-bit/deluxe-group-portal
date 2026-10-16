@@ -2532,7 +2532,9 @@
   "nextService": 9634,
   "nextServiceDate": "2026-10-20",
   "interval": 350,
-  "notes": "Controller 9680h 39m confirmed 16/10/2026 (86 starts) -> 46h PAST the next-service point (9634). Heavy use ~17.2 h/day (396h since the 23/09 service at 9284h). SERVICE NOW DUE/OVERDUE. 23/09 service all filters done. 125 kVA Weichai, Trojan, Yas Island."
+  "urgent": true,
+  "fixedDays": 24,
+  "notes": "[Scheduled on the 17/10 plan at ops request - overdue, service tomorrow.] Controller 9680h 39m confirmed 16/10/2026 (86 starts) -> 46h PAST the next-service point (9634). Heavy use ~17.2 h/day (396h since the 23/09 service at 9284h). SERVICE NOW DUE/OVERDUE. 23/09 service all filters done. 125 kVA Weichai, Trojan, Yas Island."
  },
  {
   "dg": "DG-459",
