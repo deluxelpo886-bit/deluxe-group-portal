@@ -2568,6 +2568,23 @@
   "currentHoursDate": "2026-10-05"
  },
  {
+  "dg": "DG-560",
+  "hours": 601,
+  "date": "2026-10-16",
+  "technician": "",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 951,
+  "nextServiceDate": "2026-11-19",
+  "interval": 350,
+  "dailyHours": 10.3,
+  "currentHours": 601,
+  "currentHoursDate": "2026-10-16",
+  "notes": "Serviced 16/10/2026 at 601h (DSE controller Run Time 601h) - oil, oil filter & fuel filter done. AIR FILTER not confirmed on the card (verify). Next 951h (+350); ran 113h since 05/10 (488h) = ~10.3 h/day -> next service due ~19/11/2026. 125 kVA Kirloskar, X DOM, Yas Island YN7."
+ },
+ {
   "dg": "DG-822",
   "hours": 6279,
   "date": "2026-08-30",
