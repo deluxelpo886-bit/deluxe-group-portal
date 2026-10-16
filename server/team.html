@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe — Service Team Vehicle Utilisation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b66">
+<style>
+  :root{ --ink:#16202b; --muted:#5b6b7b; --line:#dbe3ea; --panel:#ffffff; --soft:#f4f7fa;
+    --brand:#0d3b66; --brand2:#e8a13a;
+    --svc:#2e7d5b; --drive:#1f6fb2; --yard:#8a5a12; --other:#b0453a;
+    --sans:'Inter','Segoe UI',-apple-system,sans-serif; }
+  *{box-sizing:border-box;}
+  body{background:#eef2f6;color:var(--ink);font-family:var(--sans);margin:0;padding:18px 14px 70px;}
+  .sheet{max-width:1000px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 6px 24px rgba(20,40,60,.08);}
+  .head{background:linear-gradient(120deg,var(--brand),#134a80);color:#fff;padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .head .co{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;}
+  .head h1{font-size:23px;margin:4px 0 2px;font-weight:800;}
+  .head .dt{font-size:14px;opacity:.95;}
+  .head .badge{background:var(--brand2);color:#241800;font-weight:800;font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;}
+  .body{padding:20px 24px;}
+  .ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+  .ctl label{font-size:12px;color:var(--muted);}
+  .ctl select{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-family:var(--sans);font-size:13px;color:var(--ink);background:#fff;}
+  .btn{border:none;border-radius:8px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer;}
+  .btn.print{background:var(--brand);color:#fff;margin-left:auto;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 16px;font-size:12px;color:var(--muted);}
+  .legend .k{display:inline-flex;align-items:center;gap:6px;}
+  .legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .note{background:#fdf3e0;border:1px solid #e8c98a;color:#8a5a12;border-radius:10px;padding:11px 14px;font-size:12.5px;line-height:1.6;margin-bottom:16px;}
+  .note b{color:#7a3d00;}
+  .veh{border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden;break-inside:avoid;}
+  .vhead{background:var(--soft);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);}
+  .vhead .vn{font-size:16px;font-weight:800;}
+  .vhead .flag{background:#fce8e6;color:var(--other);font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;}
+  .vhead .good{background:#e5f4ec;color:var(--svc);font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;}
+  .vhead .km{margin-left:auto;font-size:12px;color:var(--muted);}
+  /* stacked bar */
+  .bar{display:flex;height:22px;border-radius:6px;overflow:hidden;margin:12px 16px 6px;background:#eef2f6;}
+  .bar span{display:block;height:100%;}
+  .bar .s-svc{background:var(--svc);} .bar .s-drive{background:var(--drive);}
+  .bar .s-yard{background:var(--yard);} .bar .s-other{background:var(--other);}
+  .tiles{display:flex;gap:10px;flex-wrap:wrap;padding:4px 16px 14px;}
+  .tile{flex:1;min-width:92px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;}
+  .tile .n{font-size:19px;font-weight:800;line-height:1;}
+  .tile .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;}
+  .tile.svc .n{color:var(--svc);} .tile.drive .n{color:var(--drive);}
+  .tile.yard .n{color:var(--yard);} .tile.other .n{color:var(--other);}
+  .sites{padding:0 16px 12px;font-size:12px;color:var(--muted);}
+  .sites b{color:var(--ink);}
+  table.days{width:calc(100% - 32px);margin:0 16px 14px;border-collapse:collapse;font-size:12px;}
+  table.days th,table.days td{border:1px solid #e6edf3;padding:5px 8px;text-align:center;}
+  table.days th{background:#fbfdff;font-size:10px;text-transform:uppercase;color:var(--muted);}
+  table.days td.d{font-weight:700;color:var(--ink);text-align:left;white-space:nowrap;}
+  table.days td.z{color:#b9c3cd;}
+  .empty{padding:40px;text-align:center;color:var(--muted);}
+  .foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .navback{display:inline-block;margin-bottom:10px;color:var(--brand);text-decoration:none;font-size:13px;font-weight:700;}
+  #overlay{position:fixed;inset:0;background:rgba(13,30,50,.7);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;}
+  #overlay .card{background:#fff;border-radius:14px;padding:24px;max-width:340px;width:100%;}
+  #overlay input{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:14px;}
+  @media print{
+    @page{size:A4 portrait;margin:8mm;}
+    html,body{background:#fff;padding:0;margin:0;font-size:9px;}
+    .sheet{border:none;box-shadow:none;max-width:none;border-radius:0;}
+    .noprint{display:none !important;}
+    .head{background:var(--brand) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:8px 10px !important;}
+    .head h1{font-size:15px !important;margin:1px 0 !important;} .head .co{font-size:8px !important;} .head .dt{font-size:9px !important;}
+    .body{padding:0 !important;}
+    .veh{page-break-inside:avoid;break-inside:avoid;margin-bottom:7px;border-radius:6px;}
+    .bar,.tile .n,.tile.svc .n{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .bar span,.vhead,.legend .sw{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .tile .n{font-size:15px;} .tiles{padding:4px 10px 10px;gap:7px;}
+    table.days{font-size:8px;}
+  }
+</style>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<a class="navback noprint" href="/menu">☰ Menu</a>
+<div class="sheet">
+  <div class="head">
+    <div>
+      <div class="co">Deluxe Heavy Equipment Rental L.L.C · Deluxe Energy Solutions L.L.C</div>
+      <h1>Service Team — Vehicle Utilisation</h1>
+      <div class="dt" id="dateLine">—</div>
+    </div>
+    <div class="badge" id="totBadge">—</div>
+  </div>
+  <div class="body">
+    <div class="ctl noprint">
+      <label>Period</label>
+      <select id="days">
+        <option value="7" selected>Last 7 days</option>
+        <option value="3">Last 3 days</option>
+        <option value="14">Last 14 days</option>
+        <option value="30">Last 30 days</option>
+      </select>
+      <button class="btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="legend noprint">
+      <span class="k"><span class="sw" style="background:var(--svc)"></span> Servicing (at a genset)</span>
+      <span class="k"><span class="sw" style="background:var(--drive)"></span> Driving</span>
+      <span class="k"><span class="sw" style="background:var(--yard)"></span> Idle at yard</span>
+      <span class="k"><span class="sw" style="background:var(--other)"></span> Other stops</span>
+    </div>
+    <div id="out"><div class="empty">Loading vehicle data…</div></div>
+    <div class="foot">
+      <span>Deluxe Operations — service-team vehicle utilisation (Total Secure GPS)</span>
+      <span id="genLine"></span>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div class="card">
+    <h2 style="margin:0 0 4px;font-size:18px;">Vehicle Utilisation — Sign in</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 14px;">Sign in to view the report.</p>
+    <input type="text" id="loginEmail" placeholder="deluxeoperationhead" autocomplete="username">
+    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+    <div style="color:#c0392b;font-size:13px;min-height:18px;" id="loginErr"></div>
+    <button class="btn print" style="width:100%;margin:0;" id="loginBtn">Sign in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var LS='deluxeFleetToken';
+  var TOKEN=localStorage.getItem(LS)||'';
+  var $=function(id){return document.getElementById(id);};
+  function authHeaders(){ return {'Authorization':'Bearer '+TOKEN}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function hrs(n){ return (n==null?0:n).toFixed(1); }
+
+  function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
+  function hideLogin(){ $('overlay').style.display='none'; load(); }
+  async function doLogin(){
+    var email=$('loginEmail').value.trim(), password=$('loginPass').value; $('loginErr').textContent='';
+    try{ var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
+      var d=await r.json(); if(!r.ok){ $('loginErr').textContent=d.message||d.error||'Sign in failed'; return; }
+      TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
+    }catch(e){ $('loginErr').textContent='Network error'; }
+  }
+  $('loginBtn').addEventListener('click',doLogin);
+  $('loginPass').addEventListener('keydown',function(e){ if(e.key==='Enter')doLogin(); });
+
+  function fmtDay(d){ var p=d.split('-'); var dt=new Date(d+'T00:00:00'); var wd=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()]; return wd+' '+p[2]+'/'+p[1]; }
+
+  function barSeg(v){
+    var tot=v.serviceHrs+v.driveHrs+v.yardHrs+v.otherHrs;
+    if(tot<=0) return '<div class="bar"><span class="s-yard" style="flex:1"></span></div>';
+    function pc(x){ return (x/tot*100); }
+    return '<div class="bar">'
+      +'<span class="s-svc" style="width:'+pc(v.serviceHrs)+'%" title="Servicing"></span>'
+      +'<span class="s-drive" style="width:'+pc(v.driveHrs)+'%" title="Driving"></span>'
+      +'<span class="s-yard" style="width:'+pc(v.yardHrs)+'%" title="Idle at yard"></span>'
+      +'<span class="s-other" style="width:'+pc(v.otherHrs)+'%" title="Other stops"></span>'
+      +'</div>';
+  }
+
+  function daysTable(v){
+    var head='<tr><th>Day</th><th>Servicing</th><th>Driving</th><th>Idle yard</th><th>Other</th><th>km</th></tr>';
+    var rows=v.perDay.map(function(d){
+      var blank=(d.serviceHrs+d.driveHrs+d.yardHrs+d.otherHrs)===0;
+      function c(x){ return blank||x===0?'<td class="z">·</td>':'<td>'+hrs(x)+'</td>'; }
+      return '<tr><td class="d">'+fmtDay(d.day)+'</td>'+c(d.serviceHrs)+c(d.driveHrs)+c(d.yardHrs)+c(d.otherHrs)
+        +(blank||d.distanceKm===0?'<td class="z">·</td>':'<td>'+hrs(d.distanceKm)+'</td>')+'</tr>';
+    }).join('');
+    return '<table class="days">'+head+rows+'</table>';
+  }
+
+  function vehCard(v){
+    var tot=v.serviceHrs+v.driveHrs+v.yardHrs+v.otherHrs;
+    // Flag: tracked but hardly any time on a genset relative to driving/idle.
+    var flag='';
+    if(tot>=1 && v.servicePct<20 && (v.driveHrs+v.yardHrs)>v.serviceHrs){
+      flag='<span class="flag">⚠ Low on-site time — '+v.servicePct+'% servicing</span>';
+    } else if(tot>=1 && v.servicePct>=50){
+      flag='<span class="good">'+v.servicePct+'% on service</span>';
+    } else if(tot>=1){
+      flag='<span class="good" style="background:#fdf3e0;color:var(--yard)">'+v.servicePct+'% servicing</span>';
+    }
+    var sites = v.sites && v.sites.length
+      ? '<div class="sites"><b>'+v.siteCount+'</b> genset site'+(v.siteCount===1?'':'s')+' visited · <b>'+v.serviceVisits+'</b> service stop'+(v.serviceVisits===1?'':'s')+' — '+v.sites.map(esc).join(', ')+(v.siteCount>v.sites.length?' …':'')+'</div>'
+      : '<div class="sites">No stops matched a genset site in this period.</div>';
+    return '<div class="veh">'
+      +'<div class="vhead"><span class="vn">🚐 '+esc(v.name)+'</span>'+flag
+      +'<span class="km">'+hrs(v.distanceKm)+' km · '+hrs(v.trackedHrs)+' h tracked</span></div>'
+      +barSeg(v)
+      +'<div class="tiles">'
+      +'<div class="tile svc"><div class="n">'+hrs(v.serviceHrs)+'</div><div class="l">Servicing h</div></div>'
+      +'<div class="tile drive"><div class="n">'+hrs(v.driveHrs)+'</div><div class="l">Driving h</div></div>'
+      +'<div class="tile yard"><div class="n">'+hrs(v.yardHrs)+'</div><div class="l">Idle yard h</div></div>'
+      +'<div class="tile other"><div class="n">'+hrs(v.otherHrs)+'</div><div class="l">Other-stop h</div></div>'
+      +'</div>'
+      +sites
+      +daysTable(v)
+      +'</div>';
+  }
+
+  async function load(){
+    if(!TOKEN){ showLogin(); return; }
+    var days=$('days').value;
+    $('out').innerHTML='<div class="empty">Loading vehicle data…</div>';
+    try{
+      var r=await fetch('/api/team/utilisation?days='+encodeURIComponent(days),{cache:'no-store',headers:authHeaders()});
+      if(r.status===401){ showLogin('Session expired — sign in again.'); return; }
+      var d=await r.json();
+      if(d.configured===false){
+        $('out').innerHTML='<div class="note"><b>GPS tracking not connected.</b><br>'+esc(d.error||'Total Secure is not configured on the server.')+' Once Total Secure (TRACCAR_URL / USER / PASSWORD) is set on the server, this report fills in automatically.</div>';
+        $('totBadge').textContent='Not connected';
+        return;
+      }
+      var from=new Date(d.from), to=new Date(d.to);
+      var fmt=function(x){ return x.getDate()+'/'+(x.getMonth()+1); };
+      $('dateLine').textContent='Last '+d.days+' days · '+fmt(from)+' – '+fmt(to);
+      $('totBadge').textContent=d.vehicles.length+' vehicle'+(d.vehicles.length===1?'':'s');
+      if(d.generatedAt){ $('genLine').textContent='Generated '+new Date(d.generatedAt).toLocaleString('en-GB',{timeZone:'Asia/Dubai'}); }
+      if(!d.vehicles.length){ $('out').innerHTML='<div class="empty">No tracked vehicles returned any trips or stops in this period.</div>'; return; }
+      var warn=d.error?'<div class="note">Note: '+esc(d.error)+'</div>':'';
+      var intro='<div class="note">Each van’s GPS time is split into <b style="color:var(--svc)">servicing</b> (parked within 300 m of a genset site), <b style="color:var(--drive)">driving</b>, <b style="color:var(--yard)">idle at the yard</b>, and <b style="color:var(--other)">other stops</b> (parked somewhere that is neither). Sorted by servicing hours.</div>';
+      $('out').innerHTML=warn+intro+d.vehicles.map(vehCard).join('');
+    }catch(e){ $('out').innerHTML='<div class="empty">Could not load the report. '+esc(e.message||'')+'</div>'; }
+  }
+
+  $('days').addEventListener('change',load);
+  if(TOKEN){ load(); } else { showLogin(); }
+})();
+</script>
+</body>
+</html>
