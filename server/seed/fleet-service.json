@@ -3306,11 +3306,12 @@
   "airFilter": false,
   "dailyHours": 11.3,
   "nextService": 31379,
-  "nextServiceDate": "2026-10-17",
+  "nextServiceDate": "2026-10-30",
   "interval": 450,
+  "fixedDays": 51,
   "currentHours": 31215,
   "currentHoursDate": "2026-10-15",
-  "notes": "Serviced 09/09/2026 at 30929h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 31215.1h confirmed 15/10/2026 -> 164h left to next (31379). Running again ~11.3 h/day (158h in 14 days since 31057h/01-10). Due ~17-29/10 (calendar target 17/10). SMALL OIL-SEAL LEAK - monitor, replace the oil seal at next service. Trojan, Al Reem RT8 (same site as DG-505 & DG-819)."
+  "notes": "[16/10: removed from morning plan at ops request - skipped to next genuine due date ~30/10 by hours (164h left @~11.3 h/day). Oil-seal leak still to fix at that service.] Serviced 09/09/2026 at 30929h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 31215.1h confirmed 15/10/2026 -> 164h left to next (31379). Running again ~11.3 h/day (158h in 14 days since 31057h/01-10). Due ~17-29/10 (calendar target 17/10). SMALL OIL-SEAL LEAK - monitor, replace the oil seal at next service. Trojan, Al Reem RT8 (same site as DG-505 & DG-819)."
  },
  {
   "dg": "DG-545",
