@@ -1650,13 +1650,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 7.1,
+  "dailyHours": 5.5,
   "nextService": 2348,
   "nextServiceDate": "2026-11-09",
   "interval": 350,
-  "currentHours": 2055,
-  "currentHoursDate": "2026-10-01",
-  "notes": "Serviced 23/09/2026 at 1998h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller confirmed 2055h on 01/10/2026 -> 293h left to next (2348), ~7.1 h/day (moderate). 100 kVA Perkins, Trojan, Yas Island."
+  "currentHours": 2132,
+  "currentHoursDate": "2026-10-16",
+  "notes": "Serviced 23/09/2026 at 1998h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER recorded NOT done (pending) - verify vs latest card photo. Controller 2132h 58m confirmed 16/10/2026 -> 216h left to next (2348). Ran 77h since 01/10 (2055h) = ~5.1 h/day (light/moderate). 100 kVA Perkins, Trojan, Yas Island."
  },
  {
   "dg": "DG-811",
