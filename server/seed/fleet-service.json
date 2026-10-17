@@ -2462,11 +2462,11 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.85,
+  "dailyHours": 7.5,
   "nextService": 16509,
   "nextServiceDate": "2026-10-23",
   "interval": 350,
-  "notes": "Serviced 23/09/2026 at 16159h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 16509h (350h cycle). ~12 h/day. 50 kVA Perkins, Hydro Power, Mussafah MN1. TIGHT 24h CYCLE: service every 15 days (heavy/continuous use).",
+  "notes": "Controller 16338h 56m confirmed 17/10/2026 -> 171h left to next (16509). ~7.5 h/day (179h since the 23/09 service at 16159h). Air filter still PENDING from 23/09 (fit at next service). Office fixed 15-day cycle -> next service 23/10/2026. 50 kVA Perkins, Hydro Power, Mussafah MN1.",
   "fixedDays": 15
  },
  {
