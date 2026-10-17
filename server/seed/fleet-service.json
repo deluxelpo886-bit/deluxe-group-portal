@@ -3482,5 +3482,23 @@
   "interval": 350,
   "notes": "Serviced 03/10/2026 @ 145h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). DSE meter 420h 12m confirmed 15/10/2026 -> 75h left to next (495h). RUNNING ~24h/day: 275h in 12 days since the 03/10 service (~23 h/day) - due ~18/10, very soon. Air filter still pending. 82.5 kVA Kirloskar on hire to EL MASRIA CEMENT, KIZAD. 350h interval (NOTE: office master sheet uses 450h = next 595h - confirm). Co-located with DG-850. TIGHT 24h CYCLE: service every 15 days (heavy/continuous use).",
   "fixedDays": 15
+ },
+ {
+  "dg": "DG-563",
+  "hours": 466,
+  "date": "2026-10-17",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 816,
+  "nextServiceDate": "2026-11-01",
+  "interval": 350,
+  "fixedDays": 15,
+  "dailyHours": 23,
+  "currentHours": 466,
+  "currentHoursDate": "2026-10-17",
+  "notes": "Serviced 17/10/2026 at 466h (DSE Run Time 466h 48m) by Sonu Hussain - oil, oil filter & fuel filter done. AIR FILTER NOT done (card marked X) - pending, fit at next service. Runs ~23 h/day (near-24h heavy); on a fixed 15-day cycle -> next service 01/11/2026 (or 816h). 82.5 kVA Kirloskar, El Masria Cement, Khalifa Industrial City B."
  }
 ]
