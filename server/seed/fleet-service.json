@@ -2561,12 +2561,15 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 12.11,
+  "dailyHours": 12,
   "nextService": 1574,
-  "nextServiceDate": "2026-10-16",
+  "nextServiceDate": "2026-10-26",
   "interval": 350,
-  "currentHours": 1224,
-  "currentHoursDate": "2026-09-17"
+  "fixedDays": 39,
+  "currentHours": 1474,
+  "currentHoursDate": "2026-10-17"
+,
+  "notes": "REPLACEMENT for DG-503 at Hydro Power, Mussafah MN1. Controller 1474h (17/10); next ~26/10 at 12 h/day. 62.5 kVA Kirloskar."
  },
  {
   "dg": "DG-560",
