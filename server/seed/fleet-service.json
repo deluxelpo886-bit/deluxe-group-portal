@@ -2533,9 +2533,24 @@
   "nextService": 9634,
   "nextServiceDate": "2026-10-20",
   "interval": 350,
-  "urgent": true,
-  "fixedDays": 24,
   "notes": "[Scheduled on the 17/10 plan at ops request - overdue, service tomorrow.] Controller 9680h 39m confirmed 16/10/2026 (86 starts) -> 46h PAST the next-service point (9634). Heavy use ~17.2 h/day (396h since the 23/09 service at 9284h). SERVICE NOW DUE/OVERDUE. 23/09 service all filters done. 125 kVA Weichai, Trojan, Yas Island."
+ },
+ {
+  "dg": "DG-849",
+  "hours": 9701,
+  "date": "2026-10-17",
+  "technician": "ROL & ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 10051,
+  "nextServiceDate": "2026-11-06",
+  "interval": 350,
+  "dailyHours": 17.4,
+  "currentHours": 9701,
+  "currentHoursDate": "2026-10-17",
+  "notes": "350h service done 17/10/2026 at 9701h by ROL & Adeel - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next service. Ran 417h since the 23/09 service (9284h) = ~17.4 h/day (heavy). Next 10051h (+350); next date set by usage -> ~06/11/2026. 125 kVA Weichai, Trojan, Yas Island. (Was 46h overdue; now serviced - urgent/fixed-date cleared.)"
  },
  {
   "dg": "DG-459",
@@ -3382,6 +3397,23 @@
   "fixedDays": 39,
   "interval": 350,
   "notes": "New unit (from 12/09/2026 @ 0h). Break-in (running-in) service done at 50h by Aadil Hussain - oil, oil filter, fuel filter changed; AIR FILTER NOT done (pending). NEXT SERVICE DATE PINNED TO 25/10/2026 by ops head (fixedDays=39 from the 16/09 service, overriding the heavy-use hours projection that otherwise landed ~09/10). Last controller reading 262h on 30/09/2026 (~14.6 h/day, heavy - weddings/events). 125 kVA Kirlosker, Malik Al Ghabah Weddings, Madinat Zayed Shopping Centre."
+ },
+ {
+  "dg": "DG-867",
+  "hours": 514,
+  "date": "2026-10-17",
+  "technician": "ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 864,
+  "nextServiceDate": "2026-11-09",
+  "interval": 350,
+  "dailyHours": 15,
+  "currentHours": 514,
+  "currentHoursDate": "2026-10-17",
+  "notes": "350h service done 17/10/2026 at 514h (DSE Run Time 514h 45m) by Adeel - oil, oil filter, fuel filter & AIR FILTER all done (air filter now fitted; clears the break-in pending). Ran 464h since the 16/09 break-in (50h) = ~15 h/day (heavy). Next 864h (+350) -> due ~09/11/2026. 125 kVA Kirloskar, Malik Al Ghabah Weddings & Events, Madinat Zayed Shopping Centre."
  },
  {
   "dg": "DG-561",
