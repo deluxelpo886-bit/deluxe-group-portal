@@ -1883,6 +1883,23 @@
   "notes": "Serviced 14/10/2026 at 11117h by Adeel & Jairaj - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card, pending). Next 11467h. THEN MOVED TO YARD - unit has a LEAKAGE; off-hired from Motor Way (ICAD III) for repair. A CROSS-HIRE genset was given to the customer as the replacement. 30 kVA Kirlosker."
  },
  {
+  "dg": "RSG-39",
+  "hours": 4093,
+  "date": "2026-10-15",
+  "technician": "",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 4443,
+  "nextServiceDate": "2026-11-03",
+  "interval": 350,
+  "dailyHours": 18,
+  "currentHours": 4093,
+  "currentHoursDate": "2026-10-15",
+  "notes": "CROSS-HIRE unit from The Red Square Equipments Repair (20 kVA), covering DG-812 at ICAD III while DG-812 is in the yard (leakage). Delivered 14/10/2026 (DO H-2519), DHS 1700/month. Reading 4093h on 15/10 (baseline). Runs ~18 h/day; next service +350h (4443h) planned at 18 h/day from the 15/10 service baseline -> ~03/11/2026. Supplier-maintained; track and remind."
+ },
+ {
   "dg": "DG-35",
   "hours": 8858,
   "date": "2026-08-10",
@@ -2952,12 +2969,12 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 10.66,
-  "currentHours": 36152,
-  "currentHoursDate": "2026-10-13",
+  "currentHours": 36161,
+  "currentHoursDate": "2026-10-16",
   "nextService": 36363,
   "nextServiceDate": "2026-11-02",
   "interval": 350,
-  "notes": "Back ON HIRE to Trojan, Al Bahia (same site) from 13/10/2026 - meter 36152h confirmed. Was in yard since 16/09. Last service 31/08 @36013h -> 211h left to next (36363h). ~10.66 h/day on duty -> due ~02/11. 200 kVA Kirloskar."
+  "notes": "On hire to TROJAN, Al Bahia (moved 13/10). Controller 36161h 46m confirmed 16/10/2026 (5733 starts). 202h left to next (36363); ran 9h since 13/10 (low after the move). Next service ~02/11/2026. 200 kVA."
  },
  {
   "dg": "DG-537",
