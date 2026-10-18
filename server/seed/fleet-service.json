@@ -2027,13 +2027,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 9.3,
-  "currentHours": 1264,
-  "currentHoursDate": "2026-10-14",
+  "dailyHours": 10.5,
+  "currentHours": 1301,
+  "currentHoursDate": "2026-10-17",
   "nextService": 1435,
-  "nextServiceDate": "2026-10-22",
+  "nextServiceDate": "2026-10-30",
   "interval": 450,
-  "notes": "Service 14/09/2026 by IK & Jayaraj at 985h - service card shows ALL FOUR done (oil, oil filter, fuel filter, air filter). Meter 1264h 42m confirmed 14/10/2026 (controller photo) -> 171h left to next (1435h). ~9.3 h/day (279h in 30 days) -> due ~01/11, NOT overdue (the old 13/10 date was a high-use estimate). 250 kVA Kirlosker, Hydro Power, Al Falah."
+  "notes": "Service 14/09/2026 by IK & Jayaraj at 985h - all four done. Meter 1301h confirmed 17/10/2026 (DSE controller) -> 134h left to next (1435h). Ran 316h since 14/09 = ~9.6 h/day; recent 37h in 3 days (~12/day). Next date set by usage -> due ~30/10/2026. 250 kVA Kirlosker, Hydro Power, Al Falah."
  },
  {
   "dg": "DG-802",
@@ -3194,6 +3194,23 @@
   "nextServiceDate": "2026-10-14",
   "interval": 450,
   "notes": "Meter 5371h 40m on 11/10/2026 (controller photo, Imran Deluxe, 2481 starts). Last service 06/09 @5009h -> 88h left to next (5459h). ~10.3 h/day (362h in 35 days) -> hours estimate ~19/10; calendar target 14/10. Due mid-Oct. 800 kVA CAT, EMDAD, KIZAD."
+ },
+ {
+  "dg": "DG-828",
+  "hours": 5474,
+  "date": "2026-10-18",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 5924,
+  "nextServiceDate": "2026-11-25",
+  "interval": 450,
+  "dailyHours": 11,
+  "currentHours": 5474,
+  "currentHoursDate": "2026-10-18",
+  "notes": "450h service done 18/10/2026 at 5474h by Sonu & Hussain - oil, oil filter, fuel filter & AIR FILTER all done. Ran 465h since the 06/09 service (5009h) = ~11 h/day. Next 5924h (+450); next date by usage/450-cycle -> ~25/11/2026. 800 kVA Caterpillar, EMDAD, KIZAD (Khalifa Ind. City B)."
  },
  {
   "dg": "DG-453",
