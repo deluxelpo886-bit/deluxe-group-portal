@@ -1883,6 +1883,23 @@
   "notes": "Serviced 14/10/2026 at 11117h by Adeel & Jairaj - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card, pending). Next 11467h. THEN MOVED TO YARD - unit has a LEAKAGE; off-hired from Motor Way (ICAD III) for repair. A CROSS-HIRE genset was given to the customer as the replacement. 30 kVA Kirlosker."
  },
  {
+  "dg": "RSG-39",
+  "hours": 4093,
+  "date": "2026-10-15",
+  "technician": "",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 4443,
+  "nextServiceDate": "2026-11-03",
+  "interval": 350,
+  "dailyHours": 18,
+  "currentHours": 4093,
+  "currentHoursDate": "2026-10-15",
+  "notes": "CROSS-HIRE unit from The Red Square Equipments Repair (20 kVA), covering DG-812 at ICAD III while DG-812 is in the yard (leakage). Delivered 14/10/2026 (DO H-2519), DHS 1700/month. Reading 4093h on 15/10 (baseline). Runs ~18 h/day; next service +350h (4443h) planned at 18 h/day from the 15/10 service baseline -> ~03/11/2026. Supplier-maintained; track and remind."
+ },
+ {
   "dg": "DG-35",
   "hours": 8858,
   "date": "2026-08-10",
@@ -2027,13 +2044,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 9.3,
-  "currentHours": 1264,
-  "currentHoursDate": "2026-10-14",
+  "dailyHours": 10.5,
+  "currentHours": 1301,
+  "currentHoursDate": "2026-10-17",
   "nextService": 1435,
-  "nextServiceDate": "2026-10-22",
+  "nextServiceDate": "2026-10-30",
   "interval": 450,
-  "notes": "Service 14/09/2026 by IK & Jayaraj at 985h - service card shows ALL FOUR done (oil, oil filter, fuel filter, air filter). Meter 1264h 42m confirmed 14/10/2026 (controller photo) -> 171h left to next (1435h). ~9.3 h/day (279h in 30 days) -> due ~01/11, NOT overdue (the old 13/10 date was a high-use estimate). 250 kVA Kirlosker, Hydro Power, Al Falah."
+  "notes": "Service 14/09/2026 by IK & Jayaraj at 985h - all four done. Meter 1301h confirmed 17/10/2026 (DSE controller) -> 134h left to next (1435h). Ran 316h since 14/09 = ~9.6 h/day; recent 37h in 3 days (~12/day). Next date set by usage -> due ~30/10/2026. 250 kVA Kirlosker, Hydro Power, Al Falah."
  },
  {
   "dg": "DG-802",
@@ -2533,9 +2550,24 @@
   "nextService": 9634,
   "nextServiceDate": "2026-10-20",
   "interval": 350,
-  "urgent": true,
-  "fixedDays": 24,
   "notes": "[Scheduled on the 17/10 plan at ops request - overdue, service tomorrow.] Controller 9680h 39m confirmed 16/10/2026 (86 starts) -> 46h PAST the next-service point (9634). Heavy use ~17.2 h/day (396h since the 23/09 service at 9284h). SERVICE NOW DUE/OVERDUE. 23/09 service all filters done. 125 kVA Weichai, Trojan, Yas Island."
+ },
+ {
+  "dg": "DG-849",
+  "hours": 9701,
+  "date": "2026-10-17",
+  "technician": "ROL & ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 10051,
+  "nextServiceDate": "2026-11-06",
+  "interval": 350,
+  "dailyHours": 17.4,
+  "currentHours": 9701,
+  "currentHoursDate": "2026-10-17",
+  "notes": "350h service done 17/10/2026 at 9701h by ROL & Adeel - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next service. Ran 417h since the 23/09 service (9284h) = ~17.4 h/day (heavy). Next 10051h (+350); next date set by usage -> ~06/11/2026. 125 kVA Weichai, Trojan, Yas Island. (Was 46h overdue; now serviced - urgent/fixed-date cleared.)"
  },
  {
   "dg": "DG-459",
@@ -2546,12 +2578,15 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 12.11,
+  "dailyHours": 12,
   "nextService": 1574,
-  "nextServiceDate": "2026-10-16",
+  "nextServiceDate": "2026-10-26",
   "interval": 350,
-  "currentHours": 1224,
-  "currentHoursDate": "2026-09-17"
+  "fixedDays": 39,
+  "currentHours": 1474,
+  "currentHoursDate": "2026-10-17"
+,
+  "notes": "REPLACEMENT for DG-503 at Hydro Power, Mussafah MN1. Controller 1474h (17/10); next ~26/10 at 12 h/day. 62.5 kVA Kirloskar."
  },
  {
   "dg": "DG-560",
@@ -2934,12 +2969,12 @@
   "fuelFilter": true,
   "airFilter": false,
   "dailyHours": 10.66,
-  "currentHours": 36152,
-  "currentHoursDate": "2026-10-13",
+  "currentHours": 36161,
+  "currentHoursDate": "2026-10-16",
   "nextService": 36363,
   "nextServiceDate": "2026-11-02",
   "interval": 350,
-  "notes": "Back ON HIRE to Trojan, Al Bahia (same site) from 13/10/2026 - meter 36152h confirmed. Was in yard since 16/09. Last service 31/08 @36013h -> 211h left to next (36363h). ~10.66 h/day on duty -> due ~02/11. 200 kVA Kirloskar."
+  "notes": "On hire to TROJAN, Al Bahia (moved 13/10). Controller 36161h 46m confirmed 16/10/2026 (5733 starts). 202h left to next (36363); ran 9h since 13/10 (low after the move). Next service ~02/11/2026. 200 kVA."
  },
  {
   "dg": "DG-537",
@@ -3181,6 +3216,23 @@
   "notes": "Meter 5371h 40m on 11/10/2026 (controller photo, Imran Deluxe, 2481 starts). Last service 06/09 @5009h -> 88h left to next (5459h). ~10.3 h/day (362h in 35 days) -> hours estimate ~19/10; calendar target 14/10. Due mid-Oct. 800 kVA CAT, EMDAD, KIZAD."
  },
  {
+  "dg": "DG-828",
+  "hours": 5474,
+  "date": "2026-10-18",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 5924,
+  "nextServiceDate": "2026-11-25",
+  "interval": 450,
+  "dailyHours": 11,
+  "currentHours": 5474,
+  "currentHoursDate": "2026-10-18",
+  "notes": "450h service done 18/10/2026 at 5474h by Sonu & Hussain - oil, oil filter, fuel filter & AIR FILTER all done. Ran 465h since the 06/09 service (5009h) = ~11 h/day. Next 5924h (+450); next date by usage/450-cycle -> ~25/11/2026. 800 kVA Caterpillar, EMDAD, KIZAD (Khalifa Ind. City B)."
+ },
+ {
   "dg": "DG-453",
   "hours": 36672,
   "date": "2026-10-08",
@@ -3382,6 +3434,23 @@
   "fixedDays": 39,
   "interval": 350,
   "notes": "New unit (from 12/09/2026 @ 0h). Break-in (running-in) service done at 50h by Aadil Hussain - oil, oil filter, fuel filter changed; AIR FILTER NOT done (pending). NEXT SERVICE DATE PINNED TO 25/10/2026 by ops head (fixedDays=39 from the 16/09 service, overriding the heavy-use hours projection that otherwise landed ~09/10). Last controller reading 262h on 30/09/2026 (~14.6 h/day, heavy - weddings/events). 125 kVA Kirlosker, Malik Al Ghabah Weddings, Madinat Zayed Shopping Centre."
+ },
+ {
+  "dg": "DG-867",
+  "hours": 514,
+  "date": "2026-10-17",
+  "technician": "ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 864,
+  "nextServiceDate": "2026-11-09",
+  "interval": 350,
+  "dailyHours": 15,
+  "currentHours": 514,
+  "currentHoursDate": "2026-10-17",
+  "notes": "350h service done 17/10/2026 at 514h (DSE Run Time 514h 45m) by Adeel - oil, oil filter, fuel filter & AIR FILTER all done (air filter now fitted; clears the break-in pending). Ran 464h since the 16/09 break-in (50h) = ~15 h/day (heavy). Next 864h (+350) -> due ~09/11/2026. 125 kVA Kirloskar, Malik Al Ghabah Weddings & Events, Madinat Zayed Shopping Centre."
  },
  {
   "dg": "DG-561",
