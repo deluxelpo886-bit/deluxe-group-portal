@@ -1032,13 +1032,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 6.1,
+  "dailyHours": "6.5",
   "nextService": 3072,
   "nextServiceDate": "2026-11-29",
   "interval": 450,
-  "currentHours": 2707,
-  "currentHoursDate": "2026-09-30",
-  "notes": "Serviced 16/09/2026 at 2622h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller confirmed 2707h on 30/09/2026 (1088 starts) -> ~6.1 h/day, 365h left to next (3072). 250 kVA Kirlosker, Trojan, Madinat Zayed."
+  "currentHours": 2829,
+  "currentHoursDate": "2026-10-18",
+  "notes": "Controller 2829h 33m confirmed 18/10/2026 (1163 starts). 243h left to next (3072); ~6.5 h/day (moderate). Next service ~24/11/2026. 250 kVA Kirloskar, Trojan, Madinat Zayed Shopping Centre."
  },
  {
   "dg": "DG-538",
