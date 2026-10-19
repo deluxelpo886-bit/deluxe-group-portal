@@ -1577,11 +1577,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 11.27,
+  "dailyHours": "11",
   "nextService": 1747,
-  "nextServiceDate": "2026-10-23",
+  "nextServiceDate": "2026-10-24",
   "interval": 450,
-  "notes": "Service 13/09/2026 by Team 1 (Sonu & Hussain) at 1297h. All filters done (oil, oil filter, fuel filter, air filter). Next at 1747h. 725 kVA Caterpillar, KIZAD (EMDAD). Exact KIZAD pin set (same as DG-448)."
+  "fixedDays": 41,
+  "notes": "Service 13/09/2026 @1297h by Sonu & Hussain. Controller 1688h 37m confirmed 19/10/2026 (1257 starts) -> 59h left to next (1747). ~11 h/day. Due this week - next date by usage ~24/10/2026. 725 kVA Caterpillar, EMDAD, KIZAD."
  },
  {
   "dg": "DG-828",
