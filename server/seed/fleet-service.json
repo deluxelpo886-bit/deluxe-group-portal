@@ -136,6 +136,23 @@
   "notes": "Serviced 23/09/2026 at 7229h by Adeel & Sajid - all filters done. Controller confirmed 7229h. Next 7579h (350h cycle). 40 kVA Kirlosker, E 20 Investment, Al Wathba."
  },
  {
+  "dg": "DG-536",
+  "hours": 7629,
+  "date": "2026-10-19",
+  "technician": "",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "nextService": 7979,
+  "nextServiceDate": "2026-11-11",
+  "interval": 350,
+  "dailyHours": 15,
+  "currentHours": 7629,
+  "currentHoursDate": "2026-10-19",
+  "notes": "Serviced today 19/10/2026 at 7629h (controller 7629h 18m). Previous service 23/09 @7229h; ran 400h since = ~15 h/day (heavy). Next 7979h (+350) -> ~11/11/2026. NOTE: meter reading provided, no service card seen - filters recorded as a full service; CONFIRM whether the air filter was changed. 40 kVA Kirloskar, E 20 Investment Ltd, Al Wathba."
+ },
+ {
   "dg": "DG-418",
   "hours": 4274,
   "date": "2025-10-02",
