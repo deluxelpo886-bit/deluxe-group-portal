@@ -214,10 +214,15 @@
       rows=l.map(function(r){return row3(esc(r.dg), esc(r.customer||'-'), 'AED '+(r.rate||0).toLocaleString());}).join('');
       empty='No earning contracts.'; open=['/rentals','Open rentals ▸'];
     } else if(key==='tracked'){
-      title='📋 All generators';
-      var l=(D.gens||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
+      title='📋 Owned generators';
+      var l=(D.owned||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
       rows=l.map(function(g){return row3(esc(g.dg), withCust(g.dg, (g.hours!=null?g.hours+'h':'')), (g.offHire||g.inYard)?'⚪ off-hire':'🟢 on hire');}).join('');
       open=['/service','Open service ▸'];
+    } else if(key==='crosshire'){
+      title='🔁 Cross-hire (hired-in) units';
+      var l=(D.crossHire||[]).slice().sort(function(a,b){return String(a.dg).localeCompare(String(b.dg));});
+      rows=l.map(function(g){return row3(esc(g.dg), withCust(g.dg,(g.hours!=null?g.hours+'h':'')), (g.offHire||g.inYard)?'⚪ off':'🟢 on site');}).join('');
+      empty='No cross-hire units on site.'; open=['/service','Open service ▸'];
     } else if(key==='overdue'){
       title='⚠ Service overdue';
       rows=(D.overdue||[]).map(function(x){return row3(esc(x.g.dg),withKva(x.g.dg,'next @ '+x.g.nextService+'h'+(x.g.nextServiceDate?(' · '+x.g.nextServiceDate):'')),'<span style="color:var(--red);font-weight:700;">OVERDUE '+Math.abs(x.d)+'d</span>');}).join('');
@@ -292,6 +297,14 @@
     var onHire=gens.filter(function(g){return !g.offHire && !g.inYard;});
     var offHire=gens.filter(function(g){return g.offHire || g.inYard;});
     var active=onHire;   // service alarms only apply to on-hire units
+    // Owned fleet (DG-xxx) vs cross-hired-IN units (e.g. RSG-39 from a supplier,
+    // covering a unit in the yard). The owned count is the real asset count;
+    // cross-hire units are listed separately so they never inflate the 135.
+    var owned=gens.filter(function(g){return /^DG-/i.test(g.dg);});
+    var crossHire=gens.filter(function(g){return !/^DG-/i.test(g.dg);});
+    var ownedOn=owned.filter(function(g){return !g.offHire && !g.inYard;});
+    var ownedOff=owned.filter(function(g){return g.offHire || g.inYard;});
+    var crossOn=crossHire.filter(function(g){return !g.offHire && !g.inYard;});
 
     // Date-based service countdown: days to the next-service date (from the
     // asset-list N.S.DATE). Past = overdue, within 7 days = due soon, within 30
@@ -317,17 +330,18 @@
     var income=(rstats.totalMonthly||0).toLocaleString('en-US');
     $('tiles').innerHTML=
        tile('good', income, 'AED / month income', (rstats.earningCount||0)+' earning'+(rstats.idleCount?' · '+rstats.idleCount+' idle':''), 'income')
-      +tile('', gens.length, 'Generators tracked', onHire.length+' on hire · '+offHire.length+' off-hire', 'tracked')
+      +tile('', owned.length, 'Owned generators', ownedOn.length+' on hire · '+ownedOff.length+' off-hire', 'tracked')
       +tile(overdue.length?'alert':(soon.length?'warn':'good'), overdue.length, 'Service overdue', soon.length+' due within 7 days', 'overdue')
       +tile(month.length?'warn':'', month.length, 'Due next 30 days', 'plan these in the schedule', 'due30')
       +tile(pending.length?'warn':'good', pending.length, 'Spare parts pending', 'needed / ordered', 'spares')
       +tile('', sites.length, 'Customer sites', gatePass+' 🔒 gate pass · '+premium+' premium', 'sites')
-      +tile('', offHire.length, 'Off-hire (in yard)', 'tap to view workshop list', 'offhire')
-      +tile('good', onHire.length, 'On hire', 'generators earning', 'onhire')
-      +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', 'sitesmap');
+      +tile('', ownedOff.length, 'Off-hire (in yard)', 'tap to view workshop list', 'offhire')
+      +tile('good', ownedOn.length, 'On hire', 'generators earning', 'onhire')
+      +tile('', sites.filter(function(s){return s.lat!=null;}).length, 'Sites on map', 'located with a pin', 'sitesmap')
+      +tile(crossHire.length?'warn':'', crossHire.length, 'Cross hire (hired in)', crossOn.length+' on site · not owned assets', 'crosshire');
 
     // Stash the computed data so any tile's list can be rendered on tap.
-    window.__D = { gens:gens, onHire:onHire, offHire:offHire, overdue:overdue, soon:soon, month:month, pending:pending, sites:sites, rentals:(rent.rentals||[]), dir:dir };
+    window.__D = { gens:gens, owned:owned, crossHire:crossHire, onHire:ownedOn, offHire:ownedOff, overdue:overdue, soon:soon, month:month, pending:pending, sites:sites, rentals:(rent.rentals||[]), dir:dir };
     if(_openDetail){ renderDetail(_openDetail); }   // keep the open list refreshed after reload
 
     // ---- due list: overdue first, then due soon (by date) ----
