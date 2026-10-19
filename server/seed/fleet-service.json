@@ -686,13 +686,14 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 10.54,
+  "dailyHours": "9",
   "nextService": 4093,
-  "nextServiceDate": "2026-10-20",
+  "nextServiceDate": "2026-10-30",
   "interval": 450,
-  "currentHours": 3750,
-  "currentHoursDate": "2026-09-22",
-  "notes": "Serviced 10/09 @3643h (all filters, IK & Jayaraj). Controller 3750h / 1415 starts on 22/09 -> 343h to next service (4093). 250 kVA, Trojan, Al Bahyah."
+  "fixedDays": 50,
+  "currentHours": 3991,
+  "currentHoursDate": "2026-10-19",
+  "notes": "Serviced 10/09/2026 @3643h by IK & Jayraj - all filters done. Controller 3991h 9m confirmed 19/10/2026 (1492 starts) -> 102h left to next (4093). ~9 h/day (348h since service). Next date set by usage -> ~30/10/2026. 250 kVA Kirloskar, Trojan, Al Bahyah."
  },
  {
   "dg": "DG-473",
