@@ -686,13 +686,14 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 10.54,
+  "dailyHours": "9",
   "nextService": 4093,
-  "nextServiceDate": "2026-10-20",
+  "nextServiceDate": "2026-10-30",
   "interval": 450,
-  "currentHours": 3750,
-  "currentHoursDate": "2026-09-22",
-  "notes": "Serviced 10/09 @3643h (all filters, IK & Jayaraj). Controller 3750h / 1415 starts on 22/09 -> 343h to next service (4093). 250 kVA, Trojan, Al Bahyah."
+  "fixedDays": 50,
+  "currentHours": 3991,
+  "currentHoursDate": "2026-10-19",
+  "notes": "Serviced 10/09/2026 @3643h by IK & Jayraj - all filters done. Controller 3991h 9m confirmed 19/10/2026 (1492 starts) -> 102h left to next (4093). ~9 h/day (348h since service). Next date set by usage -> ~30/10/2026. 250 kVA Kirloskar, Trojan, Al Bahyah."
  },
  {
   "dg": "DG-473",
@@ -808,9 +809,9 @@
   "fuelFilter": true,
   "airFilter": true,
   "nextService": 4587,
-  "nextServiceDate": "2026-10-21",
+  "nextServiceDate": "2026-11-06",
   "interval": 350,
-  "notes": "Serviced 22/09/2026 at 4237h by IK & Jayaraj (Netsonic SER2-000147). Next 4587h / 21-10-2026 (350h cycle). 60 kVA Weber, Hashim Contracting, Al Bahyah."
+  "notes": "Serviced 22/09/2026 @4237h by IK & Jayaraj - all filters done. Controller 4443h 37m confirmed 19/10/2026 (2080 starts) -> 144h left to next (4587). ~8 h/day (206h since service; usage dropped from the earlier ~18 h/day). Next date set by usage -> ~06/11/2026. 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix)."
  },
  {
   "dg": "DG-553",
