@@ -3128,6 +3128,24 @@
   "fixedDays": 20
  },
  {
+  "dg": "DG-819",
+  "hours": 23062,
+  "date": "2026-10-19",
+  "technician": "ROL & ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "nextService": 23412,
+  "nextServiceDate": "2026-11-08",
+  "interval": 350,
+  "fixedDays": 20,
+  "dailyHours": 16.5,
+  "currentHours": 23062,
+  "currentHoursDate": "2026-10-19",
+  "notes": "350h service done 19/10/2026 at 23062h by ROL & Adeel - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next service. Ran 345h since the 28/09 service (22717h) = ~16.5 h/day (heavy). Next 23412h; on a fixed 20-day cycle -> next service 08/11/2026. 45 kVA Perkins, Trojan, Al Reem."
+ },
+ {
   "dg": "DG-804",
   "hours": 12765,
   "date": "2026-10-01",
