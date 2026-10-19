@@ -1152,13 +1152,14 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 9.27,
-  "currentHours": 17529,
-  "currentHoursDate": "2026-09-22",
+  "dailyHours": "8.4",
+  "currentHours": 17765,
+  "currentHoursDate": "2026-10-19",
   "nextService": 17912,
-  "nextServiceDate": "2026-10-31",
+  "nextServiceDate": "2026-11-06",
   "interval": 450,
-  "notes": "Service 13/09/2026 by Team 3 (Imran & Jayaraj) at 17462h. All filters done. Next at 17912h (450h cycle -> +40 days). Meter confirmed 17529h on 22/09/2026 (controller photo) -> 383h left. 250 kVA, Trojan, Al Bahia."
+  "fixedDays": 54,
+  "notes": "Serviced 13/09/2026 @17462h by IK & Jayraj - all filters done. DSE controller 17765h 4m confirmed 19/10/2026 (1937 starts) -> 147h left to next (17912). ~8.4 h/day. Next date by usage -> ~06/11/2026."
  },
  {
   "dg": "DG-450",
@@ -1196,13 +1197,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 8.7,
-  "currentHours": 26119,
-  "currentHoursDate": "2026-10-07",
+  "dailyHours": "9",
+  "currentHours": 26228,
+  "currentHoursDate": "2026-10-19",
   "nextService": 26469,
-  "nextServiceDate": "2026-11-16",
+  "nextServiceDate": "2026-11-15",
   "interval": 350,
-  "notes": "Serviced 07/10 @26119h by IK & Jayaraj (oil, oil filter, fuel filter; AIR FILTER NOT changed - card shows air filter crossed). Previous service 07/09 @25703h. Controller 25988h (22/09) -> 26119h (07/10), ~8.7 h/day. Next 26469h (350h). 160 kVA Kirloskar, Trojan, Al Bahia. (Fuel-filter tick on card was faint - assumed done.)"
+  "notes": "Serviced 07/10/2026 @26119h by IK & Jayraj - oil, oil filter & fuel filter done; AIR FILTER NOT done (card X) - pending. Controller 26228h 39m confirmed 19/10/2026 (5434 starts) -> 241h left to next (26469). ~9 h/day. Next date by usage -> ~15/11/2026."
  },
  {
   "dg": "DG-508",
@@ -1817,11 +1818,12 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 8796,
-  "nextServiceDate": "2026-11-01",
+  "nextServiceDate": "2026-11-25",
   "interval": 450,
-  "currentHours": 8444,
-  "currentHoursDate": "2026-10-07",
-  "notes": "Serviced 22/09/2026 at 8346h by IK & Jayaraj (oil, oil filter, fuel filter; AIR FILTER NOT changed - card shows air filter crossed, corrected). 450h cycle -> next 8796h (01/11/2026). Controller meter 8350h (25/09) -> 8444h on 07/10/2026 (DSE 7110) -> 352h left, ~7.8 h/day. Trojan, Al Bahyah, 200 kVA Cummins."
+  "fixedDays": 64,
+  "currentHours": 8534,
+  "currentHoursDate": "2026-10-19",
+  "notes": "Serviced 22/09/2026 @8346h by IK & Jayraj - all filters done. DSE controller 8534h 26m confirmed 19/10/2026 -> 262h left to next (8796). ~7 h/day. Next date by usage -> ~25/11/2026. 200 kVA Cummins, Trojan, Al Bahia."
  },
  {
   "dg": "DG-804",
