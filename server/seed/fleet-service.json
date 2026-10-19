@@ -203,9 +203,9 @@
   "nextService": 13536,
   "nextServiceDate": "2026-10-25",
   "interval": 450,
-  "currentHours": 13180,
-  "currentHoursDate": "2026-09-26",
-  "notes": "Serviced 19/09/2026 at 13086h by IK & Main Khan (oil + all three filters). Controller meter confirmed 13180h on 26/09/2026 -> 356h left to next (13536), ~13.4 h/day. 350 kVA Caterpillar, Trojan, Al Reem RR8."
+  "currentHours": 13445,
+  "currentHoursDate": "2026-10-19",
+  "notes": "Serviced 19/09/2026 @13086h by IK & Mubarak Khan - all filters done. Controller 13445h 55m confirmed 19/10/2026 -> 91h left to next (13536). ~12 h/day (359h since service). Next service ~25/10/2026. 350 kVA Caterpillar, Trojan GC, Al Reem RR8."
  },
  {
   "dg": "DG-823",
@@ -1415,13 +1415,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 14.7,
+  "dailyHours": 1,
   "nextService": 10704,
   "nextServiceDate": "2026-11-03",
   "interval": 350,
-  "currentHours": 10354,
-  "currentHoursDate": "2026-10-10",
-  "notes": "Serviced 10/10/2026 @ 10354h by Roland/Emir - oil, oil filter & fuel filter done; AIR FILTER NOT done (pending). Next service 10704h (~03/11), ~14.7 h/day. 40 kVA Kirloskar, Trojan, Al Reem RT8."
+  "currentHours": 10357,
+  "currentHoursDate": "2026-10-19",
+  "notes": "Serviced 10/10/2026 @10354h by Roland & Emran - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending. Controller 10357h confirmed 19/10/2026 -> only 3h in 9 days (near-idle / standby lately). 347h left to next (10704). 40 kVA Kirloskar, Trojan, Al Reem RT8."
  },
  {
   "dg": "DG-830",
@@ -3293,12 +3293,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "currentHours": 31307,
-  "currentHoursDate": "2026-10-11",
+  "currentHours": 31391,
+  "currentHoursDate": "2026-10-19",
   "nextService": 31657,
   "nextServiceDate": "2026-11-04",
   "interval": 350,
-  "notes": "Serviced 11/10/2026 @ 31307h by Roland/Emir - oil, oil filter, fuel filter & AIR FILTER all done. Next service 31657h (~04/11), ~14.3 h/day. 400 kVA Caterpillar, Trojan, Al Reem RR8."
+  "notes": "Serviced 11/10/2026 @31307h by Roland & Emran - oil + all three filters done. Olympian PowerWizard 31391h confirmed 19/10/2026 (84C, running) -> 266h left to next (31657). ~10.5 h/day. Next service ~04/11/2026. 400 kVA Caterpillar, Trojan, Al Reem RR8."
  },
  {
   "dg": "DG-529",
