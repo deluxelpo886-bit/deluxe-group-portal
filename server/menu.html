@@ -81,6 +81,7 @@
   .kpi .k-lbl{color:var(--muted);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
   .kpi .tag{position:absolute;top:14px;right:14px;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;}
   .kpi.fleet .kc{background:rgba(90,162,230,.16);color:var(--blue);}
+  .kpi.cross .kc{background:rgba(150,80,200,.16);color:#9a4fc8;}
   .kpi.hire .kc{background:rgba(65,201,138,.16);color:var(--green);} .kpi.hire .tag{background:rgba(65,201,138,.14);color:var(--green);}
   .kpi.due .kc{background:rgba(240,101,90,.16);color:var(--red);} .kpi.due .tag{background:rgba(240,101,90,.14);color:var(--red);}
   .kpi.plan .kc{background:rgba(233,197,107,.16);color:var(--gold);} .kpi.plan .tag{background:rgba(233,197,107,.14);color:var(--gold);}
@@ -218,7 +219,8 @@
 
   <!-- Live KPIs -->
   <section class="kpis" id="kpis">
-    <div class="kpi fleet"><div class="kc">🔌</div><div class="k-num dash" id="kFleet">—</div><div class="k-lbl">Generators</div></div>
+    <div class="kpi fleet"><div class="kc">🔌</div><div class="k-num dash" id="kFleet">—</div><div class="k-lbl">Generators (owned)</div></div>
+    <a class="kpi cross" href="/dashboard"><div class="kc">🔁</div><div class="k-num dash" id="kCross">—</div><div class="k-lbl">Cross hire ›</div></a>
     <div class="kpi hire"><div class="kc">✅</div><span class="tag" id="kHireTag"></span><div class="k-num dash" id="kHire">—</div><div class="k-lbl">On hire</div></div>
     <a class="kpi due" href="/command#services"><div class="kc">🛠️</div><span class="tag" id="kDueTag"></span><div class="k-num dash" id="kDue">—</div><div class="k-lbl">Service due ›</div></a>
     <a class="kpi plan" href="/command#services"><div class="kc">⏳</div><span class="tag" id="kPlanTag"></span><div class="k-num dash" id="kPlan">—</div><div class="k-lbl">Plan soon ›</div></a>
@@ -396,20 +398,24 @@
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(d){
         var gens=(d&&d.generators)||[];
+        // Owned fleet (DG-xxx) vs cross-hired-in units (RSG-*, CH-*). The owned
+        // count is the real asset number; cross-hire units are shown separately.
+        var owned=gens.filter(function(g){return /^DG-/i.test(g.dg);});
+        var cross=gens.filter(function(g){return !/^DG-/i.test(g.dg);});
         var onhire=0,due=0,plan=0,dueNames=[];
-        gens.forEach(function(g){
-          var off=g.offHire;
-          if(!off) onhire++;
+        gens.forEach(function(g){   // service alarms cover everything deployed, incl. cross-hire
           var st=g.due&&g.due.state;
-          if(st==='due'){ due++; if(!off) dueNames.push(g.dg); }
+          if(st==='due'){ due++; if(!g.offHire) dueNames.push(g.dg); }
           else if(st==='plan') plan++;
         });
-        setNum('kFleet',gens.length);
+        owned.forEach(function(g){ if(!g.offHire) onhire++; });   // on-hire = owned only
+        setNum('kFleet',owned.length);
+        setNum('kCross',cross.length);
         setNum('kHire',onhire);
         setNum('kDue',due);
         setNum('kPlan',plan);
         // context tags
-        if(gens.length) setTag('kHireTag', Math.round(onhire/gens.length*100)+'%');
+        if(owned.length) setTag('kHireTag', Math.round(onhire/owned.length*100)+'%');
         setTag('kDueTag', due>0 ? 'now' : '');
         setTag('kPlanTag', plan>0 ? '7 days' : '');
         // live alert strip
