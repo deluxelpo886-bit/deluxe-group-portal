@@ -2202,6 +2202,24 @@
   "notes": "Serviced 23/09/2026 at 24978h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 25328h. Controller 25140h on 06/10 (4560 starts) -> 188h to next, ~12.5 h/day -> due ~21/10. 125 kVA Kirlosker, Hasim, Shakhbout City MSH31."
  },
  {
+  "dg": "DG-843",
+  "hours": 25327,
+  "date": "2026-10-20",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.9,
+  "nextService": 25677,
+  "nextServiceDate": "2026-11-16",
+  "interval": 350,
+  "currentHours": 25327,
+  "currentHoursDate": "2026-10-20",
+  "notes": "Serviced 20/10/2026 at 25327h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending, carry one). Next 25677h (+350). 349h since 23/09 service (24978h) = ~12.9 h/day -> due ~16/11. 125 kVA Kirlosker, Hasim, Shakhbout City MSH31.",
+  "fixedDays": 27
+ },
+ {
   "dg": "DG-854",
   "hours": 28047,
   "date": "2026-08-12",
@@ -2858,6 +2876,24 @@
   "notes": "Serviced 23/09/2026 at 15055h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 15405h. Controller 15199h on 06/10 -> 206h to next, ~11 h/day -> due ~25/10. 60 kVA Kirlosker, Al Hashim, Shakhbout City MSH31."
  },
  {
+  "dg": "DG-540",
+  "hours": 15353,
+  "date": "2026-10-20",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 11,
+  "nextService": 15703,
+  "nextServiceDate": "2026-11-21",
+  "interval": 350,
+  "currentHours": 15353,
+  "currentHoursDate": "2026-10-20",
+  "notes": "Serviced 20/10/2026 at 15353h by Jayraj & Imran - oil, oil filter, fuel filter AND AIR FILTER all done (air filter finally changed, clears the pending). Next 15703h (+350). 298h since 23/09 service (15055h) = ~11 h/day -> due ~21/11. 60 kVA Kirlosker, Al Hashim, Shakhbout City MSH31.",
+  "fixedDays": 32
+ },
+ {
   "dg": "DG-535",
   "hours": 34291,
   "date": "2026-08-26",
@@ -3288,6 +3324,24 @@
   "currentHours": 6250,
   "currentHoursDate": "2026-10-20",
   "notes": "Serviced 03/10/2026 at 5917h by IK & Imran - oil, oil filter, fuel filter AND air filter all done. Next due 6267h (350h cycle). CURRENT 6250h on 20/10/2026 (controller: Starts 1029, Trips 72) -> 333h in 17 days = 19.6 h/day (near-continuous). Only 17h left to next service -> due ~21/10/2026. 40 kVA, Aswar, Mafraq (Jarn Yafour). TIGHT ~20h/day CYCLE: service roughly every 18 days.",
+  "fixedDays": 18
+ },
+ {
+  "dg": "DG-554",
+  "hours": 6258,
+  "date": "2026-10-20",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 20,
+  "nextService": 6608,
+  "nextServiceDate": "2026-11-07",
+  "interval": 350,
+  "currentHours": 6258,
+  "currentHoursDate": "2026-10-20",
+  "notes": "Serviced 20/10/2026 at 6258h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done this time (X on card - pending, carry one). Next 6608h (+350). 341h since 03/10 service = ~20 h/day (near-continuous) -> due ~07/11. 40 kVA, Aswar, Mafraq (Jarn Yafour). TIGHT ~20h/day CYCLE.",
   "fixedDays": 18
  },
  {
