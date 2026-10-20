@@ -2907,6 +2907,24 @@
   "fixedDays": 15
  },
  {
+  "dg": "DG-494",
+  "hours": 8023,
+  "date": "2026-10-20",
+  "technician": "SONU & NUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 24,
+  "nextService": 8373,
+  "nextServiceDate": "2026-11-04",
+  "interval": 350,
+  "currentHours": 8023,
+  "currentHoursDate": "2026-10-20",
+  "notes": "Serviced 20/10/2026 at 8023h by Sonu & Nussain - oil, oil filter, fuel filter AND air filter all done. Controller 8023h 30m, 1605 starts. 336h since 06/10 service (7687h) = 24 h/day confirmed. Next service 8373h (+350). Customer KAT runs ~24 h/day -> due ~04/11. 160 kVA Kirloskar, Al Jadaf, Dubai. TIGHT 24h CYCLE: service every 15 days.",
+  "fixedDays": 15
+ },
+ {
   "dg": "DG-549",
   "hours": 6035,
   "date": "2026-08-24",
