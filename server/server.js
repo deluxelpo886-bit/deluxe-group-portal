@@ -1991,6 +1991,22 @@ app.post('/api/tech/:token/status', (req, res) => {
     res.json({ ok: true, item: jobs.setStatus(b.id, b.status) });
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
+// Lightweight DG directory for the technician app: when a tech types a DG
+// number the app shows which company it belongs to (Energy vs Heavy) plus the
+// customer / kVA, so they can confirm the unit before submitting. Keyed by the
+// uppercased DG; values are compact: { co, kva, cust, loc }.
+app.get('/api/tech/:token/dg-index', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  const dir = directory.getMap();
+  const idx = {};
+  Object.keys(dir).forEach((k) => {
+    const g = dir[k] || {};
+    idx[k] = { co: g.company || '', kva: g.kva || null, cust: g.customer || '', loc: g.location || '' };
+  });
+  res.json({ index: idx });
+});
 // Technician uploads the current running hours (with a controller photo) from the
 // field - updates the unit's real-time reading so the office/service plan sees it.
 app.post('/api/tech/:token/hours', (req, res) => {
