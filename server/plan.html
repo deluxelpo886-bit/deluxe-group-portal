@@ -50,6 +50,18 @@
   .assign label{margin:0;}
   .assign input{width:170px;}
   .hint{font-size:12px;color:var(--amber);margin-top:8px;}
+  /* Per-unit meter cross-check row */
+  .u .mtr{flex-basis:100%;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px;padding:7px 10px;background:#191e23;border:1px solid var(--line);border-radius:8px;}
+  .u .mtr .ml{font-size:12px;color:var(--muted);}
+  .u .mtr .ml b{color:var(--text);font-family:var(--mono);}
+  .u .mtr .nomtr{color:var(--red);font-size:11.5px;}
+  .u .mtr .mx{display:flex;align-items:center;gap:7px;margin-left:auto;}
+  .u .mtr .mx label{margin:0;font-size:10px;}
+  .u .mtr .mx input{width:104px;font-family:var(--mono);}
+  .u .mtr .mdelta{font-size:11.5px;font-weight:700;min-width:96px;}
+  .u .mtr .mdelta.ok{color:#36b37e;}
+  .u .mtr .mdelta.warn{color:var(--amber);}
+  .u .mtr .mdelta.bad{color:var(--red);}
   .yard h2{font-size:14px;margin:22px 0 8px;color:var(--muted);}
   .yard .u .dg{min-width:74px;}
   .empty{color:var(--muted);font-size:14px;padding:24px 0;text-align:center;}
@@ -206,6 +218,37 @@
   function loadTeams(){ try{ return JSON.parse(localStorage.getItem(teamKey())||'{}')||{}; }catch(e){ return {}; } }
   function saveTeam(zone,val){ var t=loadTeams(); if(val) t[zone]=val; else delete t[zone]; localStorage.setItem(teamKey(),JSON.stringify(t)); }
 
+  // Cross-check meters: the actual on-site reading the team writes is remembered
+  // per day on this device, keyed by DG. Lets the office compare what the system
+  // thinks (sys meter) against what the controller actually shows.
+  function meterKey(){ return 'deluxePlanMeters:'+$('date').value; }
+  function loadMeters(){ try{ return JSON.parse(localStorage.getItem(meterKey())||'{}')||{}; }catch(e){ return {}; } }
+  function saveMeter(dg,val){ var m=loadMeters(); if(val!=='') m[dg]=val; else delete m[dg]; localStorage.setItem(meterKey(),JSON.stringify(m)); }
+  function fmtHrs(n){ return (n==null)?'':String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+  function shortDate(s){ s=String(s||''); return (s.length>=10)?(s.slice(8,10)+'/'+s.slice(5,7)):''; }
+  // Sys-meter line + a box for the actual reading, with live delta vs the system.
+  function meterHtml(u){
+    var sys=(u.curHours!=null)?('<b>'+fmtHrs(u.curHours)+' h</b>'+(u.curDate?(' · '+shortDate(u.curDate)):'')):'<span class="nomtr">no reading on file</span>';
+    var saved=loadMeters()[String(u.dg).toUpperCase()]; if(saved==null) saved='';
+    return '<div class="mtr"><span class="ml">🔢 Sys meter: '+sys+'</span>'
+      +'<span class="mx"><label>Actual</label>'
+      +'<input type="number" inputmode="numeric" placeholder="reading…" value="'+esc(saved)+'" data-mdg="'+esc(String(u.dg).toUpperCase())+'"'
+      +' data-sys="'+(u.curHours!=null?u.curHours:'')+'">'
+      +'<span class="mdelta" data-mdelta="'+esc(String(u.dg).toUpperCase())+'"></span></span></div>';
+  }
+  // Compute and paint the delta text next to an actual-meter input.
+  function paintDelta(inp){
+    var dg=inp.getAttribute('data-mdg');
+    var span=$('out').querySelector('.mdelta[data-mdelta="'+dg+'"]'); if(!span) return;
+    var sys=parseFloat(inp.getAttribute('data-sys')); var act=parseFloat(inp.value);
+    if(!inp.value||isNaN(act)){ span.textContent=''; span.className='mdelta'; return; }
+    if(isNaN(sys)){ span.textContent='✓ noted'; span.className='mdelta ok'; return; }
+    var d=Math.round(act-sys);
+    if(d<0){ span.textContent='⚠ '+d+'h (below file!)'; span.className='mdelta bad'; }
+    else if(d>600){ span.textContent='⚠ +'+fmtHrs(d)+'h (big jump)'; span.className='mdelta warn'; }
+    else { span.textContent='+'+fmtHrs(d)+'h since file'; span.className='mdelta ok'; }
+  }
+
   // Build a Google Maps directions link that chains a zone's stops. Prefer the
   // GPS pin; fall back to the area name when a unit has no coordinates. Dedupe
   // so repeated pins at one site don't bloat the route.
@@ -248,7 +291,7 @@
     zg.units.forEach(function(u){
       m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+'  ['+badgeText(u.daysTo)+']';
       if(u.nextHours) m+=' · next '+u.nextHours+'h';
-      m+='\n';
+      m+='\n   ↳ confirm meter'+(u.curHours!=null?(' (file: '+fmtHrs(u.curHours)+'h'+(u.curDate?(' '+shortDate(u.curDate)):'')+')'):'')+': __________\n';
     });
     m+='\n🗺️ Route: '+mapsRoute(zg.units,zg.zone);
     return m;
@@ -299,7 +342,9 @@
         zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
         lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand,
         usage:(g.effectiveDailyHours||g.observedDailyHours||null),
-        usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null)
+        usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null),
+        curHours:(g.currentHours!=null?g.currentHours:null),
+        curDate:(g.currentHoursDate||'')
       });
     });
 
@@ -350,7 +395,7 @@
         html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
           +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
           +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+brand+usageHtml(u)+'</span>'
-          +overBadge(u.daysTo)+bdFlag+'</div>';
+          +overBadge(u.daysTo)+bdFlag+meterHtml(u)+'</div>';
       });
       html+=manyHint;
       html+='</div>';
@@ -369,6 +414,15 @@
       inp.addEventListener('input',function(){
         saveTeam(inp.getAttribute('data-zone'),inp.value.trim());
         inp.parentNode.setAttribute('data-team',inp.value.trim());
+      });
+    });
+    // Wire the per-unit actual-meter inputs: remember the reading and show the
+    // live delta against what the system has on file.
+    $('out').querySelectorAll('input[data-mdg]').forEach(function(inp){
+      paintDelta(inp);
+      inp.addEventListener('input',function(){
+        saveMeter(inp.getAttribute('data-mdg'),inp.value.trim());
+        paintDelta(inp);
       });
     });
     // Wire the per-area WhatsApp / Copy buttons and the full-plan share.
