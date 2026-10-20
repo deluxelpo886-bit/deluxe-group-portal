@@ -466,14 +466,14 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 19.7,
+  "dailyHours": 7.9,
   "nextService": 5424,
-  "nextServiceDate": "2026-10-24",
-  "currentHours": 5074,
-  "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 06/10/2026 at 5074h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (card shows X). Next service 5424h (+350). Heavy use ~19.7 h/day -> due ~24/10. 150 kVA Weber, Joseph Industries, Dubai (JVC). TIGHT 24h CYCLE: service every 18 days (heavy/continuous use).",
+  "nextServiceDate": "2026-11-19",
+  "currentHours": 5184,
+  "currentHoursDate": "2026-10-20",
+  "notes": "Serviced 06/10/2026 at 5074h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (card shows X). Next service 5424h (+350). CURRENT 5184h on 20/10/2026 (controller, ~790 starts) -> 110h in 14 days = 7.9 h/day (NOT 24h as assumed - actually light use). 240h left to next -> due ~19/11/2026. 150 kVA Weber, Joseph Industries, Dubai (JVC). Service roughly every 44 days at this rate.",
   "interval": 350,
-  "fixedDays": 18
+  "fixedDays": 44
  },
  {
   "dg": "DG-483",
