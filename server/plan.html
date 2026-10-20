@@ -50,6 +50,11 @@
   .assign label{margin:0;}
   .assign input{width:170px;}
   .hint{font-size:12px;color:var(--amber);margin-top:8px;}
+  /* "Also check" units in the same area (not due, but capture their meter) */
+  .checkhdr{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 2px;padding-top:8px;border-top:1px dashed var(--line);}
+  .u.xtra{opacity:.9;}
+  .u.xtra .dg{color:var(--muted);}
+  .checktag{font-size:11px;font-weight:700;color:var(--blue);background:rgba(91,155,213,.14);border:1px solid rgba(91,155,213,.35);padding:2px 8px;border-radius:999px;white-space:nowrap;}
   /* Per-unit meter cross-check row */
   .u .mtr{flex-basis:100%;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px;padding:7px 10px;background:#191e23;border:1px solid var(--line);border-radius:8px;}
   .u .mtr .ml{font-size:12px;color:var(--muted);}
@@ -288,11 +293,17 @@
     m+='📍 *'+zg.zone+'*  ('+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+')\n';
     if(team) m+='👷 Team: '+team+'\n';
     m+='\n';
-    zg.units.forEach(function(u){
+    var dues=zg.units.filter(function(u){return !u.extra;});
+    var chks=zg.units.filter(function(u){return u.extra;});
+    dues.forEach(function(u){
       m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+'  ['+badgeText(u.daysTo)+']';
       if(u.nextHours) m+=' · next '+u.nextHours+'h';
       m+='\n   ↳ confirm meter'+(u.curHours!=null?(' (file: '+fmtHrs(u.curHours)+'h'+(u.curDate?(' '+shortDate(u.curDate)):'')+')'):'')+': __________\n';
     });
+    if(chks.length){
+      m+='\n🔎 *Also check meter here:*\n';
+      chks.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA)'):'')+(u.customer?(' — '+u.customer):'')+' — meter: __________\n'; });
+    }
     m+='\n🗺️ Route: '+mapsRoute(zg.units,zg.zone);
     return m;
   }
@@ -304,7 +315,10 @@
     LAST.forEach(function(zg){
       var team=(loadTeams()[zg.zone]||'').trim();
       m+='\n📍 *'+zg.zone+'*'+(team?(' — '+team):'')+'\n';
-      zg.units.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+' ['+badgeText(u.daysTo)+']\n'; });
+      zg.units.forEach(function(u){
+        if(u.extra){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA)'):'')+(u.customer?(' — '+u.customer):'')+' [check meter]\n'; }
+        else { m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+' ['+badgeText(u.daysTo)+']\n'; }
+      });
       m+='🗺️ '+mapsRoute(zg.units,zg.zone)+'\n';
     });
     return m;
@@ -357,15 +371,44 @@
     // Only running (on-hire) units make the plan.
     var field=picked;
 
+    // The team visits an AREA, so show EVERY on-hire genset in each area that has
+    // a due unit — not just the due one. The extra units aren't due for service,
+    // but the team should still check them and capture their meter while there.
+    var activeZones={}; picked.forEach(function(u){ activeZones[u.zone]=true; });
+    var pickedDG={}; picked.forEach(function(u){ pickedDG[String(u.dg).toUpperCase()]=true; });
+    var extras=[];
+    gens.forEach(function(g){
+      var d=dir[String(g.dg).toUpperCase()]||{};
+      if(g.offHire || d.zone==='Yard') return;            // paused in yard - skip
+      if(!activeZones[d.zone||'Unknown']) return;          // only areas we're visiting
+      if(pickedDG[String(g.dg).toUpperCase()]) return;     // already a due unit
+      var daysTo=g.nextServiceDate?dayDiff(when,g.nextServiceDate):null;
+      extras.push({
+        dg:g.dg, daysTo:daysTo, extra:true, nextHours:g.nextService, nextDate:g.nextServiceDate||'',
+        zone:d.zone||'Unknown', location:d.location||'', customer:d.customer||'',
+        lat:d.lat, lon:d.lon, kva:d.kva, brand:d.brand,
+        usage:(g.effectiveDailyHours||g.observedDailyHours||null),
+        usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null),
+        curHours:(g.currentHours!=null?g.currentHours:null),
+        curDate:(g.currentHoursDate||'')
+      });
+    });
+    field=picked.concat(extras);
+
     // Group field units by zone.
     var zones={};
     field.forEach(function(u){ (zones[u.zone]=zones[u.zone]||[]).push(u); });
-    // Sort each zone's units worst-overdue first; order zones by worst-overdue,
-    // then by how many units (bigger clusters earlier).
+    // Sort each zone: DUE units first (worst-overdue first), then the "also check"
+    // units. Order zones by worst-overdue, then by how many due units.
     var zoneList=Object.keys(zones).map(function(z){
-      var list=zones[z].sort(function(a,b){ return a.daysTo-b.daysTo; });
-      return { zone:z, units:list, worst:list[0].daysTo };
-    }).sort(function(a,b){ return a.worst-b.worst || b.units.length-a.units.length; });
+      var list=zones[z].sort(function(a,b){
+        if(!!a.extra!==!!b.extra) return a.extra?1:-1;           // due before extra
+        var ad=(a.daysTo==null?9999:a.daysTo), bd=(b.daysTo==null?9999:b.daysTo);
+        return ad-bd;
+      });
+      var dueList=list.filter(function(u){return !u.extra;});
+      return { zone:z, units:list, dueCount:dueList.length, extraCount:list.length-dueList.length, worst:dueList.length?dueList[0].daysTo:9999 };
+    }).sort(function(a,b){ return a.worst-b.worst || b.dueCount-a.dueCount; });
 
     var overCount=picked.filter(function(u){return u.daysTo<0;}).length;
     var teams=loadTeams();
@@ -373,29 +416,36 @@
     var html='';
     html+='<div class="summary"><b>'+picked.length+'</b> generator'+(picked.length!==1?'s':'')+' to service · '
       +'<span class="pill over">'+overCount+' overdue</span> · '
-      +'<b>'+zoneList.length+'</b> area'+(zoneList.length!==1?'s':'')+'.<br>'
-      +'<span class="planTip" style="color:var(--muted);font-size:12.5px;">Tip: give the worst-overdue area to your strongest team, and any far area (e.g. Ruwais, Dubai) its own team for the day.'
+      +'<b>'+zoneList.length+'</b> area'+(zoneList.length!==1?'s':'')
+      +(extras.length?(' · <b>'+extras.length+'</b> more to check in these areas'):'')+'.<br>'
+      +'<span class="planTip" style="color:var(--muted);font-size:12.5px;">Every on-hire genset in each area is listed — service the due ones and capture the meter on the rest. Tip: give the worst-overdue area to your strongest team, and any far area (e.g. Ruwais, Dubai) its own team for the day.'
       +(pausedCount?(' · '+pausedCount+' off-hire units paused in the yard are not shown — they resume when back on hire.'):'')
       +'</span><br><button class="shareall" id="shareAll">📲 Share full plan on WhatsApp</button></div>';
 
     LAST=zoneList;
     zoneList.forEach(function(zg,zi){
       var urgent=zg.worst<0;
-      var manyHint = zg.units.length>=4 ? '<div class="hint">⚠ '+zg.units.length+' units here — consider two teams, or start early.</div>' : '';
+      var manyHint = zg.dueCount>=4 ? '<div class="hint">⚠ '+zg.dueCount+' due here — consider two teams, or start early.</div>' : '';
       html+='<div class="zone'+(urgent?' urgent':'')+'">';
       html+='<div class="zhead"><span class="zn">📍 '+esc(zg.zone)+'</span>'
-        +'<span class="zc">'+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+'</span>'
+        +'<span class="zc">'+zg.dueCount+' due'+(zg.extraCount?(' · '+zg.extraCount+' to check'):'')+'</span>'
         +overBadge(zg.worst)+'</div>';
       html+='<div class="zbody">';
+      var extraStarted=false;
       zg.units.forEach(function(u){
+        if(u.extra && !extraStarted){ extraStarted=true;
+          html+='<div class="checkhdr">↓ Also in this area — check &amp; capture meter while you\'re here</div>';
+        }
         var kva=u.kva?(' · '+u.kva+' kVA'):'';
         var brand=u.brand?(' · '+esc(u.brand)):'';
         var bd=BDMAP[String(u.dg).toUpperCase()];
         var bdFlag=bd?('<div class="bdflag">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</div>'):'';
-        html+='<div class="u"><span class="dg">'+esc(u.dg)+'</span>'
+        var nextTxt=u.extra?(u.nextDate?(' · next '+esc(u.nextDate)):''):(' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate));
+        var tag=u.extra?'<span class="checktag">✓ check meter</span>':overBadge(u.daysTo);
+        html+='<div class="u'+(u.extra?' xtra':'')+'"><span class="dg">'+esc(u.dg)+'</span>'
           +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
-          +' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate)+kva+brand+usageHtml(u)+'</span>'
-          +overBadge(u.daysTo)+bdFlag+meterHtml(u)+'</div>';
+          +nextTxt+kva+brand+usageHtml(u)+'</span>'
+          +tag+bdFlag+meterHtml(u)+'</div>';
       });
       html+=manyHint;
       html+='</div>';
