@@ -843,9 +843,9 @@
   "currentHours": 3731,
   "currentHoursDate": "2026-10-20",
   "nextService": 3898,
-  "nextServiceDate": "2027-01-09",
+  "nextServiceDate": "2026-11-15",
   "interval": 350,
-  "notes": "Serviced 09/07/2026 at 3548h (all filters). Meter 3731h on 20/10/2026 (Weichai controller: 1774 starts, 23322 kWh, gens normal running). Only 36h in 26 days since 24/09 = ~1.4 h/day - VERY light use. 167h left to next (3898h); at this rate hours won\u2019t hit it until ~Feb 2027, so time-based 6-month oil-life limit governs -> next service ~09/01/2027. 100 kVA Weichai, Smart Home, Al Ajban. Removed from today due list (barely running)."
+  "notes": "Serviced 09/07/2026 at 3548h (all filters). Meter 3731h on 20/10/2026 (Weichai controller: 1774 starts, 23322 kWh, gens normal running). ~1.4 h/day (36h in 26 days) - VERY light use. Next service set to 15/11/2026 (per ops). 100 kVA Weichai, Smart Home, Al Ajban."
  },
  {
   "dg": "DG-801",
