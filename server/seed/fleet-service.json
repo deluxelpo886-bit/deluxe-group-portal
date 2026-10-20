@@ -2537,11 +2537,11 @@
   "airFilter": false,
   "dailyHours": 7.5,
   "nextService": 16509,
-  "nextServiceDate": "2026-10-23",
+  "nextServiceDate": "2026-11-09",
   "interval": 350,
   "currentHours": 16338,
   "currentHoursDate": "2026-10-17",
-  "notes": "Controller 16338h 56m confirmed 17/10/2026 -> 171h left to next (16509). ~7.5 h/day (179h since the 23/09 service at 16159h). Air filter still PENDING from 23/09 (fit at next service). Next service 23/10/2026. 50 kVA Perkins, Hydro Power, Mussafah MN1. NOTE: removed the fixed 15-day tight cycle - current use is ~7.5 h/day (not 24h), so it now runs on the normal hours/date basis."
+  "notes": "Controller 16338h 56m confirmed 17/10/2026 -> 171h left to next (16509). ~7.5 h/day (179h since the 23/09 service at 16159h = 24 days). At 7.5 h/day, 171h left -> ~23 days -> next service ~09/11/2026 (date recomputed from measured usage, was 23/10). Air filter still PENDING from 23/09 - carry one and fit at next service. 50 kVA Perkins, Hydro Power, Mussafah MN1. Light use ~7.5 h/day (not 24h)."
  },
  {
   "dg": "DG-503",
