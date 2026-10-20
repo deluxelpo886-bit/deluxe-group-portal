@@ -132,6 +132,7 @@
       <div class="htitle">📷 Send current hours<span class="hi">अभी के घंटे भेजो</span><span class="u">ابھی کے گھنٹے بھیجیں</span></div>
       <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="hrsDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
+      <div class="dgco" id="hrsCo"></div>
       <button class="hcam" id="hrsCam">📷 Take photo of meter · मीटर की फोटो लो · <span class="ur">میٹر کی فوٹو</span></button>
       <img id="hrsPrev" alt="" style="display:none;">
       <label class="hlbl">Running hours (meter) · घंटे · <span class="ur">گھنٹے</span></label>
@@ -148,6 +149,7 @@
       <div class="htitle">🔧 Log a service<span class="hi">सर्विस दर्ज करो</span><span class="u">سروس درج کریں</span></div>
       <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="svcDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
+      <div class="dgco" id="svcCo"></div>
       <label class="hlbl">Hours now (meter) · अभी के घंटे · <span class="ur">ابھی کے گھنٹے</span></label>
       <input type="number" inputmode="numeric" id="svcHrs" placeholder="e.g. 4397">
       <label class="hlbl">What did you change? · क्या बदला · <span class="ur">کیا بدلا</span></label>
@@ -175,6 +177,7 @@
       <div class="htitle">🚨 Report breakdown<span class="hi">ब्रेकडाउन बताओ</span><span class="u">بریک ڈاؤن بتائیں</span></div>
       <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="bdDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
+      <div class="dgco" id="bdCo"></div>
       <label class="hlbl">Where · जगह · <span class="ur">کہاں (جگہ)</span></label>
       <input type="text" id="bdLoc" placeholder="e.g. Musaffah M40">
       <label class="hlbl">What is the problem? · क्या दिक्कत · <span class="ur">کیا مسئلہ ہے</span></label>
@@ -227,6 +230,18 @@
     #hrsPrev{width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin:10px 0;background:#000;}
     .hcam{width:100%;background:#223044;color:#eaf0f7;border:1px solid #38516e;border-radius:12px;padding:13px;font-size:15px;font-weight:700;margin-top:10px;cursor:pointer;}
     .herr{color:#e0644a;font-size:13px;min-height:18px;text-align:center;margin-top:6px;}
+    /* DG lookup chip: confirms which company (Energy / Heavy) + customer the DG belongs to */
+    .dgco{min-height:0;margin-top:7px;transition:min-height .12s ease;}
+    .dgco .chip2{display:flex;align-items:center;gap:9px;border-radius:12px;padding:10px 12px;border:1px solid transparent;animation:dgpop .18s ease both;}
+    @keyframes dgpop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+    .dgco .ic{font-size:22px;line-height:1;}
+    .dgco .co{font-size:15px;font-weight:900;letter-spacing:.3px;}
+    .dgco .meta{font-size:12px;opacity:.9;margin-top:1px;}
+    .dgco.energy .chip2{background:rgba(51,198,192,.14);border-color:rgba(51,198,192,.45);color:#7ff0ea;}
+    .dgco.heavy .chip2{background:rgba(90,162,230,.14);border-color:rgba(90,162,230,.45);color:#aad2ff;}
+    .dgco.cross .chip2{background:rgba(170,120,220,.14);border-color:rgba(170,120,220,.5);color:#dcbcf6;}
+    .dgco.unknown .chip2{background:rgba(224,100,74,.12);border-color:rgba(224,100,74,.45);color:#f0a08c;}
+    .dgco .co small{display:block;font-size:11px;font-weight:700;opacity:.85;}
     .hbtns{display:flex;gap:10px;margin-top:8px;}
     .hbtns button{flex:1;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;}
     .hcancel{background:#223044;color:#8da2b8;}
@@ -307,8 +322,33 @@
   $('lBackName').addEventListener('click',function(){ showLogin(); });
 
   // ---------- App ----------
-  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; unlockAudio(); registerSW(); load(); if(pollT) clearInterval(pollT); pollT=setInterval(load,20000); }
+  function startApp(){ $('loginView').style.display='none'; $('appView').style.display='block'; unlockAudio(); registerSW(); load(); fetchDgIndex(); if(pollT) clearInterval(pollT); pollT=setInterval(load,20000); }
   $('logout').addEventListener('click',function(){ if(confirm('Sign out? · साइन आउट?')){ try{localStorage.removeItem(TSTORE);}catch(e){} TOKEN=''; first=true; known={}; showLogin(); } });
+
+  // ---------- DG lookup: show which company (Energy / Heavy) a DG belongs to ----------
+  var DGX={};
+  function fetchDgIndex(){ api('/api/tech/'+encodeURIComponent(TOKEN)+'/dg-index').then(function(d){ DGX=d.index||{};
+    // refresh any field already filled (e.g. a form opened before the index loaded)
+    [['hrsDg','hrsCo'],['svcDg','svcCo'],['bdDg','bdCo']].forEach(function(p){ if($(p[0])&&$(p[0]).value.trim()) lookupDg(p[0],p[1]); }); }).catch(function(){}); }
+  function normDg(v){ v=String(v||'').trim().toUpperCase().replace(/\s+/g,''); if(!v) return '';
+    if(/^\d+$/.test(v)) return 'DG-'+v; if(/^DG\d+$/.test(v)) return 'DG-'+v.slice(2); return v; }
+  function coClass(co){ co=String(co||'').toUpperCase(); if(co.indexOf('ENERGY')>=0) return 'energy'; if(co.indexOf('HEAVY')>=0) return 'heavy'; return ''; }
+  function lookupDg(inputId, chipId){
+    var raw=$(inputId).value, key=normDg(raw), el=$(chipId);
+    if(!raw.trim()){ el.className='dgco'; el.innerHTML=''; return; }
+    var g=DGX[key];
+    if(!g){ el.className='dgco unknown'; el.innerHTML='<div class="chip2"><span class="ic">⚠️</span><div><div class="co">Unknown DG — check number<small>नंबर चेक करो · نمبر چیک کریں</small></div></div></div>'; return; }
+    var co=String(g.co||''), isCross=!/^DG-/.test(key), cls=isCross?'cross':(coClass(co)||'cross'), label, ic;
+    if(isCross){ label='CROSS-HIRE'; ic='🔁'; }
+    else if(cls==='energy'){ label='DELUXE ENERGY'; ic='⚡'; }
+    else if(cls==='heavy'){ label='DELUXE HEAVY'; ic='🏗️'; }
+    else { label=co||'—'; ic='🔌'; }
+    var meta=[]; if(g.cust) meta.push(esc(g.cust)); if(g.kva) meta.push(g.kva+' kVA');
+    el.className='dgco '+cls;
+    el.innerHTML='<div class="chip2"><span class="ic">'+ic+'</span><div><div class="co">'+label+'</div>'+(meta.length?'<div class="meta">'+meta.join(' · ')+'</div>':'')+'</div></div>';
+  }
+  (function(){ var map={hrsDg:'hrsCo',svcDg:'svcCo',bdDg:'bdCo'};
+    Object.keys(map).forEach(function(id){ var el=$(id); if(el) el.addEventListener('input',function(){ lookupDg(id,map[id]); }); }); })();
 
   async function load(){
     try{
@@ -395,7 +435,7 @@
   ['touchstart','click'].forEach(function(ev){ document.addEventListener(ev,function(){ unlockAudio(); if(alarmTimer) stopAlarm(); },{passive:true}); });
 
   // ---------- Send current hours (photo of the meter) ----------
-  window.openHoursFor=function(dg){ hrsDataUrl=null; $('hrsDg').value=(dg||''); $('hrsPrev').style.display='none'; $('hrsPrev').removeAttribute('src'); $('hrsVal').value=''; $('hrsErr').textContent=''; $('hrsOv').classList.add('on'); };
+  window.openHoursFor=function(dg){ hrsDataUrl=null; $('hrsDg').value=(dg||''); $('hrsPrev').style.display='none'; $('hrsPrev').removeAttribute('src'); $('hrsVal').value=''; $('hrsErr').textContent=''; $('hrsOv').classList.add('on'); lookupDg('hrsDg','hrsCo'); };
   $('hrsCancel').addEventListener('click',function(){ $('hrsOv').classList.remove('on'); });
   $('hrsCam').addEventListener('click',function(){ $('hrsFile').click(); });
   function resizeImg(file,cb){ try{ var img=new Image(); var u=URL.createObjectURL(file); img.onload=function(){ var max=1000,w=img.width,h=img.height; if(w>h&&w>max){h=Math.round(h*max/w);w=max;} else if(h>max){w=Math.round(w*max/h);h=max;} var c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(u); cb(c.toDataURL('image/jpeg',0.6)); }; img.onerror=function(){cb(null);}; img.src=u; }catch(e){cb(null);} }
@@ -415,7 +455,7 @@
   var svcPhoto=null;
   window.openService=function(dg){ svcPhoto=null; $('svcDg').value=(dg||''); $('svcHrs').value=''; $('svcNext').value=''; $('svcNote').value='';
     $('svcErr').textContent=''; $('svcPrev').style.display='none'; $('svcPrev').removeAttribute('src');
-    $('svcChecks').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); $('svcOv').classList.add('on'); };
+    $('svcChecks').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); $('svcOv').classList.add('on'); lookupDg('svcDg','svcCo'); };
   $('svcCancel').addEventListener('click',function(){ $('svcOv').classList.remove('on'); });
   $('svcChecks').addEventListener('click',function(e){ var b=e.target.closest('.chip'); if(b) b.classList.toggle('on'); });
   $('svcCam').addEventListener('click',function(){ $('svcFile').click(); });
@@ -442,7 +482,7 @@
     $('bdPrev').style.display='none'; $('bdPrev').removeAttribute('src');
     $('bdCat').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
     $('bdPri').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
-    $('bdOv').classList.add('on'); };
+    $('bdOv').classList.add('on'); lookupDg('bdDg','bdCo'); };
   $('bdCancel').addEventListener('click',function(){ $('bdOv').classList.remove('on'); });
   function singleSelect(wrapId){ $(wrapId).addEventListener('click',function(e){ var b=e.target.closest('.chip'); if(!b) return;
     $(wrapId).querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); b.classList.add('on'); }); }
