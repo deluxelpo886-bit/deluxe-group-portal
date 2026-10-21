@@ -1733,9 +1733,10 @@
   "currentHours": 2336,
   "currentHoursDate": "2026-09-24",
   "nextService": 2686,
-  "nextServiceDate": "2027-03-16",
+  "nextServiceDate": "2026-10-22",
   "interval": 350,
-  "notes": "Serviced 16/09/2026 at 2336h (Nazir Khan) - all filters done. Current meter today (24/09) still 2336h -> very low use / standby. Next 2686h (350h cycle). 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39."
+  "notes": "Serviced 16/09/2026 at 2336h (Nazir Khan) - all filters done. Current meter today (24/09) still 2336h -> very low use / standby. Next 2686h (350h cycle). 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39.",
+  "fixedDays": 36
  },
  {
   "dg": "DG-858",
