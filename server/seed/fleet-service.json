@@ -379,8 +379,7 @@
   "nextService": 3813,
   "nextServiceDate": "2026-12-23",
   "interval": 350,
-  "notes": "Service 12/09/2026 by Team 3 (Imran & Jayaraj) at 3463h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE - pending. Controller meter confirmed 3715h on 07/10/2026 -> 98h left to next (3813). ~8.8 h/day, due ~18/10. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
-,
+  "notes": "Service 12/09/2026 by Team 3 (Imran & Jayaraj) at 3463h. Oil, oil filter, fuel filter done; AIR FILTER NOT DONE - pending. Controller meter confirmed 3715h on 07/10/2026 -> 98h left to next (3813). ~8.8 h/day, due ~18/10. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA.",
   "fixedDays": 102
  },
  {
@@ -575,8 +574,7 @@
   "nextService": 11270,
   "nextServiceDate": "2026-11-03",
   "interval": 350,
-  "notes": "Service card: serviced 10920h (oil, oil filter, fuel filter; air filter not changed), next 11270h on a 350h cycle (card written by tech). Controller meter confirmed 11142h on 07/10/2026 -> 128h left. Usage ~4.7 h/day over the last 12 days (up from ~1.2). Note: card uses a 350h interval although this is a 250 kVA unit (rule default is 450h) - kept to the card. 250 kVA Kirlosker. (Controller marked 'DG473' in paint but owner confirms this reading is DG-480.)"
-,
+  "notes": "Service card: serviced 10920h (oil, oil filter, fuel filter; air filter not changed), next 11270h on a 350h cycle (card written by tech). Controller meter confirmed 11142h on 07/10/2026 -> 128h left. Usage ~4.7 h/day over the last 12 days (up from ~1.2). Note: card uses a 350h interval although this is a 250 kVA unit (rule default is 450h) - kept to the card. 250 kVA Kirlosker. (Controller marked 'DG473' in paint but owner confirms this reading is DG-480.)",
   "fixedDays": 178
  },
  {
@@ -690,12 +688,12 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 0.45,
-  "currentHours": 20860,
-  "currentHoursDate": "2026-10-09",
+  "dailyHours": 0.08,
+  "currentHours": 20861,
+  "currentHoursDate": "2026-10-21",
   "nextService": 21185,
-  "nextServiceDate": "2026-11-09",
-  "notes": "Current meter 20860h 45m on 09/10/2026 (5184 starts). +25h since the 16/06 service @ 20835h; ~0.45 h/day while on hire (since 14/08). Low-use standby: service skipped to a calendar check on 09/11/2026 (hours target 21185h still far off). 30 kVA Kirloskar on hire to SILVER SCREEN, AL AIN (Ain Al Fayda).",
+  "nextServiceDate": "2026-12-16",
+  "notes": "Controller 20861h on 21/10/2026 (barely moved: +1h since 20860h/09-10 = ~0.08 h/day, standby). Last service 16/06 @ 20835h; hours target 21185h is far off, so time-based calendar check governs. Low-use standby, 30 kVA Kirloskar on hire to SILVER SCREEN, AL AIN (Ain Al Fayda).",
   "interval": 350
  },
  {
@@ -1060,8 +1058,7 @@
   "interval": 450,
   "currentHours": 2829,
   "currentHoursDate": "2026-10-18",
-  "notes": "Controller 2829h 33m confirmed 18/10/2026 (1163 starts). 243h left to next (3072); ~6.5 h/day (moderate). Next service ~24/11/2026. 250 kVA Kirloskar, Trojan, Madinat Zayed Shopping Centre."
-,
+  "notes": "Controller 2829h 33m confirmed 18/10/2026 (1163 starts). 243h left to next (3072); ~6.5 h/day (moderate). Next service ~24/11/2026. 250 kVA Kirloskar, Trojan, Madinat Zayed Shopping Centre.",
   "fixedDays": 69
  },
  {
@@ -1447,8 +1444,7 @@
   "interval": 350,
   "currentHours": 10357,
   "currentHoursDate": "2026-10-19",
-  "notes": "Serviced 10/10/2026 @10354h by Roland & Emran - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending. Controller 10357h confirmed 19/10/2026 -> only 3h in 9 days (near-idle / standby lately). 347h left to next (10704). 40 kVA Kirloskar, Trojan, Al Reem RT8."
-,
+  "notes": "Serviced 10/10/2026 @10354h by Roland & Emran - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending. Controller 10357h confirmed 19/10/2026 -> only 3h in 9 days (near-idle / standby lately). 347h left to next (10704). 40 kVA Kirloskar, Trojan, Al Reem RT8.",
   "fixedDays": 182
  },
  {
@@ -1652,8 +1648,7 @@
   "nextService": 37611,
   "nextServiceDate": "2027-03-27",
   "interval": 350,
-  "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins."
-,
+  "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins.",
   "fixedDays": 182
  },
  {
@@ -1687,8 +1682,7 @@
   "interval": 350,
   "currentHours": 2132,
   "currentHoursDate": "2026-10-16",
-  "notes": "Serviced 23/09/2026 at 1998h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER recorded NOT done (pending) - verify vs latest card photo. Controller 2132h 58m confirmed 16/10/2026 -> 216h left to next (2348). Ran 77h since 01/10 (2055h) = ~5.1 h/day (light/moderate). 100 kVA Perkins, Trojan, Yas Island."
-,
+  "notes": "Serviced 23/09/2026 at 1998h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER recorded NOT done (pending) - verify vs latest card photo. Controller 2132h 58m confirmed 16/10/2026 -> 216h left to next (2348). Ran 77h since 01/10 (2055h) = ~5.1 h/day (light/moderate). 100 kVA Perkins, Trojan, Yas Island.",
   "fixedDays": 62
  },
  {
@@ -1747,8 +1741,7 @@
   "nextService": 2686,
   "nextServiceDate": "2027-03-16",
   "interval": 350,
-  "notes": "Serviced 16/09/2026 at 2336h (Nazir Khan) - all filters done. Current meter today (24/09) still 2336h -> very low use / standby. Next 2686h (350h cycle). 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39."
-,
+  "notes": "Serviced 16/09/2026 at 2336h (Nazir Khan) - all filters done. Current meter today (24/09) still 2336h -> very low use / standby. Next 2686h (350h cycle). 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39.",
   "fixedDays": 181
  },
  {
@@ -2672,8 +2665,7 @@
   "interval": 350,
   "fixedDays": 39,
   "currentHours": 1474,
-  "currentHoursDate": "2026-10-17"
-,
+  "currentHoursDate": "2026-10-17",
   "notes": "REPLACEMENT for DG-503 at Hydro Power, Mussafah MN1. Controller 1474h (17/10); next ~26/10 at 12 h/day. 62.5 kVA Kirloskar."
  },
  {
@@ -3081,8 +3073,7 @@
   "interval": 350,
   "currentHours": 18164,
   "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 06/10/2026 @ 18164h by Adeel - oil, oil filter, fuel filter AND air filter all done. Next service 18514h (+350). Back running normally (was flagged Breakdown; now running). 40 kVA, Trojan, Al Reem RT8."
-,
+  "notes": "Serviced 06/10/2026 @ 18164h by Adeel - oil, oil filter, fuel filter AND air filter all done. Next service 18514h (+350). Back running normally (was flagged Breakdown; now running). 40 kVA, Trojan, Al Reem RT8.",
   "fixedDays": 29
  },
  {
@@ -3748,5 +3739,77 @@
   "currentHours": 466,
   "currentHoursDate": "2026-10-17",
   "notes": "Serviced 17/10/2026 at 466h (DSE Run Time 466h 48m) by Sonu Hussain - oil, oil filter & fuel filter done. AIR FILTER NOT done (card marked X) - pending, fit at next service. Runs ~23 h/day (near-24h heavy); on a fixed 15-day cycle -> next service 01/11/2026 (or 816h). 82.5 kVA Kirloskar, El Masria Cement, Khalifa Industrial City B."
+ },
+ {
+  "dg": "DG-466",
+  "hours": 33031,
+  "date": "2026-10-21",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 14.7,
+  "nextService": 33381,
+  "nextServiceDate": "2026-11-14",
+  "interval": 350,
+  "fixedDays": 24,
+  "currentHours": 33031,
+  "currentHoursDate": "2026-10-21",
+  "notes": "Serviced 21/10/2026 at 33031h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 33381h (+350). 367h since 26/09 service (32664h) = ~14.7 h/day -> due ~14/11. Hydro Power, near E75 (KIZAD/Al Samha), 160 kVA."
+ },
+ {
+  "dg": "DG-549",
+  "hours": 6837,
+  "date": "2026-10-21",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.5,
+  "nextService": 7187,
+  "nextServiceDate": "2026-11-18",
+  "interval": 350,
+  "fixedDays": 28,
+  "currentHours": 6837,
+  "currentHoursDate": "2026-10-21",
+  "notes": "Serviced 21/10/2026 at 6837h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 7187h (+350). 363h since 22/09 service (6474h) = ~12.5 h/day -> due ~18/11. Six Sigma, KIZAD KHIA 8, 100 kVA CAT."
+ },
+ {
+  "dg": "DG-506",
+  "hours": 17534,
+  "date": "2026-10-21",
+  "technician": "ROLAND & ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 8.35,
+  "nextService": 17884,
+  "nextServiceDate": "2026-12-02",
+  "interval": 350,
+  "fixedDays": 42,
+  "currentHours": 17534,
+  "currentHoursDate": "2026-10-21",
+  "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil (controller DSE 17534h 55m) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card blank - pending). Next 17884h (+350). ~8.35 h/day -> due ~02/12. CONFIRM head gasket + oil seal were fitted at this service (were flagged in the WhatsApp group). Cleared the urgent/under-check flag. Hashim, Al Bahia, 40 kVA Tata."
+ },
+ {
+  "dg": "DG-456",
+  "hours": 3839,
+  "date": "2026-10-21",
+  "technician": "GAGAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 6.84,
+  "nextService": 4189,
+  "nextServiceDate": "2026-12-11",
+  "interval": 350,
+  "fixedDays": 51,
+  "currentHours": 3839,
+  "currentHoursDate": "2026-10-21",
+  "notes": "Serviced 21/10/2026 (per ops) - oil + filters; air filter pending. Next 4189h (+350) -> at ~6.84 h/day due ~11/12/2026. NOTE: service hours ~3839h are the due-point estimate (no card photo yet - confirm exact meter from card). E20 Investment, Al Ain, 62.5 kVA."
  }
 ]
