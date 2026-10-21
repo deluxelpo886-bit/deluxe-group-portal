@@ -231,27 +231,14 @@
   function saveMeter(dg,val){ var m=loadMeters(); if(val!=='') m[dg]=val; else delete m[dg]; localStorage.setItem(meterKey(),JSON.stringify(m)); }
   function fmtHrs(n){ return (n==null)?'':String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
   function shortDate(s){ s=String(s||''); return (s.length>=10)?(s.slice(8,10)+'/'+s.slice(5,7)):''; }
-  // Sys-meter line + a box for the actual reading, with live delta vs the system.
+  function fullDate(s){ s=String(s||''); return (s.length>=10)?(s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4)):''; }
+  // Last-service date + a box to write the current hour meter on site.
   function meterHtml(u){
-    var sys=(u.curHours!=null)?('<b>'+fmtHrs(u.curHours)+' h</b>'+(u.curDate?(' · '+shortDate(u.curDate)):'')):'<span class="nomtr">no reading on file</span>';
+    var last=u.svcDate?('🛠️ Last service: <b>'+fullDate(u.svcDate)+'</b>'):'<span class="nomtr">last service: —</span>';
     var saved=loadMeters()[String(u.dg).toUpperCase()]; if(saved==null) saved='';
-    return '<div class="mtr"><span class="ml">🔢 Sys meter: '+sys+'</span>'
-      +'<span class="mx"><label>Actual</label>'
-      +'<input type="number" inputmode="numeric" placeholder="reading…" value="'+esc(saved)+'" data-mdg="'+esc(String(u.dg).toUpperCase())+'"'
-      +' data-sys="'+(u.curHours!=null?u.curHours:'')+'">'
-      +'<span class="mdelta" data-mdelta="'+esc(String(u.dg).toUpperCase())+'"></span></span></div>';
-  }
-  // Compute and paint the delta text next to an actual-meter input.
-  function paintDelta(inp){
-    var dg=inp.getAttribute('data-mdg');
-    var span=$('out').querySelector('.mdelta[data-mdelta="'+dg+'"]'); if(!span) return;
-    var sys=parseFloat(inp.getAttribute('data-sys')); var act=parseFloat(inp.value);
-    if(!inp.value||isNaN(act)){ span.textContent=''; span.className='mdelta'; return; }
-    if(isNaN(sys)){ span.textContent='✓ noted'; span.className='mdelta ok'; return; }
-    var d=Math.round(act-sys);
-    if(d<0){ span.textContent='⚠ '+d+'h (below file!)'; span.className='mdelta bad'; }
-    else if(d>600){ span.textContent='⚠ +'+fmtHrs(d)+'h (big jump)'; span.className='mdelta warn'; }
-    else { span.textContent='+'+fmtHrs(d)+'h since file'; span.className='mdelta ok'; }
+    return '<div class="mtr"><span class="ml">'+last+'</span>'
+      +'<span class="mx"><label>Hour meter</label>'
+      +'<input type="number" inputmode="numeric" placeholder="reading…" value="'+esc(saved)+'" data-mdg="'+esc(String(u.dg).toUpperCase())+'"></span></div>';
   }
 
   // Build a Google Maps directions link that chains a zone's stops. Prefer the
@@ -298,11 +285,11 @@
     dues.forEach(function(u){
       m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA'+(u.brand?' '+u.brand:'')+')'):'')+(u.customer?(' — '+u.customer):'')+usageText(u)+'  ['+badgeText(u.daysTo)+']';
       if(u.nextHours) m+=' · next '+u.nextHours+'h';
-      m+='\n   ↳ confirm meter'+(u.curHours!=null?(' (file: '+fmtHrs(u.curHours)+'h'+(u.curDate?(' '+shortDate(u.curDate)):'')+')'):'')+': __________\n';
+      m+='\n   ↳ hour meter: __________'+(u.svcDate?('  (last service '+fullDate(u.svcDate)+')'):'')+'\n';
     });
     if(chks.length){
       m+='\n🔎 *Also check meter here:*\n';
-      chks.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA)'):'')+(u.customer?(' — '+u.customer):'')+' — meter: __________\n'; });
+      chks.forEach(function(u){ m+='• '+u.dg+(u.kva?(' ('+u.kva+'kVA)'):'')+(u.customer?(' — '+u.customer):'')+' — hour meter: __________\n'; });
     }
     m+='\n🗺️ Route: '+mapsRoute(zg.units,zg.zone);
     return m;
@@ -358,7 +345,8 @@
         usage:(g.effectiveDailyHours||g.observedDailyHours||null),
         usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null),
         curHours:(g.currentHours!=null?g.currentHours:null),
-        curDate:(g.currentHoursDate||'')
+        curDate:(g.currentHoursDate||''),
+        svcDate:(g.date||'')
       });
     });
 
@@ -390,7 +378,8 @@
         usage:(g.effectiveDailyHours||g.observedDailyHours||null),
         usageMeasured:(g.dailyHours!=null||g.observedDailyHours!=null),
         curHours:(g.currentHours!=null?g.currentHours:null),
-        curDate:(g.currentHoursDate||'')
+        curDate:(g.currentHoursDate||''),
+        svcDate:(g.date||'')
       });
     });
     field=picked.concat(extras);
@@ -469,10 +458,8 @@
     // Wire the per-unit actual-meter inputs: remember the reading and show the
     // live delta against what the system has on file.
     $('out').querySelectorAll('input[data-mdg]').forEach(function(inp){
-      paintDelta(inp);
       inp.addEventListener('input',function(){
         saveMeter(inp.getAttribute('data-mdg'),inp.value.trim());
-        paintDelta(inp);
       });
     });
     // Wire the per-area WhatsApp / Copy buttons and the full-plan share.
