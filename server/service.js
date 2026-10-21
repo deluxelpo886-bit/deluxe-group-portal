@@ -103,41 +103,35 @@ function logService(rec) {
   // hours (counting down from the latest confirmed reading when we have one) - NOT
   // from a fixed calendar gap or an imported date. Moderate- and light-use
   // machines KEEP their recorded date exactly as it was.
-  let heavyDate = null;
-  if (isHeavyUse) {
-    const baseHours = (rec.currentHours != null && isFinite(Number(rec.currentHours)) && Number(rec.currentHours) >= 0)
-      ? Number(rec.currentHours) : hours;
-    const baseDate = (rec.currentHoursDate && /^\d{4}-\d\d-\d\d/.test(String(rec.currentHoursDate)))
-      ? String(rec.currentHoursDate).slice(0, 10) : date;
-    const remaining = Number(nextService) - baseHours;
-    const days = Math.max(1, Math.round(remaining / measuredDaily));
-    const hd = new Date(baseDate + 'T00:00:00');
-    hd.setDate(hd.getDate() + days);
-    heavyDate = hd.toISOString().slice(0, 10);
-  }
+  // Ops-head rule: we can't predict WHEN a customer will run the set, so EVERY
+  // service is planned on at least the 12 h/day contract - and FASTER only for a
+  // unit we have truly MEASURED running harder than 12 h/day (e.g. a 24 h
+  // customer reaches the next service in about half the days). A low-use unit is
+  // therefore NOT pushed months out on its tiny measured rate: it stays on the
+  // 12 h/day plan so a sudden jump in the customer's usage never slips a service.
+  const scheduleRate = Math.max(measuredDaily || CONTRACT_DAILY_HOURS, CONTRACT_DAILY_HOURS);
+  // Count the interval hours down from the latest confirmed meter reading when we
+  // have one (else from the service reading itself).
+  const baseHours = (rec.currentHours != null && isFinite(Number(rec.currentHours)) && Number(rec.currentHours) >= 0)
+    ? Number(rec.currentHours) : hours;
+  const baseDate = (rec.currentHoursDate && /^\d{4}-\d\d-\d\d/.test(String(rec.currentHoursDate)))
+    ? String(rec.currentHoursDate).slice(0, 10) : date;
+  const remainingHrs = Number(nextService) - baseHours;
+  const projDays = Math.max(1, Math.round(remainingHrs / scheduleRate));
+  const projFrom = new Date(baseDate + 'T00:00:00');
+  projFrom.setDate(projFrom.getDate() + projDays);
+  const projDate = projFrom.toISOString().slice(0, 10);
 
-  const daysToService = recFixedDays
-    ? recFixedDays
-    : ((interval === 450)
-      ? FIXED_DAYS_450
-      : Math.max(1, Math.round(interval / effectiveDailyHours)));
+  // A per-record fixedDays cycle the office hand-set still wins (a date the ops
+  // head fixed, or a special short cycle): next date = service date + fixedDays.
+  const daysToService = recFixedDays ? recFixedDays : projDays;
   const nsd = new Date(date + 'T00:00:00');
   nsd.setDate(nsd.getDate() + daysToService);
-  // Next-service DATE priority:
-  //  1. a per-record fixedDays cycle the office set (wins for any interval),
-  //  2. HEAVY-USE machines -> hours-projected date (ops-head rule),
-  //  3. 450-hour machines -> contract 12-14 h/day projection (~38 days),
-  //  4. an explicit recorded/imported date (moderate & light use keep this),
-  //  5. the observed-rate projection.
+  // Next-service DATE: office fixedDays override, else the 12 h/day-floor
+  // projection (which is already sooner for measured heavy/24h users).
   const nextServiceDate = recFixedDays
     ? nsd.toISOString().slice(0, 10)
-    : (heavyDate
-      ? heavyDate
-      : ((interval === 450)
-        ? nsd.toISOString().slice(0, 10)
-        : ((rec.nextServiceDate && /^\d{4}-\d\d-\d\d/.test(String(rec.nextServiceDate)))
-          ? String(rec.nextServiceDate).slice(0, 10)
-          : nsd.toISOString().slice(0, 10))));
+    : projDate;
   const round1 = (n) => (n == null ? null : Math.round(n * 10) / 10);
 
   const entry = {
@@ -154,7 +148,7 @@ function logService(rec) {
     usage,
     // True when the next-service date was projected from real hours (heavy-use
     // rule) rather than a calendar date.
-    dateFromHours: !!heavyDate,
+    dateFromHours: !recFixedDays,
     daysToService,
     date,
     checks: {
