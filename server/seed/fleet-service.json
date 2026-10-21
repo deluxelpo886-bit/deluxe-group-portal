@@ -3792,7 +3792,7 @@
   "fixedDays": 42,
   "currentHours": 17534,
   "currentHoursDate": "2026-10-21",
-  "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil (controller DSE 17534h 55m) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card blank - pending). Next 17884h (+350). ~8.35 h/day -> due ~02/12. CONFIRM head gasket + oil seal were fitted at this service (were flagged in the WhatsApp group). Cleared the urgent/under-check flag. Hashim, Al Bahia, 40 kVA Tata."
+  "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil (controller DSE 17534h 55m) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card blank - pending). Service CONFIRMED by ops. Next 17884h (+350). ~8.35 h/day -> due ~02/12. Head gasket + oil seal were flagged in the WhatsApp group - confirm with team if fitted at this service. Cleared the urgent/under-check flag. Hashim, Al Bahia, 40 kVA Tata."
  },
  {
   "dg": "DG-456",
