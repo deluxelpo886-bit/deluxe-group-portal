@@ -1035,11 +1035,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 6.2,
+  "dailyHours": 6.3,
   "nextService": 6480,
   "nextServiceDate": "2026-11-12",
   "interval": 350,
-  "notes": "Serviced 17/09/2026 at 6130h by IK & Jagraj (oil + oil filter + fuel filter changed; air filter NOT changed). Next service 6480h, projected ~12/11/2026. Moved to Al Dhafra / Al Bihouth (Nexus L&T site), 5C5Q+8X4. 30 kVA, TOTAL."
+  "notes": "Serviced 17/09/2026 at 6130h by IK & Jagraj (oil + oil filter + fuel filter; air filter NOT changed - pending). Controller 6352h 58m on 22/10/2026 (~2994 starts) -> 222h in 35 days = 6.3 h/day. 128h left to next (6480h); on the 12h contract plan due ~02/11. Al Dhafra / Al Bihouth (Nexus L&T), 30 kVA, TOTAL.",
+  "currentHours": 6352,
+  "currentHoursDate": "2026-10-22"
  },
  {
   "dg": "DG-839",
@@ -2444,13 +2446,14 @@
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
-  "airFilter": true,
+  "airFilter": false,
   "nextService": 13835,
   "nextServiceDate": "2026-10-27",
   "interval": 450,
-  "currentHours": 13453,
-  "currentHoursDate": "2026-09-26",
-  "notes": "Serviced 21/09/2026 at 13385h by Adeel & Sajid - all filters done. Controller meter confirmed 13453h on 26/09/2026 (223 starts) -> 382h left to next (13835). ~13.6 h/day. 250 kVA Kirloskar, Trojan, Baniyas West."
+  "currentHours": 13770,
+  "currentHoursDate": "2026-10-22",
+  "notes": "Serviced 21/09/2026 at 13385h by Adeel & Sajid - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - correction; pending). Controller 13770h 19m on 22/10/2026 (292 starts) -> 385h in 31 days = 12.4 h/day. 65h left to next (13835h) -> due ~27/10. 250 kVA Kirloskar, Trojan, Baniyas West.",
+  "dailyHours": 12.4
  },
  {
   "dg": "DG-846",
@@ -2475,13 +2478,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 13.6,
+  "dailyHours": 12.7,
   "nextService": 6628,
   "nextServiceDate": "2026-10-25",
   "interval": 450,
-  "currentHours": 6368,
-  "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 22/09/2026 at 6178h by IK & Jayaraj (oil + oil filter + fuel filter; AIR FILTER NOT done). Next service 6628h. Controller (Caolei) RunHours 6368h on 06/10 (1708 starts, 371129 kWh, running normal) -> 260h to next, ~13.6 h/day -> due ~25/10. 375 kVA Weichai, Al Farjhan, Al Rahah."
+  "currentHours": 6560,
+  "currentHoursDate": "2026-10-22",
+  "notes": "Serviced 22/09/2026 at 6178h by IK & Jayaraj (oil + oil filter + fuel filter; AIR FILTER NOT done - pending). Controller RunHours 6560h on 22/10/2026 (1741 starts) -> 382h in 30 days = 12.7 h/day. 68h left to next (6628h) -> due ~28/10. 375 kVA Weichai, Al Farjhan, Al Rahah."
  },
  {
   "dg": "DG-548",
