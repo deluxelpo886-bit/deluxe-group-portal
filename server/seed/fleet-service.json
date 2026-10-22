@@ -2399,14 +2399,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 9.6,
-  "currentHours": 31922,
-  "currentHoursDate": "2026-10-03",
+  "dailyHours": 12.7,
+  "currentHours": 32163,
+  "currentHoursDate": "2026-10-22",
   "nextService": 32372,
   "nextServiceDate": "2026-11-20",
   "interval": 450,
-  "fixedDays": 48,
-  "notes": "Serviced 03/10/2026 at 31922h by IK & team - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 32372h (+450, office 48-day cycle -> due ~20/11). ~9.6 h/day. Cleared the previous due. National Projects & Construction, Baniyas West (Jarn Yafour), 220 kVA."
+  "notes": "Serviced 03/10/2026 at 31922h by IK & team - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 32163h 25m on 22/10/2026 (6919 starts) -> 241h in 19 days = 12.7 h/day. 209h left to next (32372h); on 12h plan due ~08/11. National Projects & Construction, Baniyas West (Jarn Yafour), 220 kVA."
  },
  {
   "dg": "DG-520",
