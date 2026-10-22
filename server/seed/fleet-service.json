@@ -3803,5 +3803,16 @@
   "currentHours": 3839,
   "currentHoursDate": "2026-10-21",
   "notes": "Serviced 21/10/2026 (per ops) - oil + filters; air filter pending. Next 4189h (+350) -> at ~6.84 h/day due ~11/12/2026. NOTE: service hours ~3839h are the due-point estimate (no card photo yet - confirm exact meter from card). E20 Investment, Al Ain, 62.5 kVA."
+ },
+ {
+  "dg": "DG-873",
+  "hours": 0,
+  "date": "2026-10-22",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "notes": "New yard stock - no service logged yet. 400 kVA Cummins, available in the yard."
  }
 ]
