@@ -1731,14 +1731,14 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 2,
-  "currentHours": 2336,
-  "currentHoursDate": "2026-09-24",
+  "dailyHours": 2.8,
+  "currentHours": 2438,
+  "currentHoursDate": "2026-10-22",
   "nextService": 2686,
-  "nextServiceDate": "2026-10-22",
+  "nextServiceDate": "2026-11-21",
   "interval": 350,
-  "notes": "Serviced 16/09/2026 at 2336h (Nazir Khan) - all filters done. Current meter today (24/09) still 2336h -> very low use / standby. Next 2686h (350h cycle). 45 kVA Kubota, Dreams Cricket Academy, Zayed City MZ39.",
-  "fixedDays": 36
+  "notes": "Serviced 16/09/2026 at 2336h (Miya Khan) - all filters done. Controller 2438h on 22/10/2026 -> 102h in 36 days = ~2.8 h/day (light use). Next service moved to 21/11/2026 (30 days) per ops. 2686h hours target still far off at this rate. Low-use standby.",
+  "fixedDays": 66
  },
  {
   "dg": "DG-858",
