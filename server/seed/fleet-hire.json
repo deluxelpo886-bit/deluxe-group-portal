@@ -405,5 +405,11 @@
   "offHire": false,
   "since": "2026-10-21",
   "note": "On hire 21/10/2026 (Wednesday) - deployed from yard to Total Power Company, MBZ City. 80 kVA Perkins."
+ },
+ {
+  "dg": "DG-537",
+  "offHire": false,
+  "since": "2026-10-21",
+  "note": "On hire 21/10/2026 - deployed from yard to Total Power Building Equipment LLC, MBZ Mussafah (breakdown repair done). 40 kVA Kirloskar."
  }
 ]
