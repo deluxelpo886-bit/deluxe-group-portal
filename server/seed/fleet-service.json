@@ -3870,5 +3870,21 @@
   "currentHours": 1353,
   "currentHoursDate": "2026-10-23",
   "notes": "Serviced 23/10/2026 at 1350h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (dash on card - pending). Next 1700h (+350 per card). Controller DSE 1353h on 23/10. 365h since 14/09 service = ~9.4 h/day -> on 12h plan due ~21/11. 250 kVA Kirlosker, Hydro Power, Al Falah."
+ },
+ {
+  "dg": "DG-501",
+  "hours": 21290,
+  "date": "2026-10-23",
+  "technician": "IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 8.1,
+  "nextService": 21640,
+  "interval": 350,
+  "currentHours": 21290,
+  "currentHoursDate": "2026-10-23",
+  "notes": "Serviced 23/10/2026 at 21290h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 21640h (+350). 349h since 10/09 service = ~8.1 h/day -> on 12h plan due ~21/11. 50 kVA, Hydro Power."
  }
 ]
