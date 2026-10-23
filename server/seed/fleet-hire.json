@@ -393,5 +393,11 @@
   "offHire": false,
   "since": "2026-10-06",
   "note": "On hire 06/10 - deployed from yard to NOOR AL SHAHRA (Al Faya), replacing DG-836. Hour meter 0 at deployment. 380 kVA. First service at 350h (~04/11)."
+ },
+ {
+  "dg": "DG-554",
+  "offHire": true,
+  "since": "2026-10-22",
+  "note": "Off-hire 22/10/2026 - returned from Aswar, Mafraq (Jarn Yafour) to yard. Needs water pump change (water + oil leak). 40 kVA Weber."
  }
 ]
