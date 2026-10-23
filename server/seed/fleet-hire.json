@@ -402,9 +402,9 @@
  },
  {
   "dg": "DG-837",
-  "offHire": false,
-  "since": "2026-10-21",
-  "note": "On hire 21/10/2026 (Wednesday) - deployed from yard to Total Power Company, MBZ City. 80 kVA Perkins."
+  "offHire": true,
+  "since": "2026-10-23",
+  "note": "In yard - available. (On-hire to Total Power Company reversed per ops.) 80 kVA Perkins."
  },
  {
   "dg": "DG-537",
