@@ -3836,5 +3836,21 @@
   "currentHours": 18546,
   "currentHoursDate": "2026-10-22",
   "notes": "Serviced 22/10/2026 at 18546h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 18996h (+450). 421h since 15/09 service = ~11.4 h/day -> on 12h plan due ~29/11. Cleared the urgent flag. CONFIRM the agreed amount was settled with the customer at this service. City Construction, RUWAIS (far site), 400 kVA Kirloskar."
+ },
+ {
+  "dg": "DG-850",
+  "hours": 2717,
+  "date": "2026-10-23",
+  "technician": "SONU & HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 11.2,
+  "nextService": 3167,
+  "interval": 450,
+  "currentHours": 2717,
+  "currentHoursDate": "2026-10-23",
+  "notes": "Serviced 23/10/2026 at 2716.8h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 3166.8h (+450). 472h since 11/09 service = ~11.2 h/day -> on 12h plan due ~29/11. *** REMINDER: CHANGE RADIATOR CAP at next service / visit. *** 440 kVA Cummins, Al Masriya, Khalifa Industrial City B (KIZAD)."
  }
 ]
