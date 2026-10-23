@@ -2904,11 +2904,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 5.3,
+  "dailyHours": 0.1,
   "nextService": 34641,
   "nextServiceDate": "2026-12-21",
   "interval": 350,
-  "notes": "Low-use standby at Al Bahyah (Hydro Power) - next service date skipped to 21/12/2026, same as DG-491 at the same site (ops-head decision). Runs ~5 h/day, so not due yet; the 15/09 date was only an estimate. Send a controller reading to confirm exact hours left to the 34641h service."
+  "notes": "Serviced 26/08 @34291h (air filter pending). Controller 34297h 29m on 23/10/2026 (Kirloskar Green, 2835 starts). Only 6h since service in 58 days = ~0.1 h/day - STANDBY, barely running. 344h left to next (34641h). 165 kVA Kirloskar, Hydro Power, Al Bahyah.",
+  "currentHours": 34297,
+  "currentHoursDate": "2026-10-23"
  },
  {
   "dg": "DG-494",
@@ -3305,13 +3307,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "dailyHours": 11.2,
-  "currentHours": 9486,
-  "currentHoursDate": "2026-10-05",
+  "dailyHours": 10.7,
+  "currentHours": 9679,
+  "currentHoursDate": "2026-10-23",
   "nextService": 9836,
   "nextServiceDate": "2026-11-05",
   "interval": 350,
-  "notes": "Serviced 05/10/2026 @ 9486h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X). Next service 9836h. ~11.2 h/day (336h since the 05/09 service). 45 kVA Jet, Agritek, Al Bahyah Farms (Al Bahia)."
+  "notes": "Serviced 05/10/2026 @9486h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 9679h 13m on 23/10/2026. 193h in 18 days = ~10.7 h/day. 157h left to next (9836h) -> due ~05/11. 45 kVA Jet, Agritek, Al Bahyah Farms (Al Bahia)."
  },
  {
   "dg": "DG-554",
