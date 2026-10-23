@@ -3852,5 +3852,21 @@
   "currentHours": 2717,
   "currentHoursDate": "2026-10-23",
   "notes": "Serviced 23/10/2026 at 2716.8h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 3166.8h (+450). 472h since 11/09 service = ~11.2 h/day -> on 12h plan due ~29/11. *** REMINDER: CHANGE RADIATOR CAP at next service / visit. *** 440 kVA Cummins, Al Masriya, Khalifa Industrial City B (KIZAD)."
+ },
+ {
+  "dg": "DG-479",
+  "hours": 1350,
+  "date": "2026-10-23",
+  "technician": "ROLAND & ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 9.4,
+  "nextService": 1700,
+  "interval": 350,
+  "currentHours": 1353,
+  "currentHoursDate": "2026-10-23",
+  "notes": "Serviced 23/10/2026 at 1350h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (dash on card - pending). Next 1700h (+350 per card). Controller DSE 1353h on 23/10. 365h since 14/09 service = ~9.4 h/day -> on 12h plan due ~21/11. 250 kVA Kirlosker, Hydro Power, Al Falah."
  }
 ]
