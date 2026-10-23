@@ -2798,10 +2798,11 @@
   "airFilter": false,
   "nextService": 9893,
   "nextServiceDate": "2026-09-20",
-  "notes": "Current reading 9744h on 17/09 -> 149h to next service (9893).",
+  "notes": "Serviced 27/08 @9543h (air filter pending). Meter 9744h (last read 17/09; parked in yard off-hire 26/09 - 21/10, meter unchanged). ON HIRE 21/10/2026 to Total Power Company, MBZ City. 149h left to next (9893h); on 12h plan due ~02/11. 80 kVA Perkins.",
   "interval": 350,
   "currentHours": 9744,
-  "currentHoursDate": "2026-09-17"
+  "currentHoursDate": "2026-10-21",
+  "dailyHours": 12
  },
  {
   "dg": "DG-832",

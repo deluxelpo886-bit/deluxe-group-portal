@@ -399,5 +399,11 @@
   "offHire": true,
   "since": "2026-10-22",
   "note": "Off-hire 22/10/2026 - returned from Aswar, Mafraq (Jarn Yafour) to yard. Needs water pump change (water + oil leak). 40 kVA Weber."
+ },
+ {
+  "dg": "DG-837",
+  "offHire": false,
+  "since": "2026-10-21",
+  "note": "On hire 21/10/2026 (Wednesday) - deployed from yard to Total Power Company, MBZ City. 80 kVA Perkins."
  }
 ]
