@@ -3886,5 +3886,21 @@
   "currentHours": 21290,
   "currentHoursDate": "2026-10-23",
   "notes": "Serviced 23/10/2026 at 21290h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 21640h (+350). 349h since 10/09 service = ~8.1 h/day -> on 12h plan due ~21/11. 50 kVA, Hydro Power."
+ },
+ {
+  "dg": "DG-565",
+  "hours": 0,
+  "date": "2026-10-24",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 12,
+  "nextService": 50,
+  "interval": 50,
+  "currentHours": 0,
+  "currentHoursDate": "2026-10-24",
+  "notes": "NEW ASSET - 250 kVA Kirloskar, zero meter. Installed 24/10/2026 at Trojan, Al Bahia (replaces DG-450). FIRST running-in service at 50h (~28/10 at ~12 h/day); after that normal 450h cycle. Company Heavy (confirm)."
  }
 ]

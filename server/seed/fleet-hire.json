@@ -411,5 +411,17 @@
   "offHire": false,
   "since": "2026-10-21",
   "note": "On hire 21/10/2026 - deployed from yard to Total Power Building Equipment LLC, MBZ Mussafah (breakdown repair done). 40 kVA Kirloskar."
+ },
+ {
+  "dg": "DG-565",
+  "offHire": false,
+  "since": "2026-10-24",
+  "note": "On hire 24/10/2026 - NEW ASSET installed at Trojan, Al Bahia (replaces DG-450). 250 kVA Kirloskar, zero meter."
+ },
+ {
+  "dg": "DG-450",
+  "offHire": true,
+  "since": "2026-10-24",
+  "note": "Off-hire 24/10/2026 - replaced by DG-565 at Trojan, Al Bahia; returned to yard. 200 kVA Kirloskar."
  }
 ]
