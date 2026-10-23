@@ -3099,7 +3099,10 @@
   "airFilter": false,
   "nextService": 8741,
   "nextServiceDate": "2026-09-16",
-  "interval": 350
+  "interval": 350,
+  "currentHoursDate": "2026-10-21",
+  "dailyHours": 12,
+  "notes": "Serviced 15/08/2026 @8391h (air filter pending). Off-hire 26/09 for breakdown repair; repair done. ON HIRE 21/10/2026 to Total Power Building Equipment LLC, MBZ Mussafah. NO fresh meter - last service 15/08 (>2 months ago), likely due for service soon; GET METER READING from site. 40 kVA Kirloskar."
  },
  {
   "dg": "DG-488",
