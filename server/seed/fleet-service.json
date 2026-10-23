@@ -888,12 +888,12 @@
   "oilFilter": false,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 2.2,
-  "currentHours": 9772,
-  "currentHoursDate": "2026-09-27",
+  "dailyHours": 1.0,
+  "currentHours": 9742,
+  "currentHoursDate": "2026-10-23",
   "nextService": 9960,
   "nextServiceDate": "2026-12-21",
-  "notes": "Serviced 14/07/2026 @ 9610h (oil + fuel & air filters; oil filter not changed). Controller confirmed 9772h @ 27/09/2026 -> 188h left to the 9960h service. Very low use ~2.2 h/day (162h over 75 days), so due ~21/12/2026 - NOT overdue (the 25/09 date was only an estimate). 83 kVA Kirlosker, Hydro Power, Al Bahyah.",
+  "notes": "Serviced 14/07/2026 @ 9610h (oil + fuel & air filters; oil filter not changed). Controller 9742h 29m on 23/10/2026 (DSE, hand-labelled DG-491). Essentially unchanged from the 27/09 reading (recorded 9772h - one of the two is a digit misread; meter barely moves). VERY low use ~1 h/day. 218h left to next (9960h). On 12h plan due ~10/11. 83 kVA Kirlosker, Hydro Power, Al Bahyah.",
   "interval": 350
  },
  {
