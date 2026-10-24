@@ -3937,5 +3937,21 @@
   "currentHours": 4873,
   "currentHoursDate": "2026-10-24",
   "notes": "Serviced 24/10/2026 at 4873h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (dash on card - pending). Next 5323h (+450). 447h since 19/09 service = ~12.8 h/day -> due ~28/11. 810 kVA, Noor Al Shahra, Al Faya."
+ },
+ {
+  "dg": "DG-477",
+  "hours": 28348,
+  "date": "2026-10-24",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 8.5,
+  "nextService": 28698,
+  "interval": 350,
+  "currentHours": 28348,
+  "currentHoursDate": "2026-10-24",
+  "notes": "Serviced 24/10/2026 at 28348h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 28698h (+350). 280h since 21/09 service = ~8.5 h/day -> on 12h plan due ~22/11. 100 kVA Kirloskar, OSAI, Al Jarf (Ohana by the Sea)."
  }
 ]
