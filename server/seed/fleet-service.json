@@ -1290,12 +1290,12 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": false,
-  "currentHours": 4605,
-  "currentHoursDate": "2026-09-26",
-  "dailyHours": 11.5,
+  "currentHours": 4697,
+  "currentHoursDate": "2026-10-24",
+  "dailyHours": 3.3,
   "nextService": 4955,
   "nextServiceDate": "2026-10-26",
-  "notes": "Serviced 26/09/2026 @ 4605h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT DONE (pending). Next service 4955h. 45 kVA, Gulf Contracting, Abu Dhabi. (Card received late - logged 05/10.)",
+  "notes": "Serviced 26/09/2026 @4605h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 4697h 43m on 24/10/2026. 92h in 28 days = ~3.3 h/day (lighter than assumed). 258h left to next (4955h); on 12h plan due ~15/11. 45 kVA Jet, Gulf Contracting, Abu Dhabi.",
   "interval": 350
  },
  {
