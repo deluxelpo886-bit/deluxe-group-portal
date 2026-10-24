@@ -828,7 +828,10 @@
   "nextService": 4587,
   "nextServiceDate": "2026-11-06",
   "interval": 350,
-  "notes": "Serviced 22/09/2026 @4237h by IK & Jayaraj - all filters done. Controller 4443h 37m confirmed 19/10/2026 (2080 starts) -> 144h left to next (4587). ~8 h/day (206h since service; usage dropped from the earlier ~18 h/day). Next date set by usage -> ~06/11/2026. 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix)."
+  "notes": "Serviced 22/09/2026 @4237h by IK & Jayaraj - all filters done. Controller 4443h 37m confirmed 19/10/2026 (2080 starts) -> 144h left to next (4587). ~8 h/day (206h since service; usage dropped from the earlier ~18 h/day). Next date set by usage -> ~06/11/2026. 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix).",
+  "dailyHours": 7.6,
+  "currentHours": 4443,
+  "currentHoursDate": "2026-10-19"
  },
  {
   "dg": "DG-553",
