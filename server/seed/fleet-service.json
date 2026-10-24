@@ -3921,5 +3921,21 @@
   "currentHours": 3852,
   "currentHoursDate": "2026-10-24",
   "notes": "Serviced 24/10/2026 at 3852h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done (air filter finally changed). Next 4202h (+350). 389h since 12/09 service = ~9.3 h/day -> on 12h plan due ~22/11. STILL OPEN: arrange diesel (fuel) oil-leak HOSE. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
+ },
+ {
+  "dg": "DG-831",
+  "hours": 4873,
+  "date": "2026-10-24",
+  "technician": "ROLAND & ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.8,
+  "nextService": 5323,
+  "interval": 450,
+  "currentHours": 4873,
+  "currentHoursDate": "2026-10-24",
+  "notes": "Serviced 24/10/2026 at 4873h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (dash on card - pending). Next 5323h (+450). 447h since 19/09 service = ~12.8 h/day -> due ~28/11. 810 kVA, Noor Al Shahra, Al Faya."
  }
 ]
