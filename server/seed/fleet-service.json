@@ -3905,5 +3905,21 @@
   "currentHours": 0,
   "currentHoursDate": "2026-10-24",
   "notes": "NEW ASSET - 250 kVA Kirloskar, zero meter. Installed 24/10/2026 at Trojan, Al Bahia (replaces DG-450). FIRST running-in service at 50h (~28/10 at ~12 h/day); after that normal 450h cycle. Company Heavy (confirm)."
+ },
+ {
+  "dg": "DG-457",
+  "hours": 3852,
+  "date": "2026-10-24",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 9.3,
+  "nextService": 4202,
+  "interval": 350,
+  "currentHours": 3852,
+  "currentHoursDate": "2026-10-24",
+  "notes": "Serviced 24/10/2026 at 3852h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done (air filter finally changed). Next 4202h (+350). 389h since 12/09 service = ~9.3 h/day -> on 12h plan due ~22/11. STILL OPEN: arrange diesel (fuel) oil-leak HOSE. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
  }
 ]
