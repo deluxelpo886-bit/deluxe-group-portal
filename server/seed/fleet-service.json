@@ -383,20 +383,20 @@
  },
  {
   "dg": "DG-827",
-  "hours": 3434,
-  "date": "2026-01-29",
-  "technician": "SATNAM&SABIR",
+  "hours": 3513,
+  "date": "2026-09-17",
+  "technician": "SHAFIULLAH & UMAR",
   "oil": true,
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
   "dailyHours": 12,
-  "nextService": 3964,
+  "nextService": 3963,
   "nextServiceDate": "2026-11-07",
   "interval": 450,
   "currentHours": 3514,
   "currentHoursDate": "2026-09-30",
-  "notes": "On hire 30/09/2026 to EMDAD (Al Dhafra) at meter 3514h. Fresh 450h cycle from hire-out @ ~12 h/day -> next service 3964h, due ~07/11. 725 kVA Caterpillar. Repair cleared before dispatch."
+  "notes": "Serviced 17/09/2026 at 3513h by Shafiullah & Umar - oil, oil filter, fuel filter AND air filter all done (pre-dispatch service). On hire 30/09/2026 to EMDAD (Al Dhafra) at 3514h. WORKING / operational. Next ~3963h (+450). 725 kVA Caterpillar."
  },
  {
   "dg": "DG-806",
@@ -3953,5 +3953,21 @@
   "currentHours": 28348,
   "currentHoursDate": "2026-10-24",
   "notes": "Serviced 24/10/2026 at 28348h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 28698h (+350). 280h since 21/09 service = ~8.5 h/day -> on 12h plan due ~22/11. 100 kVA Kirloskar, OSAI, Al Jarf (Ohana by the Sea)."
+ },
+ {
+  "dg": "DG-529",
+  "hours": 29614,
+  "date": "2026-10-24",
+  "technician": "SONU & SABIR",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 8.7,
+  "nextService": 29964,
+  "interval": 350,
+  "currentHours": 29614,
+  "currentHoursDate": "2026-10-24",
+  "notes": "Serviced 24/10/2026 at 29614h by Sonu & Sabir - oil, oil filter, fuel filter AND air filter all done. Next 29964h (+350). 209h since 30/09 (29405h) = ~8.7 h/day. 82.5 kVA Kirloskar, EMDAD, Al Dhafra. (Card number read as DG-52? - matched to DG-529 by hours.)"
  }
 ]
