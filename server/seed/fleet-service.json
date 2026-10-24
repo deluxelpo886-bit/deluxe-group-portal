@@ -3553,7 +3553,7 @@
   "nextService": 33559,
   "nextServiceDate": "2026-10-22",
   "interval": 450,
-  "notes": "Meter 33451h 51m on 09/10/2026 (7092 starts), ~11.8 h/day. Next service on the NORMAL 450h schedule: 33559h / 22-10-2026. Gasket leak noted - procure the head gasket + oil seal and fit them DURING this regular service (no longer pulled forward / RED). 250 kVA Kirloskar Green, TROJAN, AL BAHYAH."
+  "notes": "Meter 33451h 51m on 09/10/2026 (7092 starts), ~11.8 h/day. Next service on the NORMAL 450h schedule: 33559h / 22-10-2026. Gasket leak noted - procure the head gasket + oil seal and fit them DURING this regular service (no longer pulled forward / RED). 250 kVA Kirloskar Green, TROJAN, AL BAHYAH. ARRANGE for next schedule: head gasket + broken bolt."
  },
  {
   "dg": "DG-508",
@@ -3570,7 +3570,7 @@
   "dailyHours": 12,
   "currentHours": 33572,
   "currentHoursDate": "2026-10-19",
-  "notes": "450h service done 19/10/2026 at 33572h (controller 33572h 15m, 7162 starts) - oil, oil filter & fuel filter done; AIR FILTER NOT done (card X) - pending, fit at next service. Ran 121h since 09/10 (33451h) = ~12 h/day. Next 34022h; next date by usage/450-cycle -> ~26/11/2026. 250 kVA Kirloskar, Trojan, Al Bahyah. GASKET LEAK was outstanding - VERIFY the head gasket was fitted at this service; if not, still pending."
+  "notes": "450h service done 19/10/2026 at 33572h (controller 33572h 15m, 7162 starts) - oil, oil filter & fuel filter done; AIR FILTER NOT done (card X) - pending, fit at next service. Ran 121h since 09/10 (33451h) = ~12 h/day. Next 34022h; next date by usage/450-cycle -> ~26/11/2026. 250 kVA Kirloskar, Trojan, Al Bahyah. GASKET LEAK was outstanding - VERIFY the head gasket was fitted at this service; if not, still pending. ARRANGE for next schedule: head gasket + broken bolt."
  },
  {
   "dg": "DG-501",
@@ -3792,7 +3792,7 @@
   "fixedDays": 42,
   "currentHours": 17534,
   "currentHoursDate": "2026-10-21",
-  "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil (controller DSE 17534h 55m) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card blank - pending). Service CONFIRMED by ops. Next 17884h (+350). ~8.35 h/day -> due ~02/12. Head gasket + oil seal were flagged in the WhatsApp group - confirm with team if fitted at this service. Cleared the urgent/under-check flag. Hashim, Al Bahia, 40 kVA Tata."
+  "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil (controller DSE 17534h 55m) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card blank - pending). Service CONFIRMED by ops. Next 17884h (+350). ~8.35 h/day -> due ~02/12. ARRANGE: rear (crank) seal leak repair - schedule the program. Cleared the urgent/under-check flag. Hashim, Al Bahia, 40 kVA Tata."
  },
  {
   "dg": "DG-456",
@@ -3853,7 +3853,7 @@
   "interval": 450,
   "currentHours": 2717,
   "currentHoursDate": "2026-10-23",
-  "notes": "Serviced 23/10/2026 at 2716.8h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 3166.8h (+450). 472h since 11/09 service = ~11.2 h/day -> on 12h plan due ~29/11. *** REMINDER: CHANGE RADIATOR CAP at next service / visit. *** 440 kVA Cummins, Al Masriya, Khalifa Industrial City B (KIZAD)."
+  "notes": "Serviced 23/10/2026 at 2716.8h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 3166.8h (+450). 472h since 11/09 service = ~11.2 h/day -> on 12h plan due ~29/11. 440 kVA Cummins, Al Masriya, Khalifa Industrial City B (KIZAD)."
  },
  {
   "dg": "DG-479",
