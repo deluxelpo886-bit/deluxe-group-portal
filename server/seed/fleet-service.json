@@ -390,13 +390,13 @@
   "oilFilter": true,
   "fuelFilter": true,
   "airFilter": true,
-  "dailyHours": 12,
-  "nextService": 3963,
+  "dailyHours": 0.1,
+  "nextService": 3863,
   "nextServiceDate": "2026-11-07",
-  "interval": 450,
-  "currentHours": 3514,
-  "currentHoursDate": "2026-09-30",
-  "notes": "Serviced 17/09/2026 at 3513h by Shafiullah & Umar - oil, oil filter, fuel filter AND air filter all done (pre-dispatch service). On hire 30/09/2026 to EMDAD (Al Dhafra) at 3514h. WORKING / operational. Next ~3963h (+450). 725 kVA Caterpillar."
+  "interval": 350,
+  "currentHours": 3516,
+  "currentHoursDate": "2026-10-24",
+  "notes": "Serviced 17/09/2026 at 3513h by Shafiullah & Umar - oil, oil filter, fuel filter AND air filter all done. Next 3863h (+350). Controller 3516h 1m on 24/10/2026 (1842 starts) - only 3h since service = barely running (standby). On hire 30/09/2026 to EMDAD (Al Dhafra). WORKING / operational."
  },
  {
   "dg": "DG-806",
