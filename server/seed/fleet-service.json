@@ -3969,5 +3969,21 @@
   "currentHours": 29614,
   "currentHoursDate": "2026-10-24",
   "notes": "Serviced 24/10/2026 at 29614h by Sonu & Sabir - oil, oil filter, fuel filter AND air filter all done. Next 29964h (+350). 209h since 30/09 (29405h) = ~8.7 h/day. 82.5 kVA Kirloskar, EMDAD, Al Dhafra. (Card number read as DG-52? - matched to DG-529 by hours.)"
+ },
+ {
+  "dg": "DG-826",
+  "hours": 1790,
+  "date": "2026-10-25",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 11.7,
+  "nextService": 2240,
+  "interval": 450,
+  "currentHours": 1790,
+  "currentHoursDate": "2026-10-25",
+  "notes": "Serviced 25/10/2026 at 1790h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done. Next 2240h (+450). 493h since 13/09 service = ~11.7 h/day -> due ~01/12. 725 kVA Caterpillar, EMDAD, KIZAD."
  }
 ]
