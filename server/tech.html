@@ -150,6 +150,32 @@
       <label class="hlbl">Generator · DG · <span class="ur">جنریٹر</span></label>
       <input type="text" id="svcDg" placeholder="DG-xxx" autocomplete="off" style="text-transform:uppercase;">
       <div class="dgco" id="svcCo"></div>
+      <label class="hlbl">Which service? · कौन सी सर्विस · <span class="ur">کون سی سروس</span></label>
+      <div class="stype" id="svcType">
+        <button type="button" class="st on" data-st="minor">🔧 MINOR<span>छोटी · <span class="ur">چھوٹی</span></span></button>
+        <button type="button" class="st" data-st="major">🛠️ MAJOR<span>बड़ी · <span class="ur">بڑی</span></span></button>
+      </div>
+      <div class="guide" id="gMinor">
+        <div class="gt min">🔧 MINOR SERVICE — do ALL of these:</div>
+        <div class="gi"><span class="e">🛢️</span><div><b>Engine oil — <span class="oil">15W-40</span> (change)</b><span class="s">इंजन ऑयल 15W-40 बदलो · <span class="ur">انجن آئل 15W-40 بدلیں</span></span></div></div>
+        <div class="gi"><span class="e">🧩</span><div><b>Oil filter (change)</b><span class="s">ऑयल फ़िल्टर · <span class="ur">آئل فلٹر</span></span></div></div>
+        <div class="gi"><span class="e">⛽</span><div><b>Fuel filter (change)</b><span class="s">फ्यूल फ़िल्टर · <span class="ur">فیول فلٹر</span></span></div></div>
+        <div class="gi"><span class="e">💨</span><div><b>Air filter — clean / blow</b><span class="s">एयर फ़िल्टर साफ़ करो · <span class="ur">ایئر فلٹر صاف کریں</span></span></div></div>
+        <div class="gi"><span class="e">💧</span><div><b>Check water / coolant level</b><span class="s">पानी/कूलेंट देखो · <span class="ur">پانی/کولنٹ چیک</span></span></div></div>
+        <div class="gi"><span class="e">🔩</span><div><b>Check belt, battery, any leak</b><span class="s">बेल्ट, बैटरी, लीक देखो · <span class="ur">بیلٹ، بیٹری، لیک</span></span></div></div>
+        <div class="gw">⏱️ MINOR = every service (about every <b>350 running hours</b>). Always use <span class="oil">15W-40</span>.</div>
+      </div>
+      <div class="guide" id="gMajor" style="display:none">
+        <div class="gt">🛠️ MAJOR SERVICE — everything in MINOR + these:</div>
+        <div class="gi"><span class="e">🛢️</span><div><b>Oil <span class="oil">15W-40</span> + oil filter + fuel filter</b><span class="s">ऑयल + दोनों फ़िल्टर · <span class="ur">آئل + دونوں فلٹر</span></span></div></div>
+        <div class="gi"><span class="e">💨</span><div><b>Air filter — put NEW (replace)</b><span class="s">एयर फ़िल्टर नया डालो · <span class="ur">نیا ایئر فلٹر ڈالیں</span></span></div></div>
+        <div class="gi"><span class="e">💧</span><div><b>Coolant — change / flush</b><span class="s">कूलेंट बदलो · <span class="ur">کولنٹ تبدیل کریں</span></span></div></div>
+        <div class="gi"><span class="e">⚙️</span><div><b>Tappet / valve — check &amp; set</b><span class="s">टैपेट सेट करो · <span class="ur">ٹیپٹ سیٹ کریں</span></span></div></div>
+        <div class="gi"><span class="e">🔗</span><div><b>Belts &amp; hoses — check / change</b><span class="s">बेल्ट, पाइप देखो · <span class="ur">بیلٹ، ہوز چیک</span></span></div></div>
+        <div class="gi"><span class="e">🔋</span><div><b>Battery &amp; terminals — clean / check</b><span class="s">बैटरी साफ़ करो · <span class="ur">بیٹری صاف کریں</span></span></div></div>
+        <div class="gi"><span class="e">🔎</span><div><b>Full check — radiator, alternator, exhaust, mounting</b><span class="s">पूरी जाँच करो · <span class="ur">مکمل چیک کریں</span></span></div></div>
+        <div class="gw">⏱️ MAJOR = every <b>~1500 hours</b> (about every 4th service, or ~6 months). The office tells you when it is MAJOR.</div>
+      </div>
       <label class="hlbl">Hours now (meter) · अभी के घंटे · <span class="ur">ابھی کے گھنٹے</span></label>
       <input type="number" inputmode="numeric" id="svcHrs" placeholder="e.g. 4397">
       <label class="hlbl">What did you change? · क्या बदला · <span class="ur">کیا بدلا</span></label>
@@ -213,6 +239,22 @@
     .chips.pri .chip.on{background:#1e3a8a;border-color:#3b82f6;color:#bfdbfe;}
     .chips.pri .chip.on[data-v="Critical"]{background:#4a1410;border-color:#b3261e;color:#ffb4a8;}
     .chips.pri .chip.on[data-v="High"]{background:#4a2c0a;border-color:#d08b1e;color:#ffd9a0;}
+    /* Minor/Major service guide */
+    .stype{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:3px 0 7px;}
+    .stype .st{background:#0f141b;border:2px solid #273141;color:#9fb0c0;border-radius:12px;padding:12px 8px;font-size:16px;font-weight:800;cursor:pointer;text-align:center;line-height:1.2;}
+    .stype .st span{display:block;font-size:11px;font-weight:500;opacity:.85;margin-top:2px;}
+    .stype .st.on[data-st="minor"]{background:#1e3a8a;border-color:#3b82f6;color:#bfdbfe;}
+    .stype .st.on[data-st="major"]{background:#7a4a09;border-color:#f59e0b;color:#fde3b0;}
+    .guide{background:#0f141b;border:1px solid #273141;border-radius:12px;padding:10px 12px;margin:0 0 6px;}
+    .guide .gt{font-size:12.5px;font-weight:800;color:#fde3b0;margin-bottom:6px;}
+    .guide .gt.min{color:#bfdbfe;}
+    .guide .gi{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-top:1px solid #1b2531;font-size:14px;}
+    .guide .gi:first-of-type{border-top:none;}
+    .guide .gi .e{font-size:18px;flex:0 0 auto;width:22px;text-align:center;}
+    .guide .gi b{font-weight:700;color:#eaf2f9;}
+    .guide .gi .s{display:block;font-size:11px;color:#9fb0c0;font-weight:500;margin-top:1px;}
+    .guide .gw{font-size:11.5px;color:#9fb0c0;margin-top:8px;padding-top:7px;border-top:1px dashed #273141;}
+    .guide .oil{color:#f59e0b;font-weight:800;}
     .ovprev{width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin:10px 0;background:#000;}
     .hsend.bd{background:#e0644a;color:#2a0b05;}
   </style>
@@ -455,7 +497,13 @@
   var svcPhoto=null;
   window.openService=function(dg){ svcPhoto=null; $('svcDg').value=(dg||''); $('svcHrs').value=''; $('svcNext').value=''; $('svcNote').value='';
     $('svcErr').textContent=''; $('svcPrev').style.display='none'; $('svcPrev').removeAttribute('src');
-    $('svcChecks').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); $('svcOv').classList.add('on'); lookupDg('svcDg','svcCo'); };
+    $('svcChecks').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); }); setSvcType('minor'); $('svcOv').classList.add('on'); lookupDg('svcDg','svcCo'); };
+  var SVCTYPE='minor';
+  function setSvcType(t){ SVCTYPE=t;
+    $('svcType').querySelectorAll('.st').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-st')===t); });
+    $('gMinor').style.display = t==='minor'?'block':'none';
+    $('gMajor').style.display = t==='major'?'block':'none'; }
+  $('svcType').addEventListener('click',function(e){ var b=e.target.closest('.st'); if(b) setSvcType(b.getAttribute('data-st')); });
   $('svcCancel').addEventListener('click',function(){ $('svcOv').classList.remove('on'); });
   $('svcChecks').addEventListener('click',function(e){ var b=e.target.closest('.chip'); if(b) b.classList.toggle('on'); });
   $('svcCam').addEventListener('click',function(){ $('svcFile').click(); });
@@ -465,9 +513,10 @@
     var dg=$('svcDg').value.trim().toUpperCase(), hrs=$('svcHrs').value.trim(), next=$('svcNext').value.trim(); $('svcErr').textContent='';
     if(!dg){ $('svcErr').textContent='Enter DG · DG डालो · DG ڈالیں'; return; }
     if(!(Number(hrs)>=0)){ $('svcErr').textContent='Enter hours · घंटे डालो · گھنٹے ڈالیں'; return; }
+    var typeTag=(SVCTYPE==='major'?'[MAJOR SERVICE] ':'[MINOR SERVICE] ');
     var body={ dg:dg, hours:Number(hrs), oil:checked('svcChecks','oil'), oilFilter:checked('svcChecks','oilFilter'),
       fuelFilter:checked('svcChecks','fuelFilter'), airFilter:checked('svcChecks','airFilter'),
-      notes:$('svcNote').value.trim(), photo:svcPhoto };
+      serviceType:SVCTYPE, notes:(typeTag+$('svcNote').value.trim()).trim(), photo:svcPhoto };
     if(Number(next)>0) body.nextService=Number(next);
     $('svcSend').disabled=true; $('svcSend').textContent='Saving… · सेव';
     try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/service',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
