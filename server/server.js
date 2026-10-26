@@ -2003,7 +2003,8 @@ app.get('/api/tech/:token/dg-index', (req, res) => {
   const idx = {};
   Object.keys(dir).forEach((k) => {
     const g = dir[k] || {};
-    idx[k] = { co: g.company || '', kva: g.kva || null, cust: g.customer || '', loc: g.location || '' };
+    idx[k] = { co: g.company || '', kva: g.kva || null, cust: g.customer || '', loc: g.location || '',
+      zone: g.zone || '', lat: (typeof g.lat === 'number') ? g.lat : null, lon: (typeof g.lon === 'number') ? g.lon : null };
   });
   res.json({ index: idx });
 });
