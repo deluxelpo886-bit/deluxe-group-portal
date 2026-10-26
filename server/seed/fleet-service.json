@@ -3985,5 +3985,21 @@
   "currentHours": 1790,
   "currentHoursDate": "2026-10-25",
   "notes": "Serviced 25/10/2026 at 1790h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done. Next 2240h (+450). 493h since 13/09 service = ~11.7 h/day -> due ~01/12. 725 kVA Caterpillar, EMDAD, KIZAD."
+ },
+ {
+  "dg": "DG-448",
+  "hours": 8857,
+  "date": "2026-10-26",
+  "technician": "ROLAND & ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.4,
+  "nextService": 9207,
+  "interval": 350,
+  "currentHours": 8857,
+  "currentHoursDate": "2026-10-26",
+  "notes": "Serviced 26/10/2026 at 8857h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT DONE AGAIN (dash on card - now skipped 4x: 24/08, 13/09, 28/09, 26/10). Dusty KIZAD site - URGENT: carry an air filter and fit it. Next 9207h (+350). 346h since 28/09 service = ~12.4 h/day -> due ~22/11. 60 kVA Kirloskar, Mawaad, KIZAD."
  }
 ]
