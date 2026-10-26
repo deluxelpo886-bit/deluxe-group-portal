@@ -4004,5 +4004,21 @@
   "currentHours": 8857,
   "currentHoursDate": "2026-10-26",
   "notes": "Serviced 26/10/2026 at 8857h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT DONE AGAIN (dash on card - now skipped 4x: 24/08, 13/09, 28/09, 26/10). Dusty KIZAD site - URGENT: carry an air filter and fit it. Next 9207h (+350). 346h since 28/09 service = ~12.4 h/day -> due ~22/11. 60 kVA Kirloskar, Mawaad, KIZAD."
+ },
+ {
+  "dg": "DG-846",
+  "hours": 6612,
+  "date": "2026-10-26",
+  "technician": "ROLAND & ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 12.8,
+  "nextService": 6962,
+  "interval": 350,
+  "currentHours": 6612,
+  "currentHoursDate": "2026-10-26",
+  "notes": "Serviced 26/10/2026 at 6612h by Roland & Adil - oil, oil filter, fuel filter AND air filter all done (air filter finally changed - clears the pending). Controller CAOLEI 6612h (1747 starts, 375098 kWh, running normal). Next 6962h (+350). ~12.8 h/day -> due ~22/11. STILL OPEN: arrange bearing + pulley (from DG-847). 375 kVA Weichai, Al Farjhan, Al Rahah."
  }
 ]
