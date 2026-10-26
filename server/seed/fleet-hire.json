@@ -423,5 +423,11 @@
   "offHire": true,
   "since": "2026-10-24",
   "note": "Off-hire 24/10/2026 - replaced by DG-565 at Trojan, Al Bahia; returned to yard. 200 kVA Kirloskar."
+ },
+ {
+  "dg": "CH-FM-500",
+  "offHire": true,
+  "since": "2026-10-24",
+  "note": "Off-hire 24/10/2026 (Saturday) - BREAKDOWN (bearing broken). Cross-hire from FM Equipment Rental - to be collected by FM Rental."
  }
 ]
