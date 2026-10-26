@@ -334,6 +334,14 @@
     .dgco .ic{font-size:22px;line-height:1;}
     .dgco .co{font-size:15px;font-weight:900;letter-spacing:.3px;}
     .dgco .meta{font-size:12px;opacity:.9;margin-top:1px;}
+    .dgco .chip2{align-items:flex-start;}
+    .dgco .ic{margin-top:1px;}
+    .dgco .dgloc{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:12.5px;}
+    .dgco .dgloc .lt{font-weight:700;}
+    .dgco .dgloc .zn{display:inline-block;font-size:10px;font-weight:800;padding:1px 6px;border-radius:7px;background:rgba(255,255,255,.14);letter-spacing:.3px;}
+    .dgco .dgnav{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;text-decoration:none;color:#aef0cd;background:rgba(110,231,168,.16);border:1px solid rgba(110,231,168,.45);border-radius:9px;padding:5px 10px;}
+    .dgco .dgnav .hi{font-weight:700;opacity:.85;}
+    .dgco .dgnav:active{transform:scale(.96);}
     .dgco.energy .chip2{background:rgba(51,198,192,.14);border-color:rgba(51,198,192,.45);color:#7ff0ea;}
     .dgco.heavy .chip2{background:rgba(90,162,230,.14);border-color:rgba(90,162,230,.45);color:#aad2ff;}
     .dgco.cross .chip2{background:rgba(170,120,220,.14);border-color:rgba(170,120,220,.5);color:#dcbcf6;}
@@ -441,8 +449,12 @@
     else if(cls==='heavy'){ label='DELUXE HEAVY'; ic='🏗️'; }
     else { label=co||'—'; ic='🔌'; }
     var meta=[]; if(g.cust) meta.push(esc(g.cust)); if(g.kva) meta.push(g.kva+' kVA');
+    var locHtml='';
+    if(g.loc){ var mapUrl=(g.lat!=null&&g.lon!=null)?('https://www.google.com/maps/search/?api=1&query='+g.lat+','+g.lon):('https://www.google.com/maps/search/'+encodeURIComponent(g.loc));
+      locHtml='<div class="dgloc"><span class="pin">📍</span><span class="lt">'+esc(g.loc)+(g.zone?' <span class="zn">'+esc(g.zone)+'</span>':'')+'</span>'
+        +'<a class="dgnav" href="'+mapUrl+'" target="_blank" rel="noopener">🧭 Navigate<span class="hi"> रास्ता</span></a></div>'; }
     el.className='dgco '+cls;
-    el.innerHTML='<div class="chip2"><span class="ic">'+ic+'</span><div><div class="co">'+label+'</div>'+(meta.length?'<div class="meta">'+meta.join(' · ')+'</div>':'')+'</div></div>';
+    el.innerHTML='<div class="chip2"><span class="ic">'+ic+'</span><div><div class="co">'+label+'</div>'+(meta.length?'<div class="meta">'+meta.join(' · ')+'</div>':'')+locHtml+'</div></div>';
   }
   (function(){ var map={hrsDg:'hrsCo',svcDg:'svcCo',bdDg:'bdCo'};
     Object.keys(map).forEach(function(id){ var el=$(id); if(el) el.addEventListener('input',function(){ lookupDg(id,map[id]); }); }); })();
