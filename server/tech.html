@@ -300,6 +300,8 @@
     .calc .out{background:#0f1e14;border:1px solid #1f5137;border-radius:11px;padding:11px;margin-top:10px;}
     .calc .out .o{display:flex;justify-content:space-between;font-size:15px;padding:4px 0;}
     .calc .out .o b{color:#6ee7a8;font-size:18px;}
+    .calc .out .o.diz{border-top:1px dashed #2a5a3e;margin-top:4px;padding-top:7px;}
+    .calc .out .o.diz b{color:#f4b942;}
     .calc .fml{font-size:11.5px;color:var(--mut);margin-top:8px;line-height:1.5;}
     .gsnav{display:flex;gap:10px;padding:12px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);}
     .gsback{flex:0 0 38%;background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;}
@@ -572,7 +574,7 @@
     {e:'🔩',t:'Belt & battery',sh:'बेल्ट और बैटरी · <span class="ur">بیلٹ اور بیٹری</span>',d:'Press the fan belt — about 10 mm play. Clean & tighten battery terminals. Check battery water level.',dh:'बेल्ट दबाओ (~10mm), बैटरी टर्मिनल साफ़/टाइट, पानी देखो · <span class="ur">بیلٹ، بیٹری ٹرمینل، پانی</span>'},
     {e:'✅',t:'Start & check',sh:'स्टार्ट और जाँच · <span class="ur">اسٹارٹ اور چیک</span>',d:'Battery ON. Start. Oil-pressure light must go OFF. No leaks. Voltage & frequency look normal.',dh:'स्टार्ट करो, ऑयल प्रेशर लाइट बंद हो, लीक नहीं, वोल्ट/Hz सही · <span class="ur">اسٹارٹ، آئل پریشر لائٹ آف، لیک نہیں</span>'},
     {e:'⚡',t:'Electrical readings',sh:'इलेक्ट्रिकल रीडिंग · <span class="ur">الیکٹریکل ریڈنگ</span>',d:'Measure: Line voltage L-L ≈ <b>400 V</b>, L-N ≈ <b>230 V</b>. Frequency = <b>50 Hz</b>. Current on R, Y, B — should be balanced. Write all readings.',dh:'वोल्ट L-L ~400, L-N ~230, Hz 50, करंट R-Y-B बराबर, सब लिखो · <span class="ur">وولٹ 400/230، 50Hz، کرنٹ R-Y-B، لکھیں</span>'},
-    {e:'🧮',t:'Load calculation',sh:'लोड कैलकुलेशन · <span class="ur">لوڈ کیلکولیشن</span>',d:'Enter the readings to get kVA, kW and load %. Keep load below the genset rating. Then fill the service card with the meter hours and all readings.',dh:'रीडिंग डालो → kVA, kW, लोड%; फिर कार्ड + मीटर भरो · <span class="ur">ریڈنگ ڈالیں → kVA, kW, لوڈ٪؛ پھر کارڈ بھریں</span>',calc:true}
+    {e:'🧮',t:'Load & diesel calculation',sh:'लोड और डीज़ल · <span class="ur">لوڈ اور ڈیزل</span>',d:'Enter the readings to get kVA, kW, load % and diesel use (L/hr and per 12 h). Keep load below the genset rating. Then fill the service card with the meter hours and all readings.',dh:'रीडिंग डालो → kVA, kW, लोड%, डीज़ल L/घंटा; फिर कार्ड + मीटर भरो · <span class="ur">ریڈنگ ڈالیں → kVA, kW, لوڈ٪، ڈیزل؛ پھر کارڈ بھریں</span>',calc:true}
   ], major:[
     {e:'🦺',t:'Safety & record (MAJOR)',sh:'सुरक्षा और रिकॉर्ड · <span class="ur">حفاظت و ریکارڈ</span>',d:'Wear PPE, keep extinguisher. Note meter hours. This is a MAJOR service — do everything carefully.',dh:'PPE पहनो, घंटे नोट करो, यह MAJOR सर्विस है · <span class="ur">PPE، میٹر نوٹ، یہ MAJOR سروس ہے</span>'},
     {e:'🔥',t:'Warm up, then STOP',sh:'गरम करो फिर बंद · <span class="ur">گرم کریں پھر بند</span>',d:'Run ~5 min, press STOP, battery isolator OFF, let cool.',dh:'5 मिनट चलाओ, STOP, isolator बंद, ठंडा होने दो · <span class="ur">5 منٹ، STOP، آف، ٹھنڈا</span>'},
@@ -587,7 +589,7 @@
     {e:'🛢️',t:'Fill new oil — '+OIL,sh:'नया ऑयल 15W-40 · <span class="ur">نیا آئل 15W-40</span>',d:'Fill <span class="oil">15W-40</span>, correct quantity. Dipstick at FULL. Refit cap.',dh:'15W-40 सही मात्रा, डिपस्टिक FULL · <span class="ur">15W-40، FULL</span>'},
     {e:'🔋',t:'Battery check',sh:'बैटरी जाँच · <span class="ur">بیٹری چیک</span>',d:'Battery condition / load test. Electrolyte level. Clean & grease terminals. Rest voltage ~12.6V (or 25.2V for 24V).',dh:'बैटरी लोड टेस्ट, पानी, टर्मिनल, वोल्ट ~12.6V · <span class="ur">بیٹری ٹیسٹ، پانی، ~12.6V</span>'},
     {e:'⚡',t:'Electrical readings',sh:'इलेक्ट्रिकल रीडिंग · <span class="ur">الیکٹریکل ریڈنگ</span>',d:'Start the set. Measure: Line voltage L-L ≈ <b>400 V</b>, L-N ≈ <b>230 V</b>. Frequency = <b>50 Hz</b>. Current on R, Y, B — should be balanced. Write all readings.',dh:'वोल्ट L-L ~400, L-N ~230, Hz 50, करंट R-Y-B बराबर, सब लिखो · <span class="ur">وولٹ 400/230، 50Hz، کرنٹ R-Y-B، لکھیں</span>'},
-    {e:'🧮',t:'Load calculation',sh:'लोड कैलकुलेशन · <span class="ur">لوڈ کیلکولیشن</span>',d:'Enter the readings to get kVA, kW and load %. Keep load below the genset rating.',dh:'रीडिंग डालो → kVA, kW, लोड% · <span class="ur">ریڈنگ ڈالیں → kVA, kW, لوڈ٪</span>',calc:true},
+    {e:'🧮',t:'Load & diesel calculation',sh:'लोड और डीज़ल · <span class="ur">لوڈ اور ڈیزل</span>',d:'Enter the readings to get kVA, kW, load % and diesel use (L/hr and per 12 h). Keep load below the genset rating.',dh:'रीडिंग डालो → kVA, kW, लोड%, डीज़ल L/घंटा · <span class="ur">ریڈنگ ڈالیں → kVA, kW, لوڈ٪، ڈیزل</span>',calc:true},
     {e:'🧪',t:'Insulation (Megger) & AVR',sh:'मेगर टेस्ट और AVR · <span class="ur">میگر ٹیسٹ، AVR</span>',d:'Engine OFF. Megger (IR) test the alternator windings — should read ≥ <b>1 MΩ</b> (dry). Check AVR and earthing. Record the IR value.',dh:'इंजन बंद, मेगर से winding ≥ 1 MΩ, AVR/अर्थ चेक, मान लिखो · <span class="ur">انجن آف، میگر ≥ 1MΩ، AVR، ارتھ</span>',tip:'If IR is low (below 1 MΩ), windings may be damp/dirty — report to office before running on load.',tipwarn:true},
     {e:'✅',t:'Finish & record',sh:'पूरा करो और लिखो · <span class="ur">مکمل اور ریکارڈ</span>',d:'All gauges normal, no leaks, no alarm. Fill the service card, meter hours, and all electrical readings. Mark as MAJOR.',dh:'सब सही, कार्ड + मीटर + रीडिंग भरो, MAJOR लिखो · <span class="ur">کارڈ، میٹر، ریڈنگ، MAJOR</span>'}
   ]};
@@ -614,14 +616,17 @@
     +'<div class="cr"><label>Current — avg amps (A) · करंट</label><input type="number" id="cI" placeholder="e.g. 120"></div>'
     +'<div class="cr"><label>Power Factor (PF) · पावर फैक्टर</label><input type="number" id="cPF" value="0.8" step="0.05"></div>'
     +'<div class="cr"><label>Genset rating (kVA) · रेटिंग</label><input type="number" id="cR" placeholder="e.g. 100"></div>'
-    +'<div class="out"><div class="o">Apparent power <b id="oKVA">— kVA</b></div><div class="o">Real power <b id="oKW">— kW</b></div><div class="o">Load <b id="oLoad">— %</b></div></div>'
-    +'<div class="fml">kVA = (√3 × V × I) ÷ 1000 &nbsp;·&nbsp; kW = kVA × PF &nbsp;·&nbsp; Load% = kVA ÷ rating × 100<br>Full-load current I = kVA × 1000 ÷ (√3 × V)</div></div>'; }
-  function wireCalc(){ var ids=['cV','cI','cPF','cR']; function calc(){
-      var V=parseFloat($('cV').value), I=parseFloat($('cI').value), PF=parseFloat($('cPF').value), R=parseFloat($('cR').value);
+    +'<div class="cr"><label>Diesel rate (L per kWh) · डीज़ल रेट</label><input type="number" id="cSFC" value="0.25" step="0.01"></div>'
+    +'<div class="out"><div class="o">Apparent power <b id="oKVA">— kVA</b></div><div class="o">Real power <b id="oKW">— kW</b></div><div class="o">Load <b id="oLoad">— %</b></div><div class="o diz">Diesel <b id="oLph">— L/hr</b></div><div class="o diz">Per 12 h <b id="oL12">— L</b></div></div>'
+    +'<div class="fml">kVA = (√3 × V × I) ÷ 1000 &nbsp;·&nbsp; kW = kVA × PF &nbsp;·&nbsp; Load% = kVA ÷ rating × 100<br>Full-load current I = kVA × 1000 ÷ (√3 × V)<br>Diesel (L/hr) ≈ kW × diesel rate &nbsp;·&nbsp; per 12 h = L/hr × 12<br><span class="oil">Diesel rate ≈ 0.22–0.30 L/kWh — set to your engine</span></div></div>'; }
+  function wireCalc(){ var ids=['cV','cI','cPF','cR','cSFC']; function calc(){
+      var V=parseFloat($('cV').value), I=parseFloat($('cI').value), PF=parseFloat($('cPF').value), R=parseFloat($('cR').value), S=parseFloat($('cSFC').value);
       if(V>0&&I>0){ var kva=Math.sqrt(3)*V*I/1000; var kw=kva*(PF>0?PF:0.8);
         $('oKVA').textContent=kva.toFixed(1)+' kVA'; $('oKW').textContent=kw.toFixed(1)+' kW';
         $('oLoad').textContent=(R>0?Math.round(kva/R*100)+' %':'— %');
-      } else { $('oKVA').textContent='— kVA'; $('oKW').textContent='— kW'; $('oLoad').textContent='— %'; } }
+        var rate=(S>0?S:0.25); var lph=kw*rate;
+        $('oLph').textContent=lph.toFixed(1)+' L/hr'; $('oL12').textContent=Math.round(lph*12)+' L';
+      } else { $('oKVA').textContent='— kVA'; $('oKW').textContent='— kW'; $('oLoad').textContent='— %'; $('oLph').textContent='— L/hr'; $('oL12').textContent='— L'; } }
     ids.forEach(function(id){ var el=$(id); if(el) el.addEventListener('input',calc); }); calc(); }
   $('gsOpen').addEventListener('click',function(){ openGuide(SVCTYPE); });
   $('gsClose').addEventListener('click',function(){ $('gsOv').classList.remove('on'); });
