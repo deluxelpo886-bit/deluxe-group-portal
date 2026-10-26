@@ -176,6 +176,7 @@
         <div class="gi"><span class="e">🔎</span><div><b>Full check — radiator, alternator, exhaust, mounting</b><span class="s">पूरी जाँच करो · <span class="ur">مکمل چیک کریں</span></span></div></div>
         <div class="gw">⏱️ MAJOR = every <b>~1500 hours</b> (about every 4th service, or ~6 months). The office tells you when it is MAJOR.</div>
       </div>
+      <button type="button" class="gsopen" id="gsOpen">📖 Open step-by-step guide<span>स्टेप बाय स्टेप गाइड · <span class="ur">مرحلہ وار گائیڈ کھولیں</span></span></button>
       <label class="hlbl">Hours now (meter) · अभी के घंटे · <span class="ur">ابھی کے گھنٹے</span></label>
       <input type="number" inputmode="numeric" id="svcHrs" placeholder="e.g. 4397">
       <label class="hlbl">What did you change? · क्या बदला · <span class="ur">کیا بدلا</span></label>
@@ -193,6 +194,21 @@
       <input type="text" id="svcNote" placeholder="">
       <div class="herr" id="svcErr"></div>
       <div class="hbtns"><button class="hcancel" id="svcCancel">Cancel · रद्द · <span class="ur">منسوخ</span></button><button class="hsend" id="svcSend">Save service · सेव · <span class="ur">محفوظ</span></button></div>
+    </div>
+  </div>
+
+  <!-- Step-by-step service guide (full screen walkthrough) -->
+  <div class="gsov" id="gsOv">
+    <div class="gshead">
+      <button class="gsx" id="gsClose">✕</button>
+      <div class="gstitle" id="gsTitle">Service Guide</div>
+      <div class="gsprog" id="gsProg"></div>
+    </div>
+    <div class="gsbar"><div class="gsbarfill" id="gsBarFill"></div></div>
+    <div class="gsbody" id="gsBody"></div>
+    <div class="gsnav">
+      <button class="gsback" id="gsBack">◀ Back · पीछे</button>
+      <button class="gsnext" id="gsNext">Done · हो गया ▶</button>
     </div>
   </div>
 
@@ -255,6 +271,43 @@
     .guide .gi .s{display:block;font-size:11px;color:#9fb0c0;font-weight:500;margin-top:1px;}
     .guide .gw{font-size:11.5px;color:#9fb0c0;margin-top:8px;padding-top:7px;border-top:1px dashed #273141;}
     .guide .oil{color:#f59e0b;font-weight:800;}
+    .gsopen{width:100%;margin:2px 0 4px;background:#13293f;border:1.5px solid #2f6b9e;color:#bfe0ff;border-radius:12px;padding:12px;font-size:15px;font-weight:800;cursor:pointer;line-height:1.25;}
+    .gsopen span{display:block;font-size:11px;font-weight:500;opacity:.85;margin-top:2px;}
+    /* full-screen step guide */
+    .gsov{position:fixed;inset:0;background:var(--bg);z-index:60;display:none;flex-direction:column;max-width:480px;margin:0 auto;}
+    .gsov.on{display:flex;}
+    .gshead{display:flex;align-items:center;gap:10px;padding:14px 14px 8px;}
+    .gsx{background:var(--card2);border:1px solid var(--line);color:var(--ink);width:38px;height:38px;border-radius:10px;font-size:17px;cursor:pointer;flex:0 0 auto;}
+    .gstitle{font-size:17px;font-weight:800;flex:1;}
+    .gsprog{font-size:12px;color:var(--mut);font-weight:700;}
+    .gsbar{height:6px;background:var(--card2);margin:0 14px;border-radius:3px;overflow:hidden;}
+    .gsbarfill{height:100%;background:var(--green);width:0%;transition:width .2s;}
+    .gsbody{flex:1;overflow-y:auto;padding:16px 16px 10px;}
+    .stepcard .se{font-size:46px;text-align:center;margin:6px 0 4px;}
+    .stepcard .snum{font-size:12px;color:var(--amber);font-weight:800;text-align:center;letter-spacing:.5px;}
+    .stepcard h3{font-size:21px;font-weight:800;text-align:center;margin:4px 0 3px;line-height:1.2;}
+    .stepcard .sh{font-size:14px;color:var(--mut);text-align:center;font-weight:600;}
+    .stepcard .sd{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px;font-size:15.5px;line-height:1.5;}
+    .stepcard .sd .dh{color:var(--mut);font-size:13px;margin-top:7px;}
+    .stepcard .tip{background:#2a1e07;border:1px solid #6b5212;border-radius:12px;padding:10px 12px;margin-top:11px;font-size:13.5px;color:#ffe3a0;}
+    .stepcard .tip.warn{background:#2c1310;border-color:#7f2a22;color:#ffb9ab;}
+    .stepcard .oil{color:var(--amber);font-weight:800;}
+    /* electrical calculator */
+    .calc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:12px;}
+    .calc .cr{display:flex;align-items:center;gap:9px;margin:8px 0;}
+    .calc .cr label{flex:1;font-size:14px;}
+    .calc .cr input{width:110px;background:#0f141b;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 10px;font-size:16px;font-weight:700;text-align:right;}
+    .calc .out{background:#0f1e14;border:1px solid #1f5137;border-radius:11px;padding:11px;margin-top:10px;}
+    .calc .out .o{display:flex;justify-content:space-between;font-size:15px;padding:4px 0;}
+    .calc .out .o b{color:#6ee7a8;font-size:18px;}
+    .calc .fml{font-size:11.5px;color:var(--mut);margin-top:8px;line-height:1.5;}
+    .gsnav{display:flex;gap:10px;padding:12px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);}
+    .gsback{flex:0 0 38%;background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;}
+    .gsnext{flex:1;background:var(--green);border:none;color:#04210f;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;}
+    .gschoose{display:grid;gap:12px;margin-top:10px;}
+    .gschoose button{background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:16px;padding:18px;font-size:19px;font-weight:800;cursor:pointer;text-align:left;line-height:1.3;}
+    .gschoose button span{display:block;font-size:13px;color:var(--mut);font-weight:500;margin-top:4px;}
+    .gschoose button.min{border-color:#3b82f6;}.gschoose button.maj{border-color:#f59e0b;}
     .ovprev{width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin:10px 0;background:#000;}
     .hsend.bd{background:#e0644a;color:#2a0b05;}
   </style>
@@ -504,6 +557,74 @@
     $('gMinor').style.display = t==='minor'?'block':'none';
     $('gMajor').style.display = t==='major'?'block':'none'; }
   $('svcType').addEventListener('click',function(e){ var b=e.target.closest('.st'); if(b) setSvcType(b.getAttribute('data-st')); });
+
+  /* ---------- Step-by-step service guide ---------- */
+  var OIL='<span class="oil">15W-40</span>';
+  var GUIDE={ minor:[
+    {e:'🦺',t:'Safety first',sh:'सुरक्षा पहले · <span class="ur">پہلے حفاظت</span>',d:'Wear gloves & shoes. Keep a fire extinguisher near. Note the meter hours now.',dh:'दस्ताने-जूते पहनो, आग बुझाने वाला पास रखो, मीटर घंटे नोट करो · <span class="ur">دستانے پہنیں، فائر ایکسٹنگوشر پاس رکھیں، میٹر نوٹ کریں</span>'},
+    {e:'🔥',t:'Warm up, then STOP',sh:'गरम करो फिर बंद · <span class="ur">گرم کریں پھر بند</span>',d:'Run the engine ~5 minutes (oil flows easier). Press STOP. Turn the battery isolator OFF. Let it cool a little.',dh:'5 मिनट चलाओ, STOP दबाओ, बैटरी isolator बंद करो · <span class="ur">5 منٹ چلائیں، STOP، بیٹری آف</span>',tip:'Hot oil drains better — but do not burn your hand.',tipwarn:true},
+    {e:'🛢️',t:'Drain the engine oil',sh:'इंजन ऑयल निकालो · <span class="ur">آئل نکالیں</span>',d:'Put a tray under the drain plug. Open the plug and drain ALL old oil. Clean and refit the plug tight.',dh:'ड्रेन प्लग खोलो, सारा पुराना ऑयल निकालो, प्लग टाइट करो · <span class="ur">ڈرین پلگ کھولیں، سارا آئل نکالیں، ٹائٹ کریں</span>'},
+    {e:'🧩',t:'Change the oil filter',sh:'ऑयल फ़िल्टर बदलो · <span class="ur">آئل فلٹر</span>',d:'Unscrew the old oil filter. Smear clean oil on the new filter rubber gasket. Fit by hand, then turn 3/4 more.',dh:'पुराना फ़िल्टर खोलो, नए की रबर पर ऑयल लगाओ, हाथ से टाइट + 3/4 घुमाओ · <span class="ur">پرانا نکالیں، نئے کی ربر پر آئل، ہاتھ سے ٹائٹ</span>'},
+    {e:'⛽',t:'Change the fuel filter',sh:'फ्यूल फ़िल्टर बदलो · <span class="ur">فیول فلٹر</span>',d:'Close the fuel tap. Change the fuel filter. Bleed/prime out the air. Open the fuel tap again.',dh:'फ्यूल टैप बंद, फ़िल्टर बदलो, हवा निकालो, टैप खोलो · <span class="ur">فیول بند، فلٹر بدلیں، ہوا نکالیں، کھولیں</span>'},
+    {e:'💨',t:'Air filter — clean',sh:'एयर फ़िल्टर साफ़ · <span class="ur">ایئر فلٹر صاف</span>',d:'Remove the air filter. Blow with air from INSIDE to OUTSIDE. Check for any hole. Refit. (In MINOR, clean only.)',dh:'एयर फ़िल्टर निकालो, अंदर से बाहर हवा मारो, छेद देखो, लगाओ · <span class="ur">اندر سے باہر ہوا ماریں، سوراخ چیک، لگائیں</span>'},
+    {e:'🛢️',t:'Fill new oil — '+OIL,sh:'नया ऑयल 15W-40 भरो · <span class="ur">نیا آئل 15W-40</span>',d:'Fill with <span class="oil">15W-40</span> oil, correct quantity for this engine. Check the dipstick is at the FULL mark. Refit the cap.',dh:'15W-40 सही मात्रा भरो, डिपस्टिक FULL तक देखो · <span class="ur">15W-40 صحیح مقدار، ڈپ اسٹک FULL</span>',tip:'Always 15W-40. Do not overfill above the FULL mark.'},
+    {e:'💧',t:'Coolant & leaks',sh:'कूलेंट और लीक · <span class="ur">کولنٹ اور لیک</span>',d:'Check coolant/water to the mark (engine not hot). Look all around for oil, water or fuel leaks.',dh:'कूलेंट लेवल देखो, लीक देखो · <span class="ur">کولنٹ لیول، لیک چیک</span>'},
+    {e:'🔩',t:'Belt & battery',sh:'बेल्ट और बैटरी · <span class="ur">بیلٹ اور بیٹری</span>',d:'Press the fan belt — about 10 mm play. Clean & tighten battery terminals. Check battery water level.',dh:'बेल्ट दबाओ (~10mm), बैटरी टर्मिनल साफ़/टाइट, पानी देखो · <span class="ur">بیلٹ، بیٹری ٹرمینل، پانی</span>'},
+    {e:'✅',t:'Start & check',sh:'स्टार्ट और जाँच · <span class="ur">اسٹارٹ اور چیک</span>',d:'Battery ON. Start. Oil-pressure light must go OFF. No leaks. Voltage & frequency normal. Fill the service card and write the meter hours.',dh:'स्टार्ट करो, ऑयल प्रेशर लाइट बंद हो, लीक नहीं, वोल्ट/Hz सही, कार्ड भरो · <span class="ur">اسٹارٹ، آئل پریشر لائٹ آف، لیک نہیں، کارڈ بھریں</span>'}
+  ], major:[
+    {e:'🦺',t:'Safety & record (MAJOR)',sh:'सुरक्षा और रिकॉर्ड · <span class="ur">حفاظت و ریکارڈ</span>',d:'Wear PPE, keep extinguisher. Note meter hours. This is a MAJOR service — do everything carefully.',dh:'PPE पहनो, घंटे नोट करो, यह MAJOR सर्विस है · <span class="ur">PPE، میٹر نوٹ، یہ MAJOR سروس ہے</span>'},
+    {e:'🔥',t:'Warm up, then STOP',sh:'गरम करो फिर बंद · <span class="ur">گرم کریں پھر بند</span>',d:'Run ~5 min, press STOP, battery isolator OFF, let cool.',dh:'5 मिनट चलाओ, STOP, isolator बंद, ठंडा होने दो · <span class="ur">5 منٹ، STOP، آف، ٹھنڈا</span>'},
+    {e:'🛢️',t:'Drain oil + oil filter',sh:'ऑयल + फ़िल्टर · <span class="ur">آئل + فلٹر</span>',d:'Drain all old oil. Fit a NEW oil filter (oil the gasket, hand-tight + 3/4 turn).',dh:'पुराना ऑयल निकालो, नया ऑयल फ़िल्टर लगाओ · <span class="ur">آئل نکالیں، نیا آئل فلٹر</span>'},
+    {e:'⛽',t:'Fuel filter(s)',sh:'फ्यूल फ़िल्टर · <span class="ur">فیول فلٹر</span>',d:'Change all fuel filters. Bleed the air. Check for diesel leaks.',dh:'फ्यूल फ़िल्टर बदलो, हवा निकालो, लीक देखो · <span class="ur">فیول فلٹر، ہوا، لیک</span>'},
+    {e:'💨',t:'Air filter — NEW',sh:'नया एयर फ़िल्टर · <span class="ur">نیا ایئر فلٹر</span>',d:'Put a NEW air filter (do not just clean in MAJOR). Check the housing & pipes are tight, no dust leak.',dh:'नया एयर फ़िल्टर डालो, पाइप टाइट करो · <span class="ur">نیا ایئر فلٹر، پائپ ٹائٹ</span>',tip:'MAJOR = always a NEW air filter.'},
+    {e:'💧',t:'Coolant flush',sh:'कूलेंट फ्लश · <span class="ur">کولنٹ فلش</span>',d:'Drain old coolant, flush the system, refill with correct coolant + water mix. Check radiator cap.',dh:'पुराना कूलेंट निकालो, फ्लश करो, सही मिक्स भरो · <span class="ur">پرانا نکالیں، فلش، صحیح مکس</span>'},
+    {e:'⚙️',t:'Valve / tappet clearance',sh:'टैपेट सेट करो · <span class="ur">ٹیپٹ کلیئرنس</span>',d:'Engine must be COLD. Set intake & exhaust valve clearance with a feeler gauge, as per this engine. (Values to confirm per brand — office will add.)',dh:'इंजन ठंडा हो, feeler gauge से inlet/exhaust gap सेट करो · <span class="ur">انجن ٹھنڈا، فیلر گیج سے گیپ سیٹ</span>',tip:'Clearance values differ by engine (Kirloskar / CAT / Cummins / Perkins / Weichai). Confirm before setting.',tipwarn:true},
+    {e:'🛠️',t:'Injectors & turbo',sh:'इंजेक्टर और टर्बो · <span class="ur">انجیکٹر اور ٹربو</span>',d:'Check injectors (spray/leak). Turbo: free spin, no oil leak, no shaft play. Air pipes/clamps tight.',dh:'इंजेक्टर, टर्बो घूमे-लीक नहीं, पाइप टाइट · <span class="ur">انجیکٹر، ٹربو، پائپ</span>'},
+    {e:'🔗',t:'Belts, hoses, water pump',sh:'बेल्ट, पाइप, पंप · <span class="ur">بیلٹ، ہوز، پمپ</span>',d:'Replace worn belts. Check all hoses & clamps. Check water pump for leak or bearing play.',dh:'घिसी बेल्ट बदलो, पाइप/क्लैंप देखो, पंप लीक/प्ले देखो · <span class="ur">بیلٹ بدلیں، ہوز، واٹر پمپ</span>'},
+    {e:'🧰',t:'Radiator, mounting, earth',sh:'रेडिएटर, माउंट, अर्थ · <span class="ur">ریڈی ایٹر، ماؤنٹ</span>',d:'Clean radiator fins. Check engine mountings & bolts. Check exhaust & silencer. Check earth/ground connection.',dh:'रेडिएटर साफ़, माउंटिंग बोल्ट, एग्ज़ॉस्ट, अर्थ देखो · <span class="ur">ریڈی ایٹر صاف، ماؤنٹنگ، ارتھ</span>'},
+    {e:'🛢️',t:'Fill new oil — '+OIL,sh:'नया ऑयल 15W-40 · <span class="ur">نیا آئل 15W-40</span>',d:'Fill <span class="oil">15W-40</span>, correct quantity. Dipstick at FULL. Refit cap.',dh:'15W-40 सही मात्रा, डिपस्टिक FULL · <span class="ur">15W-40، FULL</span>'},
+    {e:'🔋',t:'Battery check',sh:'बैटरी जाँच · <span class="ur">بیٹری چیک</span>',d:'Battery condition / load test. Electrolyte level. Clean & grease terminals. Rest voltage ~12.6V (or 25.2V for 24V).',dh:'बैटरी लोड टेस्ट, पानी, टर्मिनल, वोल्ट ~12.6V · <span class="ur">بیٹری ٹیسٹ، پانی، ~12.6V</span>'},
+    {e:'⚡',t:'Electrical readings',sh:'इलेक्ट्रिकल रीडिंग · <span class="ur">الیکٹریکل ریڈنگ</span>',d:'Start the set. Measure: Line voltage L-L ≈ <b>400 V</b>, L-N ≈ <b>230 V</b>. Frequency = <b>50 Hz</b>. Current on R, Y, B — should be balanced. Write all readings.',dh:'वोल्ट L-L ~400, L-N ~230, Hz 50, करंट R-Y-B बराबर, सब लिखो · <span class="ur">وولٹ 400/230، 50Hz، کرنٹ R-Y-B، لکھیں</span>'},
+    {e:'🧮',t:'Load calculation',sh:'लोड कैलकुलेशन · <span class="ur">لوڈ کیلکولیشن</span>',d:'Enter the readings to get kVA, kW and load %. Keep load below the genset rating.',dh:'रीडिंग डालो → kVA, kW, लोड% · <span class="ur">ریڈنگ ڈالیں → kVA, kW, لوڈ٪</span>',calc:true},
+    {e:'🧪',t:'Insulation (Megger) & AVR',sh:'मेगर टेस्ट और AVR · <span class="ur">میگر ٹیسٹ، AVR</span>',d:'Engine OFF. Megger (IR) test the alternator windings — should read ≥ <b>1 MΩ</b> (dry). Check AVR and earthing. Record the IR value.',dh:'इंजन बंद, मेगर से winding ≥ 1 MΩ, AVR/अर्थ चेक, मान लिखो · <span class="ur">انجن آف، میگر ≥ 1MΩ، AVR، ارتھ</span>',tip:'If IR is low (below 1 MΩ), windings may be damp/dirty — report to office before running on load.',tipwarn:true},
+    {e:'✅',t:'Finish & record',sh:'पूरा करो और लिखो · <span class="ur">مکمل اور ریکارڈ</span>',d:'All gauges normal, no leaks, no alarm. Fill the service card, meter hours, and all electrical readings. Mark as MAJOR.',dh:'सब सही, कार्ड + मीटर + रीडिंग भरो, MAJOR लिखो · <span class="ur">کارڈ، میٹر، ریڈنگ، MAJOR</span>'}
+  ]};
+  var gsSteps=[], gsIdx=0;
+  function openGuide(type){ gsSteps=GUIDE[type]||GUIDE.minor; gsIdx=0;
+    $('gsTitle').textContent=(type==='major'?'🛠️ MAJOR Service':'🔧 MINOR Service'); renderStep(); $('gsOv').classList.add('on'); }
+  function renderStep(){ var s=gsSteps[gsIdx]; if(!s) return;
+    $('gsProg').textContent='Step '+(gsIdx+1)+' / '+gsSteps.length;
+    $('gsBarFill').style.width=Math.round((gsIdx+1)/gsSteps.length*100)+'%';
+    var html='<div class="stepcard"><div class="se">'+s.e+'</div>'
+      +'<div class="snum">STEP '+(gsIdx+1)+'</div><h3>'+s.t+'</h3><div class="sh">'+(s.sh||'')+'</div>'
+      +'<div class="sd">'+s.d+'<div class="dh">'+(s.dh||'')+'</div></div>'
+      +(s.tip?('<div class="tip'+(s.tipwarn?' warn':'')+'">💡 '+s.tip+'</div>'):'');
+    if(s.calc) html+=calcHtml();
+    html+='</div>';
+    $('gsBody').innerHTML=html;
+    $('gsBody').scrollTop=0;
+    $('gsBack').style.visibility=gsIdx>0?'visible':'hidden';
+    $('gsNext').textContent=(gsIdx>=gsSteps.length-1)?'Finish ✓ · खत्म':'Done · हो गया ▶';
+    if(s.calc) wireCalc();
+  }
+  function calcHtml(){ return '<div class="calc">'
+    +'<div class="cr"><label>Line Voltage (V) · वोल्ट</label><input type="number" id="cV" value="400"></div>'
+    +'<div class="cr"><label>Current — avg amps (A) · करंट</label><input type="number" id="cI" placeholder="e.g. 120"></div>'
+    +'<div class="cr"><label>Power Factor (PF) · पावर फैक्टर</label><input type="number" id="cPF" value="0.8" step="0.05"></div>'
+    +'<div class="cr"><label>Genset rating (kVA) · रेटिंग</label><input type="number" id="cR" placeholder="e.g. 100"></div>'
+    +'<div class="out"><div class="o">Apparent power <b id="oKVA">— kVA</b></div><div class="o">Real power <b id="oKW">— kW</b></div><div class="o">Load <b id="oLoad">— %</b></div></div>'
+    +'<div class="fml">kVA = (√3 × V × I) ÷ 1000 &nbsp;·&nbsp; kW = kVA × PF &nbsp;·&nbsp; Load% = kVA ÷ rating × 100<br>Full-load current I = kVA × 1000 ÷ (√3 × V)</div></div>'; }
+  function wireCalc(){ var ids=['cV','cI','cPF','cR']; function calc(){
+      var V=parseFloat($('cV').value), I=parseFloat($('cI').value), PF=parseFloat($('cPF').value), R=parseFloat($('cR').value);
+      if(V>0&&I>0){ var kva=Math.sqrt(3)*V*I/1000; var kw=kva*(PF>0?PF:0.8);
+        $('oKVA').textContent=kva.toFixed(1)+' kVA'; $('oKW').textContent=kw.toFixed(1)+' kW';
+        $('oLoad').textContent=(R>0?Math.round(kva/R*100)+' %':'— %');
+      } else { $('oKVA').textContent='— kVA'; $('oKW').textContent='— kW'; $('oLoad').textContent='— %'; } }
+    ids.forEach(function(id){ var el=$(id); if(el) el.addEventListener('input',calc); }); calc(); }
+  $('gsOpen').addEventListener('click',function(){ openGuide(SVCTYPE); });
+  $('gsClose').addEventListener('click',function(){ $('gsOv').classList.remove('on'); });
+  $('gsBack').addEventListener('click',function(){ if(gsIdx>0){ gsIdx--; renderStep(); } });
+  $('gsNext').addEventListener('click',function(){ if(gsIdx>=gsSteps.length-1){ $('gsOv').classList.remove('on'); } else { gsIdx++; renderStep(); } });
   $('svcCancel').addEventListener('click',function(){ $('svcOv').classList.remove('on'); });
   $('svcChecks').addEventListener('click',function(e){ var b=e.target.closest('.chip'); if(b) b.classList.toggle('on'); });
   $('svcCam').addEventListener('click',function(){ $('svcFile').click(); });
