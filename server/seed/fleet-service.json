@@ -645,9 +645,10 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 9658,
-  "nextServiceDate": "2027-01-30",
+  "nextServiceDate": "2026-11-15",
   "interval": 350,
-  "notes": "Serviced 21/09/2026 at 9308h by IK & Jayaraj (oil + oil filter + fuel filter; air filter NOT). Next service 9658h. Low use (~2.7 h/day) - next DATE to be confirmed by office. 83 kVA Kirloskar, KON, Al Dhannah City (Ruwais area)."
+  "notes": "Serviced 21/09/2026 at 9308h by IK & Jayaraj (oil + oil filter + fuel filter; AIR FILTER NOT - pending). Next service 9658h. Next date moved to 15/11/2026 (20 days) per ops - KON site (Al Dhannah/Ruwais) operations halted. Low use ~2.7 h/day. 83 kVA Kirloskar, KON, Al Dhannah City (Ruwais area).",
+  "fixedDays": 55
  },
  {
   "dg": "DG-829",
