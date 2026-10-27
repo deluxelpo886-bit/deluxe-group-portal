@@ -4073,5 +4073,22 @@
   "currentHours": 7156,
   "currentHoursDate": "2026-10-27",
   "notes": "Serviced 27/10/2026 @ 7156h by Roland & Adeel - oil, oil filter, fuel filter, AIR FILTER all DONE. WATER PUMP FIXED (was the breakdown flagged 13/10) - breakdown cleared, back on hire. Next 7506h (~23/11), ~12.8 h/day. 380 kVA CAT, City Const, Al Faya."
+ },
+ {
+  "dg": "DG-864",
+  "hours": 2144,
+  "date": "2026-10-27",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 9.1,
+  "nextService": 2494,
+  "nextServiceDate": "2026-11-25",
+  "interval": 350,
+  "currentHours": 2144,
+  "currentHoursDate": "2026-10-27",
+  "notes": "Serviced 27/10/2026 @ 2144h by Jayraj & Imran - oil, oil filter, fuel filter, AIR FILTER all DONE (air filter cleared). Next 2494h (~25/11), ~9.1 h/day (12h contract floor applied). 125 kVA Kirloskar, Gulf Contracting, Al Ain (Eidan Al Ridda)."
  }
 ]
