@@ -36,10 +36,12 @@
   .btn.print{background:var(--amber);color:#1a1200;} .btn.all{background:var(--panel2);color:var(--text);border:1px solid var(--line);} .btn.clr{background:var(--panel2);color:var(--faint);border:1px solid var(--line);}
   @media print{
     @page{size:A4 portrait;margin:11mm;}
-    body{background:#fff;color:#000;padding:0;font-size:11px;}
+    body{background:#fff !important;color:#000;padding:0;font-size:11px;}
+    .wrap{max-width:none;}
     .navback,.bar{display:none !important;}
-    .sheet{border:none;} .head{background:#0d3b66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:10px 12px;} .head h1{font-size:16px;}
-    .body{padding:6px 4px;}
+    .sheet{border:none;background:#fff !important;} .head{background:#0d3b66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:10px 12px;} .head h1{font-size:16px;color:#fff !important;} .head .co,.head .hi{color:#dbe8f5 !important;}
+    .body{padding:6px 4px;background:#fff !important;}
+    .fields .f label{color:#555 !important;}
     .f input,.notes{background:#fff;border:1px solid #999;color:#000;}
     h2{color:#0d3b66;margin:10px 0 5px;}
     .item{background:#fff;border:1px solid #bbb;padding:5px 8px;margin-bottom:4px;break-inside:avoid;}
