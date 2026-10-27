@@ -35,19 +35,26 @@
   .btn{border:none;border-radius:9px;padding:11px 16px;font-weight:800;font-size:14px;cursor:pointer;}
   .btn.print{background:var(--amber);color:#1a1200;} .btn.all{background:var(--panel2);color:var(--text);border:1px solid var(--line);} .btn.clr{background:var(--panel2);color:var(--faint);border:1px solid var(--line);}
   @media print{
-    @page{size:A4 portrait;margin:11mm;}
-    body{background:#fff !important;color:#000;padding:0;font-size:11px;}
+    @page{size:A4 portrait;margin:7mm;}
+    body{background:#fff !important;color:#000;padding:0;font-size:9px;}
     .wrap{max-width:none;}
     .navback,.bar{display:none !important;}
-    .sheet{border:none;background:#fff !important;} .head{background:#0d3b66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:10px 12px;} .head h1{font-size:16px;color:#fff !important;} .head .co,.head .hi{color:#dbe8f5 !important;}
-    .body{padding:6px 4px;background:#fff !important;}
-    .fields .f label{color:#555 !important;}
-    .f input,.notes{background:#fff;border:1px solid #999;color:#000;}
-    h2{color:#0d3b66;margin:10px 0 5px;}
-    .item{background:#fff;border:1px solid #bbb;padding:5px 8px;margin-bottom:4px;break-inside:avoid;}
-    .item .bx{border-color:#333;color:#333 !important;} .item.on .bx{background:#fff;color:#0a7a3f !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .item .tx b{font-size:11.5px;} .item .tx span{font-size:9.5px;color:#555;}
-    .sign .s{border-color:#333;color:#333;}
+    .sheet{border:none;background:#fff !important;} .head{background:#0d3b66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:6px 10px;} .head h1{font-size:14px;color:#fff !important;margin:1px 0;} .head .co{font-size:8px;color:#dbe8f5 !important;} .head .hi{font-size:9px;color:#dbe8f5 !important;}
+    .body{padding:5px 2px;background:#fff !important;}
+    /* header fields: 4 across, tight */
+    .fields{grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px;}
+    .fields .f label{color:#555 !important;font-size:7.5px;margin-bottom:1px;}
+    .f input,.notes{background:#fff;border:1px solid #999;color:#000;padding:4px 5px;font-size:10px;}
+    /* two-column checklist to fit one page */
+    #list{column-count:2;column-gap:9px;}
+    h2{color:#0d3b66;margin:5px 0 3px;font-size:9px;break-after:avoid;break-inside:avoid;} h2 .hi{font-size:7.5px;}
+    h2:first-child{margin-top:0;}
+    .item{background:#fff;border:1px solid #bbb;padding:3px 6px;margin-bottom:3px;gap:7px;break-inside:avoid;-webkit-column-break-inside:avoid;}
+    .item .bx{width:16px;height:16px;border-width:1.5px;border-color:#333;color:#fff !important;font-size:11px;} .item.on .bx{background:#fff;color:#0a7a3f !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .item .tx b{font-size:9.5px;line-height:1.15;} .item .tx span{font-size:7.5px;color:#555;line-height:1.1;}
+    h2 .hi,.sign{break-inside:avoid;}
+    .notes{min-height:34px;}
+    .sign{margin-top:12px;gap:30px;} .sign .s{border-color:#333;color:#333;font-size:9px;}
   }
 </style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
