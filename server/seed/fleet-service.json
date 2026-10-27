@@ -4056,5 +4056,22 @@
   "currentHours": 11491,
   "currentHoursDate": "2026-10-27",
   "notes": "Serviced 27/10/2026 @ 11491h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 11841h (~25/11), ~10.8 h/day (12h contract floor applied). 45 kVA Kubota, City Const, Al Shawamekh SHM11."
+ },
+ {
+  "dg": "DG-822",
+  "hours": 7156,
+  "date": "2026-10-27",
+  "technician": "ROLAND & ADEEL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 12.8,
+  "nextService": 7506,
+  "nextServiceDate": "2026-11-23",
+  "interval": 350,
+  "currentHours": 7156,
+  "currentHoursDate": "2026-10-27",
+  "notes": "Serviced 27/10/2026 @ 7156h by Roland & Adeel - oil, oil filter, fuel filter, AIR FILTER all DONE. WATER PUMP FIXED (was the breakdown flagged 13/10) - breakdown cleared, back on hire. Next 7506h (~23/11), ~12.8 h/day. 380 kVA CAT, City Const, Al Faya."
  }
 ]
