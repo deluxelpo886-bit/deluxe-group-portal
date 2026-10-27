@@ -264,9 +264,9 @@
  },
  {
   "dg": "DG-488",
-  "offHire": false,
-  "since": "2026-08-26",
-  "note": "On hire - ROCK STAR SCRAP TRADING LLC SPC (replaced DG-811)"
+  "offHire": true,
+  "since": "2026-10-12",
+  "note": "Off-hire 12/10/2026 - returned from Rock Star Scrap Trading (ICAD-1) to yard. Available. 40 kVA Weber."
  },
  {
   "dg": "DG-484",
