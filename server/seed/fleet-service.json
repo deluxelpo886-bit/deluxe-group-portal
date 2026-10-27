@@ -4090,5 +4090,22 @@
   "currentHours": 2144,
   "currentHoursDate": "2026-10-27",
   "notes": "Serviced 27/10/2026 @ 2144h by Jayraj & Imran - oil, oil filter, fuel filter, AIR FILTER all DONE (air filter cleared). Next 2494h (~25/11), ~9.1 h/day (12h contract floor applied). 125 kVA Kirloskar, Gulf Contracting, Al Ain (Eidan Al Ridda)."
+ },
+ {
+  "dg": "DG-841",
+  "hours": 13828,
+  "date": "2026-10-27",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.3,
+  "nextService": 14278,
+  "nextServiceDate": "2026-12-03",
+  "interval": 450,
+  "currentHours": 13828,
+  "currentHoursDate": "2026-10-27",
+  "notes": "Serviced 27/10/2026 @ 13828h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (X on card - skipped since Sept, carry one next visit). Next 14278h (~03/12), ~12.3 h/day. 250 kVA Kirloskar, Trojan, Baniyas West."
  }
 ]
