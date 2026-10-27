@@ -4022,5 +4022,22 @@
   "currentHours": 6612,
   "currentHoursDate": "2026-10-26",
   "notes": "Serviced 26/10/2026 at 6612h by Roland & Adil - oil, oil filter, fuel filter AND air filter all done (air filter finally changed - clears the pending). Controller CAOLEI 6612h (1747 starts, 375098 kWh, running normal). Next 6962h (+350). ~12.8 h/day -> due ~22/11. STILL OPEN: arrange bearing + pulley (from DG-847). 375 kVA Weichai, Al Farjhan, Al Rahah."
+ },
+ {
+  "dg": "DG-545",
+  "hours": 14201,
+  "date": "2026-10-27",
+  "technician": "SONU & TEAM",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 14.6,
+  "nextService": 14551,
+  "nextServiceDate": "2026-11-20",
+  "interval": 350,
+  "currentHours": 14201,
+  "currentHoursDate": "2026-10-27",
+  "notes": "Serviced 27/10/2026 @ 14201h by Sonu + team - oil, oil filter, fuel filter, AIR FILTER all DONE (air filter cleared). Next 14551h (~20/11), ~14.6 h/day. 150 kVA Cummins, Hashim Contracting, MBZ City ME-15."
  }
 ]
