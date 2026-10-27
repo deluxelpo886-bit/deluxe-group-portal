@@ -4039,5 +4039,22 @@
   "currentHours": 14201,
   "currentHoursDate": "2026-10-27",
   "notes": "Serviced 27/10/2026 @ 14201h by Sonu + team - oil, oil filter, fuel filter, AIR FILTER all DONE (air filter cleared). Next 14551h (~20/11), ~14.6 h/day. 150 kVA Cummins, Hashim Contracting, MBZ City ME-15."
+ },
+ {
+  "dg": "DG-832",
+  "hours": 11491,
+  "date": "2026-10-27",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 10.8,
+  "nextService": 11841,
+  "nextServiceDate": "2026-11-25",
+  "interval": 350,
+  "currentHours": 11491,
+  "currentHoursDate": "2026-10-27",
+  "notes": "Serviced 27/10/2026 @ 11491h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 11841h (~25/11), ~10.8 h/day (12h contract floor applied). 45 kVA Kubota, City Const, Al Shawamekh SHM11."
  }
 ]
