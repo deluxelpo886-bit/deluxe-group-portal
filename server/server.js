@@ -180,6 +180,13 @@ try {
   }
 } catch (e) { console.warn('[seed] reminders import skipped:', e && e.message); }
 
+// Office asked to clear ALL reminders. One-time wipe (runs once per version key,
+// recorded in the reminders seed marker) so new reminders added later survive.
+try {
+  const w = reminders.clearAll('reminders-wipe-2026-10-27-all');
+  if (w && w.cleared) console.log('[reminders] cleared all ' + w.cleared + ' reminder(s) on request');
+} catch (e) { console.warn('[reminders] wipe skipped:', e && e.message); }
+
 // Remove superseded reminder seeds (e.g. the DG-476 note before the customer
 // contact number was added). Idempotent, by stable seedKey.
 try {

@@ -136,4 +136,24 @@ function applySeed(records, version) {
   return { applied: n, version };
 }
 
-module.exports = { add, resolve, reopen, remove, getAll, stats, applySeed };
+// One-time wipe of EVERY reminder, matching the seed/version pattern so it runs
+// exactly once per `version` (recorded in the same marker file) and never fights
+// with reminders added later. Used when the office says "remove all reminders".
+function clearAll(version) {
+  if (!version) { const n = items.length; items = []; persist(); return { cleared: n }; }
+  let applied = {};
+  try { if (fs.existsSync(SEED_MARKER)) applied = JSON.parse(fs.readFileSync(SEED_MARKER, 'utf8')) || {}; } catch (_) { applied = {}; }
+  const key = 'wipe:' + version;
+  if (applied[key]) return { skipped: true, version };
+  const n = items.length;
+  items = [];
+  persist();
+  applied[key] = { at: new Date().toISOString(), removed: n };
+  try {
+    if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
+    fs.writeFileSync(SEED_MARKER, JSON.stringify(applied, null, 2));
+  } catch (_) { /* best-effort */ }
+  return { cleared: n, version };
+}
+
+module.exports = { add, resolve, reopen, remove, getAll, stats, applySeed, clearAll };
