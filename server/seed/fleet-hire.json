@@ -138,7 +138,9 @@
  },
  {
   "dg": "DG-555",
-  "offHire": true
+  "offHire": false,
+  "since": "2026-10-28",
+  "note": "On-hire 28/10/2026 to FM RENTAL (engine overhaul complete). Runs ~12 h/day. First running-in service at +50h (~02/11). Confirm exact FM site."
  },
  {
   "dg": "DG-559",

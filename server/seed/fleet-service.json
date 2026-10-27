@@ -4107,5 +4107,23 @@
   "currentHours": 13828,
   "currentHoursDate": "2026-10-27",
   "notes": "Serviced 27/10/2026 @ 13828h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (X on card - skipped since Sept, carry one next visit). Next 14278h (~03/12), ~12.3 h/day. 250 kVA Kirloskar, Trojan, Baniyas West."
+ },
+ {
+  "dg": "DG-555",
+  "hours": 914,
+  "date": "2026-10-28",
+  "technician": "",
+  "oil": false,
+  "oilFilter": false,
+  "fuelFilter": false,
+  "airFilter": false,
+  "dailyHours": 12,
+  "nextService": 964,
+  "nextServiceDate": "2026-11-02",
+  "interval": 50,
+  "fixedDays": 5,
+  "currentHours": 914,
+  "currentHoursDate": "2026-10-28",
+  "notes": "Engine overhaul COMPLETE. On-hired to FM RENTAL, deployed 28/10/2026, runs ~12 h/day. FIRST running-in service at +50 running hours (~02/11/2026) - oil + oil filter change, check for leaks after overhaul. Meter ~914h at handover (capture exact reading). 500 kVA Cummins."
  }
 ]
