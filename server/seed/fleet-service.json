@@ -4142,5 +4142,22 @@
   "currentHours": 1546,
   "currentHoursDate": "2026-10-28",
   "notes": "Serviced 28/10/2026 @ 1546h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Replacement for DG-503 at Hydro Power, Mussafah MN1. Next 1896h (~26/11), ~6.5 h/day (12h contract floor). 62.5 kVA Kirloskar."
+ },
+ {
+  "dg": "DG-485",
+  "hours": 4524,
+  "date": "2026-10-28",
+  "technician": "ROLAND & ADIL",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 9.0,
+  "nextService": 4874,
+  "nextServiceDate": "2026-11-26",
+  "interval": 350,
+  "currentHours": 4524,
+  "currentHoursDate": "2026-10-28",
+  "notes": "Serviced 28/10/2026 @ 4524h by Roland & Adil - oil, oil filter, fuel filter, NEW AIR FILTER all done (controller 4524h, 2097 starts). Next 4874h (~26/11), ~9.0 h/day (12h contract floor). 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix)."
  }
 ]
