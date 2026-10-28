@@ -1714,7 +1714,11 @@
   "dailyHours": 2.01,
   "nextService": 7881,
   "nextServiceDate": "2027-03-07",
-  "interval": 350
+  "interval": 350,
+  "currentHours": 7545,
+  "currentHoursDate": "2026-10-28",
+  "fixedDays": 174,
+  "notes": "Serviced 14/09/2026 @ 7531h by IK & Jairaj (card). Controller 7545h on 28/10/2026 (33 starts) - NEAR-STANDBY, only 14h since service (~0.3 h/day). Time-based 6-month next service pinned ~07/03/2027 (fixedDays 174). 20 kVA Kirloskar, moved to Al Bahyah/Al Shahamah Old. Air filter pending."
  },
  {
   "dg": "DG-833",
