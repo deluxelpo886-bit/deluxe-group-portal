@@ -4182,5 +4182,22 @@
   "currentHours": 16474,
   "currentHoursDate": "2026-10-28",
   "notes": "Serviced 28/10/2026 @ 16474h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (X - pending since 23/09, skipped 3x, carry one next visit). Next 16824h (~25/11), ~12.4 h/day. 50 kVA Perkins, Hydro Power, Mussafah MN1."
+ },
+ {
+  "dg": "DG-859",
+  "hours": 4073,
+  "date": "2026-10-28",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 9.1,
+  "nextService": 4523,
+  "nextServiceDate": "2026-12-05",
+  "interval": 450,
+  "currentHours": 4073,
+  "currentHoursDate": "2026-10-28",
+  "notes": "Serviced 28/10/2026 @ 4073h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X - pending). Card was written 'DG-853' but this is DG-859 (DG-853 is at ~17765h; hours/450-cycle match DG-859). Next 4523h (~05/12), ~9.1 h/day. 250 kVA Kirloskar, Trojan, Al Bahyah."
  }
 ]
