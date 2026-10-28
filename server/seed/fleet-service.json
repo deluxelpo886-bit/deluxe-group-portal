@@ -3908,12 +3908,13 @@
   "oilFilter": false,
   "fuelFilter": false,
   "airFilter": false,
-  "dailyHours": 12,
+  "dailyHours": 8.8,
   "nextService": 50,
   "interval": 50,
-  "currentHours": 0,
-  "currentHoursDate": "2026-10-24",
-  "notes": "NEW ASSET - 250 kVA Kirloskar, zero meter. Installed 24/10/2026 at Trojan, Al Bahia (replaces DG-450). FIRST running-in service at 50h (~28/10 at ~12 h/day); after that normal 450h cycle. Company Heavy (confirm)."
+  "currentHours": 35,
+  "currentHoursDate": "2026-10-28",
+  "notes": "NEW ASSET - 250 kVA Kirloskar. Installed 24/10/2026 at Trojan, Al Bahia (replaces DG-450). Controller 35h on 28/10 (~8.8 h/day running-in). FIRST running-in service at 50h -> 15h left, due ~29/10; after that normal 450h cycle.",
+  "nextServiceDate": "2026-10-29"
  },
  {
   "dg": "DG-457",
