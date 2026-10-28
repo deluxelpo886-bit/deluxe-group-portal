@@ -4165,5 +4165,22 @@
   "currentHours": 4524,
   "currentHoursDate": "2026-10-28",
   "notes": "Serviced 28/10/2026 @ 4524h by Roland & Adil - oil, oil filter, fuel filter, NEW AIR FILTER all done (controller 4524h, 2097 starts). Next 4874h (~26/11), ~9.0 h/day (12h contract floor). 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix)."
+ },
+ {
+  "dg": "DG-502",
+  "hours": 16474,
+  "date": "2026-10-28",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.4,
+  "nextService": 16824,
+  "nextServiceDate": "2026-11-25",
+  "interval": 350,
+  "currentHours": 16474,
+  "currentHoursDate": "2026-10-28",
+  "notes": "Serviced 28/10/2026 @ 16474h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done AGAIN (X - pending since 23/09, skipped 3x, carry one next visit). Next 16824h (~25/11), ~12.4 h/day. 50 kVA Perkins, Hydro Power, Mussafah MN1."
  }
 ]
