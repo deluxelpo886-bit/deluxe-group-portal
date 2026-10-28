@@ -4125,5 +4125,22 @@
   "currentHours": 914,
   "currentHoursDate": "2026-10-28",
   "notes": "Engine overhaul COMPLETE. On-hired to FM RENTAL, deployed 28/10/2026, runs ~12 h/day. FIRST running-in service at +50 running hours (~02/11/2026) - oil + oil filter change, check for leaks after overhaul. Meter ~914h at handover (capture exact reading). 500 kVA Cummins."
+ },
+ {
+  "dg": "DG-459",
+  "hours": 1546,
+  "date": "2026-10-28",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 6.5,
+  "nextService": 1896,
+  "nextServiceDate": "2026-11-26",
+  "interval": 350,
+  "currentHours": 1546,
+  "currentHoursDate": "2026-10-28",
+  "notes": "Serviced 28/10/2026 @ 1546h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Replacement for DG-503 at Hydro Power, Mussafah MN1. Next 1896h (~26/11), ~6.5 h/day (12h contract floor). 62.5 kVA Kirloskar."
  }
 ]
