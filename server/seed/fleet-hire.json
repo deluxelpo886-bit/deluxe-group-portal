@@ -449,5 +449,11 @@
   "offHire": false,
   "since": "2026-10-28",
   "note": "Back on hire 28/10/2026 to TROJAN, Al Bahia in place of DG-558. 200 kVA Kirloskar; next service 36363h (~14/11)."
+ },
+ {
+  "dg": "DG-847",
+  "offHire": true,
+  "since": "2026-10-17",
+  "note": "Off-hire 17/10/2026 - returned to yard from Fantastic (Mussafah M40). 375 kVA Weichai. Available."
  }
 ]
