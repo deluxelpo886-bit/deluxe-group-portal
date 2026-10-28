@@ -980,11 +980,11 @@
   "airFilter": true,
   "dailyHours": 3.3,
   "currentHours": 9894,
-  "currentHoursDate": "2026-10-16",
+  "currentHoursDate": "2026-10-28",
   "nextService": 9973,
-  "nextServiceDate": "2026-10-31",
+  "nextServiceDate": "2026-11-04",
   "interval": 350,
-  "notes": "Controller 9894h confirmed 16/10/2026 (was 9893h on 07/10 - only 1h in 9 days, nearly idle/standby lately). 79h left to next (9973); next service ~31/10. 60 kVA, Trojan, Yas Island."
+  "notes": "Controller 9894h re-confirmed 28/10/2026 - UNCHANGED since 16/10 (idle/standby, ~0 h in 12 days). 79h left to next (9973); on 12h plan ~04/11. 60 kVA Jet, Trojan, Yas Island."
  },
  {
   "dg": "DG-836",
