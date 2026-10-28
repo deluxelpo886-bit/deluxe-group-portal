@@ -245,6 +245,35 @@
       <div class="hbtns"><button class="hcancel" id="bdCancel">Cancel · रद्द · <span class="ur">منسوخ</span></button><button class="hsend bd" id="bdSend">Send to office · भेजो · <span class="ur">آفس کو بھیجیں</span></button></div>
     </div>
   </div>
+
+  <!-- Report a sales lead (scout) -->
+  <input type="file" accept="image/*" capture="environment" id="leadFile" style="display:none;">
+  <div class="hov" id="leadOv">
+    <div class="hbox tall">
+      <div class="htitle">📣 New rental lead<span class="hi">नया लीड (ऑफिस को)</span><span class="u">نیا لیڈ (آفس کو)</span></div>
+      <div class="leadhint">See another company's generator at a site, a new project, or a customer who needs more power? Send it — the office will follow up and sell.<span class="hi">साइट पर दूसरी कंपनी का जनरेटर, नया काम, या ग्राहक को और चाहिए — भेजो, ऑफिस बात करेगा</span></div>
+      <label class="hlbl">What did you see? · क्या देखा · <span class="ur">کیا دیکھا</span></label>
+      <div class="chips" id="leadCat">
+        <button type="button" class="chip" data-v="Competitor genset on site">🏭 Other company genset<span>दूसरी कंपनी · <span class="ur">دوسری کمپنی</span></span></button>
+        <button type="button" class="chip" data-v="New construction site">🏗️ New site / project<span>नया साइट · <span class="ur">نیا سائٹ</span></span></button>
+        <button type="button" class="chip" data-v="Customer needs more power">➕ Needs more power<span>और चाहिए · <span class="ur">مزید چاہیے</span></span></button>
+        <button type="button" class="chip" data-v="Other">❓ Other<span>और · <span class="ur">دیگر</span></span></button>
+      </div>
+      <label class="hlbl">Company / site name (if known) · कंपनी/साइट · <span class="ur">کمپنی/سائٹ</span></label>
+      <input type="text" id="leadCo" placeholder="e.g. Al Noor Contracting / ICAD site">
+      <label class="hlbl">Where · जगह · <span class="ur">کہاں</span></label>
+      <input type="text" id="leadLoc" placeholder="area / landmark">
+      <label class="hlbl">Phone (if any) · फ़ोन · <span class="ur">فون</span></label>
+      <input type="tel" id="leadPh" placeholder="site contact number">
+      <label class="hlbl">Note · नोट · <span class="ur">نوٹ</span></label>
+      <input type="text" id="leadNote" placeholder="e.g. 250 kVA old genset, needs 3 more next month">
+      <button class="hcam" id="leadCam">📷 Photo (genset / site) · फोटो · <span class="ur">فوٹو</span></button>
+      <img id="leadPrev" class="ovprev" alt="" style="display:none;">
+      <div class="leadgps" id="leadGps">📍 Location will be attached automatically</div>
+      <div class="herr" id="leadErr"></div>
+      <div class="hbtns"><button class="hcancel" id="leadCancel">Cancel · रद्द · <span class="ur">منسوخ</span></button><button class="hsend lead" id="leadSend">Send to office · भेजो · <span class="ur">آفس کو بھیجیں</span></button></div>
+    </div>
+  </div>
   <style>
     .hbox.tall{max-height:92vh;overflow:auto;}
     .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:3px 0 2px;}
@@ -252,6 +281,13 @@
     .chips .chip{background:#0f141b;border:1px solid #273141;color:#9fb0c0;border-radius:12px;padding:11px 8px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;line-height:1.2;}
     .chips .chip span{display:block;font-size:11px;font-weight:500;opacity:.8;margin-top:2px;}
     .chips .chip.on{background:#13432a;border-color:#2f8a55;color:#8ff0b4;}
+    .leadbtn{width:100%;margin-bottom:12px;background:linear-gradient(135deg,#8a5a12,#c88a1c);color:#1a1200;border:none;border-radius:13px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;display:block;box-shadow:0 8px 20px -10px rgba(200,138,28,.6);}
+    .leadbtn .hi{display:block;font-size:12px;font-weight:700;opacity:.85;margin-top:2px;}
+    .leadbtn .u{display:block;font-size:12px;font-weight:700;opacity:.85;}
+    .leadhint{font-size:12.5px;color:#9fb0c0;background:#0f141b;border:1px solid #273141;border-radius:10px;padding:9px 11px;margin:2px 0 8px;line-height:1.4;}
+    .leadhint .hi{display:block;font-size:11px;opacity:.8;margin-top:3px;}
+    .leadgps{font-size:11.5px;color:#7fd0a0;margin:8px 0 2px;}
+    .hsend.lead{background:#1f6b3b;}
     .chips.pri .chip.on{background:#1e3a8a;border-color:#3b82f6;color:#bfdbfe;}
     .chips.pri .chip.on[data-v="Critical"]{background:#4a1410;border-color:#b3261e;color:#ffb4a8;}
     .chips.pri .chip.on[data-v="High"]{background:#4a2c0a;border-color:#d08b1e;color:#ffd9a0;}
@@ -494,7 +530,9 @@
       '<div style="display:flex;gap:8px;margin-bottom:12px;">'+
       '<button class="hours-list" style="margin:0;flex:1;" onclick="openHoursFor(\'\')">📷 Send hours · घंटे · <span class="ur">گھنٹے</span></button>'+
       '<button class="hours-list" style="margin:0;flex:0 0 auto;background:#3a2417;color:#f0b48c;border-color:#7a4a2a;" onclick="testAlarm()">🔔 Test · जाँच · <span class="ur">چیک</span></button>'+
-      '</div><div class="h"><b>My jobs</b><span>मेरे काम · <span class="ur">میرے کام</span> ('+active.length+')</span></div>';
+      '</div>'+
+      '<button class="leadbtn" onclick="openLead()">📣 Spot a rental lead → office<span class="hi">नया काम/लीड ऑफिस को भेजो</span><span class="u">نیا لیڈ آفس کو بھیجیں</span></button>'+
+      '<div class="h"><b>My jobs</b><span>मेरे काम · <span class="ur">میرے کام</span> ('+active.length+')</span></div>';
     if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं<span class="u">ابھی کوئی کام نہیں</span></span></div>';
     active.forEach(function(j){ html+=jobCard(j); });
     if(done.length){ html+='<div class="h" style="margin-top:18px;"><b>Done today</b><span>आज पूरा हुआ · <span class="ur">آج مکمل</span></span></div>'; done.forEach(function(j){ html+=jobCard(j); }); }
@@ -689,6 +727,32 @@
       $('bdOv').classList.remove('on'); showBanner('✓ Breakdown sent to office · ऑफिस को भेज दिया',(dg),'آفس کو بھیج دیا'); $('doneOv').classList.add('on');
     }catch(e){ $('bdErr').textContent='Failed — try again · फिर कोशिश करो · دوبارہ کوشش کریں'; }
     $('bdSend').disabled=false; $('bdSend').textContent='Send to office · भेजो';
+  });
+
+  // ---------- Report a sales lead (scout) ----------
+  var leadPhoto=null, leadLat=null, leadLon=null;
+  window.openLead=function(){ leadPhoto=null; leadLat=null; leadLon=null;
+    $('leadCo').value=''; $('leadLoc').value=''; $('leadPh').value=''; $('leadNote').value=''; $('leadErr').textContent='';
+    $('leadPrev').style.display='none'; $('leadPrev').removeAttribute('src');
+    $('leadCat').querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+    $('leadGps').textContent='📍 Getting location… · लोकेशन ले रहे';
+    if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(function(p){ leadLat=p.coords.latitude; leadLon=p.coords.longitude; $('leadGps').textContent='📍 Location attached ✓ · लोकेशन मिल गई'; }, function(){ $('leadGps').textContent='📍 Location off — type the area below · जगह लिखो'; }, {enableHighAccuracy:true,timeout:8000}); }
+    else { $('leadGps').textContent='📍 Type the area below · जगह लिखो'; }
+    $('leadOv').classList.add('on'); };
+  $('leadCancel').addEventListener('click',function(){ $('leadOv').classList.remove('on'); });
+  singleSelect('leadCat');
+  $('leadCam').addEventListener('click',function(){ $('leadFile').click(); });
+  $('leadFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(f) resizeImg(f,function(url){ if(url){ leadPhoto=url; $('leadPrev').src=url; $('leadPrev').style.display='block'; } }); this.value=''; });
+  $('leadSend').addEventListener('click',async function(){
+    $('leadErr').textContent='';
+    var type=picked('leadCat'), note=$('leadNote').value.trim(), co=$('leadCo').value.trim();
+    if(!type && !note && !co){ $('leadErr').textContent='Pick what you saw or add a note · कुछ चुनो/लिखो · کچھ منتخب کریں'; return; }
+    var body={ leadType:type, company:co, location:$('leadLoc').value.trim(), phone:$('leadPh').value.trim(), note:note, photo:leadPhoto, lat:leadLat, lon:leadLon };
+    $('leadSend').disabled=true; $('leadSend').textContent='Sending… · भेज रहे';
+    try{ await api('/api/tech/'+encodeURIComponent(TOKEN)+'/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      $('leadOv').classList.remove('on'); showBanner('✓ Lead sent to office · लीड भेज दिया','','آفس کو بھیج دیا'); $('doneOv').classList.add('on');
+    }catch(e){ $('leadErr').textContent='Failed — try again · फिर कोशिश करो · دوبارہ کوشش'; }
+    $('leadSend').disabled=false; $('leadSend').textContent='Send to office · भेजो';
   });
 
   // ---------- Push ----------
