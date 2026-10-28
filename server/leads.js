@@ -49,6 +49,11 @@ function shape(rec) {
     stage,
     nextDate: isDate(rec && rec.nextDate) ? String(rec.nextDate).slice(0, 10) : '',
     notes: clean(rec && rec.notes, 1000),
+    // Scout fields (optional) - a field technician spotting a lead on site.
+    leadType: clean(rec && rec.leadType, 40),
+    lat: (rec && rec.lat != null && isFinite(Number(rec.lat))) ? Number(rec.lat) : null,
+    lon: (rec && rec.lon != null && isFinite(Number(rec.lon))) ? Number(rec.lon) : null,
+    source: clean(rec && rec.source, 20),
   };
 }
 
@@ -61,6 +66,7 @@ function add(rec) {
     id: 'LD' + Date.now().toString(36) + Math.floor(Math.random() * 1000),
     seedKey: (rec && rec.seedKey) || null,
     createdBy: clean(rec && rec.createdBy, 60),
+    photo: (rec && rec.photo) ? String(rec.photo) : null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }, s);

@@ -2091,6 +2091,43 @@ app.post('/api/tech/:token/breakdown', (req, res) => {
   } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
 });
 
+// Technician reports a SALES LEAD from the field (the "scout" program): a
+// competitor genset seen on site, a new construction site, a customer who may
+// need another unit, etc. Flows straight into the Growth & Sales leads list
+// (stage 'lead', source 'field-tech') for the office to follow up. The tech
+// only spots & sends; the office does the selling. Optional photo + GPS.
+app.post('/api/tech/:token/lead', (req, res) => {
+  const t = techFromToken(req);
+  if (!t) return res.status(404).json({ error: 'Unknown link' });
+  try {
+    const b = req.body || {};
+    const type = String(b.leadType || '').trim();
+    const loc = String(b.location || '').trim();
+    const note = String(b.note || b.notes || '').trim();
+    // Company is required by the store; a scout may not know it, so build a
+    // readable placeholder the office can rename once they make contact.
+    const company = String(b.company || '').trim()
+      || ('Field lead' + (type ? ' · ' + type : '') + (loc ? ' @ ' + loc : ''));
+    const it = leads.add({
+      company,
+      sector: type,
+      contact: String(b.contact || '').trim(),
+      phone: String(b.phone || '').trim(),
+      location: loc,
+      need: note.slice(0, 160),
+      notes: note,
+      leadType: type,
+      lat: b.lat,
+      lon: b.lon,
+      photo: b.photo,
+      source: 'field-tech',
+      createdBy: t.name,
+      stage: 'lead',
+    });
+    res.json({ ok: true, id: it.id });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+
 // ---------- Workshop repair tracking ----------
 // Generators in the workshop: queued / repairing / awaiting parts / completed.
 // Same fleet login. See server/repairs.js. Its own page at /workshop.
