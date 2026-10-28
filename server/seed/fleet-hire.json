@@ -431,5 +431,23 @@
   "offHire": true,
   "since": "2026-10-24",
   "note": "Off-hire 24/10/2026 (Saturday) - BREAKDOWN (bearing broken). Cross-hire from FM Equipment Rental - to be collected by FM Rental."
+ },
+ {
+  "dg": "DG-545",
+  "offHire": true,
+  "since": "2026-10-28",
+  "note": "Off-hire 28/10/2026 - contract ended, returned to yard from Hashim Contracting (MBZ City ME-15). 150 kVA Cummins."
+ },
+ {
+  "dg": "DG-558",
+  "offHire": true,
+  "since": "2026-10-28",
+  "note": "Off-hire 28/10/2026 - returned to yard from Trojan, Al Bahia (replaced by DG-450). 200 kVA Cummins."
+ },
+ {
+  "dg": "DG-450",
+  "offHire": false,
+  "since": "2026-10-28",
+  "note": "Back on hire 28/10/2026 to TROJAN, Al Bahia in place of DG-558. 200 kVA Kirloskar; next service 36363h (~14/11)."
  }
 ]
