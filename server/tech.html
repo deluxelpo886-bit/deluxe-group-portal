@@ -288,6 +288,9 @@
     .leadhint .hi{display:block;font-size:11px;opacity:.8;margin-top:3px;}
     .leadgps{font-size:11.5px;color:#7fd0a0;margin:8px 0 2px;}
     .hsend.lead{background:#1f6b3b;}
+    .cardbtn{width:100%;margin-bottom:12px;background:linear-gradient(135deg,#0d3b66,#1769aa);color:#fff;border:none;border-radius:13px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;display:block;box-shadow:0 8px 20px -10px rgba(23,105,170,.6);}
+    .cardbtn .hi{display:block;font-size:12px;font-weight:700;opacity:.85;margin-top:2px;}
+    .cardbtn .u{display:block;font-size:12px;font-weight:700;opacity:.85;}
     .chips.pri .chip.on{background:#1e3a8a;border-color:#3b82f6;color:#bfdbfe;}
     .chips.pri .chip.on[data-v="Critical"]{background:#4a1410;border-color:#b3261e;color:#ffb4a8;}
     .chips.pri .chip.on[data-v="High"]{background:#4a2c0a;border-color:#d08b1e;color:#ffd9a0;}
@@ -532,6 +535,7 @@
       '<button class="hours-list" style="margin:0;flex:0 0 auto;background:#3a2417;color:#f0b48c;border-color:#7a4a2a;" onclick="testAlarm()">🔔 Test · जाँच · <span class="ur">چیک</span></button>'+
       '</div>'+
       '<button class="leadbtn" onclick="openLead()">📣 Spot a rental lead → office<span class="hi">नया काम/लीड ऑफिस को भेजो</span><span class="u">نیا لیڈ آفس کو بھیجیں</span></button>'+
+      '<button class="cardbtn" onclick="shareCard()">📄 Share our rental card<span class="hi">रेंटल कार्ड WhatsApp पर भेजो</span><span class="u">کرایہ کارڈ بھیجیں</span></button>'+
       '<div class="h"><b>My jobs</b><span>मेरे काम · <span class="ur">میرے کام</span> ('+active.length+')</span></div>';
     if(!active.length && !done.length) html+='<div class="empty"><div class="ic">☕</div><b>No jobs now</b><span>अभी कोई काम नहीं<span class="u">ابھی کوئی کام نہیں</span></span></div>';
     active.forEach(function(j){ html+=jobCard(j); });
@@ -754,6 +758,22 @@
     }catch(e){ $('leadErr').textContent='Failed — try again · फिर कोशिश करो · دوبارہ کوشش'; }
     $('leadSend').disabled=false; $('leadSend').textContent='Send to office · भेजो';
   });
+
+  // ---------- Share the branded rental card (WhatsApp) ----------
+  window.shareCard=async function(){
+    var cap='Deluxe Generator Rental — 20 to 500 kVA, 24/7 service & breakdown across Abu Dhabi & UAE. Call/WhatsApp +971 54 998 5441 / +971 55 335 6428. sales@deluxehe.com';
+    try{
+      var resp=await fetch('/rental-card.png',{cache:'reload'});
+      var blob=await resp.blob();
+      var file=new File([blob],'Deluxe-Generator-Rental.png',{type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:'Deluxe Generator Rental', text:cap});
+        return;
+      }
+    }catch(e){ if(e && e.name==='AbortError') return; }
+    // Fallback (older phones): open the image full screen so they can long-press -> Share/Save
+    try{ window.open('/rental-card.png','_blank'); }catch(e){ location.href='/rental-card.png'; }
+  };
 
   // ---------- Push ----------
   var swReg=null;
