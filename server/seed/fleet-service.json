@@ -4267,5 +4267,22 @@
   "currentHours": 30276,
   "currentHoursDate": "2026-10-30",
   "notes": "Serviced 30/10/2026 @ 30276h by Sonu - oil, oil filter, fuel filter AND air filter all done (air filter cleared). Next 30626h (~28/11), ~8.9 h/day (12h contract floor). 100 kVA Weber, Dafoos Fire, Emirates Steel (ICAD Mussafah)."
+ },
+ {
+  "dg": "DG-480",
+  "hours": 11269,
+  "date": "2026-10-30",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 5.5,
+  "nextService": 11719,
+  "nextServiceDate": "2026-12-07",
+  "interval": 450,
+  "currentHours": 11269,
+  "currentHoursDate": "2026-10-30",
+  "notes": "Serviced 30/10/2026 @ 11269h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X - pending). Next 11719h (+450 per card; ~07/12), ~5.5 h/day (12h contract floor). 250 kVA Kirloskar, NOV, Mussafah M42."
  }
 ]
