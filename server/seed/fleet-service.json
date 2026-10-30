@@ -4250,5 +4250,22 @@
   "currentHours": 9611,
   "currentHoursDate": "2026-10-21",
   "notes": "CROSS-HIRE genset from Malwan Technical & Mechanical (100 kVA). Located NEAR KHALIFA INDUSTRIAL CITY B, Abu Dhabi (24.600533, 54.928185 / plus code 7HPPJW2H+67). Runs 24 h/day. Serviced 21/10/2026 @9611h by Sonu & Hussain - oil, oil filter, fuel filter AND air filter all done. Next service 9961h (+350); at 24 h/day that is ~15 days -> due 05/11/2026. Deluxe services this cross-hire unit."
+ },
+ {
+  "dg": "DG-467",
+  "hours": 30276,
+  "date": "2026-10-30",
+  "technician": "SONU",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 8.9,
+  "nextService": 30626,
+  "nextServiceDate": "2026-11-28",
+  "interval": 350,
+  "currentHours": 30276,
+  "currentHoursDate": "2026-10-30",
+  "notes": "Serviced 30/10/2026 @ 30276h by Sonu - oil, oil filter, fuel filter AND air filter all done (air filter cleared). Next 30626h (~28/11), ~8.9 h/day (12h contract floor). 100 kVA Weber, Dafoos Fire, Emirates Steel (ICAD Mussafah)."
  }
 ]
