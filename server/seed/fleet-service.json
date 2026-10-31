@@ -4284,5 +4284,22 @@
   "currentHours": 11269,
   "currentHoursDate": "2026-10-30",
   "notes": "Serviced 30/10/2026 @ 11269h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X - pending). Next 11719h (+450 per card; ~07/12), ~5.5 h/day (12h contract floor). 250 kVA Kirloskar, NOV, Mussafah M42."
+ },
+ {
+  "dg": "DG-829",
+  "hours": 5579,
+  "date": "2026-10-31",
+  "technician": "IK & VELU",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 12,
+  "nextService": 5929,
+  "nextServiceDate": "2026-11-29",
+  "interval": 350,
+  "currentHours": 5579,
+  "currentHoursDate": "2026-10-31",
+  "notes": "Full service 31/10/2026 @ 5579h by IK & Velu before dispatch - oil, oil filter, fuel filter, air filter all done (meter unchanged since 09/06, was in yard). On-hired to AlNawars Transport, Al Ajban (contract HPP1-000259). Next 5929h (+350 per card; ~29/11). 320 kVA Caterpillar."
  }
 ]
