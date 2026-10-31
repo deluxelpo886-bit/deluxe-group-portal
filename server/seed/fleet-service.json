@@ -4301,5 +4301,23 @@
   "currentHours": 5579,
   "currentHoursDate": "2026-10-31",
   "notes": "Full service 31/10/2026 @ 5579h by IK & Velu before dispatch - oil, oil filter, fuel filter, air filter all done (meter unchanged since 09/06, was in yard). On-hired to AlNawars Transport, Al Ajban (contract HPP1-000259). Next 5929h (+350 per card; ~29/11). 320 kVA Caterpillar."
+ },
+ {
+  "dg": "DG-563",
+  "hours": 798,
+  "date": "2026-10-31",
+  "technician": "JAYRAJ & IMRAN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 23.7,
+  "nextService": 1148,
+  "nextServiceDate": "2026-11-15",
+  "interval": 350,
+  "fixedDays": 15,
+  "currentHours": 798,
+  "currentHoursDate": "2026-10-31",
+  "notes": "Serviced 31/10/2026 @ 798h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done (air filter finally cleared). Runs ~23.7 h/day (near-24h heavy); on the 15-day cycle -> next 1148h (~15/11). 82.5 kVA Kirloskar, El Masria Cement, Khalifa Industrial City B."
  }
 ]
