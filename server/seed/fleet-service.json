@@ -4319,5 +4319,22 @@
   "currentHours": 798,
   "currentHoursDate": "2026-10-31",
   "notes": "Serviced 31/10/2026 @ 798h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done (air filter finally cleared). Runs ~23.7 h/day (near-24h heavy); on the 15-day cycle -> next 1148h (~15/11). 82.5 kVA Kirloskar, El Masria Cement, Khalifa Industrial City B."
+ },
+ {
+  "dg": "DG-800",
+  "hours": 13600,
+  "date": "2026-11-01",
+  "technician": "ADEEL & ROLAND",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": true,
+  "dailyHours": 11.9,
+  "nextService": 14050,
+  "nextServiceDate": "2026-12-09",
+  "interval": 450,
+  "currentHours": 13600,
+  "currentHoursDate": "2026-11-01",
+  "notes": "Serviced 01/11/2026 @ 13600h by Adeel & Roland - oil, oil filter, fuel filter, air filter all done (controller 13600h). Next 14050h (~09/12), ~11.9 h/day. REAR CRANKSHAFT SEAL still to replace (recurring leak - VERY IMPORTANT; confirm if done this visit). 350 kVA Caterpillar, Trojan GC, Al Reem RR8."
  }
 ]
