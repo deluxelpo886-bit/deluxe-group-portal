@@ -4336,5 +4336,22 @@
   "currentHours": 13600,
   "currentHoursDate": "2026-11-01",
   "notes": "Serviced 01/11/2026 @ 13600h by Adeel & Roland - oil, oil filter, fuel filter, air filter all done (controller 13600h). Next 14050h (~09/12), ~11.9 h/day. REAR CRANKSHAFT SEAL still to replace (recurring leak - VERY IMPORTANT; confirm if done this visit). 350 kVA Caterpillar, Trojan GC, Al Reem RR8."
+ },
+ {
+  "dg": "DG-858",
+  "hours": 16863,
+  "date": "2026-11-01",
+  "technician": "SONU HUSSAIN",
+  "oil": true,
+  "oilFilter": true,
+  "fuelFilter": true,
+  "airFilter": false,
+  "dailyHours": 12.4,
+  "nextService": 17243,
+  "nextServiceDate": "2026-12-02",
+  "interval": 450,
+  "currentHours": 16863,
+  "currentHoursDate": "2026-11-01",
+  "notes": "Serviced 01/11/2026 @ 16863h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X - pending). Next 17243h per card (~02/12), ~12.4 h/day. 250 kVA Kirloskar, Ramah, Mushayrif U32."
  }
 ]
