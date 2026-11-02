@@ -617,12 +617,12 @@
   "airFilter": true,
   "dailyHours": 1.5,
   "nextService": 14474,
-  "nextServiceDate": "2026-10-25",
+  "nextServiceDate": "2026-11-12",
   "interval": 350,
   "currentHours": 14332,
   "currentHoursDate": "2026-10-16",
-  "urgent": true,
-  "notes": "Controller reading 14332h 15m on 16/10/2026 (3624 starts) -> 142h to next service (14474). Light use ~1.5 h/day (208h since the 30/05 service at 14124h). Not hours-due - but the office SCHEDULED a time-based service for 25/10/2026 (bundled with DG-858 at the same site, Mushayrif U32). Forced onto the 25/10 plan. Ramah, Mushayrif U32. Last service 30/05 by Sabir & Bakhtamal (oil, oil filter, fuel filter)."
+  "notes": "Controller 14332h on 16/10 (~1.5 h/day light use). Office SKIPPED/deferred the service by 10 days -> next service 12/11/2026 (pinned). Ramah, Mushayrif U32. Last service 30/05 by Sabir & Bakhtamal.",
+  "fixedDays": 166
  },
  {
   "dg": "DG-490",
@@ -3882,8 +3882,9 @@
   "interval": 50,
   "currentHours": 35,
   "currentHoursDate": "2026-10-28",
-  "notes": "NEW ASSET - 250 kVA Kirloskar. Installed 24/10/2026 at Trojan, Al Bahia (replaces DG-450). Controller 35h on 28/10 (~8.8 h/day running-in). FIRST running-in service at 50h -> 15h left, due ~29/10; after that normal 450h cycle.",
-  "nextServiceDate": "2026-10-29"
+  "notes": "NEW ASSET - 250 kVA Kirloskar. Installed 24/10/2026 at Trojan, Al Bahia (replaces DG-450). Controller 35h on 28/10. FIRST running-in service at 50h - date held at 05/11/2026 (office, pinned). After that normal 450h cycle.",
+  "nextServiceDate": "2026-11-05",
+  "fixedDays": 12
  },
  {
   "dg": "DG-457",
