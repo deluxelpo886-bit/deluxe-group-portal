@@ -3271,13 +3271,13 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 13411,
-  "nextServiceDate": "2026-11-04",
+  "nextServiceDate": "2026-11-03",
   "interval": 350,
   "fixedDays": 15,
   "dailyHours": 19.7,
   "currentHours": 13325,
-  "currentHoursDate": "2026-10-31",
-  "notes": "Serviced 16/10/2026 at 13061h by Sonu Hussain - oil, oil filter & fuel filter renewed. AIR FILTER NOT changed (pending - carry one and fit at next service). Controller 13325h confirmed Sat 31/10/2026 -> 86h left to next (13411). ~19.7 h/day heavy/near-24h. Due ~04/11. Head gasket noted on card (confirm/arrange). 160 kVA FG Wilson, Trojan, ICAD III."
+  "currentHoursDate": "2026-10-30",
+  "notes": "Serviced 16/10/2026 at 13061h by Sonu Hussain - oil, oil filter & fuel filter renewed. AIR FILTER NOT changed (pending - carry one and fit at next service). Controller 13325h confirmed Sat 30/10/2026 -> 86h left to next (13411). ~19.7 h/day heavy/near-24h. Due ~04/11. Head gasket noted on card (confirm/arrange). 160 kVA FG Wilson, Trojan, ICAD III."
  },
  {
   "dg": "DG-35",
