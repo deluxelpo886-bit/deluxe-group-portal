@@ -455,5 +455,11 @@
   "offHire": true,
   "since": "2026-10-17",
   "note": "Off-hire 17/10/2026 - returned to yard from Fantastic (Mussafah M40). 375 kVA Weichai. Available."
+ },
+ {
+  "dg": "DG-851",
+  "offHire": true,
+  "since": "2026-10-31",
+  "note": "Off-hire 31/10/2026 - returned to yard from Al Hashim (Al Reem Island RS3). 40 kVA Kubota. Available."
  }
 ]
