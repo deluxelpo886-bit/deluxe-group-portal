@@ -252,7 +252,8 @@
   "interval": 450,
   "notes": "Serviced 22/09/2026 at 5981h by Sonu & Hussain (oil + oil filter + fuel filter; AIR FILTER pending). Controller 6549h confirmed 02/11/2026 -> PAST next-service hour (6431h) by 118h -> SERVICE DUE NOW (overdue). ~8.5 h/day. Fit the pending air filter at this service. 320 kVA CAT, Noor Al Sahara Ready Mix, Jumeirah Islands Dubai.",
   "currentHours": 6549,
-  "currentHoursDate": "2026-11-02"
+  "currentHoursDate": "2026-11-02",
+  "dailyHours": 13.9
  },
  {
   "dg": "DG-555",
