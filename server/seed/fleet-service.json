@@ -248,9 +248,11 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 6431,
-  "nextServiceDate": "2026-11-01",
+  "nextServiceDate": "2026-11-02",
   "interval": 450,
-  "notes": "Serviced 22/09/2026 at 5981h by Sonu & Hussain (oil + oil filter + fuel filter; air filter NOT done - pending). Controller confirmed 5981h. Next 6431h (450h cycle -> +40 days = 01/11/2026). 320 kVA CAT, Noor Al Sahara Ready Mix, Jumeirah Islands Dubai."
+  "notes": "Serviced 22/09/2026 at 5981h by Sonu & Hussain (oil + oil filter + fuel filter; AIR FILTER pending). Controller 6549h confirmed 02/11/2026 -> PAST next-service hour (6431h) by 118h -> SERVICE DUE NOW (overdue). ~8.5 h/day. Fit the pending air filter at this service. 320 kVA CAT, Noor Al Sahara Ready Mix, Jumeirah Islands Dubai.",
+  "currentHours": 6549,
+  "currentHoursDate": "2026-11-02"
  },
  {
   "dg": "DG-555",
