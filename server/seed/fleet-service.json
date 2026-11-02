@@ -1368,12 +1368,12 @@
   "fuelFilter": true,
   "airFilter": false,
   "nextService": 7228,
-  "nextServiceDate": "2026-11-13",
+  "nextServiceDate": "2026-11-10",
   "interval": 350,
-  "dailyHours": 9.2,
-  "currentHours": 6878,
-  "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 06/10/2026 @ 6878h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (box blank). Next service 7228h (+350). ~9.2 h/day. 25 kVA Weber, Six Sigma, Dubai Jumeirah 1 (La Mer)."
+  "dailyHours": 9.3,
+  "currentHours": 7130,
+  "currentHoursDate": "2026-11-02",
+  "notes": "Serviced 06/10/2026 @ 6878h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 7130h 4m confirmed 02/11/2026 -> 98h left to next (7228); ~9.3 h/day. Due ~10/11. 25 kVA Weber, Six Sigma, Dubai Jumeirah 1 (La Mer)."
  },
  {
   "dg": "DG-852",
@@ -1398,12 +1398,12 @@
   "fuelFilter": true,
   "airFilter": true,
   "nextService": 3392,
-  "nextServiceDate": "2026-11-12",
+  "nextServiceDate": "2026-11-11",
   "interval": 350,
-  "dailyHours": 9.5,
-  "currentHours": 3042,
-  "currentHoursDate": "2026-10-06",
-  "notes": "Serviced 06/10/2026 @ 3042h by Sonu Hussain - oil, oil filter, fuel filter AND air filter all done. Next service 3392h (+350). ~9.5 h/day. 40 kVA, Six Sigma, Dubai Jumeirah 1 (La Mer)."
+  "dailyHours": 8.9,
+  "currentHours": 3282,
+  "currentHoursDate": "2026-11-02",
+  "notes": "Serviced 06/10/2026 @ 3042h by Sonu Hussain - oil, oil filter, fuel filter AND air filter all done. Controller 3282h 35m confirmed 02/11/2026 (689 starts) -> 110h left to next (3392); ~8.9 h/day. Due ~11/11. 40 kVA Kubota, Six Sigma, Dubai Jumeirah 1 (La Mer)."
  },
  {
   "dg": "DG-505",
