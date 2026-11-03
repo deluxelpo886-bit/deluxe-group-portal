@@ -4476,5 +4476,22 @@
     "currentHours": 4738,
     "currentHoursDate": "2026-11-03",
     "notes": "Serviced 03/11/2026 @ 4738h by Shafiullah - oil, oil filter, fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next visit. Ran 341h since 03/10 service (4397h) = ~11 h/day. Next 5088h (+350) -> due ~05/12/2026. 160 kVA Kirloskar, Green Ston, Al Ain."
+  },
+  {
+    "dg": "DG-542",
+    "hours": 2378,
+    "date": "2026-11-03",
+    "technician": "JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 2728,
+    "nextServiceDate": "2026-11-30",
+    "interval": 350,
+    "dailyHours": 13.0,
+    "currentHours": 2378,
+    "currentHoursDate": "2026-11-03",
+    "notes": "Serviced 03/11/2026 @ 2378h by Jayraj & Imran - oil, oil filter, fuel filter, air filter ALL done (previous pending air filter now fitted). Controller 2378h confirmed 03/11. Ran 380h since 23/09 (~9-16 h/day, heavy recent) - using ~13 h/day. Next 2728h (+350) -> due ~30/11/2026. NOTE: Jayraj flagged an item to be REPLACED at next service - confirm what part. 100 kVA Perkins, Trojan, Yas Island."
   }
 ]
