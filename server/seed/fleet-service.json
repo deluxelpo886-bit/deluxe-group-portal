@@ -4094,12 +4094,12 @@
     "airFilter": false,
     "dailyHours": 12,
     "nextService": 964,
-    "nextServiceDate": "2026-11-02",
+    "nextServiceDate": "2026-11-13",
     "interval": 50,
-    "fixedDays": 5,
+    "fixedDays": 16,
     "currentHours": 914,
     "currentHoursDate": "2026-10-28",
-    "notes": "Engine overhaul COMPLETE. On-hired to FM RENTAL, deployed 28/10/2026, runs ~12 h/day. FIRST running-in service at +50 running hours (~02/11/2026) - oil + oil filter change, check for leaks after overhaul. Meter ~914h at handover (capture exact reading). 500 kVA Cummins."
+    "notes": "Engine overhaul COMPLETE. On-hired to FM RENTAL, deployed 28/10/2026, runs ~12 h/day. FIRST running-in service at +50 running hours (~02/11/2026) - oil + oil filter change, check for leaks after overhaul. Meter ~914h at handover (capture exact reading). 500 kVA Cummins. | Running-in service DATE-PINNED to 13/11/2026 (moved +10 days per ops)."
   },
   {
     "dg": "DG-459",
