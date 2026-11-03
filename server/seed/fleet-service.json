@@ -4459,5 +4459,22 @@
     "currentHours": 3759,
     "currentHoursDate": "2026-11-03",
     "notes": "Serviced 03/11/2026 @ 3759h by Sonu & Hussain - oil, oil filter, fuel filter, air filter ALL done. Controller running (386V/51.4Hz). Ran 423h since 27/09 service (3336h) = ~11.4 h/day. Next 4209h (+450) -> due ~12/12/2026. 350 kVA Cummins, Gulf Contracting, Dubai (Hessyan First)."
+  },
+  {
+    "dg": "DG-861",
+    "hours": 4738,
+    "date": "2026-11-03",
+    "technician": "SHAFIULLAH",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 5088,
+    "nextServiceDate": "2026-12-05",
+    "interval": 350,
+    "dailyHours": 11.0,
+    "currentHours": 4738,
+    "currentHoursDate": "2026-11-03",
+    "notes": "Serviced 03/11/2026 @ 4738h by Shafiullah - oil, oil filter, fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next visit. Ran 341h since 03/10 service (4397h) = ~11 h/day. Next 5088h (+350) -> due ~05/12/2026. 160 kVA Kirloskar, Green Ston, Al Ain."
   }
 ]
