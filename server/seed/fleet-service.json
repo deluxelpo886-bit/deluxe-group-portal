@@ -1432,11 +1432,11 @@
     "airFilter": false,
     "dailyHours": 3.3,
     "nextService": 8789,
-    "nextServiceDate": "2026-11-02",
+    "nextServiceDate": "2026-11-28",
     "interval": 350,
-    "currentHours": 8716,
-    "currentHoursDate": "2026-10-21",
-    "notes": "Serviced 28/07/2026 @ 8439h by Sonu Hussain (oil + oil & fuel filters; AIR FILTER NOT changed - still pending). Controller 8716h on 21/10/2026 -> 73h left to 8789h service. Measured: 277h over 85 days since service = 3.3 h/day (and only 13h in the 16 days since 05/10 = ~0.8 h/day - running very light, NOT 6 h/day). At 3.3 h/day -> due ~12/11/2026. Was falsely overdue. Khalifa Industrial City B, KIZAD (OSAI). 40 kVA Kirlosker.",
+    "currentHours": 8719,
+    "currentHoursDate": "2026-11-03",
+    "notes": "Serviced 28/07/2026 @ 8439h by Sonu Hussain (oil + oil & fuel filters; AIR FILTER NOT changed - still pending). Controller 8716h on 21/10/2026 -> 73h left to 8789h service. Measured: 277h over 85 days since service = 3.3 h/day (and only 13h in the 16 days since 05/10 = ~0.8 h/day - running very light, NOT 6 h/day). At 3.3 h/day -> due ~12/11/2026. Was falsely overdue. Khalifa Industrial City B, KIZAD (OSAI). 40 kVA Kirlosker. | Meter 8719h on 03/11/2026 - only 3h since 21/10 (13 days) = running almost idle (~0.2 h/day). Still 70h to 8789h target; on hours it is far off, but 3+ months since service & air filter pending -> do a TIME-based service on next KIZAD visit and fit the air filter.",
     "fixedDays": 97
   },
   {
