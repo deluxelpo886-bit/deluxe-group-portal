@@ -1,465 +1,477 @@
 [
- {
-  "dg": "DG-869",
-  "offHire": true,
-  "note": "New yard stock - available for hire."
- },
- {
-  "dg": "DG-870",
-  "offHire": true,
-  "note": "New yard stock - available for hire."
- },
- {
-  "dg": "DG-871",
-  "offHire": true,
-  "note": "New yard stock - available for hire."
- },
- {
-  "dg": "DG-872",
-  "offHire": true,
-  "note": "New yard stock - available for hire."
- },
- {
-  "dg": "DG-564",
-  "offHire": false,
-  "since": "2026-10-10",
-  "note": "On hire from 10/10/2026 - EMDAD, KIZAD-B (EMDAD METAL SOLUTION). NEW 100 kVA genset, replaced DG-492. Starts at 0h; first service at 50h."
- },
- {
-  "dg": "DG-492",
-  "offHire": true,
-  "note": "Off-hire 10/10/2026 - replaced by DG-564 at EMDAD; bringing to yard."
- },
- {
-  "dg": "DG-833",
-  "offHire": false,
-  "since": "2026-09-09",
-  "note": "On hire - Dreams Cricket Academy LLC, Abu Dhabi University (HPP2-000055)"
- },
- {
-  "dg": "DG-818",
-  "offHire": false,
-  "since": "2026-09-14",
-  "note": "On hire from 14/09/2026 - Tectronics LLC (location pin pending). Hour meter 7531 at hire-out. 20 kVA."
- },
- {
-  "dg": "DG-404",
-  "offHire": true
- },
- {
-  "dg": "DG-418",
-  "offHire": true
- },
- {
-  "dg": "DG-452",
-  "offHire": true
- },
- {
-  "dg": "DG-455",
-  "offHire": true
- },
- {
-  "dg": "DG-457",
-  "offHire": false,
-  "since": "2026-09-02",
-  "note": "On hire \u2014 GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000220)"
- },
- {
-  "dg": "DG-36",
-  "offHire": false,
-  "since": "2026-09-02",
-  "note": "On hire \u2014 GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
- },
- {
-  "dg": "DG-470",
-  "offHire": true,
-  "since": "2026-09-30",
-  "note": "OFF-HIRED 30/09 (Netsonic OFF2-000036) - Classic Naaz Real Estate. COLLECTED and returned to yard 03/10. Available for hire. 220 kVA Iveco."
- },
- {
-  "dg": "DG-473",
-  "offHire": false,
-  "since": "2026-08-24",
-  "note": "On hire \u2014 EL MASRIA CEMENT INDUSTRIES"
- },
- {
-  "dg": "DG-476",
-  "offHire": false,
-  "since": "2026-08-03",
-  "note": "On hire \u2014 JOSEPH INDUSTRIES LLC, Dubai (HPP1-000192)"
- },
- {
-  "dg": "DG-478",
-  "offHire": true
- },
- {
-  "dg": "DG-483",
-  "offHire": true
- },
- {
-  "dg": "DG-485",
-  "offHire": false,
-  "since": "2026-08-22",
-  "note": "On hire - Hashim Contracting, Al Bahia (HPP1-000209)"
- },
- {
-  "dg": "DG-496",
-  "offHire": true
- },
- {
-  "dg": "DG-506",
-  "offHire": false,
-  "since": "2026-08-11",
-  "note": "On hire - Hashim Contracting, Al Bahia (HPP1-000203)"
- },
- {
-  "dg": "DG-507",
-  "offHire": false,
-  "since": "2026-08-14",
-  "note": "On hire - Silver Screen General Contracting, Al Ain (HPP2-000051)"
- },
- {
-  "dg": "DG-830",
-  "offHire": false,
-  "since": "2026-09-13",
-  "note": "On hire - sent from yard to replace DG-824 at the same site (Gulf Contracting, Dubai Hessyan First). Per Netsonic SER1-000136."
- },
- {
-  "dg": "DG-543",
-  "offHire": true
- },
- {
-  "dg": "DG-547",
-  "offHire": true
- },
- {
-  "dg": "DG-552",
-  "offHire": true
- },
- {
-  "dg": "DG-555",
-  "offHire": false,
-  "since": "2026-10-28",
-  "note": "On-hire 28/10/2026 to FM RENTAL (engine overhaul complete). Runs ~12 h/day. First running-in service at +50h (~02/11). Confirm exact FM site."
- },
- {
-  "dg": "DG-559",
-  "offHire": true
- },
- {
-  "dg": "DG-560",
-  "offHire": false,
-  "note": "On hire - X Dom, Yas Island",
-  "since": "2026-08-24"
- },
- {
-  "dg": "DG-NO",
-  "offHire": true
- },
- {
-  "dg": "DG-800",
-  "offHire": false,
-  "since": "2026-08-24",
-  "note": "On hire \u2014 TROJAN GENERAL CONTRACTING LLC"
- },
- {
-  "dg": "DG-805",
-  "offHire": true
- },
- {
-  "dg": "DG-806",
-  "offHire": true
- },
- {
-  "dg": "DG-814",
-  "offHire": true
- },
- {
-  "dg": "DG-822",
-  "offHire": false,
-  "note": "On hire - City Const, Al Faya",
-  "since": "2026-08-24"
- },
- {
-  "dg": "DG-823",
-  "offHire": false
- },
- {
-  "dg": "DG-825",
-  "offHire": true
- },
- {
-  "dg": "DG-827",
-  "offHire": false,
-  "since": "2026-09-30",
-  "note": "On hire 30/09 - EMDAD (Al Dhafra). 725 kVA Caterpillar. Meter 3514h. Repair cleared before dispatch."
- },
- {
-  "dg": "DG-829",
-  "offHire": false,
-  "note": "On-hire 31/10/2026 to ALNAWARS TRANSPORT GENERAL CONTRACTING (Al Ajban). Contract HPP1-000259, LPO NRS-A-26-10-11. With DD-827 diesel tank (1000 gal). 320 kVA Caterpillar. Site person Mr Aqeeb.",
-  "since": "2026-10-31"
- },
- {
-  "dg": "DG-832",
-  "offHire": false,
-  "note": "On hire - City Const, Baniyas",
-  "since": "2026-08-24"
- },
- {
-  "dg": "DG-836",
-  "offHire": true,
-  "since": "2026-09-21",
-  "note": "Off hire - returned to yard, available for hire (per Netsonic 21/09). Was on hire to Stolway Manufacturing (ICAD II)."
- },
- {
-  "dg": "DG-838",
-  "offHire": true
- },
- {
-  "dg": "DG-840",
-  "offHire": true
- },
- {
-  "dg": "DG-859",
-  "offHire": false,
-  "note": "On hire - Trojan, Al Bahia",
-  "since": "2026-08-24"
- },
- {
-  "dg": "DG-860",
-  "offHire": false,
-  "since": "2026-08-02",
-  "note": "On hire - City Construction, Gayathi (HPP1-000191)"
- },
- {
-  "dg": "DG-862",
-  "offHire": true,
-  "note": "In workshop - engine overhauling"
- },
- {
-  "dg": "DG-868",
-  "offHire": false,
-  "since": "2026-10-08",
-  "note": "On hire - ADNOC fuel station Al Shamkha (0-450h cycle, 12h/day)"
- },
- {
-  "dg": "DG-562",
-  "offHire": false,
-  "since": "2026-10-08",
-  "note": "On hire - ADNOC fuel station Al Shamkha (0-450h cycle, 12h/day)"
- },
- {
-  "dg": "DG-863",
-  "offHire": true
- },
- {
-  "dg": "DG-811",
-  "offHire": true,
-  "since": "2026-08-26",
-  "note": "Off hire - not working (returned from Rock Star)"
- },
- {
-  "dg": "DG-453",
-  "offHire": false,
-  "note": "Back on hire 13/10/2026 at KHALIQ NOOR SCRAP LLC, Mussafah (last location kept). Serviced 08/10 @36672h; next 37022h."
- },
- {
-  "dg": "DG-488",
-  "offHire": true,
-  "since": "2026-10-12",
-  "note": "Off-hire 12/10/2026 - returned from Rock Star Scrap Trading (ICAD-1) to yard. Available. 40 kVA Weber."
- },
- {
-  "dg": "DG-484",
-  "offHire": true,
-  "since": "2026-09-01",
-  "note": "COURT CASE (AL SAFAKH) - service paused"
- },
- {
-  "dg": "DG-529",
-  "offHire": false,
-  "since": "2026-09-30",
-  "note": "On hire 30/09 - EMDAD (Al Dhafra). Meter 29405h."
- },
- {
-  "dg": "DG-538",
-  "offHire": true,
-  "since": "2026-09-30",
-  "note": "OFF-HIRED 30/09 (Netsonic OFF2-000035) - Aswar Al Garbia General Transporting, Musaffah. COLLECTED and returned to yard 06/10 (controller 3730h). Available for hire. 160 kVA Kirlosker. Air filter still pending."
- },
- {
-  "dg": "DG-842",
-  "offHire": true,
-  "since": "2026-09-30",
-  "note": "OFF-HIRED 30/09 (Netsonic OFF2-000037) - Bashundhara Property Management, Musaffah M40. COLLECTED and returned to yard 06/10 (controller 4403h). Available for hire. 200 kVA."
- },
- {
-  "dg": "DG-834",
-  "offHire": true,
-  "since": "2026-09-30",
-  "note": "OFF-HIRED 30/09 - Grand Falcon, Musaffah. COLLECTED and returned to yard at 6286h."
- },
- {
-  "dg": "DG-450",
-  "offHire": false,
-  "since": "2026-10-13",
-  "note": "Back on hire 13/10/2026 to TROJAN, Al Bahia (same site). Meter 36152h; next service 36363h (~02/11)."
- },
- {
-  "dg": "DG-456",
-  "offHire": false,
-  "since": "2026-09-21",
-  "note": "On hire 21/09 - E 20 INVESTMENT LTD, Al Ain (contract HPP1-000238). Contact: Tareq Ahmed 971569902418. Rate 6825/month. Driver Mhohsin."
- },
- {
-  "dg": "DG-430",
-  "offHire": false,
-  "since": "2026-09-20",
-  "note": "On hire 20/09 - Al Shuwaib (Shabiat Al Shuwaib). Customer, hours & rate pending (to update 21/09)."
- },
- {
-  "dg": "DG-532",
-  "offHire": true,
-  "since": "2026-10-17",
-  "note": "Off-hire 17/10/2026 - returned from Stolway Manufacturing (ICAD III) to yard. Available. 350 kVA CAT."
- },
- {
-  "dg": "DG-856",
-  "offHire": true,
-  "since": "2026-09-22",
-  "note": "Off-hire 22/09 - returned to yard (was on hire to Trojan, Al Hudayriat Island). 250 kVA Kirlosker."
- },
- {
-  "dg": "DG-836",
-  "offHire": false,
-  "since": "2026-09-22",
-  "note": "On hire 22/09 - deployed to Al Faya (Noor Al Shahra), replacing DG-541. 500 kVA Cummins."
- },
- {
-  "dg": "DG-541",
-  "offHire": true,
-  "since": "2026-09-22",
-  "note": "Off-hire 22/09 - returned to yard (was on hire to Noor Al Shahra, Al Faya; replaced by DG-836). 500 kVA FG Wilson."
- },
- {
-  "dg": "DG-500",
-  "offHire": true,
-  "since": "2026-09-23",
-  "note": "Off-hire 23/09 - returned to yard (was on hire to Mawaad, Al Faya North / Al Asheesh). 50 kVA Tata."
- },
- {
-  "dg": "DG-820",
-  "offHire": true,
-  "since": "2026-09-26",
-  "note": "Off-hire 26/09 - returned to yard (was on hire to Hydro Power, Baniyas West WB1). 45 kVA Kirlosker."
- },
- {
-  "dg": "DG-815",
-  "offHire": false,
-  "since": "2026-09-26",
-  "note": "On hire 26/09 - deployed from yard to OSAI, KIZAD (Khalifa Ind. City B), replacing DG-537 (which broke down). 30 kVA Perkins."
- },
- {
-  "dg": "DG-537",
-  "offHire": true,
-  "since": "2026-09-26",
-  "note": "Off-hire 26/09 - returned to yard for repair (ran overdue and broke down); replaced by DG-815 at OSAI, KIZAD. 40 kVA Kirlosker."
- },
- {
-  "dg": "DG-837",
-  "offHire": true,
-  "since": "2026-09-26",
-  "note": "Off-hire 26/09 - contract ended, returned to yard (was on hire to City Const, Al Shawamekh SHM11). 80 kVA Perkins."
- },
- {
-  "dg": "DG-563",
-  "offHire": false,
-  "since": "2026-09-26",
-  "note": "On hire 26/09 - NEW asset deployed to El Masria Cement (Shakhbout City), replacing DG-473. 82.5 kVA Kirloskar."
- },
- {
-  "dg": "DG-473",
-  "offHire": true,
-  "since": "2026-09-26",
-  "note": "Off-hire 26/09 - returned to yard, replaced by DG-563 at El Masria Cement (Shakhbout City). 100 kVA Weber."
- },
- {
-  "dg": "DG-836",
-  "offHire": true,
-  "since": "2026-10-06",
-  "note": "Off-hire 06/10 - returned to yard, replaced by DG-866 at Noor Al Shahra (Al Faya). 500 kVA. Available for hire."
- },
- {
-  "dg": "DG-866",
-  "offHire": false,
-  "since": "2026-10-06",
-  "note": "On hire 06/10 - deployed from yard to NOOR AL SHAHRA (Al Faya), replacing DG-836. Hour meter 0 at deployment. 380 kVA. First service at 350h (~04/11)."
- },
- {
-  "dg": "DG-554",
-  "offHire": true,
-  "since": "2026-10-22",
-  "note": "Off-hire 22/10/2026 - returned from Aswar, Mafraq (Jarn Yafour) to yard. Needs water pump change (water + oil leak). 40 kVA Weber."
- },
- {
-  "dg": "DG-837",
-  "offHire": true,
-  "since": "2026-10-23",
-  "note": "In yard - available. (On-hire to Total Power Company reversed per ops.) 80 kVA Perkins."
- },
- {
-  "dg": "DG-537",
-  "offHire": false,
-  "since": "2026-10-21",
-  "note": "On hire 21/10/2026 - deployed from yard to Total Power Building Equipment LLC, MBZ Mussafah (breakdown repair done). 40 kVA Kirloskar."
- },
- {
-  "dg": "DG-565",
-  "offHire": false,
-  "since": "2026-10-24",
-  "note": "On hire 24/10/2026 - NEW ASSET installed at Trojan, Al Bahia (replaces DG-450). 250 kVA Kirloskar, zero meter."
- },
- {
-  "dg": "DG-450",
-  "offHire": true,
-  "since": "2026-10-24",
-  "note": "Off-hire 24/10/2026 - replaced by DG-565 at Trojan, Al Bahia; returned to yard. 200 kVA Kirloskar."
- },
- {
-  "dg": "CH-FM-500",
-  "offHire": true,
-  "since": "2026-10-24",
-  "note": "Off-hire 24/10/2026 (Saturday) - BREAKDOWN (bearing broken). Cross-hire from FM Equipment Rental - to be collected by FM Rental."
- },
- {
-  "dg": "DG-545",
-  "offHire": true,
-  "since": "2026-10-28",
-  "note": "Off-hire 28/10/2026 - contract ended, returned to yard from Hashim Contracting (MBZ City ME-15). 150 kVA Cummins."
- },
- {
-  "dg": "DG-558",
-  "offHire": true,
-  "since": "2026-10-28",
-  "note": "Off-hire 28/10/2026 - returned to yard from Trojan, Al Bahia (replaced by DG-450). 200 kVA Cummins."
- },
- {
-  "dg": "DG-450",
-  "offHire": false,
-  "since": "2026-10-28",
-  "note": "Back on hire 28/10/2026 to TROJAN, Al Bahia in place of DG-558. 200 kVA Kirloskar; next service 36363h (~14/11)."
- },
- {
-  "dg": "DG-847",
-  "offHire": true,
-  "since": "2026-10-17",
-  "note": "Off-hire 17/10/2026 - returned to yard from Fantastic (Mussafah M40). 375 kVA Weichai. Available."
- },
- {
-  "dg": "DG-851",
-  "offHire": true,
-  "since": "2026-10-31",
-  "note": "Off-hire 31/10/2026 - returned to yard from Al Hashim (Al Reem Island RS3). 40 kVA Kubota. Available."
- }
+  {
+    "dg": "DG-869",
+    "offHire": true,
+    "note": "New yard stock - available for hire."
+  },
+  {
+    "dg": "DG-870",
+    "offHire": true,
+    "note": "New yard stock - available for hire."
+  },
+  {
+    "dg": "DG-871",
+    "offHire": true,
+    "note": "New yard stock - available for hire."
+  },
+  {
+    "dg": "DG-872",
+    "offHire": true,
+    "note": "New yard stock - available for hire."
+  },
+  {
+    "dg": "DG-564",
+    "offHire": false,
+    "since": "2026-10-10",
+    "note": "On hire from 10/10/2026 - EMDAD, KIZAD-B (EMDAD METAL SOLUTION). NEW 100 kVA genset, replaced DG-492. Starts at 0h; first service at 50h."
+  },
+  {
+    "dg": "DG-492",
+    "offHire": true,
+    "note": "Off-hire 10/10/2026 - replaced by DG-564 at EMDAD; bringing to yard."
+  },
+  {
+    "dg": "DG-833",
+    "offHire": false,
+    "since": "2026-09-09",
+    "note": "On hire - Dreams Cricket Academy LLC, Abu Dhabi University (HPP2-000055)"
+  },
+  {
+    "dg": "DG-818",
+    "offHire": false,
+    "since": "2026-09-14",
+    "note": "On hire from 14/09/2026 - Tectronics LLC (location pin pending). Hour meter 7531 at hire-out. 20 kVA."
+  },
+  {
+    "dg": "DG-404",
+    "offHire": true
+  },
+  {
+    "dg": "DG-418",
+    "offHire": true
+  },
+  {
+    "dg": "DG-452",
+    "offHire": true
+  },
+  {
+    "dg": "DG-455",
+    "offHire": true
+  },
+  {
+    "dg": "DG-457",
+    "offHire": false,
+    "since": "2026-09-02",
+    "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000220)"
+  },
+  {
+    "dg": "DG-36",
+    "offHire": false,
+    "since": "2026-09-02",
+    "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
+  },
+  {
+    "dg": "DG-470",
+    "offHire": true,
+    "since": "2026-09-30",
+    "note": "OFF-HIRED 30/09 (Netsonic OFF2-000036) - Classic Naaz Real Estate. COLLECTED and returned to yard 03/10. Available for hire. 220 kVA Iveco."
+  },
+  {
+    "dg": "DG-473",
+    "offHire": false,
+    "since": "2026-08-24",
+    "note": "On hire — EL MASRIA CEMENT INDUSTRIES"
+  },
+  {
+    "dg": "DG-476",
+    "offHire": false,
+    "since": "2026-08-03",
+    "note": "On hire — JOSEPH INDUSTRIES LLC, Dubai (HPP1-000192)"
+  },
+  {
+    "dg": "DG-478",
+    "offHire": true
+  },
+  {
+    "dg": "DG-483",
+    "offHire": true
+  },
+  {
+    "dg": "DG-485",
+    "offHire": false,
+    "since": "2026-08-22",
+    "note": "On hire - Hashim Contracting, Al Bahia (HPP1-000209)"
+  },
+  {
+    "dg": "DG-496",
+    "offHire": true
+  },
+  {
+    "dg": "DG-506",
+    "offHire": false,
+    "since": "2026-08-11",
+    "note": "On hire - Hashim Contracting, Al Bahia (HPP1-000203)"
+  },
+  {
+    "dg": "DG-507",
+    "offHire": false,
+    "since": "2026-08-14",
+    "note": "On hire - Silver Screen General Contracting, Al Ain (HPP2-000051)"
+  },
+  {
+    "dg": "DG-830",
+    "offHire": false,
+    "since": "2026-09-13",
+    "note": "On hire - sent from yard to replace DG-824 at the same site (Gulf Contracting, Dubai Hessyan First). Per Netsonic SER1-000136."
+  },
+  {
+    "dg": "DG-543",
+    "offHire": true
+  },
+  {
+    "dg": "DG-547",
+    "offHire": true
+  },
+  {
+    "dg": "DG-552",
+    "offHire": true
+  },
+  {
+    "dg": "DG-555",
+    "offHire": false,
+    "since": "2026-10-28",
+    "note": "On-hire 28/10/2026 to FM RENTAL (engine overhaul complete). Runs ~12 h/day. First running-in service at +50h (~02/11). Confirm exact FM site."
+  },
+  {
+    "dg": "DG-559",
+    "offHire": true
+  },
+  {
+    "dg": "DG-560",
+    "offHire": false,
+    "note": "On hire - X Dom, Yas Island",
+    "since": "2026-08-24"
+  },
+  {
+    "dg": "DG-NO",
+    "offHire": true
+  },
+  {
+    "dg": "DG-800",
+    "offHire": false,
+    "since": "2026-08-24",
+    "note": "On hire — TROJAN GENERAL CONTRACTING LLC"
+  },
+  {
+    "dg": "DG-805",
+    "offHire": true
+  },
+  {
+    "dg": "DG-806",
+    "offHire": true
+  },
+  {
+    "dg": "DG-814",
+    "offHire": true
+  },
+  {
+    "dg": "DG-822",
+    "offHire": false,
+    "note": "On hire - City Const, Al Faya",
+    "since": "2026-08-24"
+  },
+  {
+    "dg": "DG-823",
+    "offHire": false
+  },
+  {
+    "dg": "DG-825",
+    "offHire": true
+  },
+  {
+    "dg": "DG-827",
+    "offHire": false,
+    "since": "2026-09-30",
+    "note": "On hire 30/09 - EMDAD (Al Dhafra). 725 kVA Caterpillar. Meter 3514h. Repair cleared before dispatch."
+  },
+  {
+    "dg": "DG-829",
+    "offHire": false,
+    "note": "On-hire 31/10/2026 to ALNAWARS TRANSPORT GENERAL CONTRACTING (Al Ajban). Contract HPP1-000259, LPO NRS-A-26-10-11. With DD-827 diesel tank (1000 gal). 320 kVA Caterpillar. Site person Mr Aqeeb.",
+    "since": "2026-10-31"
+  },
+  {
+    "dg": "DG-832",
+    "offHire": false,
+    "note": "On hire - City Const, Baniyas",
+    "since": "2026-08-24"
+  },
+  {
+    "dg": "DG-836",
+    "offHire": true,
+    "since": "2026-09-21",
+    "note": "Off hire - returned to yard, available for hire (per Netsonic 21/09). Was on hire to Stolway Manufacturing (ICAD II)."
+  },
+  {
+    "dg": "DG-838",
+    "offHire": true
+  },
+  {
+    "dg": "DG-840",
+    "offHire": true
+  },
+  {
+    "dg": "DG-859",
+    "offHire": false,
+    "note": "On hire - Trojan, Al Bahia",
+    "since": "2026-08-24"
+  },
+  {
+    "dg": "DG-860",
+    "offHire": false,
+    "since": "2026-08-02",
+    "note": "On hire - City Construction, Gayathi (HPP1-000191)"
+  },
+  {
+    "dg": "DG-862",
+    "offHire": true,
+    "note": "In workshop - engine overhauling"
+  },
+  {
+    "dg": "DG-868",
+    "offHire": false,
+    "since": "2026-10-08",
+    "note": "On hire - ADNOC fuel station Al Shamkha (0-450h cycle, 12h/day)"
+  },
+  {
+    "dg": "DG-562",
+    "offHire": false,
+    "since": "2026-10-08",
+    "note": "On hire - ADNOC fuel station Al Shamkha (0-450h cycle, 12h/day)"
+  },
+  {
+    "dg": "DG-863",
+    "offHire": true
+  },
+  {
+    "dg": "DG-811",
+    "offHire": true,
+    "since": "2026-08-26",
+    "note": "Off hire - not working (returned from Rock Star)"
+  },
+  {
+    "dg": "DG-453",
+    "offHire": false,
+    "note": "Back on hire 13/10/2026 at KHALIQ NOOR SCRAP LLC, Mussafah (last location kept). Serviced 08/10 @36672h; next 37022h."
+  },
+  {
+    "dg": "DG-488",
+    "offHire": true,
+    "since": "2026-10-12",
+    "note": "Off-hire 12/10/2026 - returned from Rock Star Scrap Trading (ICAD-1) to yard. Available. 40 kVA Weber."
+  },
+  {
+    "dg": "DG-484",
+    "offHire": true,
+    "since": "2026-09-01",
+    "note": "COURT CASE (AL SAFAKH) - service paused"
+  },
+  {
+    "dg": "DG-529",
+    "offHire": false,
+    "since": "2026-09-30",
+    "note": "On hire 30/09 - EMDAD (Al Dhafra). Meter 29405h."
+  },
+  {
+    "dg": "DG-538",
+    "offHire": true,
+    "since": "2026-09-30",
+    "note": "OFF-HIRED 30/09 (Netsonic OFF2-000035) - Aswar Al Garbia General Transporting, Musaffah. COLLECTED and returned to yard 06/10 (controller 3730h). Available for hire. 160 kVA Kirlosker. Air filter still pending."
+  },
+  {
+    "dg": "DG-842",
+    "offHire": true,
+    "since": "2026-09-30",
+    "note": "OFF-HIRED 30/09 (Netsonic OFF2-000037) - Bashundhara Property Management, Musaffah M40. COLLECTED and returned to yard 06/10 (controller 4403h). Available for hire. 200 kVA."
+  },
+  {
+    "dg": "DG-834",
+    "offHire": true,
+    "since": "2026-09-30",
+    "note": "OFF-HIRED 30/09 - Grand Falcon, Musaffah. COLLECTED and returned to yard at 6286h."
+  },
+  {
+    "dg": "DG-450",
+    "offHire": false,
+    "since": "2026-10-13",
+    "note": "Back on hire 13/10/2026 to TROJAN, Al Bahia (same site). Meter 36152h; next service 36363h (~02/11)."
+  },
+  {
+    "dg": "DG-456",
+    "offHire": false,
+    "since": "2026-09-21",
+    "note": "On hire 21/09 - E 20 INVESTMENT LTD, Al Ain (contract HPP1-000238). Contact: Tareq Ahmed 971569902418. Rate 6825/month. Driver Mhohsin."
+  },
+  {
+    "dg": "DG-430",
+    "offHire": false,
+    "since": "2026-09-20",
+    "note": "On hire 20/09 - Al Shuwaib (Shabiat Al Shuwaib). Customer, hours & rate pending (to update 21/09)."
+  },
+  {
+    "dg": "DG-532",
+    "offHire": true,
+    "since": "2026-10-17",
+    "note": "Off-hire 17/10/2026 - returned from Stolway Manufacturing (ICAD III) to yard. Available. 350 kVA CAT."
+  },
+  {
+    "dg": "DG-856",
+    "offHire": true,
+    "since": "2026-09-22",
+    "note": "Off-hire 22/09 - returned to yard (was on hire to Trojan, Al Hudayriat Island). 250 kVA Kirlosker."
+  },
+  {
+    "dg": "DG-836",
+    "offHire": false,
+    "since": "2026-09-22",
+    "note": "On hire 22/09 - deployed to Al Faya (Noor Al Shahra), replacing DG-541. 500 kVA Cummins."
+  },
+  {
+    "dg": "DG-541",
+    "offHire": true,
+    "since": "2026-09-22",
+    "note": "Off-hire 22/09 - returned to yard (was on hire to Noor Al Shahra, Al Faya; replaced by DG-836). 500 kVA FG Wilson."
+  },
+  {
+    "dg": "DG-500",
+    "offHire": true,
+    "since": "2026-09-23",
+    "note": "Off-hire 23/09 - returned to yard (was on hire to Mawaad, Al Faya North / Al Asheesh). 50 kVA Tata."
+  },
+  {
+    "dg": "DG-820",
+    "offHire": true,
+    "since": "2026-09-26",
+    "note": "Off-hire 26/09 - returned to yard (was on hire to Hydro Power, Baniyas West WB1). 45 kVA Kirlosker."
+  },
+  {
+    "dg": "DG-815",
+    "offHire": false,
+    "since": "2026-09-26",
+    "note": "On hire 26/09 - deployed from yard to OSAI, KIZAD (Khalifa Ind. City B), replacing DG-537 (which broke down). 30 kVA Perkins."
+  },
+  {
+    "dg": "DG-537",
+    "offHire": true,
+    "since": "2026-09-26",
+    "note": "Off-hire 26/09 - returned to yard for repair (ran overdue and broke down); replaced by DG-815 at OSAI, KIZAD. 40 kVA Kirlosker."
+  },
+  {
+    "dg": "DG-837",
+    "offHire": true,
+    "since": "2026-09-26",
+    "note": "Off-hire 26/09 - contract ended, returned to yard (was on hire to City Const, Al Shawamekh SHM11). 80 kVA Perkins."
+  },
+  {
+    "dg": "DG-563",
+    "offHire": false,
+    "since": "2026-09-26",
+    "note": "On hire 26/09 - NEW asset deployed to El Masria Cement (Shakhbout City), replacing DG-473. 82.5 kVA Kirloskar."
+  },
+  {
+    "dg": "DG-473",
+    "offHire": true,
+    "since": "2026-09-26",
+    "note": "Off-hire 26/09 - returned to yard, replaced by DG-563 at El Masria Cement (Shakhbout City). 100 kVA Weber."
+  },
+  {
+    "dg": "DG-836",
+    "offHire": true,
+    "since": "2026-10-06",
+    "note": "Off-hire 06/10 - returned to yard, replaced by DG-866 at Noor Al Shahra (Al Faya). 500 kVA. Available for hire."
+  },
+  {
+    "dg": "DG-866",
+    "offHire": false,
+    "since": "2026-10-06",
+    "note": "On hire 06/10 - deployed from yard to NOOR AL SHAHRA (Al Faya), replacing DG-836. Hour meter 0 at deployment. 380 kVA. First service at 350h (~04/11)."
+  },
+  {
+    "dg": "DG-554",
+    "offHire": true,
+    "since": "2026-10-22",
+    "note": "Off-hire 22/10/2026 - returned from Aswar, Mafraq (Jarn Yafour) to yard. Needs water pump change (water + oil leak). 40 kVA Weber."
+  },
+  {
+    "dg": "DG-837",
+    "offHire": true,
+    "since": "2026-10-23",
+    "note": "In yard - available. (On-hire to Total Power Company reversed per ops.) 80 kVA Perkins."
+  },
+  {
+    "dg": "DG-537",
+    "offHire": false,
+    "since": "2026-10-21",
+    "note": "On hire 21/10/2026 - deployed from yard to Total Power Building Equipment LLC, MBZ Mussafah (breakdown repair done). 40 kVA Kirloskar."
+  },
+  {
+    "dg": "DG-565",
+    "offHire": false,
+    "since": "2026-10-24",
+    "note": "On hire 24/10/2026 - NEW ASSET installed at Trojan, Al Bahia (replaces DG-450). 250 kVA Kirloskar, zero meter."
+  },
+  {
+    "dg": "DG-450",
+    "offHire": true,
+    "since": "2026-10-24",
+    "note": "Off-hire 24/10/2026 - replaced by DG-565 at Trojan, Al Bahia; returned to yard. 200 kVA Kirloskar."
+  },
+  {
+    "dg": "CH-FM-500",
+    "offHire": true,
+    "since": "2026-10-24",
+    "note": "Off-hire 24/10/2026 (Saturday) - BREAKDOWN (bearing broken). Cross-hire from FM Equipment Rental - to be collected by FM Rental."
+  },
+  {
+    "dg": "DG-545",
+    "offHire": true,
+    "since": "2026-10-28",
+    "note": "Off-hire 28/10/2026 - contract ended, returned to yard from Hashim Contracting (MBZ City ME-15). 150 kVA Cummins."
+  },
+  {
+    "dg": "DG-558",
+    "offHire": true,
+    "since": "2026-10-28",
+    "note": "Off-hire 28/10/2026 - returned to yard from Trojan, Al Bahia (replaced by DG-450). 200 kVA Cummins."
+  },
+  {
+    "dg": "DG-450",
+    "offHire": false,
+    "since": "2026-10-28",
+    "note": "Back on hire 28/10/2026 to TROJAN, Al Bahia in place of DG-558. 200 kVA Kirloskar; next service 36363h (~14/11)."
+  },
+  {
+    "dg": "DG-847",
+    "offHire": true,
+    "since": "2026-10-17",
+    "note": "Off-hire 17/10/2026 - returned to yard from Fantastic (Mussafah M40). 375 kVA Weichai. Available."
+  },
+  {
+    "dg": "DG-851",
+    "offHire": true,
+    "since": "2026-10-31",
+    "note": "Off-hire 31/10/2026 - returned to yard from Al Hashim (Al Reem Island RS3). 40 kVA Kubota. Available."
+  },
+  {
+    "dg": "DG-459",
+    "offHire": true,
+    "since": "2026-11-03",
+    "note": "Off-hire 03/11/2026 - returned to yard from Hydro Power (Mussafah MN1). 62.5 kVA Kirloskar. Available; air filter pending."
+  },
+  {
+    "dg": "DG-502",
+    "offHire": true,
+    "since": "2026-11-03",
+    "note": "Off-hire 03/11/2026 - returned to yard from Hydro Power (Mussafah MN1). 50 kVA Perkins. Available; air filter pending."
+  }
 ]
