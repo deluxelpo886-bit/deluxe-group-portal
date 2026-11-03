@@ -2618,12 +2618,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 10051,
-    "nextServiceDate": "2026-11-06",
+    "nextServiceDate": "2026-11-08",
     "interval": 350,
-    "dailyHours": 17.4,
-    "currentHours": 9701,
-    "currentHoursDate": "2026-10-17",
-    "notes": "350h service done 17/10/2026 at 9701h by ROL & Adeel - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next service. Ran 417h since the 23/09 service (9284h) = ~17.4 h/day (heavy). Next 10051h (+350); next date set by usage -> ~06/11/2026. 125 kVA Weichai, Trojan, Yas Island. (Was 46h overdue; now serviced - urgent/fixed-date cleared.)"
+    "dailyHours": 16.0,
+    "currentHours": 9973,
+    "currentHoursDate": "2026-11-03",
+    "notes": "350h service done 17/10/2026 at 9701h by ROL & Adeel - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending, fit at next service. Ran 417h since the 23/09 service (9284h) = ~17.4 h/day (heavy). Next 10051h (+350); next date set by usage -> ~06/11/2026. 125 kVA Weichai, Trojan, Yas Island. (Was 46h overdue; now serviced - urgent/fixed-date cleared.) | Meter 9973h on 03/11/2026 - ran 272h in 17 days = ~16 h/day. Only 78h to next (10051h) -> due ~08/11/2026 (soon)."
   },
   {
     "dg": "DG-459",
@@ -3460,12 +3460,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 5776,
-    "nextServiceDate": "2026-11-04",
+    "nextServiceDate": "2026-11-26",
     "interval": 350,
-    "dailyHours": 12,
-    "currentHours": 5426,
-    "currentHoursDate": "2026-10-06",
-    "notes": "Serviced 06/10/2026 @ 5426h by IK & Jayraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X). Next service 5776h (+350). ~12 h/day. 100 kVA, Six Sigma, Jubail Island (JS)."
+    "dailyHours": 6.9,
+    "currentHours": 5618,
+    "currentHoursDate": "2026-11-03",
+    "notes": "Serviced 06/10/2026 @ 5426h by IK & Jayraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X). Next service 5776h (+350). ~12 h/day. 100 kVA, Six Sigma, Jubail Island (JS). | Meter 5618h on 03/11/2026 - ran 192h since service in 28 days = ~6.9 h/day. 158h to next (5776h) -> due ~26/11/2026."
   },
   {
     "dg": "DG-848",
