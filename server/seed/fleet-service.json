@@ -4408,5 +4408,39 @@
     "currentHours": 4420,
     "currentHoursDate": "2026-11-02",
     "notes": "Serviced 02/11/2026 (supplier-maintained cross-hire). METER NOT CAPTURED on card photo - hours 4420h is an ESTIMATE from 4093h@15/10 + ~18 h/day; CONFIRM actual reading. All filters done. Next service est. 4770h (+350) ~21/11/2026. CROSS-HIRE from The Red Square Equipments Repair (20 kVA), covering DG-812 at ICAD III."
+  },
+  {
+    "dg": "DG-518",
+    "hours": 6415,
+    "date": "2026-11-03",
+    "technician": "JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 6765,
+    "nextServiceDate": "2026-12-29",
+    "interval": 350,
+    "dailyHours": 6.2,
+    "currentHours": 6415,
+    "currentHoursDate": "2026-11-03",
+    "notes": "Serviced 03/11/2026 @ 6415h by Jayraj & Imran - oil, oil filter, fuel filter, air filter ALL done. Controller 6415h confirmed. Done a little early (was due 6480h/12-11). Next 6765h (+350), ~6.2 h/day -> due ~29/12/2026. 30 kVA Perkins, Total, Al Dhafra (Al Bihouth / Nexus L&T)."
+  },
+  {
+    "dg": "DG-430",
+    "hours": 297,
+    "date": "2026-11-03",
+    "technician": "SHAFIULLAH",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": false,
+    "airFilter": false,
+    "nextService": 647,
+    "nextServiceDate": "2026-12-16",
+    "interval": 350,
+    "dailyHours": 8.1,
+    "currentHours": 297,
+    "currentHoursDate": "2026-11-03",
+    "notes": "Serviced 03/11/2026 @ 297h by Shafiullah - oil + oil filter done; FUEL FILTER and AIR FILTER NOT changed (pending). Follows break-in @45h/03-10. Running rate now ~8.1 h/day (45->297h in 31 days). Next 647h (+350) -> due ~16/12/2026. 150 kVA Kirloskar, Al Shuwaib. Customer details still pending."
   }
 ]
