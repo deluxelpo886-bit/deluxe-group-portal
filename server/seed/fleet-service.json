@@ -4510,5 +4510,39 @@
     "currentHours": 13384,
     "currentHoursDate": "2026-11-04",
     "notes": "Serviced 04/11/2026 @ 13384h by Jayraj & Imran - oil, oil filter, fuel filter AND AIR FILTER all done (air filter was pending from 16/10 - now fitted). Ran 323h since 16/10 (~17 h/day, heavy). Next 13734h (+350) -> due ~25/11/2026. 160 kVA FG Wilson, Trojan, ICAD III."
+  },
+  {
+    "dg": "DG-802",
+    "hours": 24008,
+    "date": "2026-11-04",
+    "technician": "JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 24358,
+    "nextServiceDate": "2026-12-04",
+    "interval": 350,
+    "dailyHours": 11.7,
+    "currentHours": 24008,
+    "currentHoursDate": "2026-11-04",
+    "notes": "Serviced 04/11/2026 @ 24008h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X) - pending, fit at next visit. Controller 24008h confirmed. Ran 351h since 05/10 (~11.7 h/day). Next 24358h (+350) -> due ~04/12/2026. 250 kVA FG Wilson, Bright Accord, Al Jubail Island."
+  },
+  {
+    "dg": "DG-803",
+    "hours": 12233,
+    "date": "2026-11-04",
+    "technician": "JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 12583,
+    "nextServiceDate": "2026-12-02",
+    "interval": 350,
+    "dailyHours": 12.7,
+    "currentHours": 12233,
+    "currentHoursDate": "2026-11-04",
+    "notes": "Serviced 04/11/2026 @ 12233h by Jayraj & Imran - oil, oil filter, fuel filter, air filter ALL done. Controller 12233h confirmed. Ran 380h since 05/10 (~12.7 h/day). Next 12583h (+350) -> due ~02/12/2026. 160 kVA FG Wilson, Bright Accord, Al Jubail Island."
   }
 ]
