@@ -224,6 +224,7 @@
       </div>
     </div>
     <div id="pvBoard"></div>
+    <div id="pvSuggest"></div>
 
     <!-- STEP 3: DISPATCH -->
     <div class="step" style="--accent:var(--blue)"><div class="n">3</div><h2>📋 Today's dispatch</h2><span class="rule"></span></div>
@@ -285,7 +286,68 @@ function contactOf(g){return (g&&g.contact&&String(g.contact).trim())?String(g.c
 function telHtml(num){var n=String(num).replace(/[^+0-9]/g,'');return '<a href="tel:'+n+'" style="color:var(--green);text-decoration:none;white-space:nowrap">📞 '+esc(num)+'</a>';}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
-function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderPreventive();renderDispatch();}
+function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderPreventive();renderSundaySuggest();renderDispatch();}
+
+// ---- Suggested Sunday major services, auto-built from service (hours) data ----
+// Every on-hire genset's projected next-service date is rolled onto the Sunday
+// of that week, so the office sees which majors are coming up on each Sunday
+// and can add them to the fixed list with one tap.
+function isoDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function sundayOfWeek(dstr){ var d=new Date(String(dstr).slice(0,10)+'T00:00:00'); d.setDate(d.getDate()-d.getDay()); return isoDay(d); }
+function nextSunday(fromStr){ var d=new Date(String(fromStr).slice(0,10)+'T00:00:00'); var a=(7-d.getDay())%7; d.setDate(d.getDate()+a); return isoDay(d); }
+function ddmm(s){ s=String(s||''); return s.length>=10?(s.slice(8,10)+'/'+s.slice(5,7)):''; }
+function pvAddSuggest(dg,date){ apiPost('/api/preventive/add',{dg:dg,date:date,note:'Major service (from schedule)'}).then(function(){ toast('Added '+dg+' to '+ddmm(date)); loadAll(); }).catch(function(){ toast('Could not add'); }); }
+var pvSuggestOpen=false;
+var pvSunExpand={};   // which Sundays are expanded to show all gensets
+function togglePvSuggest(){ pvSuggestOpen=!pvSuggestOpen; renderSundaySuggest(); }
+function toggleSun(sun){ pvSunExpand[sun]=!pvSunExpand[sun]; renderSundaySuggest(); }
+function sundayBuckets(){
+  var today=new Date().toISOString().slice(0,10);
+  var planned={}; (DATA.prev||[]).forEach(function(p){ if(p.status!=='done') planned[String(p.dg).toUpperCase()]=true; });
+  var buckets={};
+  (DATA.gens||[]).forEach(function(g){
+    if(g.offHire || !g.nextServiceDate) return;
+    if(planned[String(g.dg).toUpperCase()]) return;         // already on the fixed list
+    var due=String(g.nextServiceDate).slice(0,10);
+    var sun=sundayOfWeek(due); if(sun<today) sun=nextSunday(today);
+    (buckets[sun]=buckets[sun]||[]).push({dg:g.dg,kva:g.kva,customer:g.customer||g.location||'',due:due,
+      hoursLeft:(g.hoursToService!=null?g.hoursToService:null)});
+  });
+  return buckets;
+}
+function renderSundaySuggest(){
+  var box=document.getElementById('pvSuggest'); if(!box) return;
+  var today=new Date().toISOString().slice(0,10);
+  var buckets=sundayBuckets();
+  var sundays=Object.keys(buckets).sort().slice(0,6);        // next 6 Sundays with work
+  var total=sundays.reduce(function(n,s){return n+buckets[s].length;},0);
+  if(!total){ box.innerHTML=''; return; }
+  // Collapsed header toggle so the daily screen stays clean.
+  var head='<button class="openbd" style="margin-top:10px" onclick="togglePvSuggest()">📅 <b>Suggested from service data — '+total+' upcoming on Sundays</b> '+(pvSuggestOpen?'▾':'▸')+'</button>';
+  if(!pvSuggestOpen){ box.innerHTML=head; return; }
+  var html=head+'<div style="margin-top:4px">';
+  var CAP=8;
+  sundays.forEach(function(sun){
+    var list=buckets[sun].sort(function(a,b){ return String(a.due).localeCompare(String(b.due)); });
+    var rel=(sun===nextSunday(today))?' · next Sunday':'';
+    var expanded=!!pvSunExpand[sun];
+    var shown=expanded?list:list.slice(0,CAP);
+    html+='<div style="background:var(--card,#141c27);border:1px solid var(--line,#2a3441);border-radius:12px;padding:10px 12px;margin:6px 0">'
+      +'<div style="font-weight:800;font-size:13px;margin-bottom:6px">🗓️ Sunday '+ddmm(sun)+' <span style="color:var(--sub,#8b95a1);font-weight:600">· '+list.length+' due'+rel+'</span></div>';
+    shown.forEach(function(u){
+      var meta=[]; if(u.kva!=null) meta.push(esc(u.kva)+' kVA'); if(u.customer) meta.push(esc(u.customer));
+      var hl=(u.hoursLeft!=null)?(u.hoursLeft+'h left'):'';
+      html+='<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid rgba(255,255,255,.05)">'
+        +'<div style="flex:1;min-width:0"><span style="font-weight:700">'+esc(u.dg)+'</span>'
+        +'<span style="color:var(--sub,#8b95a1);font-size:12px"> · '+meta.join(' · ')+' · due '+ddmm(u.due)+(hl?(' · '+hl):'')+'</span></div>'
+        +'<button class="btn" style="background:#6b46c1;color:#fff;padding:6px 11px;font-size:12px" onclick="pvAddSuggest(\''+esc(u.dg)+'\',\''+sun+'\')">＋ Add</button></div>';
+    });
+    if(list.length>CAP){ html+='<div style="padding-top:6px"><a href="javascript:void(0)" onclick="toggleSun(\''+sun+'\')" style="color:#a78bfa;font-size:12px;font-weight:600;text-decoration:none">'+(expanded?('▲ show less'):('▼ show all '+list.length+' gensets'))+'</a></div>'; }
+    html+='</div>';
+  });
+  html+='</div>';
+  box.innerHTML=html;
+}
 
 // ---- Preventive service (Sunday round) ----
 function togglePvForm(){var f=document.getElementById('pvForm');f.hidden=!f.hidden;if(!f.hidden){var pt=document.getElementById('pTeam');if(pt&&pt.options.length<=1){pt.innerHTML='<option value="">— assign team —</option>'+TEAMS.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join('');}var pd=document.getElementById('pDate');if(pd&&!pd.value&&DATA.pvSunday)pd.value=DATA.pvSunday;var dg=document.getElementById('pDg');if(dg)dg.focus();}}
