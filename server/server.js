@@ -2607,6 +2607,19 @@ app.get(['/service-report', '/report'], (req, res) => {
   res.sendFile(path.join(__dirname, 'service-report.html'), { cacheControl: false });
 });
 
+// Preventive service schedule: a day-by-day forward plan built from live
+// hour-meter data - every on-hire genset falls on the day its next service is
+// projected. Distinct from the manual Sunday preventive list in the plan.
+app.get(['/preventive-plan', '/preventive-schedule'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:;"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'preventive-plan.html'), { cacheControl: false });
+});
+
 // Monthly service report (analytics: how many gensets serviced, filters,
 // technicians) - a live dashboard page, distinct from the printable form above.
 app.get(['/service-monthly', '/monthly-report', '/monthly'], (req, res) => {
