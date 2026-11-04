@@ -65,6 +65,20 @@
   .empty{ padding:36px; text-align:center; color:var(--mut); }
   .foot{ text-align:center; color:var(--mut); font-size:11px; margin-top:14px; }
   .note{ font-size:12px; color:var(--mut); margin:2px 2px 12px; }
+  .printhdr{ display:none; }
+  @media print{
+    @page{ size:A4; margin:10mm; }
+    body{ background:#fff; }
+    .top,#refreshBtn,#printBtn{ display:none !important; }
+    .wrap{ max-width:none; padding:0; }
+    .printhdr{ display:block; text-align:center; margin-bottom:10px; }
+    .printhdr .t{ font-size:17px; font-weight:800; color:#0b3d2e; }
+    .printhdr .s{ font-size:11px; color:#555; }
+    .day{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; page-break-inside:avoid; margin-bottom:8px; }
+    .stat{ box-shadow:none; border:1px solid #ccc; }
+    .u{ padding:6px 12px 6px 10px; }
+    .note{ display:none; }
+  }
 </style>
 </head>
 <body>
@@ -79,6 +93,7 @@
     <option value="999">All upcoming</option>
   </select>
   <button id="refreshBtn" type="button">↻</button>
+  <button id="printBtn" type="button">🖨 Print</button>
   <a class="nav" href="/menu">← Menu</a>
 </div>
 
@@ -91,6 +106,7 @@
 </div>
 
 <div class="wrap" id="app" hidden>
+  <div class="printhdr"><div class="t">DELUXE HEAVY EQUIPMENT L.L.C — Preventive Service Schedule</div><div class="s" id="printsub"></div></div>
   <div class="note">Built from live hour-meter data — each generator falls on the day its next service is projected (running hours ÷ daily usage). Overdue units show first.</div>
   <div class="strip" id="strip"></div>
   <div id="days"></div>
@@ -187,6 +203,11 @@ function render(){
 document.getElementById('loginBtn').addEventListener('click',doLogin);
 document.getElementById('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
 document.getElementById('refreshBtn').addEventListener('click',load);
+document.getElementById('printBtn').addEventListener('click',function(){
+  var h=document.getElementById('horizon'); var lbl=h.options[h.selectedIndex].text;
+  document.getElementById('printsub').textContent=lbl+' · as on '+new Date().toLocaleDateString('en-GB');
+  window.print();
+});
 document.getElementById('horizon').addEventListener('change',render);
 gate();
 </script>
