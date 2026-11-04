@@ -2607,6 +2607,18 @@ app.get(['/service-report', '/report'], (req, res) => {
   res.sendFile(path.join(__dirname, 'service-report.html'), { cacheControl: false });
 });
 
+// Major service schedule: a Sunday-by-Sunday plan built from live hours data.
+// Major service = every 1500 running hours; one genset per team per Sunday.
+app.get(['/major-service', '/major'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:;"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'major-service.html'), { cacheControl: false });
+});
+
 // Monthly service report (analytics: how many gensets serviced, filters,
 // technicians) - a live dashboard page, distinct from the printable form above.
 app.get(['/service-monthly', '/monthly-report', '/monthly'], (req, res) => {

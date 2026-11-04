@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Deluxe — Major Service Schedule (Sundays)</title>
+<style>
+  :root{
+    --bg:#0f141a; --panel:#fff; --ink:#15202b; --mut:#667487; --line:#e5e9ef;
+    --green:#0b7a3b; --greenD:#0b3d2e; --amber:#e6952a; --red:#d2443a; --blue:#2f6df0; --purple:#6b46c1;
+    --soft:#f4f7f5;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body{ margin:0; background:#eef1f4; color:var(--ink); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+
+  .top{ position:sticky; top:0; z-index:20; background:var(--greenD); color:#fff;
+    padding:11px 14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+  .top .brand{ font-weight:800; font-size:15px; display:flex; align-items:center; gap:8px; }
+  .top .brand .dot{ width:9px; height:9px; border-radius:50%; background:#49d17f; box-shadow:0 0 0 4px rgba(73,209,127,.18); }
+  .top .sp{ flex:1; }
+  .top select,.top button{ font:inherit; font-size:13px; border-radius:9px; border:1px solid rgba(255,255,255,.18); padding:8px 11px; }
+  .top select{ background:#0e5134; color:#fff; font-weight:600; }
+  .top button{ background:rgba(255,255,255,.12); color:#fff; font-weight:700; border:none; cursor:pointer; }
+  .top a.nav{ color:#cfe9db; text-decoration:none; font-size:12.5px; font-weight:600; }
+
+  .wrap{ max-width:940px; margin:0 auto; padding:14px 12px 60px; }
+  .signin{ max-width:360px; margin:12vh auto; background:#fff; border-radius:16px; padding:26px 22px; box-shadow:0 10px 40px rgba(0,0,0,.18); }
+  .signin h2{ margin:0 0 4px; font-size:19px; } .signin p{ margin:0 0 16px; color:var(--mut); font-size:13px; }
+  .signin input{ width:100%; font:inherit; font-size:15px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; margin-bottom:10px; }
+  .signin button{ width:100%; font:inherit; font-weight:700; font-size:15px; padding:12px; border:none; border-radius:10px; background:var(--greenD); color:#fff; cursor:pointer; }
+  .err{ color:var(--red); font-size:12.5px; min-height:16px; }
+
+  .note{ font-size:12px; color:var(--mut); margin:2px 2px 12px; }
+  .strip{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .stat{ background:#fff; border-radius:13px; padding:12px 14px; box-shadow:0 1px 3px rgba(16,24,40,.07); text-align:center; }
+  .stat .v{ font-size:26px; font-weight:800; line-height:1; }
+  .stat .k{ font-size:10px; color:var(--mut); margin-top:4px; text-transform:uppercase; letter-spacing:.4px; font-weight:700; }
+  .stat.r .v{ color:var(--red); } .stat.p .v{ color:var(--purple); } .stat.g .v{ color:var(--green); }
+
+  .day{ background:#fff; border-radius:14px; box-shadow:0 1px 3px rgba(16,24,40,.07); margin-bottom:12px; overflow:hidden; }
+  .dhead{ display:flex; align-items:center; gap:10px; padding:11px 15px; border-bottom:1px solid var(--line); background:var(--soft); }
+  .dhead .dt{ font-weight:800; font-size:14.5px; }
+  .dhead .rel{ font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; background:#efe9fb; color:var(--purple); }
+  .dhead .rel.next{ background:#fff3e0; color:var(--amber); }
+  .dhead .ct{ margin-left:auto; font-size:12px; color:var(--mut); font-weight:600; }
+
+  .slot{ display:flex; align-items:center; gap:12px; padding:11px 15px; border-bottom:1px solid #f1f4f7; }
+  .slot:last-child{ border-bottom:none; }
+  .slot .team{ flex:0 0 118px; font-size:12px; font-weight:800; color:var(--purple); }
+  .slot .team small{ display:block; font-weight:600; color:var(--mut); font-size:10.5px; }
+  .slot .g{ flex:1; min-width:0; }
+  .slot .g .dg{ font-weight:800; font-size:14px; }
+  .slot .g .cu{ font-size:12px; color:var(--mut); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .slot .rt{ text-align:right; flex:0 0 auto; }
+  .slot .rt .mj{ font-size:12.5px; font-weight:800; }
+  .slot .rt .mj.r{ color:var(--red); } .slot .rt .mj.a{ color:var(--amber); } .slot .rt .mj.g{ color:var(--green); }
+  .slot .rt .sub{ font-size:10.5px; color:var(--mut); margin-top:1px; }
+  .slot.free{ opacity:.6; }
+  .slot.free .g .dg{ color:var(--mut); font-weight:600; }
+  .empty{ padding:36px; text-align:center; color:var(--mut); }
+  .foot{ text-align:center; color:var(--mut); font-size:11px; margin-top:14px; }
+  .printhdr{ display:none; }
+  @media print{
+    @page{ size:A4; margin:10mm; }
+    body{ background:#fff; } .top,#refreshBtn,#printBtn{ display:none !important; } .wrap{ max-width:none; padding:0; }
+    .note{ display:none; }
+    .printhdr{ display:block; text-align:center; margin-bottom:10px; }
+    .printhdr .t{ font-size:17px; font-weight:800; color:#0b3d2e; } .printhdr .s{ font-size:11px; color:#555; }
+    .day,.stat{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; page-break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top" id="topbar" hidden>
+  <div class="brand"><span class="dot"></span> Major Service — Sundays</div>
+  <div class="sp"></div>
+  <select id="horizon" title="How many Sundays ahead">
+    <option value="6">Next 6 Sundays</option>
+    <option value="10" selected>Next 10 Sundays</option>
+    <option value="16">Next 16 Sundays</option>
+    <option value="999">All</option>
+  </select>
+  <button id="refreshBtn" type="button">↻</button>
+  <button id="printBtn" type="button">🖨 Print</button>
+  <a class="nav" href="/menu">← Menu</a>
+</div>
+
+<div class="signin" id="signin" hidden>
+  <h2>Deluxe Portal</h2><p>Sign in to view the major-service schedule.</p>
+  <input id="em" placeholder="Login" autocomplete="username"/>
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password"/>
+  <div class="err" id="loginErr"></div>
+  <button id="loginBtn" type="button">Sign in</button>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <div class="printhdr"><div class="t">DELUXE HEAVY EQUIPMENT L.L.C — Major Service Schedule (Sundays)</div><div class="s" id="printsub"></div></div>
+  <div class="note">Major service = every <b>1500 running hours</b>. Built from live hour-meter data: each genset is placed on the Sunday it reaches its next 1500 h milestone, <b>one genset per team</b> (3 teams → up to 3 per Sunday). Overflow rolls to the next free Sunday. You confirm and implement.</div>
+  <div class="strip" id="strip"></div>
+  <div id="days"></div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+var TEAMS=[{id:'6692',name:'Sonu & Hussain'},{id:'44137',name:'Adil & Sabir'},{id:'44107',name:'Imran & Jayaraj'}];
+var MAJOR=1500;
+var tok=null; try{tok=localStorage.getItem('deluxeFleetToken');}catch(e){}
+var GENS=[];
+function hdrs(){return {'Authorization':'Bearer '+tok,'Content-Type':'application/json'};}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function show(id,on){var e=document.getElementById(id); if(e) e.hidden=!on;}
+
+function gate(){
+  if(!tok){ show('signin',true); show('app',false); show('topbar',false); return; }
+  show('signin',false); show('app',true); show('topbar',true); load();
+}
+function doLogin(){
+  var em=(document.getElementById('em').value||'').trim(), pw=(document.getElementById('pw').value||'').trim();
+  document.getElementById('loginErr').textContent='';
+  fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(d&&d.token){ tok=d.token; try{localStorage.setItem('deluxeFleetToken',tok);}catch(_){ } gate(); }
+      else document.getElementById('loginErr').textContent='Wrong login'; })
+    .catch(function(){ document.getElementById('loginErr').textContent='Connection error'; });
+}
+function load(){
+  fetch('/api/service/status',{headers:hdrs()}).then(function(r){ if(r.status===401){throw{auth:1};} if(!r.ok)throw 0; return r.json(); })
+    .then(function(d){ GENS=(d.generators||[]); render(); })
+    .catch(function(e){ if(e&&e.auth){ try{localStorage.removeItem('deluxeFleetToken');}catch(_){ } tok=null; gate(); } });
+}
+function isoDay(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function addDays(dstr,n){ var d=new Date(dstr+'T00:00:00'); d.setDate(d.getDate()+n); return isoDay(d); }
+function sundayOfWeek(dstr){ var d=new Date(String(dstr).slice(0,10)+'T00:00:00'); d.setDate(d.getDate()-d.getDay()); return isoDay(d); }
+function nextSunday(fromStr){ var d=new Date(String(fromStr).slice(0,10)+'T00:00:00'); var a=(7-d.getDay())%7; d.setDate(d.getDate()+a); return isoDay(d); }
+function ddmm(s){ s=String(s||''); return s.length>=10?(s.slice(8,10)+'/'+s.slice(5,7)):''; }
+function pretty(s){ var d=new Date(String(s).slice(0,10)+'T00:00:00'); var wd=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  return wd+' '+String(d.getDate()).padStart(2,'0')+' '+mo; }
+function daysBetween(a,b){ return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000); }
+
+function render(){
+  if(!GENS.length) return;
+  var today=new Date().toLocaleDateString('en-CA');
+  var horizon=Number(document.getElementById('horizon').value||10);
+  var firstSun=nextSunday(today);
+
+  // 1) Work out each on-hire genset's NEXT 1500h major milestone and its date.
+  var cand=[];
+  GENS.forEach(function(g){
+    if(g.offHire) return;
+    var cur = (g.currentHours!=null)?g.currentHours:(g.hours!=null?g.hours:null);
+    if(cur==null || !isFinite(cur)) return;
+    var nextMajor=Math.ceil(cur/MAJOR)*MAJOR;
+    if(nextMajor<=cur){                                      // cur sits exactly on a multiple
+      nextMajor = (cur<=0) ? MAJOR : cur;                    // 0h = brand-new unit (first major at 1500h), else due now
+    }
+    var hoursToMajor=Math.max(0,nextMajor-cur);
+    var daily=(g.dailyHours&&g.dailyHours>0)?g.dailyHours:((g.effectiveDailyHours&&g.effectiveDailyHours>0)?g.effectiveDailyHours:12);
+    var daysToMajor=Math.round(hoursToMajor/daily);
+    var majorDate=addDays(today,Math.max(0,daysToMajor));
+    var target=sundayOfWeek(majorDate); if(target<firstSun) target=firstSun;
+    cand.push({dg:g.dg,kva:g.kva,customer:g.customer||g.location||'',location:g.location||'',
+      cur:Math.round(cur),nextMajor:nextMajor,hoursToMajor:Math.round(hoursToMajor),
+      daily:daily,majorDate:majorDate,target:target});
+  });
+  // Only schedule those reaching a milestone within the chosen horizon window.
+  var lastSun=addDays(firstSun,(horizon-1)*7);
+  cand=cand.filter(function(c){ return c.target<=lastSun || horizon>=999; });
+  // Most urgent first (soonest milestone, then fewest hours left).
+  cand.sort(function(a,b){ return a.target<b.target?-1:a.target>b.target?1:(a.hoursToMajor-b.hoursToMajor); });
+
+  // 2) Capacity schedule: 3 teams per Sunday, one genset each. Overflow rolls on.
+  var byDay={};        // sunday -> [assignments]
+  function count(s){ return (byDay[s]||[]).length; }
+  cand.forEach(function(c){
+    var s=c.target;
+    while(count(s)>=TEAMS.length){ s=addDays(s,7); }         // next free Sunday
+    var slot=count(s);
+    (byDay[s]=byDay[s]||[]).push(Object.assign({team:TEAMS[slot],scheduledSunday:s},c));
+  });
+
+  var sundays=Object.keys(byDay).sort();
+  if(horizon<999) sundays=sundays.filter(function(s){ return s<=lastSun; });
+
+  // summary
+  var totalSched=sundays.reduce(function(n,s){return n+byDay[s].length;},0);
+  var dueNow=cand.filter(function(c){ return c.hoursToMajor<=50; }).length;
+  document.getElementById('strip').innerHTML=
+    '<div class="stat r"><div class="v">'+dueNow+'</div><div class="k">At/near a 1500h milestone</div></div>'+
+    '<div class="stat p"><div class="v">'+(byDay[firstSun]?byDay[firstSun].length:0)+'</div><div class="k">Next Sunday</div></div>'+
+    '<div class="stat g"><div class="v">'+totalSched+'</div><div class="k">Scheduled in window</div></div>';
+
+  if(!sundays.length){ document.getElementById('days').innerHTML='<div class="day"><div class="empty">No gensets reach a 1500 h major within this window. 🎉</div></div>'; return; }
+
+  var html='';
+  sundays.forEach(function(s){
+    var list=byDay[s];
+    var rel=(s===firstSun)?'next Sunday':('in '+Math.round(daysBetween(today,s)/7)+' wk');
+    html+='<div class="day"><div class="dhead"><span class="dt">'+pretty(s)+'</span>'
+      +'<span class="rel'+(s===firstSun?' next':'')+'">'+rel+'</span>'
+      +'<span class="ct">'+list.length+' / '+TEAMS.length+' teams</span></div>';
+    TEAMS.forEach(function(t,i){
+      var a=list[i];
+      if(a){
+        var hc = a.hoursToMajor<=50?'r':(a.hoursToMajor<=250?'a':'g');
+        html+='<div class="slot"><div class="team">Team '+(i+1)+'<small>'+esc(t.name)+'</small></div>'
+          +'<div class="g"><div class="dg">'+esc(a.dg)+' <span style="font-weight:600;color:var(--mut);font-size:11px">'+(a.kva!=null?esc(a.kva)+' kVA':'')+'</span></div>'
+          +'<div class="cu">'+esc(a.customer)+(a.location?(' · '+esc(a.location)):'')+'</div></div>'
+          +'<div class="rt"><div class="mj '+hc+'">'+(a.hoursToMajor<=0?'DUE':('major @ '+a.nextMajor+'h')) +'</div>'
+          +'<div class="sub">now '+a.cur+'h · '+(a.hoursToMajor<=0?'due now':(a.hoursToMajor+'h to go'))+' · ~'+a.daily+' h/day</div></div></div>';
+      } else {
+        html+='<div class="slot free"><div class="team">Team '+(i+1)+'<small>'+esc(t.name)+'</small></div>'
+          +'<div class="g"><div class="dg">— free —</div></div><div class="rt"></div></div>';
+      }
+    });
+    html+='</div>';
+  });
+  document.getElementById('days').innerHTML=html;
+  document.getElementById('foot').textContent='Deluxe Heavy Equipment L.L.C — major-service schedule (1500 h cycle) · '+new Date().toLocaleString('en-GB');
+}
+
+document.getElementById('loginBtn').addEventListener('click',doLogin);
+document.getElementById('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('refreshBtn').addEventListener('click',load);
+document.getElementById('printBtn').addEventListener('click',function(){
+  var h=document.getElementById('horizon'); document.getElementById('printsub').textContent=h.options[h.selectedIndex].text+' · as on '+new Date().toLocaleDateString('en-GB');
+  window.print();
+});
+document.getElementById('horizon').addEventListener('change',render);
+gate();
+</script>
+</body>
+</html>
