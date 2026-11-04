@@ -208,24 +208,6 @@
     <div id="services" class="step" style="--accent:var(--green)"><div class="n">2</div><h2>🔧 Services — check next</h2><span class="rule"></span><span class="cnt" id="svcCount"></span></div>
     <div id="svcList"></div>
 
-    <!-- STEP 2b: PREVENTIVE SERVICE (SUNDAY ROUND) -->
-    <div id="preventive" class="step" style="--accent:#6b46c1"><div class="n">🗓️</div><h2>Major Service — Sunday</h2><span class="rule"></span><span class="cnt" id="pvCount"></span></div>
-    <button class="openbd" onclick="togglePvForm()">🗓️ <b>＋ Add Sunday major service</b></button>
-    <div id="pvForm" class="bdform" hidden>
-      <input id="pDg" list="dgList" placeholder="DG number *   e.g. DG-553" autocomplete="off">
-      <div class="frow">
-        <input id="pDate" type="date" title="Service date (defaults to next Sunday)">
-        <select id="pTeam"><option value="">— assign team —</option></select>
-      </div>
-      <input id="pNote" placeholder="Note (optional)   e.g. full service + air filter">
-      <div class="frow">
-        <button class="btn wide" style="background:#6b46c1;color:#fff" onclick="submitPv()">🗓️ Add to list</button>
-        <button class="btn ghost" onclick="togglePvForm()">Cancel</button>
-      </div>
-    </div>
-    <div id="pvBoard"></div>
-    <div id="pvSuggest"></div>
-
     <!-- STEP 3: DISPATCH -->
     <div class="step" style="--accent:var(--blue)"><div class="n">3</div><h2>📋 Today's dispatch</h2><span class="rule"></span></div>
     <div id="dispatch"></div>
@@ -259,15 +241,13 @@ function areaKey(loc){return String(loc||'').toUpperCase().replace(/\(.*$/,'').r
 function loadAll(){
   if(!tok){document.getElementById('signin').hidden=false;document.getElementById('app').hidden=true;return;}
   var rb=document.getElementById('refreshBtn');rb.textContent='…';
-  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares'),apiGet('/api/reminders'),apiGet('/api/preventive').catch(function(){return{preventive:[]};})])
+  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares'),apiGet('/api/reminders')])
    .then(function(res){
      DATA.bd=(res[0]&&res[0].breakdowns)||[];
      DATA.gens=(res[1]&&res[1].generators)||[];
      DATA.spares=(res[2]&&res[2].items)||[];
      DATA.rem=(res[3]&&res[3].reminders)||[];
      DATA.remToday=(res[3]&&res[3].today)||new Date().toISOString().slice(0,10);
-     DATA.prev=(res[4]&&res[4].preventive)||[];
-     DATA.pvSunday=(res[4]&&res[4].nextSunday)||null;
      document.getElementById('signin').hidden=true;document.getElementById('app').hidden=false;
      render();rb.textContent='↻ Refresh';
      if(location.hash==='#services'){ var _s=document.getElementById('services'); if(_s){ setTimeout(function(){ _s.scrollIntoView({behavior:'smooth',block:'start'}); },120); } }
@@ -286,7 +266,7 @@ function contactOf(g){return (g&&g.contact&&String(g.contact).trim())?String(g.c
 function telHtml(num){var n=String(num).replace(/[^+0-9]/g,'');return '<a href="tel:'+n+'" style="color:var(--green);text-decoration:none;white-space:nowrap">📞 '+esc(num)+'</a>';}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
-function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderPreventive();renderSundaySuggest();renderDispatch();}
+function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderDispatch();}
 
 // ---- Suggested Sunday major services, auto-built from service (hours) data ----
 // Every on-hire genset's projected next-service date is rolled onto the Sunday
