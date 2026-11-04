@@ -48,6 +48,7 @@ const hire = require('./hire');
 const serviceAlert = require('./service-alert');
 const breakdowns = require('./breakdowns');
 const reminders = require('./reminders');
+const preventive = require('./preventive');
 const leads = require('./leads');
 const rentals = require('./rentals');
 const lpo = require('./lpo');
@@ -106,7 +107,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r244');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r245');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -1269,6 +1270,109 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
     return g;
   });
   res.json({ generators, hire: hire.getAll() });
+});
+
+// ---- Monthly service report -------------------------------------------------
+// "How many gensets serviced" per month, tracked properly. Aggregates every
+// service event from each generator's service history (not just the latest),
+// buckets by month, and returns a month-by-month summary plus a full detail
+// list for one selected month (DG, date, hours, which filters, technician).
+app.get('/api/service/report', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const dirMap = directory.getMap();
+  const monthLabel = (ym) => {
+    const [y, m] = ym.split('-');
+    const names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return (names[Number(m) - 1] || m) + ' ' + y;
+  };
+  // Flatten every service event across all generators.
+  const events = [];
+  serviceLog.getAll().forEach((g) => {
+    const dg = String(g.dg || '').toUpperCase();
+    const d = dirMap[dg] || {};
+    const hist = Array.isArray(g.history) ? g.history : [];
+    hist.forEach((h) => {
+      if (!h || h.reading === true) return;            // skip plain hour readings
+      const date = String(h.date || '').slice(0, 10);
+      if (!/^\d{4}-\d\d-\d\d$/.test(date)) return;
+      const c = h.checks || {};
+      // Skip "new unit registration" placeholders: a 0-hour entry with no filter
+      // work is a yard/workshop asset-list stub, not an actual service.
+      const anyFilter = !!(c.oil || c.oilFilter || c.fuelFilter || c.airFilter);
+      const ranHours = (h.hours != null && Number(h.hours) > 0);
+      if (!ranHours && !anyFilter) return;
+      events.push({
+        dg,
+        date,
+        month: date.slice(0, 7),
+        hours: (h.hours != null ? Number(h.hours) : null),
+        technician: String(h.technician || '').trim(),
+        kva: (d.kva != null ? d.kva : (g.kva != null ? g.kva : null)),
+        brand: d.brand || '',
+        customer: d.customer || '',
+        location: d.location || '',
+        oil: !!c.oil, oilFilter: !!c.oilFilter, fuelFilter: !!c.fuelFilter, airFilter: !!c.airFilter,
+      });
+    });
+  });
+
+  // Month-by-month summary.
+  const byMonth = {};
+  events.forEach((e) => {
+    const m = byMonth[e.month] || (byMonth[e.month] = { month: e.month, services: 0, gensets: new Set(), oil: 0, oilFilter: 0, fuelFilter: 0, airFilter: 0 });
+    m.services += 1; m.gensets.add(e.dg);
+    if (e.oil) m.oil += 1; if (e.oilFilter) m.oilFilter += 1; if (e.fuelFilter) m.fuelFilter += 1; if (e.airFilter) m.airFilter += 1;
+  });
+  const months = Object.keys(byMonth).sort().reverse().map((k) => {
+    const m = byMonth[k];
+    return { month: k, label: monthLabel(k), services: m.services, gensets: m.gensets.size, oil: m.oil, oilFilter: m.oilFilter, fuelFilter: m.fuelFilter, airFilter: m.airFilter };
+  });
+
+  // Selected month detail (default = current month in Dubai, else newest month).
+  const todayYM = new Intl.DateTimeFormat('en-CA', { timeZone: process.env.ALERT_TIMEZONE || 'Asia/Dubai', year: 'numeric', month: '2-digit' }).format(new Date());
+  let sel = String(req.query.month || '').slice(0, 7);
+  if (!/^\d{4}-\d\d$/.test(sel)) sel = (byMonth[todayYM] ? todayYM : (months[0] ? months[0].month : todayYM));
+  const rows = events.filter((e) => e.month === sel).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(a.dg).localeCompare(String(b.dg))));
+  const techMap = {};
+  rows.forEach((r) => { const t = r.technician || '—'; techMap[t] = (techMap[t] || 0) + 1; });
+  const technicians = Object.keys(techMap).map((t) => ({ name: t, count: techMap[t] })).sort((a, b) => b.count - a.count);
+  const totals = {
+    services: rows.length,
+    gensets: new Set(rows.map((r) => r.dg)).size,
+    oil: rows.filter((r) => r.oil).length,
+    oilFilter: rows.filter((r) => r.oilFilter).length,
+    fuelFilter: rows.filter((r) => r.fuelFilter).length,
+    airFilter: rows.filter((r) => r.airFilter).length,
+  };
+  res.json({ months, selected: sel, selectedLabel: monthLabel(sel), detail: { rows, technicians, totals } });
+});
+
+// ---- Preventive service plan (Sunday service round) -------------------------
+app.get('/api/preventive', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ preventive: preventive.getAll(), nextSunday: preventive.nextSunday() });
+});
+app.post('/api/preventive/add', fleetProtect, (req, res) => {
+  try { res.json({ ok: true, entry: preventive.add(req.body || {}) }); }
+  catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/preventive/update', fleetProtect, (req, res) => {
+  try {
+    const id = String((req.body || {}).id || '');
+    res.json({ ok: true, entry: preventive.update(id, req.body || {}) });
+  } catch (e) { res.status(400).json({ error: (e && e.message) || 'Invalid' }); }
+});
+app.post('/api/preventive/resolve', fleetProtect, (req, res) => {
+  const id = String((req.body || {}).id || '');
+  res.json({ ok: preventive.resolve(id) });
+});
+app.post('/api/preventive/reopen', fleetProtect, (req, res) => {
+  const id = String((req.body || {}).id || '');
+  res.json({ ok: preventive.reopen(id) });
+});
+app.post('/api/preventive/remove', fleetProtect, (req, res) => {
+  const id = String((req.body || {}).id || '');
+  res.json({ ok: preventive.remove(id) });
 });
 
 // ---- Manual fleet overrides (office-entered, persistent) ----
@@ -2501,6 +2605,18 @@ app.get(['/service-report', '/report'], (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'service-report.html'), { cacheControl: false });
+});
+
+// Monthly service report (analytics: how many gensets serviced, filters,
+// technicians) - a live dashboard page, distinct from the printable form above.
+app.get(['/service-monthly', '/monthly-report', '/monthly'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:;"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'service-monthly.html'), { cacheControl: false });
 });
 
 app.get('/fleet', (req, res) => serveFleetPage(req, res, false));
