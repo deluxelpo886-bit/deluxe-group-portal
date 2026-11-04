@@ -209,8 +209,8 @@
     <div id="svcList"></div>
 
     <!-- STEP 2b: PREVENTIVE SERVICE (SUNDAY ROUND) -->
-    <div id="preventive" class="step" style="--accent:#6b46c1"><div class="n">🗓️</div><h2>Preventive service — Sunday round</h2><span class="rule"></span><span class="cnt" id="pvCount"></span></div>
-    <button class="openbd" onclick="togglePvForm()">🗓️ <b>＋ Add to Sunday preventive list</b></button>
+    <div id="preventive" class="step" style="--accent:#6b46c1"><div class="n">🗓️</div><h2>Major Service — Sunday</h2><span class="rule"></span><span class="cnt" id="pvCount"></span></div>
+    <button class="openbd" onclick="togglePvForm()">🗓️ <b>＋ Add Sunday major service</b></button>
     <div id="pvForm" class="bdform" hidden>
       <input id="pDg" list="dgList" placeholder="DG number *   e.g. DG-553" autocomplete="off">
       <div class="frow">
@@ -299,7 +299,7 @@ function renderPreventive(){
   // Show the upcoming Sunday round (and anything earlier still open) first.
   open.sort(function(a,b){return String(a.date).localeCompare(String(b.date))||String(a.dg).localeCompare(String(b.dg));});
   if(cnt)cnt.textContent=open.length?(open.length+' planned'):'';
-  if(!open.length){board.innerHTML='<div class="svc-empty" style="padding:12px 14px;color:var(--sub,#8b95a1);font-size:13px">No preventive services planned. Add the Sunday round above — it shows here and on the day.</div>';return;}
+  if(!open.length){board.innerHTML='<div class="svc-empty" style="padding:12px 14px;color:var(--sub,#8b95a1);font-size:13px">No Sunday major services planned yet. Add the gensets for this Sunday above — they show here and on the day.</div>';return;}
   var today=new Date().toISOString().slice(0,10);
   // group by date
   var groups={};open.forEach(function(p){(groups[p.date]=groups[p.date]||[]).push(p);});
@@ -308,7 +308,7 @@ function renderPreventive(){
     var isToday=dt===today, past=dt<today;
     var tag=isToday?'📌 Today':(past?'⚠ '+dd:'🗓️ '+dd);
     var col=isToday?'var(--amber)':(past?'var(--red)':'#6b46c1');
-    html+='<div style="margin:10px 0 4px;font-weight:700;font-size:12.5px;color:'+col+'">'+tag+' · Sunday preventive ('+groups[dt].length+')</div>';
+    html+='<div style="margin:10px 0 4px;font-weight:700;font-size:12.5px;color:'+col+'">'+tag+' · Sunday major service ('+groups[dt].length+')</div>';
     groups[dt].forEach(function(p){
       var g=genFor(p.dg);var meta=[];if(g&&g.kva!=null)meta.push(esc(g.kva)+' kVA');if(g&&g.customer)meta.push(esc(g.customer));if(g&&g.location)meta.push(esc(g.location));
       html+='<div class="svc-card" style="border-left:4px solid '+col+';background:var(--card,#141c27);border-radius:12px;padding:10px 12px;margin:6px 0;display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">'
