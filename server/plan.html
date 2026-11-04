@@ -116,6 +116,30 @@
   }
   nav::-webkit-scrollbar{display:none;}
   nav>a{flex:0 0 auto!important; white-space:nowrap;}
+
+  /* ---- Morning Plan UX v2: colour-coded rows, tighter list, sticky area header ---- */
+  /* Sticky zone header: the area name + due count stays pinned while you scroll
+     that area's list, so you always know which zone the rows belong to. */
+  .zone{overflow:visible;}
+  .zhead{position:sticky;top:0;z-index:4;border-top-left-radius:12px;border-top-right-radius:12px;
+    box-shadow:0 6px 14px -12px rgba(0,0,0,.8);}
+  .zone.urgent .zhead{background:linear-gradient(180deg,rgba(244,105,76,.14),var(--panel2));}
+  .zfoot{border-bottom-left-radius:12px;border-bottom-right-radius:12px;}
+  /* Strong per-row status colour: red overdue · green due-today · amber soon ·
+     blue check-meter. A left accent bar + matching dot make state scannable. */
+  .u{padding:8px 10px 8px 12px!important;border-left:3px solid var(--line);border-radius:0 8px 8px 0;margin:3px 0;transition:background .12s ease;}
+  .u:hover{background:rgba(255,255,255,.025);}
+  .u.u-over{border-left-color:var(--red);}
+  .u.u-today{border-left-color:var(--green);}
+  .u.u-soon{border-left-color:var(--amber);}
+  .u.u-check{border-left-color:var(--blue);}
+  .u .dg::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle;background:var(--muted);}
+  .u.u-over .dg::before{background:var(--red);box-shadow:0 0 0 3px rgba(244,105,76,.18);}
+  .u.u-today .dg::before{background:var(--green);box-shadow:0 0 0 3px rgba(56,224,160,.18);}
+  .u.u-soon .dg::before{background:var(--amber);box-shadow:0 0 0 3px rgba(244,199,82,.18);}
+  .u.u-check .dg::before{background:var(--blue);box-shadow:0 0 0 3px rgba(95,176,245,.18);}
+  /* Tighter meter cross-check row so more gensets fit on one screen. */
+  .u .mtr{margin-top:5px!important;padding:5px 9px!important;}
 </style>
 <link rel="stylesheet" href="/theme.css">
 <link rel="manifest" href="/manifest-portal.json">
@@ -431,7 +455,8 @@
         var bdFlag=bd?('<div class="bdflag">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</div>'):'';
         var nextTxt=u.extra?(u.nextDate?(' · next '+esc(u.nextDate)):''):(' · next @ '+esc(u.nextHours||'?')+'h · '+esc(u.nextDate));
         var tag=u.extra?'<span class="checktag">✓ check meter</span>':overBadge(u.daysTo);
-        html+='<div class="u'+(u.extra?' xtra':'')+'"><span class="dg">'+esc(u.dg)+'</span>'
+        var ustate=u.extra?'u-check':(u.daysTo<0?'u-over':(u.daysTo===0?'u-today':'u-soon'));
+        html+='<div class="u '+ustate+(u.extra?' xtra':'')+'"><span class="dg">'+esc(u.dg)+'</span>'
           +'<span class="meta"><span class="cust">'+esc(u.customer||u.location||'—')+'</span>'
           +nextTxt+kva+brand+usageHtml(u)+'</span>'
           +tag+bdFlag+meterHtml(u)+'</div>';
