@@ -189,8 +189,18 @@ function logService(rec) {
     hours: entry.hours,
     nextService: entry.nextService,
     technician: entry.technician,
+    // Record WHICH filters were changed on this service, so the monthly service
+    // report can count oil / oil-filter / fuel-filter / air-filter per event
+    // (not only on the latest service). A plain service event (not a reading).
+    checks: {
+      oil: !!(entry.checks && entry.checks.oil),
+      oilFilter: !!(entry.checks && entry.checks.oilFilter),
+      fuelFilter: !!(entry.checks && entry.checks.fuelFilter),
+      airFilter: !!(entry.checks && entry.checks.airFilter),
+    },
+    service: true,
     updatedAt: entry.updatedAt,
-  }]).slice(-30);
+  }]).slice(-60);
   entry.history = history;
 
   store[dg] = entry;

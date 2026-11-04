@@ -155,6 +155,7 @@
     <a href="/service">🔧 Service</a>
     <a href="/plan">🧭 Plan</a>
     <a href="/spares">🧰 Spares</a>
+    <a href="/service-monthly">📊 Report</a>
   </nav>
   <div class="eyebrow">Deluxe Operations</div>
   <h1>Morning Command</h1>
@@ -207,6 +208,23 @@
     <div id="services" class="step" style="--accent:var(--green)"><div class="n">2</div><h2>🔧 Services — check next</h2><span class="rule"></span><span class="cnt" id="svcCount"></span></div>
     <div id="svcList"></div>
 
+    <!-- STEP 2b: PREVENTIVE SERVICE (SUNDAY ROUND) -->
+    <div id="preventive" class="step" style="--accent:#6b46c1"><div class="n">🗓️</div><h2>Preventive service — Sunday round</h2><span class="rule"></span><span class="cnt" id="pvCount"></span></div>
+    <button class="openbd" onclick="togglePvForm()">🗓️ <b>＋ Add to Sunday preventive list</b></button>
+    <div id="pvForm" class="bdform" hidden>
+      <input id="pDg" list="dgList" placeholder="DG number *   e.g. DG-553" autocomplete="off">
+      <div class="frow">
+        <input id="pDate" type="date" title="Service date (defaults to next Sunday)">
+        <select id="pTeam"><option value="">— assign team —</option></select>
+      </div>
+      <input id="pNote" placeholder="Note (optional)   e.g. full service + air filter">
+      <div class="frow">
+        <button class="btn wide" style="background:#6b46c1;color:#fff" onclick="submitPv()">🗓️ Add to list</button>
+        <button class="btn ghost" onclick="togglePvForm()">Cancel</button>
+      </div>
+    </div>
+    <div id="pvBoard"></div>
+
     <!-- STEP 3: DISPATCH -->
     <div class="step" style="--accent:var(--blue)"><div class="n">3</div><h2>📋 Today's dispatch</h2><span class="rule"></span></div>
     <div id="dispatch"></div>
@@ -226,7 +244,7 @@
 var TEAMS=[{id:'6692',name:'Team 1 · Sonu & Hussain'},{id:'44137',name:'Team 2 · Adil & Sabir'},{id:'44107',name:'Team 3 · Imran & Jayaraj'}];
 var STATUSES=['Open','Assigned','On the way','On site','Waiting parts','Resolved'];
 var tok=null; try{tok=localStorage.getItem('deluxeFleetToken');}catch(e){}
-var DATA={bd:[],gens:[],spares:[],rem:[],remToday:null};
+var DATA={bd:[],gens:[],spares:[],rem:[],remToday:null,prev:[],pvSunday:null};
 
 function toast(t){var m=document.getElementById('msg');m.textContent=t;m.style.display='block';clearTimeout(m._t);m._t=setTimeout(function(){m.style.display='none';},2200);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -240,13 +258,15 @@ function areaKey(loc){return String(loc||'').toUpperCase().replace(/\(.*$/,'').r
 function loadAll(){
   if(!tok){document.getElementById('signin').hidden=false;document.getElementById('app').hidden=true;return;}
   var rb=document.getElementById('refreshBtn');rb.textContent='…';
-  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares'),apiGet('/api/reminders')])
+  Promise.all([apiGet('/api/breakdowns'),apiGet('/api/service/status'),apiGet('/api/spares'),apiGet('/api/reminders'),apiGet('/api/preventive').catch(function(){return{preventive:[]};})])
    .then(function(res){
      DATA.bd=(res[0]&&res[0].breakdowns)||[];
      DATA.gens=(res[1]&&res[1].generators)||[];
      DATA.spares=(res[2]&&res[2].items)||[];
      DATA.rem=(res[3]&&res[3].reminders)||[];
      DATA.remToday=(res[3]&&res[3].today)||new Date().toISOString().slice(0,10);
+     DATA.prev=(res[4]&&res[4].preventive)||[];
+     DATA.pvSunday=(res[4]&&res[4].nextSunday)||null;
      document.getElementById('signin').hidden=true;document.getElementById('app').hidden=false;
      render();rb.textContent='↻ Refresh';
      if(location.hash==='#services'){ var _s=document.getElementById('services'); if(_s){ setTimeout(function(){ _s.scrollIntoView({behavior:'smooth',block:'start'}); },120); } }
@@ -265,7 +285,42 @@ function contactOf(g){return (g&&g.contact&&String(g.contact).trim())?String(g.c
 function telHtml(num){var n=String(num).replace(/[^+0-9]/g,'');return '<a href="tel:'+n+'" style="color:var(--green);text-decoration:none;white-space:nowrap">📞 '+esc(num)+'</a>';}
 function partsFor(dg){return DATA.spares.filter(function(s){return String(s.dg).toUpperCase()===String(dg).toUpperCase()&&s.status!=='Fitted';});}
 
-function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderDispatch();}
+function render(){fillDgList();renderKpis();renderReminders();renderBreakdowns();renderServices();renderPreventive();renderDispatch();}
+
+// ---- Preventive service (Sunday round) ----
+function togglePvForm(){var f=document.getElementById('pvForm');f.hidden=!f.hidden;if(!f.hidden){var pt=document.getElementById('pTeam');if(pt&&pt.options.length<=1){pt.innerHTML='<option value="">— assign team —</option>'+TEAMS.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join('');}var pd=document.getElementById('pDate');if(pd&&!pd.value&&DATA.pvSunday)pd.value=DATA.pvSunday;var dg=document.getElementById('pDg');if(dg)dg.focus();}}
+function submitPv(){var dg=(document.getElementById('pDg').value||'').trim();if(!dg){toast('Enter the DG number');return;}var teamSel=document.getElementById('pTeam');var team=teamSel.value;var teamName=team?(TEAMS.filter(function(t){return t.id===team;})[0]||{}).name||'':'';var body={dg:dg,date:(document.getElementById('pDate').value||'').trim(),team:team,teamName:teamName,note:(document.getElementById('pNote').value||'').trim()};apiPost('/api/preventive/add',body).then(function(){document.getElementById('pDg').value='';document.getElementById('pNote').value='';togglePvForm();toast('Added to Sunday list');loadAll();}).catch(function(){toast('Could not add');});}
+function pvDone(id){apiPost('/api/preventive/resolve',{id:id}).then(function(){toast('Done ✓');loadAll();}).catch(function(){toast('Failed');});}
+function pvDel(id){apiPost('/api/preventive/remove',{id:id}).then(function(){toast('Removed');loadAll();}).catch(function(){toast('Failed');});}
+function renderPreventive(){
+  var board=document.getElementById('pvBoard');var cnt=document.getElementById('pvCount');if(!board)return;
+  var all=(DATA.prev||[]).slice();
+  var open=all.filter(function(p){return p.status!=='done';});
+  // Show the upcoming Sunday round (and anything earlier still open) first.
+  open.sort(function(a,b){return String(a.date).localeCompare(String(b.date))||String(a.dg).localeCompare(String(b.dg));});
+  if(cnt)cnt.textContent=open.length?(open.length+' planned'):'';
+  if(!open.length){board.innerHTML='<div class="svc-empty" style="padding:12px 14px;color:var(--sub,#8b95a1);font-size:13px">No preventive services planned. Add the Sunday round above — it shows here and on the day.</div>';return;}
+  var today=new Date().toISOString().slice(0,10);
+  // group by date
+  var groups={};open.forEach(function(p){(groups[p.date]=groups[p.date]||[]).push(p);});
+  var html='';Object.keys(groups).sort().forEach(function(dt){
+    var dd=dt.slice(8,10)+'/'+dt.slice(5,7)+'/'+dt.slice(0,4);
+    var isToday=dt===today, past=dt<today;
+    var tag=isToday?'📌 Today':(past?'⚠ '+dd:'🗓️ '+dd);
+    var col=isToday?'var(--amber)':(past?'var(--red)':'#6b46c1');
+    html+='<div style="margin:10px 0 4px;font-weight:700;font-size:12.5px;color:'+col+'">'+tag+' · Sunday preventive ('+groups[dt].length+')</div>';
+    groups[dt].forEach(function(p){
+      var g=genFor(p.dg);var meta=[];if(g&&g.kva!=null)meta.push(esc(g.kva)+' kVA');if(g&&g.customer)meta.push(esc(g.customer));if(g&&g.location)meta.push(esc(g.location));
+      html+='<div class="svc-card" style="border-left:4px solid '+col+';background:var(--card,#141c27);border-radius:12px;padding:10px 12px;margin:6px 0;display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">'
+        +'<div style="flex:1;min-width:160px"><div style="font-weight:800">'+esc(p.dg)+(p.teamName?' <span style="font-weight:600;color:#a78bfa">· '+esc(p.teamName)+'</span>':'')+'</div>'
+        +(meta.length?'<div style="font-size:12px;color:var(--sub,#8b95a1);margin-top:2px">'+meta.join(' · ')+'</div>':'')
+        +(p.note?'<div style="font-size:12.5px;margin-top:3px">📝 '+esc(p.note)+'</div>':'')+'</div>'
+        +'<div style="display:flex;gap:6px"><button class="btn" style="background:var(--green);color:#fff;padding:7px 10px" onclick="pvDone(\''+p.id+'\')">✓ Done</button>'
+        +'<button class="btn ghost" style="padding:7px 10px" onclick="pvDel(\''+p.id+'\')">✕</button></div></div>';
+    });
+  });
+  board.innerHTML=html;
+}
 
 function toggleRemForm(){var f=document.getElementById('remForm');f.hidden=!f.hidden;if(!f.hidden){var d=document.getElementById('rDate');if(d&&!d.value)d.value=DATA.remToday||new Date().toISOString().slice(0,10);var n=document.getElementById('rNote');if(n)n.focus();}}
 function submitRem(){var note=(document.getElementById('rNote').value||'').trim();if(!note){toast('Write the reminder first');return;}var body={dg:(document.getElementById('rDg').value||'').trim(),note:note,dueDate:(document.getElementById('rDate').value||'').trim(),createdBy:'Operations Head'};apiPost('/api/reminders/add',body).then(function(){document.getElementById('rNote').value='';document.getElementById('rDg').value='';toggleRemForm();toast('Reminder saved');loadAll();}).catch(function(){toast('Could not save reminder');});}
