@@ -85,6 +85,7 @@
   .kpi.hire .kc{background:rgba(65,201,138,.16);color:var(--green);} .kpi.hire .tag{background:rgba(65,201,138,.14);color:var(--green);}
   .kpi.due .kc{background:rgba(240,101,90,.16);color:var(--red);} .kpi.due .tag{background:rgba(240,101,90,.14);color:var(--red);}
   .kpi.plan .kc{background:rgba(233,197,107,.16);color:var(--gold);} .kpi.plan .tag{background:rgba(233,197,107,.14);color:var(--gold);}
+  .kpi.prev .kc{background:rgba(139,92,246,.18);color:#a78bfa;} .kpi.prev .tag{background:rgba(139,92,246,.16);color:#a78bfa;}
   .kpi:active{transform:scale(.99);}
 
   /* ---------- primary quick actions ---------- */
@@ -224,6 +225,7 @@
     <div class="kpi hire"><div class="kc">✅</div><span class="tag" id="kHireTag"></span><div class="k-num dash" id="kHire">—</div><div class="k-lbl">On hire</div></div>
     <a class="kpi due" href="/command#services"><div class="kc">🛠️</div><span class="tag" id="kDueTag"></span><div class="k-num dash" id="kDue">—</div><div class="k-lbl">Service due ›</div></a>
     <a class="kpi plan" href="/command#services"><div class="kc">⏳</div><span class="tag" id="kPlanTag"></span><div class="k-num dash" id="kPlan">—</div><div class="k-lbl">Plan soon ›</div></a>
+    <a class="kpi prev" href="/preventive-plan"><div class="kc">🗓️</div><span class="tag" id="kPrevTag"></span><div class="k-num dash" id="kPrev">—</div><div class="k-lbl">Preventive today ›</div></a>
   </section>
 
   <!-- Reminders (shown only when there are open reminders) -->
@@ -405,10 +407,18 @@
         var owned=gens.filter(function(g){return /^DG-/i.test(g.dg);});
         var cross=gens.filter(function(g){return !/^DG-/i.test(g.dg);});
         var onhire=0,due=0,plan=0,dueNames=[];
+        var todayStr=new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD local
+        var prevToday=0, prevOver=0;
         gens.forEach(function(g){   // service alarms cover everything deployed, incl. cross-hire
           var st=g.due&&g.due.state;
           if(st==='due'){ due++; if(!g.offHire) dueNames.push(g.dg); }
           else if(st==='plan') plan++;
+          // Preventive schedule (by projected next-service DATE): due today / overdue.
+          if(!g.offHire && g.nextServiceDate){
+            var nd=String(g.nextServiceDate).slice(0,10);
+            if(nd===todayStr) prevToday++;
+            else if(nd<todayStr) prevOver++;
+          }
         });
         owned.forEach(function(g){ if(!g.offHire) onhire++; });   // on-hire = owned only
         setNum('kFleet',owned.length);
@@ -416,10 +426,12 @@
         setNum('kHire',onhire);
         setNum('kDue',due);
         setNum('kPlan',plan);
+        setNum('kPrev',prevToday);
         // context tags
         if(owned.length) setTag('kHireTag', Math.round(onhire/owned.length*100)+'%');
         setTag('kDueTag', due>0 ? 'now' : '');
         setTag('kPlanTag', plan>0 ? '7 days' : '');
+        setTag('kPrevTag', prevOver>0 ? ('+'+prevOver+' overdue') : '');
         // live alert strip
         var strip=document.getElementById('alertStrip');
         if(strip){
