@@ -4544,5 +4544,22 @@
     "currentHours": 12233,
     "currentHoursDate": "2026-11-04",
     "notes": "Serviced 04/11/2026 @ 12233h by Jayraj & Imran - oil, oil filter, fuel filter, air filter ALL done. Controller 12233h confirmed. Ran 380h since 05/10 (~12.7 h/day). Next 12583h (+350) -> due ~02/12/2026. 160 kVA FG Wilson, Bright Accord, Al Jubail Island."
+  },
+  {
+    "dg": "DG-857",
+    "hours": 1889,
+    "date": "2026-11-05",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 2339,
+    "nextServiceDate": "2026-12-12",
+    "interval": 450,
+    "dailyHours": 12.3,
+    "currentHours": 1889,
+    "currentHoursDate": "2026-11-05",
+    "notes": "Serviced 05/11/2026 @ 1889h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X) - pending. Controller 1889h / 494 starts confirmed. Ran 481h since 27/09 (~12.3 h/day). Next 2339h (+450) -> due ~12/12/2026. 250 kVA Kirloskar, Gulf Contracting, Dubai Business Bay."
   }
 ]
