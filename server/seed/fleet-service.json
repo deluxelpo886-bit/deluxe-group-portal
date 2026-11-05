@@ -3616,7 +3616,9 @@
     "nextService": 450,
     "nextServiceDate": null,
     "interval": 450,
-    "notes": "In yard (workshop) - available. Confirm hours before it goes back on hire."
+    "notes": "New 1250 kVA Cummins (purchased 09/09/2026), going out on hire - customer/site PENDING. Meter confirmed 0h on 05/11 so it is NOT due for service; removed from the service plan until it runs. First service at 450h once deployed.",
+    "currentHours": 0,
+    "currentHoursDate": "2026-11-05"
   },
   {
     "dg": "DG-866",
