@@ -4631,5 +4631,22 @@
     "currentHours": 14423,
     "currentHoursDate": "2026-11-05",
     "notes": "Serviced 05/11/2026 @ 14423h by Adeel & Rol - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. Light-use standby (~4.5 h/day; was 14332h on 16/10). Next 14773h (+350) -> due ~22/01/2027 on hours (time-based review earlier if needed). 100 kVA Kirloskar, Ramah, Mushayrif (U32)."
+  },
+  {
+    "dg": "DG-453",
+    "hours": 36959,
+    "date": "2026-11-05",
+    "technician": "IK, JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 37309,
+    "nextServiceDate": "2026-12-09",
+    "interval": 350,
+    "dailyHours": 10.3,
+    "currentHours": 36959,
+    "currentHoursDate": "2026-11-05",
+    "notes": "Serviced 05/11/2026 @ 36959h by IK, Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. OIL LEAK ARRESTED (fixed on site); 6 litres oil used/topped up. Ran 287h since 08/10 (~10.3 h/day). Next 37309h (+350) -> due ~09/12/2026. 30 kVA Kirloskar, Khaliq Noor Scrap, Mussafah."
   }
 ]
