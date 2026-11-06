@@ -4665,5 +4665,22 @@
     "currentHours": 23366,
     "currentHoursDate": "2026-11-06",
     "notes": "Serviced 06/11/2026 @ 23366h by Rol & Adil - oil, oil filter, fuel filter, air filter ALL done. Controller 23366h confirmed. Ran 304h since 19/10 (~16.9 h/day). Next 23716h (+350) -> due ~27/11/2026. 45 kVA Perkins, Trojan, Al Reem."
+  },
+  {
+    "dg": "DG-564",
+    "hours": 322,
+    "date": "2026-11-06",
+    "technician": "JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 672,
+    "nextServiceDate": "2026-12-08",
+    "interval": 350,
+    "dailyHours": 10.9,
+    "currentHours": 322,
+    "currentHoursDate": "2026-11-06",
+    "notes": "350h service done 06/11/2026 @ 322h by Jayraj & Imran - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending, fit at next service. Controller 322h confirmed. Ran 239h since first service 15/10 (83h) over 22 days = ~10.9 h/day. Next 672h (+350) -> due ~08/12/2026. 100 kVA Kirloskar, Emdad, Kizad-B."
   }
 ]
