@@ -61,4 +61,33 @@ function get(dg) { return store[String(dg || '').trim().toUpperCase()] || null; 
 function getMap() { return Object.assign({}, store); }
 function getAll() { return Object.keys(store).map((k) => Object.assign({}, store[k])); }
 
-module.exports = { save, remove, get, getMap, getAll };
+// One-time import of known filter part numbers (e.g. from the daily store issue
+// register). Version-gated so it runs once and survives deploys. Only FILLS a
+// field that is currently empty - it never overwrites what the office typed in
+// the Parts & Oil page.
+function applySeed(records, version) {
+  if (!Array.isArray(records) || !version) return { skipped: true };
+  const marker = path.join(DIR, 'specs-seed-applied.json');
+  let applied = {};
+  try { if (fs.existsSync(marker)) applied = JSON.parse(fs.readFileSync(marker, 'utf8')) || {}; } catch (_) { applied = {}; }
+  if (applied[version]) return { skipped: true, version };
+  let n = 0;
+  records.forEach((r) => {
+    const dg = String((r && r.dg) || '').trim().toUpperCase();
+    if (!dg) return;
+    const cur = store[dg] || { dg };
+    const merged = Object.assign({}, cur);
+    ['air', 'oil', 'fuel', 'oilLitres', 'oilGrade', 'engine', 'notes'].forEach((k) => {
+      const v = r[k];
+      const has = (v != null && String(v).trim() !== '');
+      const curEmpty = (cur[k] == null || String(cur[k]).trim() === '');
+      if (has && curEmpty) merged[k] = v;
+    });
+    try { save(merged); n += 1; } catch (_) { /* skip */ }
+  });
+  applied[version] = { at: new Date().toISOString(), count: n };
+  try { if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true }); fs.writeFileSync(marker, JSON.stringify(applied, null, 2)); } catch (_) { /* best-effort */ }
+  return { applied: n, version };
+}
+
+module.exports = { save, remove, get, getMap, getAll, applySeed };

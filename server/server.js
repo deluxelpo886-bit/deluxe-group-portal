@@ -160,6 +160,18 @@ try {
   }
 } catch (e) { console.warn('[seed] spares import skipped:', e && e.message); }
 
+// One-time import of known filter part numbers (from the daily store issue
+// register) so the Parts & Oil page shows the right oil/fuel/air filter master
+// numbers per generator. Only fills blank fields; never overwrites office edits.
+try {
+  const filterSeedPath = path.join(__dirname, 'seed', 'filter-parts.json');
+  if (fs.existsSync(filterSeedPath)) {
+    const fp = JSON.parse(fs.readFileSync(filterSeedPath, 'utf8'));
+    const r = specs.applySeed(fp, 'filter-parts-2026-11-06');
+    if (r && r.applied) console.log('[seed] filled filter part numbers for ' + r.applied + ' generators');
+  }
+} catch (e) { console.warn('[seed] filter-parts import skipped:', e && e.message); }
+
 // Breakdown log wiped clean at the Operations Head's request (26/09). The full
 // history - seeded reports, prunes, and confirmed-fixed resolutions - is cleared
 // once on boot and stays cleared across deploys (the seed file is emptied so
