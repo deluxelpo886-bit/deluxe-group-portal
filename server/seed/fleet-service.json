@@ -4648,5 +4648,22 @@
     "currentHours": 36959,
     "currentHoursDate": "2026-11-05",
     "notes": "Serviced 05/11/2026 @ 36959h by IK, Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. OIL LEAK ARRESTED (fixed on site); 6 litres oil used/topped up. Ran 287h since 08/10 (~10.3 h/day). Next 37309h (+350) -> due ~09/12/2026. 30 kVA Kirloskar, Khaliq Noor Scrap, Mussafah."
+  },
+  {
+    "dg": "DG-819",
+    "hours": 23366,
+    "date": "2026-11-06",
+    "technician": "ROL & ADIL",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 23716,
+    "nextServiceDate": "2026-11-27",
+    "interval": 350,
+    "dailyHours": 16.9,
+    "currentHours": 23366,
+    "currentHoursDate": "2026-11-06",
+    "notes": "Serviced 06/11/2026 @ 23366h by Rol & Adil - oil, oil filter, fuel filter, air filter ALL done. Controller 23366h confirmed. Ran 304h since 19/10 (~16.9 h/day). Next 23716h (+350) -> due ~27/11/2026. 45 kVA Perkins, Trojan, Al Reem."
   }
 ]
