@@ -998,7 +998,17 @@ app.get('/api/team/utilisation', fleetProtect, async (req, res) => {
   });
 
   const hrs = (ms) => Math.round((ms / 3600000) * 10) / 10;
-  const vehicles = Object.keys(V).map((id) => {
+  // Only our tracked service-team vans belong in this report. Any other tracker
+  // the GPS feed carries (Hafeez / procurement, substitute or hired trucks)
+  // stays out, so the office gets a tidy 3-vehicle report, not a page per
+  // device. Same plate allow-list the live map uses (actual Total Secure plates
+  // 66912 / 43137 / 44107, with the older short forms 6692 / 44137 kept too).
+  const TEAM_PLATES = ['66912', '6692', '43137', '44137', '44107'];
+  const isTeamVeh = (name, id) => {
+    const s = (String(name || '') + ' ' + String(id || '')).toLowerCase();
+    return TEAM_PLATES.some((p) => s.indexOf(p) !== -1);
+  };
+  const vehicles = Object.keys(V).filter((id) => isTeamVeh(V[id].name, id)).map((id) => {
     const v = V[id];
     const totalMs = v.serviceMs + v.yardMs + v.otherMs + v.driveMs;
     const sitesArr = Object.keys(v.sites).sort((a, b) => v.sites[b] - v.sites[a]);
