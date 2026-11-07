@@ -473,5 +473,17 @@
     "offHire": true,
     "since": "2026-11-03",
     "note": "Off-hire 03/11/2026 - returned to yard from Hydro Power (Mussafah MN1). 50 kVA Perkins. Available; air filter pending."
+  },
+  {
+    "dg": "DG-843",
+    "offHire": true,
+    "since": "2026-11-06",
+    "note": "Off-hire 06/11/2026 - off-hired from Hasim, Shakhbout City (MSH31). In transit, not yet arrived at yard."
+  },
+  {
+    "dg": "DG-540",
+    "offHire": true,
+    "since": "2026-11-06",
+    "note": "Off-hire 06/11/2026 - off-hired from Al Hashim, Shakhbout City (MSH31). In transit, not yet arrived at yard."
   }
 ]
