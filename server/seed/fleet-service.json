@@ -4682,5 +4682,22 @@
     "currentHours": 322,
     "currentHoursDate": "2026-11-06",
     "notes": "350h service done 06/11/2026 @ 322h by Jayraj & Imran - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending, fit at next service. Controller 322h confirmed. Ran 239h since first service 15/10 (83h) over 22 days = ~10.9 h/day. Next 672h (+350) -> due ~08/12/2026. 100 kVA Kirloskar, Emdad, Kizad-B."
+  },
+  {
+    "dg": "DG-833",
+    "hours": 2336,
+    "date": "2026-11-06",
+    "technician": "MIYA KHAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 2686,
+    "nextServiceDate": "2027-05-06",
+    "interval": 350,
+    "dailyHours": 0.5,
+    "currentHours": 2336,
+    "currentHoursDate": "2026-11-06",
+    "notes": "Periodic service done 06/11/2026 @ 2336h by Miya Khan - oil, oil filter, fuel filter & air filter ALL done. STANDBY unit (Dreams Cricket Academy, Zayed City) - meter still 2336h, unchanged since 16/09 service (ran ~0h in ~7 weeks); controller 0V on standby. Hours-based next 2686h will not be reached at standby use, so serviced on a time/periodic basis - next periodic service ~06/05/2027. 45 kVA Kubota."
   }
 ]
