@@ -96,7 +96,19 @@
         <option value="14">Last 14 days</option>
         <option value="30">Last 30 days</option>
       </select>
+      <label style="margin-left:6px;">Cost AED/km</label>
+      <input id="rate" type="number" min="0" step="0.05" inputmode="decimal"
+             style="width:84px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-family:var(--sans);font-size:13px;color:var(--ink);background:#fff;">
       <button class="btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div id="summary" style="display:none;margin:0 0 16px;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
+      <div style="background:var(--soft);padding:10px 16px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;">Team total — this period</div>
+      <div class="tiles" style="padding:12px 16px;">
+        <div class="tile"><div class="n" id="sumKm">—</div><div class="l">Total km</div></div>
+        <div class="tile drive"><div class="n" id="sumCost">—</div><div class="l">Running cost (AED)</div></div>
+        <div class="tile svc"><div class="n" id="sumSvc">—</div><div class="l">Servicing h</div></div>
+        <div class="tile"><div class="n" id="sumRate">—</div><div class="l">AED / km used</div></div>
+      </div>
     </div>
     <div class="legend noprint">
       <span class="k"><span class="sw" style="background:var(--svc)"></span> Servicing (at a genset)</span>
@@ -132,6 +144,15 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function hrs(n){ return (n==null?0:n).toFixed(1); }
 
+  // Running-cost rate: AED per km driven. Office-editable, remembered on this
+  // device. Cost = distance (km) x rate. Changing it re-paints from the data
+  // already loaded (no refetch).
+  var RK='deluxeVehCostPerKm';
+  var RATE=parseFloat(localStorage.getItem(RK)); if(!(RATE>=0)) RATE=1.50;
+  var LASTDATA=null;
+  function money(n){ return 'AED '+Math.round(n==null?0:n).toLocaleString('en-US'); }
+  function costKm(km){ return (Number(km)||0)*RATE; }
+
   function showLogin(msg){ $('overlay').style.display='flex'; if(msg)$('loginErr').textContent=msg; }
   function hideLogin(){ $('overlay').style.display='none'; load(); }
   async function doLogin(){
@@ -159,12 +180,13 @@
   }
 
   function daysTable(v){
-    var head='<tr><th>Day</th><th>Servicing</th><th>Driving</th><th>Idle yard</th><th>Other</th><th>km</th></tr>';
+    var head='<tr><th>Day</th><th>Servicing</th><th>Driving</th><th>Idle yard</th><th>Other</th><th>km</th><th>Cost AED</th></tr>';
     var rows=v.perDay.map(function(d){
       var blank=(d.serviceHrs+d.driveHrs+d.yardHrs+d.otherHrs)===0;
       function c(x){ return blank||x===0?'<td class="z">·</td>':'<td>'+hrs(x)+'</td>'; }
-      return '<tr><td class="d">'+fmtDay(d.day)+'</td>'+c(d.serviceHrs)+c(d.driveHrs)+c(d.yardHrs)+c(d.otherHrs)
-        +(blank||d.distanceKm===0?'<td class="z">·</td>':'<td>'+hrs(d.distanceKm)+'</td>')+'</tr>';
+      var kmCell=(blank||d.distanceKm===0)?'<td class="z">·</td>':'<td>'+hrs(d.distanceKm)+'</td>';
+      var costCell=(d.distanceKm>0)?'<td>'+money(costKm(d.distanceKm))+'</td>':'<td class="z">·</td>';
+      return '<tr><td class="d">'+fmtDay(d.day)+'</td>'+c(d.serviceHrs)+c(d.driveHrs)+c(d.yardHrs)+c(d.otherHrs)+kmCell+costCell+'</tr>';
     }).join('');
     return '<table class="days">'+head+rows+'</table>';
   }
@@ -185,13 +207,15 @@
       : '<div class="sites">No stops matched a genset site in this period.</div>';
     return '<div class="veh">'
       +'<div class="vhead"><span class="vn">🚐 '+esc(v.name)+'</span>'+flag
-      +'<span class="km">'+hrs(v.distanceKm)+' km · '+hrs(v.trackedHrs)+' h tracked</span></div>'
+      +'<span class="km">'+hrs(v.distanceKm)+' km · '+money(costKm(v.distanceKm))+' · '+hrs(v.trackedHrs)+' h tracked</span></div>'
       +barSeg(v)
       +'<div class="tiles">'
       +'<div class="tile svc"><div class="n">'+hrs(v.serviceHrs)+'</div><div class="l">Servicing h</div></div>'
       +'<div class="tile drive"><div class="n">'+hrs(v.driveHrs)+'</div><div class="l">Driving h</div></div>'
       +'<div class="tile yard"><div class="n">'+hrs(v.yardHrs)+'</div><div class="l">Idle yard h</div></div>'
       +'<div class="tile other"><div class="n">'+hrs(v.otherHrs)+'</div><div class="l">Other-stop h</div></div>'
+      +'<div class="tile"><div class="n">'+hrs(v.distanceKm)+'</div><div class="l">Distance km</div></div>'
+      +'<div class="tile drive"><div class="n" style="font-size:15px;">'+money(costKm(v.distanceKm))+'</div><div class="l">Running cost</div></div>'
       +'</div>'
       +sites
       +daysTable(v)
@@ -211,17 +235,39 @@
         $('totBadge').textContent='Not connected';
         return;
       }
-      var from=new Date(d.from), to=new Date(d.to);
-      var fmt=function(x){ return x.getDate()+'/'+(x.getMonth()+1); };
-      $('dateLine').textContent='Last '+d.days+' days · '+fmt(from)+' – '+fmt(to);
-      $('totBadge').textContent=d.vehicles.length+' vehicle'+(d.vehicles.length===1?'':'s');
-      if(d.generatedAt){ $('genLine').textContent='Generated '+new Date(d.generatedAt).toLocaleString('en-GB',{timeZone:'Asia/Dubai'}); }
-      if(!d.vehicles.length){ $('out').innerHTML='<div class="empty">No tracked vehicles returned any trips or stops in this period.</div>'; return; }
-      var warn=d.error?'<div class="note">Note: '+esc(d.error)+'</div>':'';
-      var intro='<div class="note">Each van’s GPS time is split into <b style="color:var(--svc)">servicing</b> (parked within 300 m of a genset site), <b style="color:var(--drive)">driving</b>, <b style="color:var(--yard)">idle at the yard</b>, and <b style="color:var(--other)">other stops</b> (parked somewhere that is neither). Sorted by servicing hours.</div>';
-      $('out').innerHTML=warn+intro+d.vehicles.map(vehCard).join('');
+      LASTDATA=d; paint();
     }catch(e){ $('out').innerHTML='<div class="empty">Could not load the report. '+esc(e.message||'')+'</div>'; }
   }
+
+  // Render whatever is in LASTDATA (called on load and whenever the AED/km rate
+  // changes, so cost figures update without refetching GPS data).
+  function paint(){
+    var d=LASTDATA; if(!d) return;
+    var from=new Date(d.from), to=new Date(d.to);
+    var fmt=function(x){ return x.getDate()+'/'+(x.getMonth()+1); };
+    $('dateLine').textContent='Last '+d.days+' days · '+fmt(from)+' – '+fmt(to);
+    $('totBadge').textContent=d.vehicles.length+' vehicle'+(d.vehicles.length===1?'':'s');
+    if(d.generatedAt){ $('genLine').textContent='Generated '+new Date(d.generatedAt).toLocaleString('en-GB',{timeZone:'Asia/Dubai'}); }
+    if(!d.vehicles.length){ $('summary').style.display='none'; $('out').innerHTML='<div class="empty">No tracked team vehicles returned any trips or stops in this period.</div>'; return; }
+    // Fleet totals.
+    var totKm=0, totSvc=0;
+    d.vehicles.forEach(function(v){ totKm+=Number(v.distanceKm)||0; totSvc+=Number(v.serviceHrs)||0; });
+    $('sumKm').textContent=totKm.toFixed(1)+' km';
+    $('sumCost').textContent=money(costKm(totKm));
+    $('sumSvc').textContent=totSvc.toFixed(1)+' h';
+    $('sumRate').textContent='AED '+RATE.toFixed(2);
+    $('summary').style.display='block';
+    var warn=d.error?'<div class="note">Note: '+esc(d.error)+'</div>':'';
+    var intro='<div class="note">Each van’s GPS time is split into <b style="color:var(--svc)">servicing</b> (parked within 300 m of a genset site), <b style="color:var(--drive)">driving</b>, <b style="color:var(--yard)">idle at the yard</b>, and <b style="color:var(--other)">other stops</b> (parked somewhere that is neither). <b>Running cost = km × AED '+RATE.toFixed(2)+'/km.</b> Sorted by servicing hours.</div>';
+    $('out').innerHTML=warn+intro+d.vehicles.map(vehCard).join('');
+  }
+
+  // Sync the rate input, and re-paint when it changes.
+  $('rate').value=RATE;
+  $('rate').addEventListener('input',function(){
+    var v=parseFloat($('rate').value);
+    if(v>=0){ RATE=v; try{ localStorage.setItem(RK,String(v)); }catch(e){} paint(); }
+  });
 
   $('days').addEventListener('change',load);
   if(TOKEN){ load(); } else { showLogin(); }
