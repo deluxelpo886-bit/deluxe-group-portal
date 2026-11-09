@@ -1653,11 +1653,11 @@
     "airFilter": true,
     "dailyHours": 0.25,
     "currentHours": 37264,
-    "currentHoursDate": "2026-10-10",
+    "currentHoursDate": "2026-11-09",
     "nextService": 37611,
     "nextServiceDate": "2027-03-27",
     "interval": 350,
-    "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins."
+    "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins. [09/11/2026: controller checked - ~37264h, STOPPED (0 rpm). Standby unit at OSAI/Motherson, barely runs (~0.25 h/day). Service card seen on set is the 23/08 Adeel service (meter mis-written 33259 = 37259), already logged."
   },
   {
     "dg": "DG-542",
