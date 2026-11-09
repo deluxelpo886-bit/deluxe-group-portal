@@ -1371,12 +1371,13 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 7228,
-    "nextServiceDate": "2026-11-10",
+    "nextServiceDate": "2026-11-17",
     "interval": 350,
     "dailyHours": 9.3,
     "currentHours": 7130,
     "currentHoursDate": "2026-11-02",
-    "notes": "Serviced 06/10/2026 @ 6878h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 7130h 4m confirmed 02/11/2026 -> 98h left to next (7228); ~9.3 h/day. Due ~10/11. 25 kVA Weber, Six Sigma, Dubai Jumeirah 1 (La Mer)."
+    "notes": "Serviced 06/10/2026 @ 6878h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 7130h 4m confirmed 02/11/2026 -> 98h left to next (7228); ~9.3 h/day. Due ~10/11. 25 kVA Weber, Six Sigma, Dubai Jumeirah 1 (La Mer). [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 10/11/2026 -> 17/11/2026.",
+    "fixedDays": 42
   },
   {
     "dg": "DG-852",
@@ -1401,12 +1402,13 @@
     "fuelFilter": true,
     "airFilter": true,
     "nextService": 3392,
-    "nextServiceDate": "2026-11-11",
+    "nextServiceDate": "2026-11-18",
     "interval": 350,
     "dailyHours": 8.9,
     "currentHours": 3282,
     "currentHoursDate": "2026-11-02",
-    "notes": "Serviced 06/10/2026 @ 3042h by Sonu Hussain - oil, oil filter, fuel filter AND air filter all done. Controller 3282h 35m confirmed 02/11/2026 (689 starts) -> 110h left to next (3392); ~8.9 h/day. Due ~11/11. 40 kVA Kubota, Six Sigma, Dubai Jumeirah 1 (La Mer)."
+    "notes": "Serviced 06/10/2026 @ 3042h by Sonu Hussain - oil, oil filter, fuel filter AND air filter all done. Controller 3282h 35m confirmed 02/11/2026 (689 starts) -> 110h left to next (3392); ~8.9 h/day. Due ~11/11. 40 kVA Kubota, Six Sigma, Dubai Jumeirah 1 (La Mer). [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 11/11/2026 -> 18/11/2026.",
+    "fixedDays": 43
   },
   {
     "dg": "DG-505",
@@ -1498,11 +1500,12 @@
     "airFilter": false,
     "dailyHours": 12.5,
     "nextService": 4111,
-    "nextServiceDate": "2026-11-20",
+    "nextServiceDate": "2026-11-27",
     "interval": 450,
-    "notes": "Serviced 15/10/2026 at 3661h by Sonu Hussain & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card). Next 4111h (450h cycle). Heavy use ~17.4 h/day (400h in 23 days since 3261h/22-09). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First). [09/11/2026 meter update: controller 3973h 42m / 1048 starts. Ran 312h since 15/10 (3661h) over 25 days = ~12.5 h/day. 138h to next (4111) -> due ~20/11/2026. AIR FILTER still pending from the 15/10 service.",
+    "notes": "Serviced 15/10/2026 at 3661h by Sonu Hussain & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card). Next 4111h (450h cycle). Heavy use ~17.4 h/day (400h in 23 days since 3261h/22-09). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First). [09/11/2026 meter update: controller 3973h 42m / 1048 starts. Ran 312h since 15/10 (3661h) over 25 days = ~12.5 h/day. 138h to next (4111) -> due ~20/11/2026. AIR FILTER still pending from the 15/10 service. [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 20/11/2026 -> 27/11/2026.",
     "currentHours": 3973,
-    "currentHoursDate": "2026-11-09"
+    "currentHoursDate": "2026-11-09",
+    "fixedDays": 43
   },
   {
     "dg": "DG-834",
@@ -4374,12 +4377,13 @@
     "fuelFilter": true,
     "airFilter": true,
     "nextService": 6901,
-    "nextServiceDate": "2026-11-27",
+    "nextServiceDate": "2026-12-04",
     "interval": 350,
     "dailyHours": 13.9,
     "currentHours": 6551,
     "currentHoursDate": "2026-11-02",
-    "notes": "Serviced 02/11/2026 @ 6551h by Rol & Adil - oil, oil filter, fuel filter AND air filter ALL done (previous pending air filter now fitted). Controller 6551h confirmed. Next service 6901h (+350). ~13.9 h/day -> due ~27/11/2026. 320 kVA CAT, Noor Al Sahara Ready Mix, Jumeirah Islands Dubai."
+    "notes": "Serviced 02/11/2026 @ 6551h by Rol & Adil - oil, oil filter, fuel filter AND air filter ALL done (previous pending air filter now fitted). Controller 6551h confirmed. Next service 6901h (+350). ~13.9 h/day -> due ~27/11/2026. 320 kVA CAT, Noor Al Sahara Ready Mix, Jumeirah Islands Dubai. [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 27/11/2026 -> 04/12/2026.",
+    "fixedDays": 32
   },
   {
     "dg": "DG-848",
@@ -4459,12 +4463,13 @@
     "fuelFilter": true,
     "airFilter": true,
     "nextService": 4209,
-    "nextServiceDate": "2026-12-12",
+    "nextServiceDate": "2026-12-19",
     "interval": 450,
     "dailyHours": 11.4,
     "currentHours": 3759,
     "currentHoursDate": "2026-11-03",
-    "notes": "Serviced 03/11/2026 @ 3759h by Sonu & Hussain - oil, oil filter, fuel filter, air filter ALL done. Controller running (386V/51.4Hz). Ran 423h since 27/09 service (3336h) = ~11.4 h/day. Next 4209h (+450) -> due ~12/12/2026. 350 kVA Cummins, Gulf Contracting, Dubai (Hessyan First)."
+    "notes": "Serviced 03/11/2026 @ 3759h by Sonu & Hussain - oil, oil filter, fuel filter, air filter ALL done. Controller running (386V/51.4Hz). Ran 423h since 27/09 service (3336h) = ~11.4 h/day. Next 4209h (+450) -> due ~12/12/2026. 350 kVA Cummins, Gulf Contracting, Dubai (Hessyan First). [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 12/12/2026 -> 19/12/2026.",
+    "fixedDays": 46
   },
   {
     "dg": "DG-861",
@@ -4561,12 +4566,13 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 2339,
-    "nextServiceDate": "2026-12-12",
+    "nextServiceDate": "2026-12-19",
     "interval": 450,
     "dailyHours": 12.3,
     "currentHours": 1889,
     "currentHoursDate": "2026-11-05",
-    "notes": "Serviced 05/11/2026 @ 1889h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X) - pending. Controller 1889h / 494 starts confirmed. Ran 481h since 27/09 (~12.3 h/day). Next 2339h (+450) -> due ~12/12/2026. 250 kVA Kirloskar, Gulf Contracting, Dubai Business Bay."
+    "notes": "Serviced 05/11/2026 @ 1889h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X) - pending. Controller 1889h / 494 starts confirmed. Ran 481h since 27/09 (~12.3 h/day). Next 2339h (+450) -> due ~12/12/2026. 250 kVA Kirloskar, Gulf Contracting, Dubai Business Bay. [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 12/12/2026 -> 19/12/2026.",
+    "fixedDays": 44
   },
   {
     "dg": "DG-471",
@@ -4612,12 +4618,13 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 8753,
-    "nextServiceDate": "2026-11-20",
+    "nextServiceDate": "2026-11-27",
     "interval": 350,
     "dailyHours": 24.0,
     "currentHours": 8403,
     "currentHoursDate": "2026-11-05",
-    "notes": "Serviced 05/11/2026 @ 8403h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. Heavy 24 h/day (KAT). Next 8753h (+350) -> due ~20/11/2026. 160 kVA Kirloskar, KAT, Dubai Al Jadaf."
+    "notes": "Serviced 05/11/2026 @ 8403h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. Heavy 24 h/day (KAT). Next 8753h (+350) -> due ~20/11/2026. 160 kVA Kirloskar, KAT, Dubai Al Jadaf. [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 20/11/2026 -> 27/11/2026.",
+    "fixedDays": 22
   },
   {
     "dg": "DG-531",
