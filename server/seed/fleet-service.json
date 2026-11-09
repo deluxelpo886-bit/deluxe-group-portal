@@ -3409,12 +3409,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "currentHours": 31391,
-    "currentHoursDate": "2026-10-19",
-    "nextService": 31657,
-    "nextServiceDate": "2026-11-04",
-    "interval": 350,
-    "notes": "Serviced 11/10/2026 @31307h by Roland & Emran - oil + all three filters done. Olympian PowerWizard 31391h confirmed 19/10/2026 (84C, running) -> 266h left to next (31657). ~10.5 h/day. Next service ~04/11/2026. 400 kVA Caterpillar, Trojan, Al Reem RR8."
+    "currentHours": 31644,
+    "currentHoursDate": "2026-11-09",
+    "nextService": 31757,
+    "nextServiceDate": "2026-11-19",
+    "interval": 450,
+    "notes": "Serviced 11/10/2026 @31307h by Roland & Emran - oil + all three filters done. Olympian PowerWizard 31391h confirmed 19/10/2026 (84C, running) -> 266h left to next (31657). ~10.5 h/day. Next service ~04/11/2026. 400 kVA Caterpillar, Trojan, Al Reem RR8. [Updated 09/11/2026: controller reads 31643.7h running (1472 rpm, 73C) - ~11.6 h/day. 400 kVA -> interval 450, so next is 31757h (~19/11/2026), not 31657.",
+    "dailyHours": 11.6
   },
   {
     "dg": "DG-529",
