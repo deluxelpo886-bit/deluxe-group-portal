@@ -1496,11 +1496,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 17.4,
+    "dailyHours": 12.5,
     "nextService": 4111,
-    "nextServiceDate": "2026-11-10",
+    "nextServiceDate": "2026-11-20",
     "interval": 450,
-    "notes": "Serviced 15/10/2026 at 3661h by Sonu Hussain & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card). Next 4111h (450h cycle). Heavy use ~17.4 h/day (400h in 23 days since 3261h/22-09). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First)."
+    "notes": "Serviced 15/10/2026 at 3661h by Sonu Hussain & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card). Next 4111h (450h cycle). Heavy use ~17.4 h/day (400h in 23 days since 3261h/22-09). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First). [09/11/2026 meter update: controller 3973h 42m / 1048 starts. Ran 312h since 15/10 (3661h) over 25 days = ~12.5 h/day. 138h to next (4111) -> due ~20/11/2026. AIR FILTER still pending from the 15/10 service.",
+    "currentHours": 3973,
+    "currentHoursDate": "2026-11-09"
   },
   {
     "dg": "DG-834",
