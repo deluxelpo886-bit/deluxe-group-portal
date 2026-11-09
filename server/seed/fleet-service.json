@@ -4750,5 +4750,22 @@
     "currentHours": 851,
     "currentHoursDate": "2026-11-08",
     "notes": "350h service done 08/11/2026 @ 851h by Rol & Adil - oil, oil filter, fuel filter & air filter ALL done. Ran 337h since 17/10 (514h) over 22 days = ~15.3 h/day. Next 1201h (+350) -> due ~01/12/2026. 125 kVA Kirloskar, Malik Al Ghabah Weddings & Events, Madinat Zayed Shopping Centre."
+  },
+  {
+    "dg": "DG-35",
+    "hours": 9838,
+    "date": "2026-11-09",
+    "technician": "ROL & ADIL",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 10188,
+    "nextServiceDate": "2026-12-14",
+    "interval": 350,
+    "dailyHours": 10.1,
+    "currentHours": 9838,
+    "currentHoursDate": "2026-11-09",
+    "notes": "350h service done 09/11/2026 @ 9838h by Rol & Adil - oil, oil filter, fuel filter & air filter ALL done. Ran 352h since 05/10 (9486h) over 35 days = ~10.1 h/day. Next 10188h (+350) -> due ~14/12/2026. 45 kVA JET, Agritek, Al Bahyah Farms."
   }
 ]
