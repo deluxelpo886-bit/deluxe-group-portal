@@ -4779,5 +4779,22 @@
     "currentHours": 9838,
     "currentHoursDate": "2026-11-09",
     "notes": "350h service done 09/11/2026 @ 9838h by Rol & Adil - oil, oil filter, fuel filter & air filter ALL done. Ran 352h since 05/10 (9486h) over 35 days = ~10.1 h/day. Next 10188h (+350) -> due ~14/12/2026. 45 kVA JET, Agritek, Al Bahyah Farms."
+  },
+  {
+    "dg": "DG-816",
+    "hours": 8735,
+    "date": "2026-11-09",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 9085,
+    "nextServiceDate": "2027-03-12",
+    "interval": 350,
+    "dailyHours": 2.85,
+    "currentHours": 8735,
+    "currentHoursDate": "2026-11-09",
+    "notes": "350h service done 09/11/2026 @ 8735h by Sonu & Hussain - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending, fit next service. Ran 296h since 28/07 (8439h) over 104 days = ~2.85 h/day (light/standby). Next 9085h (+350) -> ~12/03/2027 at this light use. 40 kVA Kirloskar, OSAI, Khalifa Ind. City B (KIZAD)."
   }
 ]
