@@ -491,5 +491,11 @@
     "offHire": true,
     "since": "2026-11-09",
     "note": "Returned to Malwan Technical 09/11/2026 - cross-hire ended; our DG-476 deployed in its place near Khalifa Industrial City B."
+  },
+  {
+    "dg": "DG-491",
+    "offHire": true,
+    "since": "2026-11-10",
+    "note": "Off-hire 10/11/2026 - returned from Hydro Power, Al Bahia to yard. Available for next hire. 83 kVA Kirloskar."
   }
 ]
