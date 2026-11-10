@@ -4796,5 +4796,22 @@
     "currentHours": 8735,
     "currentHoursDate": "2026-11-09",
     "notes": "350h service done 09/11/2026 @ 8735h by Sonu & Hussain - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending, fit next service. Ran 296h since 28/07 (8439h) over 104 days = ~2.85 h/day (light/standby). Next 9085h (+350) -> ~12/03/2027 at this light use. 40 kVA Kirloskar, OSAI, Khalifa Ind. City B (KIZAD)."
+  },
+  {
+    "dg": "DG-481",
+    "hours": 24216,
+    "date": "2026-11-10",
+    "technician": "ADEEL & ROL",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 24566,
+    "nextServiceDate": "2026-12-16",
+    "interval": 350,
+    "dailyHours": 9.7,
+    "currentHours": 24216,
+    "currentHoursDate": "2026-11-10",
+    "notes": "350h service done 10/11/2026 @ 24216h by Adeel & Rol - oil, oil filter & fuel filter done; AIR FILTER NOT done (dash on card) - pending, fit next service. Ran 281h since 12/10 (23935h) over 29 days = ~9.7 h/day. Next 24566h (+350) -> due ~16/12/2026. 100 kVA Weber, Six Sigma, Al Nahyan (E25)."
   }
 ]
