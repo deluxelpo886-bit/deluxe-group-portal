@@ -3673,13 +3673,13 @@
     "oilFilter": false,
     "fuelFilter": false,
     "airFilter": false,
-    "dailyHours": 12,
-    "currentHours": 0,
-    "currentHoursDate": "2026-10-08",
-    "nextService": 450,
-    "nextServiceDate": "2026-11-15",
+    "dailyHours": 0.6,
+    "currentHours": 18,
+    "currentHoursDate": "2026-11-08",
+    "nextService": 50,
+    "nextServiceDate": "2026-12-31",
     "interval": 450,
-    "notes": "On hire to ADNOC fuel station (Al Shamkha) from 08/10/2026. New 500 kVA CAT; meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service ~15/11."
+    "notes": "On hire to ADNOC fuel station (Al Shamkha) from 08/10/2026. New 500 kVA CAT; meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service ~15/11. [08/11/2026: controller 17h 57m / 54 starts - barely run (~18h in a month, standby backup at ADNOC). Set running-in (first) service target at 50h ~ time-based 31/12/2026; will not reach 450h for a long time at this standby use."
   },
   {
     "dg": "DG-562",
