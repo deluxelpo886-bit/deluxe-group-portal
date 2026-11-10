@@ -3332,12 +3332,12 @@
     "airFilter": false,
     "dailyHours": 12,
     "nextService": 6608,
-    "nextServiceDate": "2026-12-06",
+    "nextServiceDate": "2026-11-20",
     "interval": 350,
     "currentHours": 6291,
     "currentHoursDate": "2026-11-10",
-    "notes": "Serviced 20/10/2026 at 6258h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done this time (X on card - pending, carry one). Next 6608h (+350). 341h since 03/10 service = ~20 h/day (near-continuous) -> due ~07/11. 40 kVA, Aswar, Mafraq (Jarn Yafour). TIGHT ~20h/day CYCLE. [10/11/2026: on hire to ALNAWARS (Al Faya North). Handover meter 6291h. Next 6608h (~06/12 at 12 h/day).",
-    "fixedDays": 18
+    "notes": "Serviced 20/10/2026 at 6258h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done this time (X on card - pending, carry one). Next 6608h (+350). 341h since 03/10 service = ~20 h/day (near-continuous) -> due ~07/11. 40 kVA, Aswar, Mafraq (Jarn Yafour). TIGHT ~20h/day CYCLE. [10/11/2026: on hire to ALNAWARS (Al Faya North). Handover meter 6291h. Next 6608h (~06/12 at 12 h/day). [10/11/2026: next service date pinned to 20/11/2026 per ops head.",
+    "fixedDays": 31
   },
   {
     "dg": "DG-828",
