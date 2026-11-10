@@ -3155,10 +3155,10 @@
     "airFilter": true,
     "dailyHours": 8.2,
     "nextService": 31406,
-    "nextServiceDate": "2026-12-06",
+    "nextServiceDate": "2026-11-20",
     "interval": 350,
-    "notes": "Serviced 14/10/2026 at 31056h by Adeel & Jairaj - ALL FOUR done (oil, oil filter, fuel filter, air filter). Next 31406h (350h), ~8.2 h/day -> due ~26/11. 125 kVA Kirlosker, XDAM, Baniyas (Al Nahdhah School). [10/11/2026: meter 31278h (128h to next 31406). Next service POSTPONED 10 days per ops head -> 06/12/2026 (fixedDays=53 from the 14/10 service).",
-    "fixedDays": 53,
+    "notes": "Serviced 14/10/2026 at 31056h by Adeel & Jairaj - ALL FOUR done (oil, oil filter, fuel filter, air filter). Next 31406h (350h), ~8.2 h/day -> due ~26/11. 125 kVA Kirlosker, XDAM, Baniyas (Al Nahdhah School). [10/11/2026: meter 31278h (128h to next 31406). Next service POSTPONED 10 days per ops head -> 06/12/2026 (fixedDays=53 from the 14/10 service). [Corrected: next service date set to 20/11/2026 (fixedDays=37).",
+    "fixedDays": 37,
     "currentHours": 31278,
     "currentHoursDate": "2026-11-10"
   },
