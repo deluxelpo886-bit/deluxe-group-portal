@@ -4813,5 +4813,22 @@
     "currentHours": 24216,
     "currentHoursDate": "2026-11-10",
     "notes": "350h service done 10/11/2026 @ 24216h by Adeel & Rol - oil, oil filter & fuel filter done; AIR FILTER NOT done (dash on card) - pending, fit next service. Ran 281h since 12/10 (23935h) over 29 days = ~9.7 h/day. Next 24566h (+350) -> due ~16/12/2026. 100 kVA Weber, Six Sigma, Al Nahyan (E25)."
+  },
+  {
+    "dg": "DG-537",
+    "hours": 8935,
+    "date": "2026-11-10",
+    "technician": "ROL & ADIL",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 9285,
+    "nextServiceDate": "2027-01-05",
+    "interval": 350,
+    "dailyHours": 6.3,
+    "currentHours": 8935,
+    "currentHoursDate": "2026-11-10",
+    "notes": "350h service done 10/11/2026 @ 8935h by Rol & Adil - oil, oil filter & fuel filter done; AIR FILTER STILL NOT done (dash on card) - pending since the 15/08 service, skipped again. Clears the overdue (was due 8741h). Ran 544h since 15/08 (8391h) = ~6.3 h/day. Next 9285h (+350) -> ~05/01/2027. 40 kVA Kirloskar, Total Power, MBZ Mussafah."
   }
 ]
