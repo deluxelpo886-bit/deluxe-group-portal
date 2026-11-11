@@ -3069,13 +3069,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 10.66,
-    "currentHours": 36161,
-    "currentHoursDate": "2026-10-28",
+    "dailyHours": 13.7,
+    "currentHours": 36353,
+    "currentHoursDate": "2026-11-11",
     "nextService": 36363,
-    "nextServiceDate": "2026-11-14",
+    "nextServiceDate": "2026-11-12",
     "interval": 350,
-    "notes": "Redeployed 28/10/2026 to TROJAN, Al Bahia in place of DG-558. Controller 36161h (16/10, low use). 202h left to next (36363); on 12h plan ~14/11. Air filter pending. 200 kVA Kirloskar."
+    "notes": "Redeployed 28/10/2026 to TROJAN, Al Bahia in place of DG-558. Controller 36161h (16/10, low use). 202h left to next (36363); on 12h plan ~14/11. Air filter pending. 200 kVA Kirloskar. [11/11/2026: controller 36353h / 5857 starts. Ran 192h since 28/10 (36161h) = ~13.7 h/day. Next 36363h - only 10h to go, service DUE NOW. 200 kVA Kirloskar, Trojan, Al Bahia."
   },
   {
     "dg": "DG-537",
