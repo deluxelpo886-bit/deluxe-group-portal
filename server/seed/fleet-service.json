@@ -3677,9 +3677,10 @@
     "currentHours": 18,
     "currentHoursDate": "2026-11-08",
     "nextService": 50,
-    "nextServiceDate": "2026-12-31",
+    "nextServiceDate": "2026-12-11",
     "interval": 450,
-    "notes": "On hire to ADNOC fuel station (Al Shamkha) from 08/10/2026. New 500 kVA CAT; meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service ~15/11. [08/11/2026: controller 17h 57m / 54 starts - barely run (~18h in a month, standby backup at ADNOC). Set running-in (first) service target at 50h ~ time-based 31/12/2026; will not reach 450h for a long time at this standby use."
+    "notes": "On hire to ADNOC fuel station (Al Shamkha) from 08/10/2026. New 500 kVA CAT; meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service ~15/11. [08/11/2026: controller 17h 57m / 54 starts - barely run (~18h in a month, standby backup at ADNOC). Set running-in (first) service target at 50h ~ time-based 31/12/2026; will not reach 450h for a long time at this standby use. [11/11/2026: skipped from plan for 30 days per ops head -> next 11/12/2026 (fixedDays=64).",
+    "fixedDays": 64
   },
   {
     "dg": "DG-562",
