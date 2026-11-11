@@ -3683,7 +3683,7 @@
   },
   {
     "dg": "DG-562",
-    "hours": 0,
+    "hours": 28583,
     "date": "2026-10-08",
     "technician": "WORKSHOP",
     "oil": false,
@@ -3691,12 +3691,13 @@
     "fuelFilter": false,
     "airFilter": false,
     "dailyHours": 12,
-    "currentHours": 0,
-    "currentHoursDate": "2026-10-08",
-    "nextService": 450,
-    "nextServiceDate": "2026-11-15",
+    "currentHours": 28587,
+    "currentHoursDate": "2026-11-11",
+    "nextService": 29033,
+    "nextServiceDate": "2026-12-11",
     "interval": 450,
-    "notes": "On hire to ADNOC fuel station from 08/10/2026 (was new 500 kVA Perkins genset in yard). Meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service due ~15/11."
+    "notes": "On hire to ADNOC fuel station from 08/10/2026 (was new 500 kVA Perkins genset in yard). Meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service due ~15/11. [11/11/2026: CORRECTED baseline - unit given to ADNOC at 28583h (used Perkins, not 0h). Controller 28587h / 8537 starts. Service schedule SKIPPED 30 days per ops head -> next 11/12/2026 (fixedDays=64). Next hours 29033 (+450).",
+    "fixedDays": 64
   },
   {
     "dg": "DG-563",
