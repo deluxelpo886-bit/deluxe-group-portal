@@ -393,13 +393,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 0.1,
+    "dailyHours": 1.5,
     "nextService": 3863,
-    "nextServiceDate": "2026-11-07",
+    "nextServiceDate": "2027-05-07",
     "interval": 350,
-    "currentHours": 3516,
-    "currentHoursDate": "2026-10-24",
-    "notes": "Serviced 17/09/2026 at 3513h by Shafiullah & Umar - oil, oil filter, fuel filter AND air filter all done. Next 3863h (+350). Controller 3516h 1m on 24/10/2026 (1842 starts) - only 3h since service = barely running (standby). On hire 30/09/2026 to EMDAD (Al Dhafra). WORKING / operational."
+    "currentHours": 3598,
+    "currentHoursDate": "2026-11-11",
+    "notes": "Serviced 17/09/2026 at 3513h by Shafiullah & Umar - oil, oil filter, fuel filter AND air filter all done. Next 3863h (+350). Controller 3516h 1m on 24/10/2026 (1842 starts) - only 3h since service = barely running (standby). On hire 30/09/2026 to EMDAD (Al Dhafra). WORKING / operational. [11/11/2026: controller 3598h 26m / 1899 starts. Ran only 85h since 17/09 (3513h) = ~1.5 h/day (standby/backup). Next 3863h far off at this use. 725 kVA CAT, Emdad, Al Dhafra."
   },
   {
     "dg": "DG-806",
@@ -3958,12 +3958,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 8.7,
+    "dailyHours": 18.7,
     "nextService": 29964,
     "interval": 350,
-    "currentHours": 29614,
-    "currentHoursDate": "2026-10-24",
-    "notes": "Serviced 24/10/2026 at 29614h by Sonu & Sabir - oil, oil filter, fuel filter AND air filter all done. Next 29964h (+350). 209h since 30/09 (29405h) = ~8.7 h/day. 82.5 kVA Kirloskar, EMDAD, Al Dhafra. (Card number read as DG-52? - matched to DG-529 by hours.)"
+    "currentHours": 29950,
+    "currentHoursDate": "2026-11-11",
+    "notes": "Serviced 24/10/2026 at 29614h by Sonu & Sabir - oil, oil filter, fuel filter AND air filter all done. Next 29964h (+350). 209h since 30/09 (29405h) = ~8.7 h/day. 82.5 kVA Kirloskar, EMDAD, Al Dhafra. (Card number read as DG-52? - matched to DG-529 by hours.) [11/11/2026: controller 29950h 18m / 5054 starts. Ran 336h since 24/10 (29614h) = ~18.7 h/day (now 24h primary power during site outage). Next 29964h - only 14h to go, service DUE NOW. 82.5 kVA Kirloskar, Emdad, Al Dhafra.",
+    "nextServiceDate": "2026-11-12"
   },
   {
     "dg": "DG-826",
