@@ -4869,5 +4869,22 @@
     "currentHours": 5066,
     "currentHoursDate": "2026-11-11",
     "notes": "350h service done 11/11/2026 @ 5066h by Sonu & Hussain - oil, oil filter, fuel filter & air filter ALL done. Ran 290h since 21/09 (4776h) over 51 days = ~5.7 h/day. Next 5416h (+350) -> ~11/01/2027. 45 kVA Kirloskar, Al Reef, Al Bday'ah (Western Region)."
+  },
+  {
+    "dg": "DG-520",
+    "hours": 12914,
+    "date": "2026-11-11",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 13264,
+    "nextServiceDate": "2026-12-04",
+    "interval": 350,
+    "dailyHours": 15.1,
+    "currentHours": 12914,
+    "currentHoursDate": "2026-11-11",
+    "notes": "350h service done 11/11/2026 @ 12914h by Sonu & Hussain - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending. Running (gauge ~1500 RPM, load on genset). Ran 529h since 07/10 (12385h) over 35 days = ~15.1 h/day. Next 13264h (+350) -> ~04/12/2026. 200 kVA Kirloskar, Trojan, Al Bahyah."
   }
 ]
