@@ -850,10 +850,10 @@
     "currentHours": 3758,
     "currentHoursDate": "2026-11-11",
     "nextService": 3898,
-    "nextServiceDate": "2027-02-01",
+    "nextServiceDate": "2026-11-25",
     "interval": 350,
-    "notes": "Serviced 09/07/2026 at 3548h (all filters). Meter 3731h on 20/10/2026 (Weichai controller: 1774 starts, 23322 kWh, gens normal running). ~1.4 h/day (36h in 26 days) - VERY light use. Next service set to 15/11/2026 (per ops). 100 kVA Weichai, Smart Home, Al Ajban. [11/11/2026: controller 3758h / 1804 starts, running normally. Ran 210h since 09/07 (3548h) = ~1.7 h/day (light). Next 3898h - 140h to go -> due ~01/02/2027. Schedule date corrected. 100 kVA Weichai, Smart Home, Al Ajban.",
-    "fixedDays": 129
+    "notes": "Serviced 09/07/2026 at 3548h (all filters). Meter 3731h on 20/10/2026 (Weichai controller: 1774 starts, 23322 kWh, gens normal running). ~1.4 h/day (36h in 26 days) - VERY light use. Next service set to 15/11/2026 (per ops). 100 kVA Weichai, Smart Home, Al Ajban. [11/11/2026: controller 3758h / 1804 starts, running normally. Ran 210h since 09/07 (3548h) = ~1.7 h/day (light). Next 3898h - 140h to go -> due ~01/02/2027. Schedule date corrected. 100 kVA Weichai, Smart Home, Al Ajban. [Next service date set to 25/11/2026 per ops head (fixedDays=139).",
+    "fixedDays": 139
   },
   {
     "dg": "DG-801",
