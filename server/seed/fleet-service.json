@@ -4851,5 +4851,22 @@
     "currentHours": 9895,
     "currentHoursDate": "2026-11-10",
     "notes": "350h service done 10/11/2026 @ 9895h by Sonu & Hussain - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending. Controller 9895h confirmed. Ran 272h since 18/07 (9623h) = ~2.4 h/day (light). Next 10245h (+350) -> ~05/04/2027 at this light use. 60 kVA JET, Trojan, Yas Island."
+  },
+  {
+    "dg": "DG-821",
+    "hours": 5066,
+    "date": "2026-11-11",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 5416,
+    "nextServiceDate": "2027-01-11",
+    "interval": 350,
+    "dailyHours": 5.7,
+    "currentHours": 5066,
+    "currentHoursDate": "2026-11-11",
+    "notes": "350h service done 11/11/2026 @ 5066h by Sonu & Hussain - oil, oil filter, fuel filter & air filter ALL done. Ran 290h since 21/09 (4776h) over 51 days = ~5.7 h/day. Next 5416h (+350) -> ~11/01/2027. 45 kVA Kirloskar, Al Reef, Al Bday'ah (Western Region)."
   }
 ]
