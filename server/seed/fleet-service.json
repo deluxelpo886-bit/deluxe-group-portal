@@ -1298,11 +1298,11 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "currentHours": 4697,
-    "currentHoursDate": "2026-10-24",
-    "dailyHours": 3.3,
+    "currentHours": 4715,
+    "currentHoursDate": "2026-11-13",
+    "dailyHours": 2.3,
     "nextService": 4955,
-    "nextServiceDate": "2026-10-26",
+    "nextServiceDate": "2027-02-25",
     "notes": "Serviced 26/09/2026 @4605h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 4697h 43m on 24/10/2026. 92h in 28 days = ~3.3 h/day (lighter than assumed). 258h left to next (4955h); on 12h plan due ~15/11. 45 kVA Jet, Gulf Contracting, Abu Dhabi.",
     "interval": 350
   },
@@ -3907,12 +3907,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 9.3,
+    "dailyHours": 4.0,
     "nextService": 4202,
     "interval": 350,
-    "currentHours": 3852,
-    "currentHoursDate": "2026-10-24",
-    "notes": "Serviced 24/10/2026 at 3852h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done (air filter finally changed). Next 4202h (+350). 389h since 12/09 service = ~9.3 h/day -> on 12h plan due ~22/11. STILL OPEN: arrange diesel (fuel) oil-leak HOSE. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA."
+    "currentHours": 3929,
+    "currentHoursDate": "2026-11-13",
+    "notes": "Serviced 24/10/2026 at 3852h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done (air filter finally changed). Next 4202h (+350). 389h since 12/09 service = ~9.3 h/day -> on 12h plan due ~22/11. STILL OPEN: arrange diesel (fuel) oil-leak HOSE. Gulf Contracting, Abu Dhabi (Al Hisn W6), 62.5 kVA.",
+    "nextServiceDate": "2027-01-20"
   },
   {
     "dg": "DG-831",
