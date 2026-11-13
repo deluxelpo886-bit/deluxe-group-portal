@@ -1092,11 +1092,12 @@
     "airFilter": false,
     "dailyHours": 5.7,
     "nextService": 4054,
-    "nextServiceDate": "2026-11-23",
+    "nextServiceDate": "2026-12-14",
     "interval": 350,
     "currentHours": 3730,
     "currentHoursDate": "2026-10-06",
-    "notes": "Serviced 23/09/2026 at 3704h by IK & Jayaraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 4054h (350h cycle). 160 kVA Kirlosker. Off-hired 30/09; COLLECTED and returned to yard 06/10 (controller 3730h). Available for hire."
+    "notes": "Serviced 23/09/2026 at 3704h by IK & Jayaraj - oil, oil filter, fuel filter done; air filter pending. REDEPLOYED 14/11/2026 to BRIGHT ACCORD, Al Jubail Island JS (replaced DG-802). Next service DATE-PINNED to 14/12/2026 (tomorrow +30 days, ops). 160 kVA Kirlosker.",
+    "fixedDays": 82
   },
   {
     "dg": "DG-821",
