@@ -107,7 +107,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r284');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r285');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -167,7 +167,7 @@ try {
   const filterSeedPath = path.join(__dirname, 'seed', 'filter-parts.json');
   if (fs.existsSync(filterSeedPath)) {
     const fp = JSON.parse(fs.readFileSync(filterSeedPath, 'utf8'));
-    const r = specs.applySeed(fp, 'filter-parts-2026-11-11');
+    const r = specs.applySeed(fp, 'filter-parts-2026-11-13');
     if (r && r.applied) console.log('[seed] filled filter part numbers for ' + r.applied + ' generators');
   }
 } catch (e) { console.warn('[seed] filter-parts import skipped:', e && e.message); }
