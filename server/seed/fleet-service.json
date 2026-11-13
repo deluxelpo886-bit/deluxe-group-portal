@@ -1230,10 +1230,10 @@
     "dailyHours": 8.7,
     "currentHours": 26436,
     "currentHoursDate": "2026-11-12",
-    "nextService": 26886,
-    "nextServiceDate": "2027-01-03",
-    "interval": 450,
-    "notes": "Serviced 12/11/2026 at 26436h by Rol & Adil - oil + oil filter + fuel filter changed; AIR FILTER NOT. Next service 26886h (card shows +450). Controller 26436h 16m / 5469 starts. 160 kVA, on hire Trojan, Al Bahia."
+    "nextService": 26786,
+    "nextServiceDate": "2026-12-22",
+    "interval": 350,
+    "notes": "Serviced 12/11/2026 at 26436h by Rol & Adil - oil + oil filter + fuel filter changed; AIR FILTER NOT. Next service 26786h (350h cycle). Controller 26436h 16m / 5469 starts. 160 kVA, on hire Trojan, Al Bahia."
   },
   {
     "dg": "DG-508",
@@ -3070,10 +3070,10 @@
     "dailyHours": 4.7,
     "currentHours": 36357,
     "currentHoursDate": "2026-11-12",
-    "nextService": 36807,
-    "nextServiceDate": "2027-02-16",
-    "interval": 450,
-    "notes": "Serviced 12/11/2026 at 36357h by Rol & Ali - oil + oil filter + fuel filter changed; AIR FILTER NOT. Next service 36807h (card shows +450). ~4.7 h/day recent. 200 kVA on hire Trojan, Al Bahia."
+    "nextService": 36707,
+    "nextServiceDate": "2027-01-26",
+    "interval": 350,
+    "notes": "Serviced 12/11/2026 at 36357h by Rol & Ali - oil + oil filter + fuel filter changed; AIR FILTER NOT. Next service 36707h (350h cycle). ~4.7 h/day recent. 200 kVA on hire Trojan, Al Bahia."
   },
   {
     "dg": "DG-537",
