@@ -1033,7 +1033,15 @@ function renderKva(){
     html += `<div class="verdict no">✗ No ${v} KVA units in this selection</div>`;
   }
   const availAll = pool.filter(r=>r.status==='Available').sort((a,b)=>a.kva-b.kva);
-  if(!exactAvail.length && availAll.length){
+  // Also show AVAILABLE units close to the size typed (same practical class),
+  // because a 80 kVA job can take an 82 / 82.5 / 83 kVA set. Band = +/- 5 KVA.
+  const TOL = 5;
+  const near = availAll.filter(r=>r.kva!==v && Math.abs(r.kva-v)<=TOL)
+                       .sort((a,b)=>Math.abs(a.kva-v)-Math.abs(b.kva-v) || a.kva-b.kva);
+  if(near.length){
+    html += `<div style="margin-top:10px; font-size:13px; color:var(--muted);">Also available near ${v} KVA (±${TOL}):</div>`;
+    near.forEach(r=>{ html += `<div class="result-line avail"><span><span class="dg">${r.dg}</span> — ${r.kva} KVA — <span class="badge ${r.company==='Heavy'?'heavy':'energy'}">${r.company}</span></span><span class="meta">${r.location}</span></div>`; });
+  } else if(!exactAvail.length && availAll.length){
     const below = availAll.filter(r=>r.kva<v).pop();
     const above = availAll.find(r=>r.kva>v);
     html += `<div style="margin-top:10px; font-size:13px; color:var(--muted);">Nearest available alternatives:</div>`;
