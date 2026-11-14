@@ -905,17 +905,20 @@
   },
   {
     "dg": "DG-539",
-    "hours": 31514,
-    "date": "2026-07-14",
-    "technician": "SABIR&IMRAN",
+    "hours": 3732,
+    "date": "2026-11-12",
+    "technician": "MIA KHAN",
     "oil": true,
-    "oilFilter": false,
-    "fuelFilter": false,
+    "oilFilter": true,
+    "fuelFilter": true,
     "airFilter": false,
     "dailyHours": 11.68,
-    "nextService": 31864,
-    "nextServiceDate": "2026-09-10",
-    "interval": 350
+    "nextService": 4082,
+    "nextServiceDate": "2026-12-12",
+    "interval": 350,
+    "currentHours": 3732,
+    "currentHoursDate": "2026-11-12",
+    "notes": "Serviced 12/11/2026 at 3732h by Mia Khan - oil + oil filter + fuel filter changed; AIR FILTER NOT. Next service 4082h. NOTE: meter now reads 3732h (was 31514h in July) - unit was in workshop; engine/controller changed or meter reset - new baseline from 3732h. 45 kVA."
   },
   {
     "dg": "DG-545",
