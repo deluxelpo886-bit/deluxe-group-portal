@@ -167,7 +167,7 @@ try {
   const filterSeedPath = path.join(__dirname, 'seed', 'filter-parts.json');
   if (fs.existsSync(filterSeedPath)) {
     const fp = JSON.parse(fs.readFileSync(filterSeedPath, 'utf8'));
-    const r = specs.applySeed(fp, 'filter-parts-2026-11-14');
+    const r = specs.applySeed(fp, 'filter-parts-2026-11-14b');
     if (r && r.applied) console.log('[seed] filled filter part numbers for ' + r.applied + ' generators');
   }
 } catch (e) { console.warn('[seed] filter-parts import skipped:', e && e.message); }
