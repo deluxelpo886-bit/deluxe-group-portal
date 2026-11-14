@@ -1047,8 +1047,15 @@ kvaInput.addEventListener('input', renderKva);
 /* ---------- BREAKDOWN DISPATCH ---------- */
 function renderBdSelect(){
   const bdSelect = document.getElementById('bdSelect');
-  const pool = getFiltered().filter(r=>r.status!=='Off-Fleet' && r.lat!=null);
+  // The breakdown / affected-generator picker must list EVERY genset, not just
+  // the ones matching the active map filter - a breakdown can hit any unit. Use
+  // the full fleet (minus off-fleet / no-coordinate units) and sort by DG number
+  // so any unit is easy to find in the long list.
+  const prev = bdSelect.value;
+  const pool = DATA.filter(r=>r.status!=='Off-Fleet' && r.lat!=null)
+    .slice().sort((a,b)=>String(a.dg).localeCompare(String(b.dg), undefined, {numeric:true}));
   bdSelect.innerHTML = pool.map(r=>`<option value="${r.dg}">${r.dg} — ${r.kva}KVA — ${r.status} (${r.location})</option>`).join('');
+  if(prev) bdSelect.value = prev;
 }
 
 /* ---------- LOCATE A GENERATOR ON THE MAP ---------- */
