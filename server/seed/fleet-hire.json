@@ -289,12 +289,6 @@
     "note": "On hire from 14/11/2026 - BRIGHT ACCORD, Al Jubail Island JS (replaced DG-802). 160 kVA Kirlosker. Next service pinned 14/12/2026 (+30 days). Air filter still pending."
   },
   {
-    "dg": "DG-842",
-    "offHire": true,
-    "since": "2026-09-30",
-    "note": "OFF-HIRED 30/09 (Netsonic OFF2-000037) - Bashundhara Property Management, Musaffah M40. COLLECTED and returned to yard 06/10 (controller 4403h). Available for hire. 200 kVA."
-  },
-  {
     "dg": "DG-834",
     "offHire": true,
     "since": "2026-09-30",
@@ -433,12 +427,6 @@
     "note": "Off-hire 28/10/2026 - contract ended, returned to yard from Hashim Contracting (MBZ City ME-15). 150 kVA Cummins."
   },
   {
-    "dg": "DG-558",
-    "offHire": true,
-    "since": "2026-10-28",
-    "note": "Off-hire 28/10/2026 - returned to yard from Trojan, Al Bahia (replaced by DG-450). 200 kVA Cummins."
-  },
-  {
     "dg": "DG-450",
     "offHire": false,
     "since": "2026-10-28",
@@ -509,5 +497,17 @@
     "offHire": true,
     "since": "2026-11-14",
     "note": "Swapped out / off-hired 14/11/2026 at Bright Accord, Al Jubail Island - replaced by DG-538. Returning to yard. 250 kVA FG Wilson."
+  },
+  {
+    "dg": "DG-558",
+    "offHire": false,
+    "since": "2026-11-14",
+    "note": "On hire - AL REEM ISLAND RS5 (Ad Dajaya St, The Gate District). Redeployed from yard. 200 kVA Cummins. Customer/rate to confirm."
+  },
+  {
+    "dg": "DG-842",
+    "offHire": false,
+    "since": "2026-11-14",
+    "note": "On hire - AL REEM ISLAND RS5 (same site as DG-558). Redeployed from yard. 200 kVA. Customer/rate to confirm."
   }
 ]

@@ -1860,11 +1860,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 8796,
-    "nextServiceDate": "2026-11-10",
+    "nextServiceDate": "2026-12-18",
     "interval": 450,
-    "currentHours": 8534,
-    "currentHoursDate": "2026-10-19",
-    "notes": "Serviced 22/09/2026 @8346h by IK & Jayraj - all filters done. DSE controller 8534h 26m confirmed 19/10/2026 -> 262h left to next (8796). ~7 h/day. Next date by usage -> ~25/11/2026. 200 kVA Cummins, Trojan, Al Bahia."
+    "currentHours": 8559,
+    "currentHoursDate": "2026-11-14",
+    "notes": "Serviced 22/09/2026 @8346h by IK & Jayraj - oil + oil/fuel filters (air pending). REDEPLOYED to AL REEM ISLAND - RS5 (Ad Dajaya St, The Gate District). Controller 8559h on 14/11/2026. Next service 8796h (~18/12/2026). 200 kVA Cummins.",
+    "dailyHours": 7.0
   },
   {
     "dg": "DG-804",
@@ -2369,11 +2370,11 @@
     "airFilter": false,
     "dailyHours": 11.33,
     "nextService": 4689,
-    "nextServiceDate": "2026-10-18",
+    "nextServiceDate": "2026-12-09",
     "interval": 350,
-    "currentHours": 4403,
-    "currentHoursDate": "2026-10-06",
-    "notes": "Serviced 18/09/2026 at 4339h by Adil & Bakhtamal (oil + oil filter + fuel filter; air filter NOT). Next service 4689h. Off-hired 30/09; COLLECTED and returned to yard 06/10 (controller 4403h, 1687 starts). Available for hire."
+    "currentHours": 4406,
+    "currentHoursDate": "2026-11-14",
+    "notes": "Serviced 18/09/2026 at 4339h by Adil & Bakhtamal (oil + oil/fuel filters; air NOT). Next 4689h. REDEPLOYED to AL REEM ISLAND - RS5 (same site as DG-558). Controller 4406h on 14/11/2026. 200 kVA."
   },
   {
     "dg": "DG-471",
