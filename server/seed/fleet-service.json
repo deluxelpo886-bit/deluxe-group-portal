@@ -3737,21 +3737,20 @@
   },
   {
     "dg": "DG-466",
-    "hours": 33031,
-    "date": "2026-10-21",
+    "hours": 33399,
+    "date": "2026-11-15",
     "technician": "SONU & HUSSAIN",
     "oil": true,
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
     "dailyHours": 14.7,
-    "nextService": 33381,
-    "nextServiceDate": "2026-11-14",
+    "nextService": 33749,
+    "nextServiceDate": "2026-12-09",
     "interval": 350,
-    "fixedDays": 24,
-    "currentHours": 33031,
-    "currentHoursDate": "2026-10-21",
-    "notes": "Serviced 21/10/2026 at 33031h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 33381h (+350). 367h since 26/09 service (32664h) = ~14.7 h/day -> due ~14/11. Hydro Power, near E75 (KIZAD/Al Samha), 160 kVA."
+    "currentHours": 33399,
+    "currentHoursDate": "2026-11-15",
+    "notes": "Serviced 15/11/2026 at 33399h by Sonu & Hussain - oil + oil filter + fuel filter changed; AIR FILTER NOT. Next service 33749h (+350). ~14.7 h/day (heavy use). 160 kVA, on hire Hydro Power, near E75 (KIZAD/Al Samha)."
   },
   {
     "dg": "DG-549",
