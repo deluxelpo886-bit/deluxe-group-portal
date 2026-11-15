@@ -900,6 +900,36 @@ function fleetLoginPageHtml() {
     + '</script></body></html>';
 }
 
+// ---------- Central sign-in gate for office pages ----------
+// Every office page used to render its OWN password form that logged in
+// directly (expecting a token back). With the email-OTP second factor enabled,
+// /api/fleet/login no longer returns a token straight away - it emails a code
+// first - so those per-page forms would break ("Login failed"). Instead we gate
+// all of them here: an un-signed-in visitor to any office page is served the
+// single OTP-capable sign-in page (fleetLoginPageHtml), which sets the session
+// cookie; after login the page itself loads and its inline form never shows.
+// Public / technician-app / map pages are deliberately NOT in this set.
+// Escape hatch: FLEET_PAGE_OPEN=1 bypasses gating entirely.
+const GATED_PAGES = new Set([
+  '/dashboard', '/command', '/morning', '/plan', '/schedule', '/service', '/servicecard',
+  '/service-monthly', '/monthly-report', '/monthly', '/major-service', '/major', '/team',
+  '/technicians', '/lpo', '/pnl', '/rentals', '/return', '/contract', '/delivery', '/dispatch',
+  '/enquiries', '/sites', '/spares', '/specs', '/strategy', '/health', '/breakdowns', '/flags',
+  '/growth', '/sales', '/marketing', '/utilisation', '/usage', '/workshop',
+]);
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || FLEET_PAGE_OPEN) return next();
+  if (!GATED_PAGES.has(req.path)) return next();
+  if (fleetAuthed(req)) return next();
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:;"
+  );
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  return res.type('html').send(fleetLoginPageHtml());
+});
+
 app.get('/api/positions', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json(positions.getSnapshot());
