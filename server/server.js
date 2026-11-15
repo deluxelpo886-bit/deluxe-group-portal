@@ -772,15 +772,63 @@ function setFleetCookie(req, res, token) {
   });
 }
 
-app.post('/api/fleet/login', loginLimiter, (req, res) => {
+app.post('/api/fleet/login', loginLimiter, async (req, res) => {
   const email = String((req.body && req.body.email) || '').trim().toLowerCase();
   const password = String((req.body && req.body.password) || '');
-  if (email === FLEET_EMAIL && password === FLEET_PASSWORD) {
-    const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
-    setFleetCookie(req, res, token);
-    return res.json({ token });
+  if (email !== FLEET_EMAIL || password !== FLEET_PASSWORD) {
+    return res.status(401).json({ error: 'Wrong email or password' });
   }
-  return res.status(401).json({ error: 'Wrong email or password' });
+  // Credentials OK. If the email OTP second factor is active, don't issue a
+  // token yet - email a one-time code and return a pending login id instead.
+  if (loginOtpActive()) {
+    pruneOtps();
+    const code = String(crypto.randomInt(100000, 1000000)); // 6 digits
+    const pendingId = crypto.randomBytes(18).toString('hex');
+    loginOtps.set(pendingId, { fleet: true, codeHash: hashCode(code), expires: Date.now() + OTP_TTL_MS, attempts: 0 });
+    try {
+      await sendEmail({
+        to: OTP_EMAIL,
+        subject: 'Deluxe Fleet login code: ' + code,
+        text: 'Your Deluxe Fleet & Dispatch login code is ' + code + '\n\n'
+          + 'The code expires in 10 minutes.\n\n'
+          + 'If you did NOT just try to sign in, ignore this email and change the fleet password.',
+        html: '<div style="font-family:Arial,sans-serif;max-width:460px;margin:auto">'
+          + '<h2 style="color:#0b3d6e;margin:0 0 6px">Deluxe Fleet &amp; Dispatch</h2>'
+          + '<p style="margin:0 0 14px;color:#555">Login verification code</p>'
+          + '<div style="font-size:34px;font-weight:700;letter-spacing:8px;background:#f4f7fb;'
+          + 'border:1px solid #cdd6e0;border-radius:10px;padding:16px;text-align:center;color:#0b3d6e">' + code + '</div>'
+          + '<p style="color:#555;font-size:13px;margin:14px 0 0">Expires in 10 minutes. '
+          + 'If this was not you, ignore this email and change the fleet password.</p></div>',
+      });
+    } catch (e) {
+      loginOtps.delete(pendingId);
+      console.error('[fleet-otp] failed to email code:', e && e.message);
+      return res.status(502).json({ error: 'Could not send the login code by email. Please try again in a moment.' });
+    }
+    return res.json({ otpRequired: true, pendingId, sentTo: maskEmail(OTP_EMAIL) });
+  }
+  const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+  setFleetCookie(req, res, token);
+  return res.json({ token });
+});
+
+// Second step of the fleet OTP login: exchange pending id + emailed code for the
+// fleet session token.
+app.post('/api/fleet/login/verify', loginLimiter, (req, res) => {
+  const { pendingId, code } = req.body || {};
+  const rec = pendingId && loginOtps.get(pendingId);
+  if (!rec || !rec.fleet) return res.status(400).json({ error: 'Login session expired - please sign in again.' });
+  if (rec.expires < Date.now()) { loginOtps.delete(pendingId); return res.status(400).json({ error: 'Code expired - please sign in again.' }); }
+  rec.attempts += 1;
+  if (rec.attempts > OTP_MAX_ATTEMPTS) { loginOtps.delete(pendingId); return res.status(429).json({ error: 'Too many wrong codes - please sign in again.' }); }
+  if (hashCode(code || '') !== rec.codeHash) {
+    const left = OTP_MAX_ATTEMPTS - rec.attempts + 1;
+    return res.status(401).json({ error: 'Incorrect code. ' + Math.max(0, left) + ' attempt(s) left.' });
+  }
+  loginOtps.delete(pendingId);
+  const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+  setFleetCookie(req, res, token);
+  return res.json({ token });
 });
 
 // Silent upgrade: a visitor who still has a valid Bearer token in localStorage
@@ -828,19 +876,27 @@ function fleetLoginPageHtml() {
     + 'button{width:100%;background:#e8a13a;color:#1a1300;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}'
     + '</style></head><body><div class="card">'
     + '<div class="k">Deluxe Operations</div><h1>Fleet &amp; Dispatch</h1>'
-    + '<p class="sub">Sign in to view the fleet map and live dispatch.</p>'
-    + '<label>Email</label><input id="e" type="text" autocomplete="username" placeholder="deluxeoperationhead">'
-    + '<label>Password</label><input id="p" type="password" autocomplete="current-password" placeholder="Password">'
+    + '<p class="sub" id="sub">Sign in to view the fleet map and live dispatch.</p>'
+    + '<div id="creds"><label>Email</label><input id="e" type="text" autocomplete="username" placeholder="deluxeoperationhead">'
+    + '<label>Password</label><input id="p" type="password" autocomplete="current-password" placeholder="Password"></div>'
+    + '<div id="otp" style="display:none"><label>Email code</label>'
+    + '<input id="c" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code">'
+    + '<div id="msg" style="color:#8b95a1;font-size:12px;margin:-6px 0 12px"></div></div>'
     + '<div id="err"></div><button id="b">Sign in</button></div><script>'
     + 'var E=document.getElementById("e"),P=document.getElementById("p"),B=document.getElementById("b"),X=document.getElementById("err");'
+    + 'var C=document.getElementById("c"),OT=document.getElementById("otp"),CR=document.getElementById("creds"),MSG=document.getElementById("msg"),SUB=document.getElementById("sub");'
+    + 'var pending=null;'
     + 'try{var t=localStorage.getItem("deluxeFleetToken");if(t){fetch("/api/fleet/session",{method:"POST",headers:{Authorization:"Bearer "+t}}).then(function(r){if(r.ok)location.reload();});}}catch(e){}'
-    + 'function go(){X.textContent="";B.disabled=true;B.textContent="Signing in...";'
-    + 'fetch("/api/fleet/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:E.value.trim(),password:P.value})})'
+    + 'function go(){X.textContent="";B.disabled=true;B.textContent=pending?"Verifying...":"Signing in...";'
+    + 'var url=pending?"/api/fleet/login/verify":"/api/fleet/login";'
+    + 'var body=pending?{pendingId:pending,code:(C.value||"").trim()}:{email:E.value.trim(),password:P.value};'
+    + 'fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})'
     + '.then(function(r){return r.json().then(function(b){return{ok:r.ok,b:b};});})'
-    + '.then(function(res){if(!res.ok){X.textContent=res.b.error||"Wrong email or password";B.disabled=false;B.textContent="Sign in";return;}'
+    + '.then(function(res){if(!res.ok){X.textContent=res.b.error||"Wrong email or password";B.disabled=false;B.textContent=pending?"Verify code":"Sign in";return;}'
+    + 'if(res.b.otpRequired){pending=res.b.pendingId;CR.style.display="none";OT.style.display="block";SUB.textContent="Enter the 6-digit code we emailed you.";MSG.textContent="Code sent to "+(res.b.sentTo||"your email")+" - valid 10 minutes.";B.disabled=false;B.textContent="Verify code";C.focus();return;}'
     + 'try{localStorage.setItem("deluxeFleetToken",res.b.token);}catch(e){}location.reload();})'
-    + '.catch(function(){X.textContent="Could not reach the server";B.disabled=false;B.textContent="Sign in";});}'
-    + 'B.addEventListener("click",go);P.addEventListener("keydown",function(e){if(e.key==="Enter")go();});E.focus();'
+    + '.catch(function(){X.textContent="Could not reach the server";B.disabled=false;B.textContent=pending?"Verify code":"Sign in";});}'
+    + 'B.addEventListener("click",go);P.addEventListener("keydown",function(e){if(e.key==="Enter")go();});C.addEventListener("keydown",function(e){if(e.key==="Enter")go();});E.focus();'
     + '</script></body></html>';
 }
 
