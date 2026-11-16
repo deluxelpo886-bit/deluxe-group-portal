@@ -856,20 +856,20 @@
   },
   {
     "dg": "DG-801",
-    "hours": 11640,
-    "date": "2026-10-10",
-    "technician": "SATNAM&HUSAIN",
+    "hours": 81,
+    "date": "2026-11-16",
+    "technician": "SONU & HUSSAIN",
     "oil": true,
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
     "dailyHours": 5,
-    "currentHours": 11640,
-    "currentHoursDate": "2026-10-10",
-    "nextService": 12090,
-    "nextServiceDate": "2027-01-08",
+    "currentHours": 81,
+    "currentHoursDate": "2026-11-16",
+    "nextService": 531,
+    "nextServiceDate": "2027-02-14",
     "interval": 450,
-    "notes": "Serviced 10/10/2026 @ 11640h; next service 12090h (interval 450), light use ~5 h/day. 250 kVA FG Wilson, Mawaad, Al Faya. NOTE: was flagged Breakdown - confirm if now repaired / back on hire; air filter to confirm."
+    "notes": "Serviced 16/11/2026 - NEW hour meter installed (our Quartz meter) reading 81h; old engine meter (~11640h) retired, now tracked from the new meter. Oil + oil filter + fuel filter done; air filter to confirm. Interval 450 (250 kVA) -> next service 531h (~14/02/2027, light use). 250 kVA FG Wilson, Mawaad, Al Faya."
   },
   {
     "dg": "DG-556",
