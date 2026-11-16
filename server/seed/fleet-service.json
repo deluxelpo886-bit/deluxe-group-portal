@@ -967,9 +967,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 42884,
-    "nextServiceDate": "2026-10-10",
+    "nextServiceDate": "2026-12-06",
     "interval": 450,
-    "notes": "Yard to customer - deployed to Stolway Manufacturing (ICAD II) replacing DG-836. Meter 42434h, next 42884h / 10/10/2026 per Netsonic SER1-000036. 350 kVA."
+    "notes": "ON HIRE to ALI AND SONS from 17/11/2026, running 24 h/day (continuous). Last service 21/09 @42434h; 450h to next service 42884h -> due ~06/12/2026 at 24 h/day. 350 kVA CAT. Site location & rate to confirm.",
+    "currentHours": 42434,
+    "currentHoursDate": "2026-11-16",
+    "dailyHours": 24
   },
   {
     "dg": "DG-37",
