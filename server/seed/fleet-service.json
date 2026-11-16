@@ -966,11 +966,11 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "nextService": 42884,
-    "nextServiceDate": "2026-12-06",
-    "interval": 450,
-    "notes": "ON HIRE to ALI AND SONS from 17/11/2026, running 24 h/day (continuous). Last service 21/09 @42434h; 450h to next service 42884h -> due ~06/12/2026 at 24 h/day. 350 kVA CAT. Site location & rate to confirm.",
-    "currentHours": 42434,
+    "nextService": 42620,
+    "nextServiceDate": "2026-11-21",
+    "interval": 350,
+    "notes": "ON HIRE to ALI AND SONS from 17/11/2026, 24 h/day. Controller 42517.6h (16/11). Next service 42620h per unit card - only ~102h left, DUE ~21/11/2026 at 24 h/day. 350 kVA CAT. (Card uses +350; 350 kVA would normally be 450 - confirm interval. Site & rate to confirm.)",
+    "currentHours": 42518,
     "currentHoursDate": "2026-11-16",
     "dailyHours": 24
   },
@@ -3174,7 +3174,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "interval": 450,
-    "nextService": 22219
+    "nextService": 22219,
+    "currentHours": 22021,
+    "currentHoursDate": "2026-11-16",
+    "dailyHours": 8,
+    "nextServiceDate": "2026-12-11",
+    "notes": "DEPLOYED 16/11/2026 to AL REEM ISLAND - RS5 (replaced DG-558). Controller 22021h / 2979 starts. Last service 01/09 @21769h; next service 22219h - 198h left, due ~11/12/2026. 250 kVA Kirloskar. Site rate to confirm."
   },
   {
     "dg": "DG-470",

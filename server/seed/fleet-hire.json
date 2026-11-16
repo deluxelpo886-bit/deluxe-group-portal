@@ -313,12 +313,6 @@
     "note": "On hire 20/09 - Al Shuwaib (Shabiat Al Shuwaib). Customer, hours & rate pending (to update 21/09)."
   },
   {
-    "dg": "DG-856",
-    "offHire": true,
-    "since": "2026-09-22",
-    "note": "Off-hire 22/09 - returned to yard (was on hire to Trojan, Al Hudayriat Island). 250 kVA Kirlosker."
-  },
-  {
     "dg": "DG-836",
     "offHire": false,
     "since": "2026-09-22",
@@ -493,12 +487,6 @@
     "note": "Swapped out / off-hired 14/11/2026 at Bright Accord, Al Jubail Island - replaced by DG-538. Returning to yard. 250 kVA FG Wilson."
   },
   {
-    "dg": "DG-558",
-    "offHire": false,
-    "since": "2026-11-14",
-    "note": "On hire - AL REEM ISLAND RS5 (Ad Dajaya St, The Gate District). Redeployed from yard. 200 kVA Cummins. Customer/rate to confirm."
-  },
-  {
     "dg": "DG-842",
     "offHire": false,
     "since": "2026-11-14",
@@ -509,5 +497,17 @@
     "offHire": false,
     "since": "2026-11-17",
     "note": "On hire to ALI AND SONS from 17/11/2026, running 24 h/day. 350 kVA CAT. Site location & rate to confirm."
+  },
+  {
+    "dg": "DG-856",
+    "offHire": false,
+    "since": "2026-11-16",
+    "note": "On hire - AL REEM ISLAND RS5 (replaced DG-558). 250 kVA Kirloskar. Rate to confirm."
+  },
+  {
+    "dg": "DG-558",
+    "offHire": true,
+    "since": "2026-11-16",
+    "note": "Removed from Al Reem Island RS5 16/11/2026 (replaced by DG-856). Returned to yard. Available. 200 kVA Cummins."
   }
 ]
