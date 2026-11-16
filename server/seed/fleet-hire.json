@@ -313,12 +313,6 @@
     "note": "On hire 20/09 - Al Shuwaib (Shabiat Al Shuwaib). Customer, hours & rate pending (to update 21/09)."
   },
   {
-    "dg": "DG-532",
-    "offHire": true,
-    "since": "2026-10-17",
-    "note": "Off-hire 17/10/2026 - returned from Stolway Manufacturing (ICAD III) to yard. Available. 350 kVA CAT."
-  },
-  {
     "dg": "DG-856",
     "offHire": true,
     "since": "2026-09-22",
@@ -509,5 +503,11 @@
     "offHire": false,
     "since": "2026-11-14",
     "note": "On hire - AL REEM ISLAND RS5 (same site as DG-558). Redeployed from yard. 200 kVA. Customer/rate to confirm."
+  },
+  {
+    "dg": "DG-532",
+    "offHire": false,
+    "since": "2026-11-17",
+    "note": "On hire to ALI AND SONS from 17/11/2026, running 24 h/day. 350 kVA CAT. Site location & rate to confirm."
   }
 ]
