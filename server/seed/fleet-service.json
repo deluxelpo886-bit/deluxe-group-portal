@@ -3174,7 +3174,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "interval": 450,
-    "nextService": 22219
+    "nextService": 22219,
+    "currentHours": 22021,
+    "currentHoursDate": "2026-11-16",
+    "dailyHours": 8,
+    "nextServiceDate": "2026-12-11",
+    "notes": "DEPLOYED 16/11/2026 to AL REEM ISLAND - RS5 (replaced DG-558). Controller 22021h / 2979 starts. Last service 01/09 @21769h; next service 22219h - 198h left, due ~11/12/2026. 250 kVA Kirloskar. Site rate to confirm."
   },
   {
     "dg": "DG-470",
