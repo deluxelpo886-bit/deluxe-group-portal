@@ -3478,12 +3478,13 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 5776,
-    "nextServiceDate": "2026-11-26",
+    "nextServiceDate": "2026-12-16",
     "interval": 350,
     "dailyHours": 6.9,
     "currentHours": 5618,
     "currentHoursDate": "2026-11-03",
-    "notes": "Serviced 06/10/2026 @ 5426h by IK & Jayraj - oil, oil filter, fuel filter done; AIR FILTER NOT done (card shows X). Next service 5776h (+350). ~12 h/day. 100 kVA, Six Sigma, Jubail Island (JS). | Meter 5618h on 03/11/2026 - ran 192h since service in 28 days = ~6.9 h/day. 158h to next (5776h) -> due ~26/11/2026."
+    "notes": "Service DEFERRED another 20 days (ops) -> review ~16/12/2026 (was due 26/11). Next service 5776h. 100 kVA, Six Sigma, Jubail Island.",
+    "fixedDays": 71
   },
   {
     "dg": "DG-848",
