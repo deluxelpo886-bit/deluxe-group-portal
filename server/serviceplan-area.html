@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service Plan — by Area</title>
+<style>
+  :root{ --navy:#17304f; --gold:#b8860b; --red:#8a1c1c; --ink:#1c2733; --mut:#5b6b7b; --line:#e3e9ef; }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body{ font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif; background:#eef1f4; color:var(--ink); font-size:14px; }
+  .bar{ position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:linear-gradient(135deg,#0d2440,#17304f); color:#fff; padding:12px 15px; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+  .bar b{ font-size:15px; } .bar .sp{ flex:1; }
+  .bar .asof{ font-size:12px; color:#bcd0e6; }
+  .bar button, .bar a{ font:inherit; font-size:12.5px; font-weight:700; border:none; border-radius:9px; padding:8px 12px; cursor:pointer; text-decoration:none; }
+  .bar .refresh{ background:rgba(255,255,255,.14); color:#fff; }
+  .bar .print{ background:var(--gold); color:#2a1e00; }
+  .bar .nav{ background:rgba(255,255,255,.1); color:#cfe0f2; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:14px 12px 50px; }
+  .sum{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+  .stat{ background:#fff; border-radius:12px; padding:12px 10px; text-align:center; box-shadow:0 1px 3px rgba(16,24,40,.07); }
+  .stat .v{ font-size:26px; font-weight:800; line-height:1; } .stat .k{ font-size:10px; color:var(--mut); margin-top:5px; text-transform:uppercase; letter-spacing:.4px; font-weight:700; }
+  .stat.t .v{ color:var(--navy); } .stat.ov .v{ color:var(--red); } .stat.so .v{ color:var(--gold); }
+  .area{ background:#fff; border-radius:12px; margin-bottom:12px; overflow:hidden; box-shadow:0 1px 3px rgba(16,24,40,.07); }
+  .ah{ display:flex; justify-content:space-between; align-items:center; background:var(--navy); color:#fff; padding:9px 13px; }
+  .ah .an{ font-size:15px; font-weight:700; } .ah .ac{ font-size:12px; opacity:.9; }
+  .tw{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; }
+  th{ background:#f4f7fa; color:#44586c; font-size:10px; text-transform:uppercase; letter-spacing:.3px; padding:7px 9px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td{ padding:8px 9px; border-bottom:1px solid #eef2f6; font-size:12.5px; white-space:nowrap; }
+  td.dg{ font-weight:700; color:var(--navy); font-family:ui-monospace,monospace; }
+  td.c{ text-align:center; } td.site{ color:var(--mut); font-size:11.5px; white-space:normal; min-width:150px; }
+  tr.ov td{ background:#fcf0ee; } tr.so td{ background:#fdf8ec; }
+  .b{ font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; color:#fff; letter-spacing:.3px; }
+  .b.ov{ background:var(--red); } .b.so{ background:var(--gold); }
+  .msg{ text-align:center; color:var(--mut); padding:50px 20px; font-size:14px; }
+  .leg{ font-size:11.5px; color:var(--mut); margin-top:8px; padding:0 4px; }
+  @media(max-width:560px){ .sum{ grid-template-columns:repeat(2,1fr); } .bar b{ font-size:14px; } }
+  @media print{
+    body{ background:#fff; } .bar{ position:static; box-shadow:none; background:var(--navy)!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .bar button,.bar a{ display:none; } .area,.stat{ box-shadow:none; border:1px solid var(--line); break-inside:avoid; }
+    tr.ov td,tr.so td,.b,.ah,.stat .v{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <b>🛠️ Service Plan — by Area</b>
+    <span class="asof" id="asof"></span>
+    <span class="sp"></span>
+    <button class="refresh" id="refresh">↻ Refresh</button>
+    <button class="print" id="print">🖨 Print / PDF</button>
+    <a class="nav" href="/fleet">Map</a>
+    <a class="nav" href="/menu">Menu</a>
+  </div>
+  <div class="wrap">
+    <div class="sum" id="sum" style="display:none">
+      <div class="stat t"><div class="v" id="sTot">–</div><div class="k">Due to service</div></div>
+      <div class="stat ov"><div class="v" id="sOv">–</div><div class="k">Overdue</div></div>
+      <div class="stat so"><div class="v" id="sSo">–</div><div class="k">Due soon</div></div>
+      <div class="stat"><div class="v" id="sAr">–</div><div class="k">Areas</div></div>
+    </div>
+    <div id="body"><div class="msg">Loading service plan…</div></div>
+    <div class="leg" id="leg" style="display:none">Grouped by area for route-efficient servicing.
+      <b style="color:#8a1c1c">OVERDUE</b> = past the due date or service hours.
+      <b style="color:#b8860b">DUE SOON</b> = within 21 days or 80 running hours.
+      "Left" shows hours / days remaining (negative = overdue). Only on-hire units are shown. Live from the service log.</div>
+  </div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  var TOKEN=''; try{ TOKEN=localStorage.getItem('deluxeFleetToken')||''; }catch(e){}
+
+  function parseD(s){ var m=/^(\d\d)\/(\d\d)\/(\d{4})/.exec(s||''); if(m) return new Date(+m[3],+m[2]-1,+m[1]);
+    var n=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||''); if(n) return new Date(+n[1],+n[2]-1,+n[3]); return null; }
+  function clean(loc){ return (String(loc||'').split(/[-(]/)[0].trim().replace(/\b\w/g,function(c){return c.toUpperCase();})||'Other').slice(0,24); }
+  function areaOf(g){
+    var t=((g.location||'')+' '+(g.customer||'')).toUpperCase();
+    var rules=[['Al Reem Island',['AL REEM','REEM ISLAND']],['Yas Island',['YAS ISLAND']],
+     ['Al Bahia',['BAHIA','BAHYAH','BAHYA']],['Jubail Island',['JUBAIL']],
+     ['KIZAD / Al Samha',['KIZAD','SAMHA','KHIA']],['Khalifa Ind. City',['KHALIFA IND','KHALIFA INDUSTRIAL']],
+     ['Mussafah',['MUSSAFAH','MUSAFFAH','MUSAFAH','M37','M40','ICAD']],['Al Ain',['AL AIN','AL MAQTA']],
+     ['Ruwais / Al Dhafra',['RUWAIS','DHAFRA','DHANNAH','GHAYATHI','RUWAISH','MIRFA']],
+     ['Shakhbout City',['SHAKHBOUT','MSH']],['Dubai',['DUBAI','JUMEIRAH','LA MER']],
+     ['Al Jarf',['AL JARF','GHADEER']],['Al Ajban',['AJBAN']],['Al Faya',['AL FAYA']],['Al Falah',['AL FALAH']],
+     ['Al Wathba',['WATHBA']],['Al Shawamekh',['SHAWAMEKH','SHM']],['Al Rahah',['RAHAH']],['Mushayrif',['MUSHAYRIF','MUSHRIF']],
+     ['Abu Dhabi City',['ABU DHABI','AL HISN','AL NAHYAN','AL DANAH','AL BIDIYA','MADINAT ZAYED','NABBAGH']]];
+    for(var i=0;i<rules.length;i++){ for(var j=0;j<rules[i][1].length;j++){ if(t.indexOf(rules[i][1][j])>=0) return rules[i][0]; } }
+    return clean(g.location||'Other');
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function leftStr(hl,dl){ var p=[]; if(hl!=null) p.push((hl>=0?'+':'')+hl+'h'); if(dl!=null) p.push((dl>=0?'+':'')+dl+'d'); return p.join(' / ')||'–'; }
+
+  function render(gens){
+    var today=new Date(); today.setHours(0,0,0,0);
+    var due=[];
+    gens.forEach(function(g){
+      if(g.offHire) return;                       // only on-hire units
+      var nd=parseD(g.nextServiceDate);
+      var cur=(typeof g.currentHours==='number')?g.currentHours:null;
+      var nh=(typeof g.nextService==='number')?g.nextService:null;
+      var dl=nd?Math.round((nd-today)/86400000):null;
+      var hl=(cur!=null&&nh!=null)?Math.round(nh-cur):null;
+      var over=(dl!=null&&dl<0)||(hl!=null&&hl<=0);
+      var soon=(!over)&&((dl!=null&&dl<=21)||(hl!=null&&hl<=80));
+      if(over||soon) due.push({dg:g.dg,kva:g.kva,cust:g.customer||'–',loc:g.location||'',area:areaOf(g),
+        dl:dl,hl:hl,nh:nh,cur:cur,nd:g.nextServiceDate||'–',st:over?'OVERDUE':'DUE SOON'});
+    });
+    var groups={}; due.forEach(function(x){ (groups[x.area]=groups[x.area]||[]).push(x); });
+    var tot=due.length, ov=due.filter(function(x){return x.st==='OVERDUE';}).length;
+    $('sTot').textContent=tot; $('sOv').textContent=ov; $('sSo').textContent=tot-ov; $('sAr').textContent=Object.keys(groups).length;
+    $('sum').style.display=''; $('leg').style.display=tot?'':'none';
+    if(!tot){ $('body').innerHTML='<div class="msg">✅ No units due for service right now.</div>'; return; }
+    var areas=Object.keys(groups).sort(function(a,b){
+      var A=groups[a], B=groups[b];
+      var ao=A.filter(function(x){return x.st==='OVERDUE';}).length, bo=B.filter(function(x){return x.st==='OVERDUE';}).length;
+      return (bo-ao)||(B.length-A.length)||a.localeCompare(b);
+    });
+    var html='';
+    areas.forEach(function(area){
+      var items=groups[area].sort(function(a,b){
+        var au=a.st==='OVERDUE'?0:1, bu=b.st==='OVERDUE'?0:1;
+        return au-bu || ((a.dl==null?999:a.dl)-(b.dl==null?999:b.dl));
+      });
+      var oc=items.filter(function(x){return x.st==='OVERDUE';}).length;
+      var rows=items.map(function(x){ var cls=x.st==='OVERDUE'?'ov':'so';
+        return '<tr class="'+cls+'"><td class="dg">'+esc(x.dg)+'</td><td class="c">'+esc(x.kva)+'</td>'
+          +'<td>'+esc(String(x.cust).slice(0,28))+'</td><td class="site">'+esc(String(x.loc).slice(0,40))+'</td>'
+          +'<td class="c">'+(x.cur!=null?x.cur:'–')+'</td><td class="c">'+(x.nh!=null?x.nh:'–')+'</td>'
+          +'<td class="c">'+leftStr(x.hl,x.dl)+'</td><td class="c">'+esc(x.nd)+'</td>'
+          +'<td class="c"><span class="b '+cls+'">'+x.st+'</span></td></tr>'; }).join('');
+      html+='<div class="area"><div class="ah"><span class="an">📍 '+esc(area)+'</span>'
+        +'<span class="ac">'+items.length+' unit'+(items.length!==1?'s':'')+(oc?' · '+oc+' overdue':'')+'</span></div>'
+        +'<div class="tw"><table><thead><tr><th>DG</th><th>kVA</th><th>Customer</th><th>Site</th>'
+        +'<th>Cur hrs</th><th>Next hrs</th><th>Left (h/d)</th><th>Due date</th><th>Status</th></tr></thead><tbody>'
+        +rows+'</tbody></table></div></div>';
+    });
+    $('body').innerHTML=html;
+  }
+
+  function load(){
+    $('body').innerHTML='<div class="msg">Loading service plan…</div>';
+    var hdr={'Cache-Control':'no-store'}; if(TOKEN) hdr.Authorization='Bearer '+TOKEN;
+    fetch('/api/service/status',{headers:hdr,credentials:'same-origin'})
+      .then(function(r){ if(r.status===401){ location.href='/fleet'; throw new Error('login'); } return r.json(); })
+      .then(function(d){
+        var now=new Date();
+        $('asof').textContent='as of '+now.toLocaleDateString('en-GB')+' '+now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        render(d.generators||[]);
+      })
+      .catch(function(e){ if(e.message!=='login') $('body').innerHTML='<div class="msg">Could not load the service plan. '+esc(e.message)+'</div>'; });
+  }
+  $('refresh').addEventListener('click',load);
+  $('print').addEventListener('click',function(){ window.print(); });
+  load();
+})();
+</script>
+</body>
+</html>

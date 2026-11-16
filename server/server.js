@@ -913,6 +913,7 @@ function fleetLoginPageHtml() {
 const GATED_PAGES = new Set([
   '/dashboard', '/command', '/morning', '/plan', '/schedule', '/service', '/servicecard',
   '/service-monthly', '/monthly-report', '/monthly', '/major-service', '/major', '/team',
+  '/service-areas', '/servicebyarea', '/area-plan', '/service-plan-area', '/serviceplan',
   '/technicians', '/lpo', '/pnl', '/rentals', '/return', '/contract', '/delivery', '/dispatch',
   '/enquiries', '/sites', '/spares', '/specs', '/strategy', '/health', '/breakdowns', '/flags',
   '/growth', '/sales', '/marketing', '/utilisation', '/usage', '/workshop',
@@ -1623,6 +1624,18 @@ app.get('/plan', (req, res) => {
   );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'plan.html'), { cacheControl: false });
+});
+
+// Service plan grouped by AREA - a live, print-ready list of on-hire units due
+// / overdue for service, grouped by area so the team can clear a zone at a time.
+app.get(['/service-areas', '/servicebyarea', '/area-plan', '/service-plan-area'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'serviceplan-area.html'), { cacheControl: false });
 });
 
 app.get('/serviceplan', (req, res) => {
