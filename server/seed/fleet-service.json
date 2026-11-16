@@ -3826,12 +3826,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 11.4,
+    "dailyHours": 15.9,
     "nextService": 18996,
     "interval": 450,
-    "currentHours": 18546,
-    "currentHoursDate": "2026-10-22",
-    "notes": "Serviced 22/10/2026 at 18546h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 18996h (+450). 421h since 15/09 service = ~11.4 h/day -> on 12h plan due ~29/11. Cleared the urgent flag. CONFIRM the agreed amount was settled with the customer at this service. City Construction, RUWAIS (far site), 400 kVA Kirloskar."
+    "currentHours": 18943,
+    "currentHoursDate": "2026-11-16",
+    "notes": "Serviced 22/10/2026 @18546h by Sonu & Hussain. Controller 18943h / 2454 starts on 16/11 (~15.9 h/day heavy). Next service 18996h - DUE ~20/11/2026 (only ~53h left). 400 kVA, City Const, Ruwais.",
+    "nextServiceDate": "2026-11-20"
   },
   {
     "dg": "DG-850",
