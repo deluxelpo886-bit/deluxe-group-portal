@@ -1448,13 +1448,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 1,
+    "dailyHours": 9.5,
     "nextService": 10704,
-    "nextServiceDate": "2027-04-10",
+    "nextServiceDate": "2026-11-24",
     "interval": 350,
-    "currentHours": 10357,
-    "currentHoursDate": "2026-10-19",
-    "notes": "Serviced 10/10/2026 @10354h by Roland & Emran - oil, oil filter & fuel filter done; AIR FILTER NOT done (card box blank) - pending. Controller 10357h confirmed 19/10/2026 -> only 3h in 9 days (near-idle / standby lately). 347h left to next (10704). 40 kVA Kirloskar, Trojan, Al Reem RT8."
+    "currentHours": 10624,
+    "currentHoursDate": "2026-11-16",
+    "notes": "Serviced 10/10/2026 at 10354h by Roland - oil + oil/fuel filters; air NOT. Controller 10624h on 16/11 (~9.5 h/day). Next service 10704h - DUE ~24/11/2026. 40 kVA Kirloskar, on hire Trojan, Al Reem Island RT8."
   },
   {
     "dg": "DG-830",
@@ -4208,13 +4208,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 18,
+    "dailyHours": 2.5,
     "nextService": 18925,
-    "nextServiceDate": "2026-11-17",
+    "nextServiceDate": "2027-03-18",
     "interval": 350,
-    "currentHours": 18575,
-    "currentHoursDate": "2026-10-29",
-    "notes": "Serviced 29/10/2026 @ 18575h by Sonu Hussain - oil, oil filter, fuel filter AND air filter all done. Was overdue by hours (18514h); now cleared. Next 18925h (~17/11), ~18 h/day (HEAVY use). 40 kVA Tata, Trojan, Al Reem RT8."
+    "currentHours": 18620,
+    "currentHoursDate": "2026-11-16",
+    "notes": "Serviced 29/10/2026 at 18575h by Sonu & Hussain - oil + oil/fuel/air filters all done. Controller 18620h on 16/11 (~2.5 h/day, light recent use). Next 18925h. 40 kVA Tata (Kohler), on hire Trojan, Al Reem."
   },
   {
     "dg": "DG-835",
