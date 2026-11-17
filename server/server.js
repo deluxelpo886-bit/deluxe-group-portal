@@ -848,15 +848,28 @@ app.post('/api/fleet/logout', (req, res) => {
 });
 
 // Require a valid fleet login token (Bearer header, ?token=, or the cookie).
-function fleetProtect(req, res, next) {
+// Sliding (inactivity) session: re-issue a fresh 30-minute token/cookie on every
+// authenticated request, so an active user never gets logged out mid-work, but
+// the session dies after 30 minutes with NO activity. Any valid token - the
+// Authorization Bearer, the ?token query, or the session cookie - keeps it alive;
+// a stale Bearer no longer breaks a still-fresh cookie session.
+function refreshFleetCookie(req, res) {
+  try { setFleetCookie(req, res, jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30m' })); }
+  catch (_) { /* best-effort */ }
+}
+function fleetAuthValid(req) {
   const auth = req.get('authorization') || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || readCookie(req, FLEET_COOKIE) || '');
-  try {
-    jwt.verify(token, FLEET_SECRET);
-    return next();
-  } catch (_) {
-    return res.status(401).json({ error: 'login required' });
+  const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || '');
+  for (const t of [bearer, readCookie(req, FLEET_COOKIE) || '']) {
+    if (!t) continue;
+    try { jwt.verify(t, FLEET_SECRET); return true; } catch (_) { /* try next */ }
   }
+  return false;
+}
+function fleetProtect(req, res, next) {
+  if (!fleetAuthValid(req)) return res.status(401).json({ error: 'login required' });
+  refreshFleetCookie(req, res);   // slide the 30-min inactivity window forward
+  return next();
 }
 
 // The standalone sign-in page served when the fleet map is locked and the
@@ -921,7 +934,7 @@ const GATED_PAGES = new Set([
 app.use((req, res, next) => {
   if (req.method !== 'GET' || FLEET_PAGE_OPEN) return next();
   if (!GATED_PAGES.has(req.path)) return next();
-  if (fleetAuthed(req)) return next();
+  if (fleetAuthed(req)) { refreshFleetCookie(req, res); return next(); }
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
@@ -2696,6 +2709,7 @@ function serveFleetPage(req, res, noStore) {
   if (!FLEET_PAGE_OPEN && !fleetAuthed(req)) {
     return res.type('html').send(fleetLoginPageHtml());
   }
+  if (!FLEET_PAGE_OPEN) refreshFleetCookie(req, res);   // slide the inactivity window
   return res.sendFile(path.join(__dirname, 'fleet.html'), { cacheControl: false });
 }
 
