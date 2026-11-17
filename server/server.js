@@ -297,7 +297,7 @@ if (!JWT_SECRET || JWT_SECRET === 'CHANGE_THIS_SECRET_BEFORE_DEPLOYING') {
 // env to a new value) instantly invalidates ALL existing sessions and forces
 // everyone to sign in again on the next deploy. Bumped 2026-10-07 to sign all
 // current logins out at the owner's request.
-const SESSION_SALT = (process.env.SESSION_SALT || '2026-10-07-signout-1').trim();
+const SESSION_SALT = (process.env.SESSION_SALT || '2026-11-17-signout-2').trim();
 JWT_SECRET = JWT_SECRET + '|' + SESSION_SALT;
 
 const VALID_COMPANIES = ['energy', 'heavy'];
