@@ -693,9 +693,10 @@
     "currentHours": 20861,
     "currentHoursDate": "2026-10-21",
     "nextService": 21185,
-    "nextServiceDate": "2026-12-16",
-    "notes": "Controller 20861h on 21/10/2026 (barely moved: +1h since 20860h/09-10 = ~0.08 h/day, standby). Last service 16/06 @ 20835h; hours target 21185h is far off, so time-based calendar check governs. Low-use standby, 30 kVA Kirloskar on hire to SILVER SCREEN, AL AIN (Ain Al Fayda).",
-    "interval": 350
+    "nextServiceDate": "2026-12-17",
+    "notes": "Low-use standby - service SKIPPED, deferred 30 days (ops) -> review ~17/12/2026. Barely running (~0.08 h/day). Next service 21185h when hours reached. 30 kVA Kirloskar, on hire Silver Screen, Al Ain (Ain Al Fayda).",
+    "interval": 350,
+    "fixedDays": 184
   },
   {
     "dg": "DG-859",
