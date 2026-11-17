@@ -4894,5 +4894,39 @@
     "currentHours": 12914,
     "currentHoursDate": "2026-11-11",
     "notes": "350h service done 11/11/2026 @ 12914h by Sonu & Hussain - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending. Running (gauge ~1500 RPM, load on genset). Ran 529h since 07/10 (12385h) over 35 days = ~15.1 h/day. Next 13264h (+350) -> ~04/12/2026. 200 kVA Kirloskar, Trojan, Al Bahyah."
+  },
+  {
+    "dg": "DG-555",
+    "hours": 101,
+    "date": "2026-11-17",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 3.9,
+    "nextService": 551,
+    "nextServiceDate": "2027-03-12",
+    "interval": 450,
+    "currentHours": 101,
+    "currentHoursDate": "2026-11-17",
+    "notes": "Serviced 17/11/2026 @101h by Sonu & Hussain - oil + oil filter + fuel filter done; AIR FILTER NOT done (X on card) - pending. Controller Engine Run Time 101h26m / 51 starts. Next 551h (+450). 500 kVA Cummins, on hire FM Rental, Al Nabbagh 3, Al Ain."
+  },
+  {
+    "dg": "DG-456",
+    "hours": 4189,
+    "date": "2026-11-17",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 6.84,
+    "nextService": 4539,
+    "nextServiceDate": "2027-01-07",
+    "interval": 350,
+    "currentHours": 4189,
+    "currentHoursDate": "2026-11-17",
+    "notes": "Serviced 17/11/2026 @4189h by Sonu & Hussain - oil + oil filter + fuel filter done; AIR FILTER NOT done (X on card) - pending. Next 4539h (+350). 62.5 kVA Cummins, on hire E20 Investment, Al Ain (Al Maqta)."
   }
 ]
