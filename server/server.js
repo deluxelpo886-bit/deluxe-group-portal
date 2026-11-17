@@ -453,7 +453,7 @@ app.post('/api/login', loginLimiter, async (req, res) => {
     return res.json({ otpRequired: true, pendingId, sentTo: maskEmail(OTP_EMAIL) });
   }
 
-  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30d' });
+  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30m' });
   res.json({ token, username, isAdmin: !!user.is_admin });
 });
 
@@ -470,7 +470,7 @@ app.post('/api/login/verify', loginLimiter, (req, res) => {
     return res.status(401).json({ error: 'Incorrect code. ' + Math.max(0, left) + ' attempt(s) left.' });
   }
   loginOtps.delete(pendingId);
-  const token = jwt.sign({ username: rec.username }, JWT_SECRET, { expiresIn: '30d' });
+  const token = jwt.sign({ username: rec.username }, JWT_SECRET, { expiresIn: '30m' });
   res.json({ token, username: rec.username, isAdmin: rec.isAdmin });
 });
 
@@ -768,7 +768,7 @@ function fleetAuthed(req) {
 function setFleetCookie(req, res, token) {
   res.cookie(FLEET_COOKIE, token, {
     httpOnly: true, sameSite: 'lax', secure: !!req.secure, path: '/',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    maxAge: 30 * 60 * 1000,
   });
 }
 
@@ -807,7 +807,7 @@ app.post('/api/fleet/login', loginLimiter, async (req, res) => {
     }
     return res.json({ otpRequired: true, pendingId, sentTo: maskEmail(OTP_EMAIL) });
   }
-  const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+  const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30m' });
   setFleetCookie(req, res, token);
   return res.json({ token });
 });
@@ -826,7 +826,7 @@ app.post('/api/fleet/login/verify', loginLimiter, (req, res) => {
     return res.status(401).json({ error: 'Incorrect code. ' + Math.max(0, left) + ' attempt(s) left.' });
   }
   loginOtps.delete(pendingId);
-  const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30d' });
+  const token = jwt.sign({ sub: 'fleet', role: 'fleet' }, FLEET_SECRET, { expiresIn: '30m' });
   setFleetCookie(req, res, token);
   return res.json({ token });
 });
@@ -886,7 +886,7 @@ function fleetLoginPageHtml() {
     + 'var E=document.getElementById("e"),P=document.getElementById("p"),B=document.getElementById("b"),X=document.getElementById("err");'
     + 'var C=document.getElementById("c"),OT=document.getElementById("otp"),CR=document.getElementById("creds"),MSG=document.getElementById("msg"),SUB=document.getElementById("sub");'
     + 'var pending=null;'
-    + 'try{var t=localStorage.getItem("deluxeFleetToken");if(t){fetch("/api/fleet/session",{method:"POST",headers:{Authorization:"Bearer "+t}}).then(function(r){if(r.ok)location.reload();});}}catch(e){}'
+    + 'try{localStorage.removeItem("deluxeFleetToken");}catch(e){}'
     + 'function go(){X.textContent="";B.disabled=true;B.textContent=pending?"Verifying...":"Signing in...";'
     + 'var url=pending?"/api/fleet/login/verify":"/api/fleet/login";'
     + 'var body=pending?{pendingId:pending,code:(C.value||"").trim()}:{email:E.value.trim(),password:P.value};'
