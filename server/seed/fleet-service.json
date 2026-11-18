@@ -4949,19 +4949,19 @@
   },
   {
     "dg": "DG-545",
-    "hours": 14201,
+    "hours": 14219,
     "date": "2026-11-18",
-    "technician": "SONU & TEAM",
+    "technician": "MIA KHAN",
     "oil": true,
     "oilFilter": true,
     "fuelFilter": true,
-    "airFilter": true,
+    "airFilter": false,
     "dailyHours": 14.6,
-    "nextService": 14551,
+    "nextService": 14569,
     "nextServiceDate": "2026-12-12",
     "interval": 350,
-    "currentHours": 14201,
+    "currentHours": 14219,
     "currentHoursDate": "2026-11-18",
-    "notes": "Service done 18/11/2026 @14201h (+350) before going back out on hire. Meter idle at 14201h (unit sat in yard off-hire since 27/10). Oil + all filters done. Next 14551h. 150 kVA Cummins."
+    "notes": "Serviced 18/11/2026 @14219h by Mia Khan - oil + oil filter + fuel filter done; AIR FILTER NOT done (empty on card) - pending. Controller Engine Run Time 14219h 32m / 4010 starts. Next 14569h (+350). 150 kVA Cummins."
   }
 ]
