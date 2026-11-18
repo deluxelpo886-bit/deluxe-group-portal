@@ -4946,5 +4946,22 @@
     "currentHours": 7971,
     "currentHoursDate": "2026-11-18",
     "notes": "Serviced 18/11/2026 @7971h by Sonu & Roland - oil + oil filter + fuel filter done; AIR FILTER NOT done (X on card) - CHANGE AT NEXT SERVICE (noted on card). Next 8321h (+350). 40 kVA Kirloskar, on hire E20 Investment, Al Wathba."
+  },
+  {
+    "dg": "DG-545",
+    "hours": 14219,
+    "date": "2026-11-18",
+    "technician": "MIA KHAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 14.6,
+    "nextService": 14569,
+    "nextServiceDate": "2026-12-12",
+    "interval": 350,
+    "currentHours": 14219,
+    "currentHoursDate": "2026-11-18",
+    "notes": "Serviced 18/11/2026 @14219h by Mia Khan - oil + oil filter + fuel filter done; AIR FILTER NOT done (empty on card) - pending. Controller Engine Run Time 14219h 32m / 4010 starts. Next 14569h (+350). 150 kVA Cummins."
   }
 ]
