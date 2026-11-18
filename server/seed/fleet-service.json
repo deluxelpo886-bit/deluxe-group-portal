@@ -4929,5 +4929,22 @@
     "currentHours": 4189,
     "currentHoursDate": "2026-11-17",
     "notes": "Serviced 17/11/2026 @4189h by Sonu & Hussain - oil + oil filter + fuel filter done; AIR FILTER NOT done (X on card) - pending. Next 4539h (+350). 62.5 kVA Cummins, on hire E20 Investment, Al Ain (Al Maqta)."
+  },
+  {
+    "dg": "DG-536",
+    "hours": 7971,
+    "date": "2026-11-18",
+    "technician": "SONU & ROLAND",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 11.0,
+    "nextService": 8321,
+    "nextServiceDate": "2026-12-20",
+    "interval": 350,
+    "currentHours": 7971,
+    "currentHoursDate": "2026-11-18",
+    "notes": "Serviced 18/11/2026 @7971h by Sonu & Roland - oil + oil filter + fuel filter done; AIR FILTER NOT done (X on card) - CHANGE AT NEXT SERVICE (noted on card). Next 8321h (+350). 40 kVA Kirloskar, on hire E20 Investment, Al Wathba."
   }
 ]
