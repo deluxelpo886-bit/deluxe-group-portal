@@ -221,12 +221,6 @@
     "offHire": true
   },
   {
-    "dg": "DG-859",
-    "offHire": false,
-    "note": "On hire - Trojan, Al Bahia",
-    "since": "2026-08-24"
-  },
-  {
     "dg": "DG-860",
     "offHire": false,
     "since": "2026-08-02",
@@ -505,15 +499,21 @@
     "note": "On hire - AL REEM ISLAND RS5 (replaced DG-558). 250 kVA Kirloskar. Rate to confirm."
   },
   {
-    "dg": "DG-558",
-    "offHire": true,
-    "since": "2026-11-16",
-    "note": "Removed from Al Reem Island RS5 16/11/2026 (replaced by DG-856). Returned to yard. Available. 200 kVA Cummins."
-  },
-  {
     "dg": "DG-844",
     "offHire": true,
     "since": "2026-11-16",
     "note": "Off-hire 16/11/2026 - returned to yard from XDAM Interior Design Works, Baniyas (Al Nahdhah School). Available. 125 kVA Kirloskar."
+  },
+  {
+    "dg": "DG-558",
+    "offHire": false,
+    "since": "2026-11-18",
+    "note": "Deployed 18/11/2026 to Trojan, Al Bahyah - replaced DG-859 (oil/water fault). 200 kVA Cummins. Controller display changed in workshop - on-site reading unreliable (shows 85957h); real ~8559h, correct on site."
+  },
+  {
+    "dg": "DG-859",
+    "offHire": true,
+    "since": "2026-11-18",
+    "note": "Off-hire 18/11/2026 - OIL & WATER MIXING engine fault; returned from Trojan Al Bahyah to workshop, replaced by DG-558. 250 kVA Kirloskar."
   }
 ]
