@@ -232,12 +232,6 @@
     "note": "In workshop - engine overhauling"
   },
   {
-    "dg": "DG-868",
-    "offHire": false,
-    "since": "2026-10-08",
-    "note": "On hire - ADNOC fuel station Al Shamkha (0-450h cycle, 12h/day)"
-  },
-  {
     "dg": "DG-562",
     "offHire": false,
     "since": "2026-10-08",
@@ -475,12 +469,6 @@
     "note": "Off-hire 09/11/2026 - billing stopped but genset LEFT AT CUSTOMER SITE (Al Masriya, Khalifa Ind. City B); customer will resume after ~2 months. Not returned to yard. 440 kVA Cummins."
   },
   {
-    "dg": "DG-802",
-    "offHire": true,
-    "since": "2026-11-14",
-    "note": "Swapped out / off-hired 14/11/2026 at Bright Accord, Al Jubail Island - replaced by DG-538. Returning to yard. 250 kVA FG Wilson."
-  },
-  {
     "dg": "DG-842",
     "offHire": false,
     "since": "2026-11-14",
@@ -515,5 +503,17 @@
     "offHire": true,
     "since": "2026-11-18",
     "note": "Off-hire 18/11/2026 - OIL & WATER MIXING engine fault; returned from Trojan Al Bahyah to workshop, replaced by DG-558. 250 kVA Kirloskar."
+  },
+  {
+    "dg": "DG-802",
+    "offHire": false,
+    "since": "2026-11-14",
+    "note": "On hire to ADNOC Fuel Station, Al Shamkha from 14/11/2026 (replaced DG-868). Controller reads 3000h (meter changed, was 24008h). 250 kVA FG Wilson."
+  },
+  {
+    "dg": "DG-868",
+    "offHire": true,
+    "since": "2026-11-14",
+    "note": "Off-hire 14/11/2026 - returned from ADNOC Fuel Station Al Shamkha to yard; replaced by DG-802. 500 kVA CAT, ~18h."
   }
 ]
