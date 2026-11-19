@@ -4987,5 +4987,23 @@
     "currentHours": 4091,
     "currentHoursDate": "2026-11-19",
     "notes": "Serviced 19/11/2026 @4091h by Sonu & Hussain - oil + oil filter + fuel filter + AIR FILTER all done (air finally cleared, pending since 15/10). Next 4541h (+450); next service date set to 07/12/2026 (ops). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First)."
+  },
+  {
+    "dg": "DG-838",
+    "hours": 19088,
+    "date": "2026-11-19",
+    "technician": "DELUXE WORKSHOP",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "dailyHours": 12,
+    "nextService": 19538,
+    "nextServiceDate": "2026-12-19",
+    "interval": 450,
+    "fixedDays": 30,
+    "currentHours": 19088,
+    "currentHoursDate": "2026-11-19",
+    "notes": "Dispatched on hire 19/11/2026 to Galaxy Universal (LEA Community Clubs) after alternator repair + service. Meter 19088h. Next service set to 30 days from dispatch -> 19/12/2026 (ops). 340 kVA CAT."
   }
 ]
