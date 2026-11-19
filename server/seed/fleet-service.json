@@ -514,10 +514,13 @@
     "oilFilter": false,
     "fuelFilter": false,
     "airFilter": false,
-    "dailyHours": 11.28,
+    "dailyHours": 12,
     "nextService": 19470,
-    "nextServiceDate": "2026-09-19",
-    "interval": 450
+    "nextServiceDate": "2026-12-21",
+    "interval": 450,
+    "currentHours": 19088,
+    "currentHoursDate": "2026-11-19",
+    "notes": "Last service 19/03/2026 @19020h (oil only). Alternator repaired; dispatched ON HIRE 19/11/2026 to Galaxy Universal (LEA Community Clubs). Handover meter 19088h - 382h left to next (19470h). Confirm pre-dispatch oil/filter service. 340 kVA CAT."
   },
   {
     "dg": "DG-814",
