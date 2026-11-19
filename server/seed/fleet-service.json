@@ -3984,12 +3984,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 11.7,
+    "dailyHours": 14,
     "nextService": 2240,
     "interval": 450,
-    "currentHours": 1790,
-    "currentHoursDate": "2026-10-25",
-    "notes": "Serviced 25/10/2026 at 1790h by Jayraj & Imran - oil, oil filter, fuel filter AND air filter all done. Next 2240h (+450). 493h since 13/09 service = ~11.7 h/day -> due ~01/12. 725 kVA Caterpillar, EMDAD, KIZAD."
+    "currentHours": 2140,
+    "currentHoursDate": "2026-11-19",
+    "notes": "Serviced 25/10/2026 @1790h by Jayraj & Imran - oil + oil/fuel/air filters all done. Meter now 2140h on 19/11 (controller photo) = ~14 h/day; 100h left to next (2240h) -> due ~26/11. 725 kVA Caterpillar, EMDAD, KIZAD.",
+    "nextServiceDate": "2026-11-26"
   },
   {
     "dg": "DG-448",
@@ -4705,9 +4706,9 @@
     "nextServiceDate": "2026-12-08",
     "interval": 350,
     "dailyHours": 10.9,
-    "currentHours": 322,
-    "currentHoursDate": "2026-11-06",
-    "notes": "350h service done 06/11/2026 @ 322h by Jayraj & Imran - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending, fit at next service. Controller 322h confirmed. Ran 239h since first service 15/10 (83h) over 22 days = ~10.9 h/day. Next 672h (+350) -> due ~08/12/2026. 100 kVA Kirloskar, Emdad, Kizad-B."
+    "currentHours": 463,
+    "currentHoursDate": "2026-11-19",
+    "notes": "350h service done 06/11/2026 @ 322h by Jayraj & Imran - oil, oil filter & fuel filter done; AIR FILTER NOT done (X on card) - pending, fit at next service. Controller 463h on 19/11 (209h left to 672). Ran 239h since first service 15/10 (83h) over 22 days = ~10.9 h/day. Next 672h (+350) -> due ~08/12/2026. 100 kVA Kirloskar, Emdad, Kizad-B."
   },
   {
     "dg": "DG-833",
