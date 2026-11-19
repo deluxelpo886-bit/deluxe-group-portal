@@ -3379,10 +3379,10 @@
     "nextService": 5924,
     "nextServiceDate": "2026-11-25",
     "interval": 450,
-    "dailyHours": 11,
-    "currentHours": 5474,
-    "currentHoursDate": "2026-10-18",
-    "notes": "450h service done 18/10/2026 at 5474h by Sonu & Hussain - oil, oil filter, fuel filter & AIR FILTER all done. Ran 465h since the 06/09 service (5009h) = ~11 h/day. Next 5924h (+450); next date by usage/450-cycle -> ~25/11/2026. 800 kVA Caterpillar, EMDAD, KIZAD (Khalifa Ind. City B)."
+    "dailyHours": 14,
+    "currentHours": 5924,
+    "currentHoursDate": "2026-11-19",
+    "notes": "450h service done 18/10/2026 @5474h by Sonu & Hussain - oil + all filters. Meter now 5924h on 19/11 (controller photo, 2591 starts) = AT next-service point (5924h, +450) -> DUE NOW. ~14 h/day since service. 800 kVA Caterpillar, EMDAD, KIZAD."
   },
   {
     "dg": "DG-453",
