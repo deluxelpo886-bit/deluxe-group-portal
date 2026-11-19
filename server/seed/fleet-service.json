@@ -3960,7 +3960,8 @@
     "currentHours": 28519,
     "currentHoursDate": "2026-11-19",
     "notes": "Serviced 24/10/2026 @28348h by Jayraj & Imran - oil + oil/fuel filters; AIR FILTER pending. Meter now 28519h on 19/11 (controller photo, 4929 starts) = ~6.6 h/day; 179h left to next (28698h) -> ~16/12. 100 kVA Kirloskar, OSAI, Al Jarf (Ohana by the Sea).",
-    "nextServiceDate": "2026-12-16"
+    "nextServiceDate": "2026-12-07",
+    "fixedDays": 44
   },
   {
     "dg": "DG-529",
@@ -4968,5 +4969,23 @@
     "currentHours": 14219,
     "currentHoursDate": "2026-11-18",
     "notes": "Serviced 18/11/2026 @14219h by Mia Khan - oil + oil filter + fuel filter done; AIR FILTER NOT done (empty on card) - pending. Controller Engine Run Time 14219h 32m / 4010 starts. Next 14569h (+350). 150 kVA Cummins."
+  },
+  {
+    "dg": "DG-830",
+    "hours": 4091,
+    "date": "2026-11-19",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "dailyHours": 12.3,
+    "nextService": 4541,
+    "nextServiceDate": "2026-12-07",
+    "interval": 450,
+    "fixedDays": 18,
+    "currentHours": 4091,
+    "currentHoursDate": "2026-11-19",
+    "notes": "Serviced 19/11/2026 @4091h by Sonu & Hussain - oil + oil filter + fuel filter + AIR FILTER all done (air finally cleared, pending since 15/10). Next 4541h (+450); next service date set to 07/12/2026 (ops). 320 kVA CAT, Gulf Contracting, Dubai (Hessyan First)."
   }
 ]
