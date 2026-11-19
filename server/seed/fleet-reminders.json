@@ -2,7 +2,7 @@
   {
     "dg": "DG-558",
     "note": "DG-558 at Trojan Al Bahyah: on-site DSE display was CHANGED in workshop and now shows a WRONG reading (~85957h). Real hours are ~8559h. Laptop not updated yet - once updated, visit site and set the controller hours correctly. Do NOT enter the on-site reading until fixed.",
-    "dueDate": "2026-11-18",
+    "dueDate": "2026-11-19",
     "createdBy": "Ops",
     "key": "DG-558-display-change-2026-11-18"
   }
