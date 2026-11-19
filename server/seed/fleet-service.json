@@ -3954,12 +3954,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 8.5,
+    "dailyHours": 6.6,
     "nextService": 28698,
     "interval": 350,
-    "currentHours": 28348,
-    "currentHoursDate": "2026-10-24",
-    "notes": "Serviced 24/10/2026 at 28348h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 28698h (+350). 280h since 21/09 service = ~8.5 h/day -> on 12h plan due ~22/11. 100 kVA Kirloskar, OSAI, Al Jarf (Ohana by the Sea)."
+    "currentHours": 28519,
+    "currentHoursDate": "2026-11-19",
+    "notes": "Serviced 24/10/2026 @28348h by Jayraj & Imran - oil + oil/fuel filters; AIR FILTER pending. Meter now 28519h on 19/11 (controller photo, 4929 starts) = ~6.6 h/day; 179h left to next (28698h) -> ~16/12. 100 kVA Kirloskar, OSAI, Al Jarf (Ohana by the Sea).",
+    "nextServiceDate": "2026-12-16"
   },
   {
     "dg": "DG-529",
