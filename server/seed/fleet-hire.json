@@ -213,10 +213,6 @@
     "note": "Off hire - returned to yard, available for hire (per Netsonic 21/09). Was on hire to Stolway Manufacturing (ICAD II)."
   },
   {
-    "dg": "DG-838",
-    "offHire": true
-  },
-  {
     "dg": "DG-840",
     "offHire": true
   },
@@ -515,5 +511,11 @@
     "offHire": true,
     "since": "2026-11-14",
     "note": "Off-hire 14/11/2026 - returned from ADNOC Fuel Station Al Shamkha to yard; replaced by DG-802. 500 kVA CAT, ~18h."
+  },
+  {
+    "dg": "DG-838",
+    "offHire": false,
+    "since": "2026-11-19",
+    "note": "On hire 19/11/2026 - Galaxy Universal Contracting, LEA Community Clubs (GU0131). LPO P600012053, 5000/month. 340 kVA CAT. Meter 19088h."
   }
 ]
