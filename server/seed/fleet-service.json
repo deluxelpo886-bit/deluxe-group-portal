@@ -4419,13 +4419,14 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "nextService": 4770,
-    "nextServiceDate": "2026-11-21",
+    "nextService": 4941,
+    "nextServiceDate": "2026-12-10",
     "interval": 350,
     "dailyHours": 18,
-    "currentHours": 4420,
-    "currentHoursDate": "2026-11-02",
-    "notes": "Serviced 02/11/2026 (supplier-maintained cross-hire). METER NOT CAPTURED on card photo - hours 4420h is an ESTIMATE from 4093h@15/10 + ~18 h/day; CONFIRM actual reading. All filters done. Next service est. 4770h (+350) ~21/11/2026. CROSS-HIRE from The Red Square Equipments Repair (20 kVA), covering DG-812 at ICAD III."
+    "currentHours": 4581,
+    "currentHoursDate": "2026-11-20",
+    "notes": "Serviced 02/11/2026 (supplier-maintained cross-hire). Controller 4581h / 2515 starts confirmed 20/11/2026. Next service set to 10/12/2026 (ops) ~4941h at ~18 h/day. CROSS-HIRE RSG-39 from The Red Square Equipments Repair (20 kVA), covering DG-812 at ICAD III (Motor Way).",
+    "fixedDays": 38
   },
   {
     "dg": "DG-518",
