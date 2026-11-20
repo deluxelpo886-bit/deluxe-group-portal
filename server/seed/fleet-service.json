@@ -3186,20 +3186,6 @@
     "notes": "DEPLOYED 16/11/2026 to AL REEM ISLAND - RS5 (replaced DG-558). Controller 22021h / 2979 starts. Last service 01/09 @21769h; next service 22219h - 198h left, due ~11/12/2026. 250 kVA Kirloskar. Site rate to confirm."
   },
   {
-    "dg": "DG-470",
-    "hours": 0,
-    "date": "2026-05-10",
-    "technician": "HUSAIN&GAGAN",
-    "oil": false,
-    "oilFilter": false,
-    "fuelFilter": false,
-    "airFilter": false,
-    "nextService": 350,
-    "nextServiceDate": "2027-01-01",
-    "notes": "Yard - available for hire (returned 28/07 from Genesis Cabinets); added to fleet count",
-    "interval": 350
-  },
-  {
     "dg": "DG-862",
     "hours": 0,
     "date": "2026-09-03",
@@ -5005,5 +4991,22 @@
     "currentHours": 19088,
     "currentHoursDate": "2026-11-19",
     "notes": "Dispatched on hire 19/11/2026 to Galaxy Universal (LEA Community Clubs) after alternator repair + service. Meter 19088h. Next service set to 30 days from dispatch -> 19/12/2026 (ops). 340 kVA CAT."
+  },
+  {
+    "dg": "DG-470",
+    "hours": 9333,
+    "date": "2026-11-20",
+    "technician": "DELUXE TEAM",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "dailyHours": 8,
+    "nextService": 9533,
+    "nextServiceDate": "2026-12-15",
+    "interval": 350,
+    "currentHours": 9333,
+    "currentHoursDate": "2026-11-20",
+    "notes": "Serviced 20/11/2026 @9333h (controller 9333h58m) - oil + all filters done - before going on hire to Future Pipe Industries (Energy). Next 9533h (+200, re-hire check per card). 220 kVA Iveco."
   }
 ]

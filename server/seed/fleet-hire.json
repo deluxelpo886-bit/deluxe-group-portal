@@ -71,12 +71,6 @@
     "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
   },
   {
-    "dg": "DG-470",
-    "offHire": true,
-    "since": "2026-09-30",
-    "note": "OFF-HIRED 30/09 (Netsonic OFF2-000036) - Classic Naaz Real Estate. COLLECTED and returned to yard 03/10. Available for hire. 220 kVA Iveco."
-  },
-  {
     "dg": "DG-473",
     "offHire": false,
     "since": "2026-08-24",
@@ -517,5 +511,11 @@
     "offHire": false,
     "since": "2026-11-19",
     "note": "On hire 19/11/2026 - Galaxy Universal Contracting, LEA Community Clubs (GU0131). LPO P600012053, 5000/month. 340 kVA CAT. Meter 19088h."
+  },
+  {
+    "dg": "DG-470",
+    "offHire": false,
+    "since": "2026-11-20",
+    "note": "On hire 20/11/2026 - Future Pipe Industries (Energy). 220 kVA Iveco. Meter 9333h."
   }
 ]
