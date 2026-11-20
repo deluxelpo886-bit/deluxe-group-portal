@@ -5,5 +5,12 @@
     "dueDate": "2026-11-19",
     "createdBy": "Ops",
     "key": "DG-558-display-change-2026-11-18"
+  },
+  {
+    "dg": "CROSS-HIRE (DG-812)",
+    "note": "Cross-hire genset (replacing DG-812 at Motor Way, ICAD III) - SERVICE DUE 10/12/2026. Meter 4581h / 2515 starts on 20/11. Arrange service for the cross-hire unit on this date.",
+    "dueDate": "2026-12-10",
+    "createdBy": "Ops",
+    "key": "crosshire-dg812-service-20261210"
   }
 ]
