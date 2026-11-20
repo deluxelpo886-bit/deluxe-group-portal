@@ -3858,13 +3858,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 12,
+    "dailyHours": 9,
     "nextService": 1700,
     "interval": 350,
-    "currentHours": 1685,
+    "currentHours": 1605,
     "currentHoursDate": "2026-11-20",
-    "notes": "Serviced 23/10/2026 @1350h by Roland & Adil - oil + oil/fuel filters; AIR FILTER pending. Meter now 1685h on 20/11 (controller ~1685h) = ~12 h/day; 15h left to next (1700h) -> DUE NOW. 250 kVA Kirloskar, Hydro Power, Al Falah.",
-    "nextServiceDate": "2026-11-21"
+    "notes": "Serviced 23/10/2026 @1350h by Roland & Adil - oil + oil/fuel filters; AIR FILTER pending. Meter now 1605h on 20/11 (controller) = ~9 h/day; 95h left to next (1700h) -> ~30/11. 250 kVA Kirloskar, Hydro Power, Al Falah.",
+    "nextServiceDate": "2026-11-30"
   },
   {
     "dg": "DG-501",
