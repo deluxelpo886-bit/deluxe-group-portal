@@ -108,7 +108,7 @@ async function debug(opts) {
 
   // --- Step 1: the login page (cookies, form, script srcs) ---
   try {
-    const r = await fetchT(WEB_BASE + '/', { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0', Accept: 'text/html' } }, 20000);
+    const r = await fetchT(WEB_BASE + '/', { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0', Accept: 'text/html' } }, 8000);
     const body = await r.text();
     const scripts = excerpts(body, /<script[^>]+src=["']([^"']+)["']/i, { before: 0, after: 0, max: 40 })
       .map((s) => (s.match(/src=["']([^"']+)["']/i) || [])[1]).filter(Boolean);
@@ -142,30 +142,31 @@ async function debug(opts) {
   ['/Public.js', '/index.js', '/js/Public.js', '/js/index.js'].forEach((p) => { if (!jsCandidates.includes(p)) jsCandidates.push(p); });
 
   report.steps.scripts = {};
-  for (const src of jsCandidates.slice(0, 6)) {
+  // Fetch the candidate scripts in PARALLEL with short timeouts so the whole
+  // probe returns in a few seconds (a slow sequential crawl was timing out).
+  await Promise.all(jsCandidates.slice(0, 3).map(async (src) => {
     const url = /^https?:/i.test(src) ? src : (src.startsWith('//') ? 'https:' + src : WEB_BASE + '/' + src.replace(/^\//, ''));
     try {
-      const r = await fetchT(url, { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0' } }, 20000);
+      const r = await fetchT(url, { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0' } }, 8000);
       const js = r.status === 200 ? await r.text() : '';
       report.steps.scripts[src] = {
         resolved: url,
         status: r.status,
         bytes: js.length,
-        // how the request Token is built + what the login/data calls look like
-        crypto: excerpts(js, /(CryptoJS|AES|DES|TripleDES|\.encrypt\s*\(|\.decrypt\s*\(|base64|md5|SHA|secretKey|parse\()/i, { max: 10 }),
-        token: excerpts(js, /(Token|GetSession|jsession|account_name)/i, { max: 10 }),
-        endpoints: excerpts(js, /(WebProcessorApi|\.ashx|GetSession|Login\.aspx|:9090|api\.overseetracking)/i, { max: 12 }),
+        crypto: excerpts(js, /(CryptoJS|AES|DES|TripleDES|\.encrypt\s*\(|\.decrypt\s*\(|base64|md5|SHA|secretKey|parse\()/i, { max: 8 }),
+        token: excerpts(js, /(Token|GetSession|jsession|account_name)/i, { max: 8 }),
+        endpoints: excerpts(js, /(WebProcessorApi|\.ashx|GetSession|Login\.aspx|:9090|api\.overseetracking)/i, { max: 10 }),
         loginFn: excerpts(js, /(function\s+\w*[Ll]ogin|[Ll]ogin\s*[:=]\s*function|SignIn|userLogin|doLogin)/i, { max: 6 }),
       };
     } catch (e) {
       report.steps.scripts[src] = { resolved: url, error: String(e && e.message || e) };
     }
-  }
+  }));
   delete report._scriptSrcs;
 
-  // --- Step 3 (optional): try the data API endpoint reachability ---
+  // --- Step 3: data API endpoint reachability from Render ---
   try {
-    const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0' } }, 15000);
+    const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0' } }, 8000);
     report.steps.apiReachable = { status: r.status, note: 'GET only - just a reachability check from Render' };
   } catch (e) {
     report.steps.apiReachable = { error: String(e && e.message || e) };
