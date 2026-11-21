@@ -205,6 +205,9 @@ async function debug(opts) {
     report.steps.apiReachable = { error: String(e && e.message || e) };
   }
 
+  // --- Step 4: monitor-page scripts -> the real device/positions call ---
+  report.steps.monitor = await reconMonitor();
+
   report.configured = isConfigured();
   if (tryLogin && isConfigured()) {
     report.steps.login = await tryLoginFlow();
@@ -214,39 +217,130 @@ async function debug(opts) {
   return report;
 }
 
-// Placeholder login attempt - refined once debug() reveals the real protocol.
-// Reports raw results rather than throwing, so the diagnostic stays readable.
+// ---- shared API call: multipart POST to WebProcessorApi.ashx ----
+// Mirrors the site's SubmitData(): fields Token, OperationType, InformationType,
+// LanguageType, Arguments (+ optional PageArguments). The Token is the opaque
+// session token the server issues at SignIn - we just pass it back, no crypto.
+let sessionToken = null;
+function buildForm(fields) {
+  const fd = new FormData();
+  Object.keys(fields).forEach((k) => fd.append(k, fields[k] == null ? '' : String(fields[k])));
+  return fd;
+}
+async function apiCall(operationType, informationType, argStr, opts) {
+  opts = opts || {};
+  const fd = buildForm({
+    Token: opts.token != null ? opts.token : (sessionToken || ''),
+    OperationType: operationType,
+    InformationType: informationType,
+    LanguageType: process.env.OVERSEE_LANG || '1',
+    Arguments: argStr || '',
+  });
+  if (opts.pageSize && opts.pageIndex) fd.append('PageArguments', JSON.stringify({ PageSize: String(opts.pageSize), PageIndex: String(opts.pageIndex) }));
+  const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', { method: 'POST', body: fd, headers: { 'User-Agent': 'DeluxePortal/1.0' } }, opts.timeout || 15000);
+  const text = await r.text();
+  let json = null; try { json = JSON.parse(text); } catch (_) {}
+  return { status: r.status, json, text };
+}
+function argEsc(s) { return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+function loginArgs() { return "{'UserName':'" + argEsc(user()) + "','Password':'" + argEsc(pass()) + "'}"; }
+
+// Log in with the stored credentials; stores + returns the session Token.
+async function login() {
+  if (!isConfigured()) throw new Error('not configured');
+  const res = await apiCall('SignIn', 'User', loginArgs(), { token: '' });
+  const j = res.json;
+  if (!j) throw new Error('login: non-JSON response (HTTP ' + res.status + ')');
+  if (String(j.State) !== '0') throw new Error('login rejected (State ' + j.State + ')');
+  sessionToken = j.Token;
+  return { token: j.Token, data: j.Data };
+}
+
+// Diagnostic SignIn used by the recon probe's ?login=1 - confirms login works
+// and shows the response shape WITHOUT leaking the full token.
 async function tryLoginFlow() {
-  const out = { attempts: [] };
-  const u = user(), p = pass();
-  const candidates = [
-    { url: WEB_BASE + '/Login.ashx', body: new URLSearchParams({ username: u, password: p }), type: 'form' },
-    { url: WEB_BASE + '/GetSession.aspx', body: new URLSearchParams({ username: u, password: p }), type: 'form' },
+  try {
+    const res = await apiCall('SignIn', 'User', loginArgs(), { token: '' });
+    const j = res.json;
+    const out = { httpStatus: res.status };
+    if (!j) { out.error = 'non-JSON response'; out.bodyHead = (res.text || '').slice(0, 400); return out; }
+    out.State = j.State;
+    out.success = String(j.State) === '0';
+    out.hasToken = !!j.Token;
+    out.tokenLen = j.Token ? String(j.Token).length : 0;
+    out.serverError = j.Error || null;
+    out.dataType = Array.isArray(j.Data) ? ('array[' + j.Data.length + ']') : (j.Data && typeof j.Data === 'object' ? 'object' : typeof j.Data);
+    out.dataKeys = (j.Data && typeof j.Data === 'object' && !Array.isArray(j.Data)) ? Object.keys(j.Data).slice(0, 40) : null;
+    if (out.success) { sessionToken = j.Token; out.afterLogin = await probeDeviceOps(); }
+    return out;
+  } catch (e) { return { error: String(e && e.message || e) }; }
+}
+
+// After login, try likely "list my devices/positions" operations so we can see
+// which one returns the vehicles (and its data shape). Read-only probing.
+async function probeDeviceOps() {
+  const combos = [
+    ['Query', 'Device'], ['Query', 'Terminal'], ['Query', 'Vehicle'], ['Query', 'Monitor'],
+    ['Get', 'Device'], ['List', 'Device'], ['Query', 'DeviceList'], ['Query', 'LastPosition'],
+    ['Query', 'GPS'], ['Query', 'Object'], ['Query', 'Car'], ['Query', 'Group'],
   ];
-  for (const c of candidates) {
+  const results = {};
+  for (const [op, info] of combos) {
     try {
-      const r = await fetchT(c.url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'DeluxePortal/1.0' },
-        body: c.body.toString(),
-      }, 15000);
-      const txt = (await r.text()).slice(0, 600);
-      out.attempts.push({ url: c.url, status: r.status, setCookie: r.headers.get('set-cookie') || null, bodyHead: txt });
-    } catch (e) {
-      out.attempts.push({ url: c.url, error: String(e && e.message || e) });
-    }
+      const res = await apiCall(op, info, '{}', { pageSize: 100, pageIndex: 1, timeout: 9000 });
+      const j = res.json;
+      results[op + '/' + info] = j
+        ? { State: j.State, DataCount: j.DataCount,
+            dataType: Array.isArray(j.Data) ? ('array[' + j.Data.length + ']') : typeof j.Data,
+            sampleKeys: Array.isArray(j.Data) && j.Data[0] && typeof j.Data[0] === 'object' ? Object.keys(j.Data[0]).slice(0, 24) : null,
+            Error: j.Error || null }
+        : { http: res.status, bodyHead: (res.text || '').slice(0, 80) };
+    } catch (e) { results[op + '/' + info] = { error: String(e && e.message || e) }; }
   }
+  return results;
+}
+
+// Recon the monitor page's own scripts to find the real device/positions call.
+async function reconMonitor() {
+  const out = {};
+  try {
+    const r = await fetchT(WEB_BASE + '/index.aspx', { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0', Accept: 'text/html' } }, 8000);
+    const body = await r.text();
+    const srcs = excerpts(body, /<script[^>]+src=["']([^"']+)["']/i, { before: 0, after: 0, max: 40 })
+      .map((s) => (s.match(/src=["']([^"']+)["']/i) || [])[1]).filter(Boolean);
+    out.page = { status: r.status, scriptSrcs: srcs };
+    out.inlineSubmitCalls = excerpts(body, /Submit(Data|DataByToken)\s*\(/i, { before: 10, after: 170, max: 20 });
+    const cand = srcs.filter((s) => /index|monitor|main|map|device|gps|common/i.test(s) && !/public\.js/i.test(s)).slice(0, 3);
+    out.scripts = {};
+    await Promise.all(cand.map(async (src) => {
+      const url = /^https?:/i.test(src) ? src : (src.startsWith('//') ? 'https:' + src : WEB_BASE + '/' + src.replace(/^\//, ''));
+      try {
+        const rr = await fetchT(url, { method: 'GET', headers: { 'User-Agent': 'DeluxePortal/1.0' } }, 8000);
+        const js = rr.status === 200 ? await rr.text() : '';
+        out.scripts[src] = { status: rr.status, bytes: js.length,
+          submitCalls: excerpts(js, /Submit(Data|DataByToken)\s*\(/i, { before: 10, after: 170, max: 24 }) };
+      } catch (e) { out.scripts[src] = { error: String(e && e.message || e) }; }
+    }));
+  } catch (e) { out.error = String(e && e.message || e); }
   return out;
 }
 
-// ---- live connector (to be completed after protocol discovery) ----
+// ---- live connector ----
 async function refresh() {
   if (!isConfigured()) {
     snapshot = Object.assign({}, snapshot, { live: false, error: 'not configured' });
     return;
   }
-  // Implemented once debug() confirms the login + WebProcessorApi protocol.
-  snapshot = Object.assign({}, snapshot, { error: 'connector pending protocol discovery' });
+  try {
+    if (!sessionToken) await login();
+    // Device/position fetch is wired once probeDeviceOps/reconMonitor confirm the
+    // exact operation; for now we keep the session established.
+    snapshot = Object.assign({}, snapshot, { error: 'login ok; positions mapping pending' });
+  } catch (e) {
+    sessionToken = null;
+    snapshot = Object.assign({}, snapshot, { error: (e && e.message) || 'refresh failed' });
+    console.error('[oversee] refresh failed:', snapshot.error);
+  }
 }
 
 let timer = null;
