@@ -69,12 +69,16 @@
   <div class="card hrs">
     <h2>2 · Update Meter Hours</h2>
     <div class="body">
-      <div class="hint">Use this when hours are pending — enter the latest controller reading and date.</div>
+      <div class="hint">Use this when hours are pending — enter the latest controller reading and date. You can also fix the next-service date here.</div>
       <div class="row">
         <div><label>DG Number</label><input id="h_dg" placeholder="DG-860" autocomplete="off"></div>
         <div><label>Current Hours</label><input id="h_hours" type="number" inputmode="numeric" placeholder="18996"></div>
-        <div><label>Reading Date</label><input id="h_date" type="date"></div>
       </div>
+      <div class="row">
+        <div><label>Reading Date</label><input id="h_date" type="date"></div>
+        <div><label>Next Service Date (optional)</label><input id="h_next" type="date"></div>
+      </div>
+      <div class="hint">Leave "Next Service Date" blank to let the system work it out from hours. Fill it only to force a date (e.g. a planned visit).</div>
       <button class="btn" onclick="updateHours()">Update Hours</button>
       <div id="h_msg" class="msg"></div>
     </div>
@@ -140,8 +144,14 @@
     var dg=up($('h_dg').value); if(!dg) return show('h_msg',false,'Enter a DG number.');
     var hours=Number($('h_hours').value); if(!isFinite(hours)) return show('h_msg',false,'Enter current hours.');
     var date=$('h_date').value||today;
-    post('/api/service/reading',{dg:dg,hours:hours,date:date,currentHours:hours,currentHoursDate:date})
-      .then(function(){ show('h_msg',true,'✓ '+dg+' meter set to '+hours+'h ('+date+').'); $('h_dg').value=''; $('h_hours').value=''; })
+    var nextDate=$('h_next').value||'';
+    var calls=[ post('/api/service/reading',{dg:dg,hours:hours,date:date,currentHours:hours,currentHoursDate:date}) ];
+    // If a next-service date was given, pin it via the office override.
+    var ovr={dg:dg,currentHours:hours,currentHoursDate:date};
+    if(nextDate) ovr.nextServiceDate=nextDate;
+    calls.push(post('/api/fleet/override',ovr));
+    Promise.all(calls)
+      .then(function(){ show('h_msg',true,'✓ '+dg+' meter set to '+hours+'h'+(nextDate?(', next service '+nextDate):'')+'.'); $('h_dg').value=''; $('h_hours').value=''; $('h_next').value=''; })
       .catch(function(e){ show('h_msg',false,e.message); });
   };
 
