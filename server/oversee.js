@@ -223,6 +223,7 @@ async function debug(opts) {
 // session token the server issues at SignIn - we just pass it back, no crypto.
 let sessionToken = null;
 let apiLang = process.env.OVERSEE_LANG || '2'; // language suffix the API expects; refined by the login sweep
+let apiEnc = 'multipart'; // request encoding the API accepts; refined by the login diagnostic
 function buildForm(fields) {
   const fd = new FormData();
   Object.keys(fields).forEach((k) => fd.append(k, fields[k] == null ? '' : String(fields[k])));
@@ -230,24 +231,32 @@ function buildForm(fields) {
 }
 async function apiCall(operationType, informationType, argStr, opts) {
   opts = opts || {};
-  const fd = buildForm({
+  const fields = {
     Token: opts.token != null ? opts.token : (sessionToken || ''),
     OperationType: operationType,
     InformationType: informationType,
     LanguageType: opts.lang != null ? opts.lang : apiLang,
     Arguments: argStr || '',
-  });
-  if (opts.pageSize && opts.pageIndex) fd.append('PageArguments', JSON.stringify({ PageSize: String(opts.pageSize), PageIndex: String(opts.pageIndex) }));
-  const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', {
-    method: 'POST', body: fd, redirect: 'follow',
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      Origin: WEB_BASE,
-      Referer: WEB_BASE + '/',
-      Accept: 'application/json, text/javascript, */*; q=0.01',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-  }, opts.timeout || 15000);
+  };
+  if (opts.pageSize && opts.pageIndex) fields.PageArguments = JSON.stringify({ PageSize: String(opts.pageSize), PageIndex: String(opts.pageIndex) });
+  let body;
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    Origin: WEB_BASE,
+    Referer: WEB_BASE + '/index.aspx',
+    Accept: 'application/json, text/javascript, */*; q=0.01',
+    'X-Requested-With': 'XMLHttpRequest',
+  };
+  const enc = opts.enc || apiEnc;
+  if (enc === 'form') {
+    const p = new URLSearchParams();
+    Object.keys(fields).forEach((k) => p.append(k, fields[k] == null ? '' : String(fields[k])));
+    body = p.toString();
+    headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+  } else {
+    body = buildForm(fields); // multipart/form-data (boundary set automatically)
+  }
+  const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', { method: 'POST', body, redirect: 'follow', headers }, opts.timeout || 15000);
   const text = await r.text();
   let json = null; try { json = JSON.parse(text); } catch (_) {}
   return { status: r.status, json, text };
@@ -266,29 +275,43 @@ async function login() {
   return { token: j.Token, data: j.Data };
 }
 
-// Diagnostic SignIn used by the recon probe's ?login=1 - sweeps LanguageType
-// values to find the one the API accepts, then (on success) probes the device
-// operations. Shows response shape WITHOUT leaking the full token.
+// Diagnostic SignIn used by ?login=1 - tries encodings + argument formats to
+// find what the picky .NET endpoint accepts (a wrong-password control tells us
+// whether the null-ref is a format problem or just bad credentials). On success
+// it locks in the working encoding/lang and probes the device operations.
 async function tryLoginFlow() {
-  const langs = ['2', '1', '3', 'en', 'en-US', 'en-us', '', '0'];
-  const sweep = [];
+  const u = argEsc(user()), p = argEsc(pass());
+  const sq = "{'UserName':'" + u + "','Password':'" + p + "'}";
+  const dq = '{"UserName":"' + String(user()).replace(/"/g, '\\"') + '","Password":"' + String(pass()).replace(/"/g, '\\"') + '"}';
+  const variants = [
+    { label: 'single-quote / multipart', args: sq, enc: 'multipart' },
+    { label: 'single-quote / urlencoded', args: sq, enc: 'form' },
+    { label: 'double-quote / multipart', args: dq, enc: 'multipart' },
+    { label: 'double-quote / urlencoded', args: dq, enc: 'form' },
+    { label: 'single-quote / mp / lang1', args: sq, enc: 'multipart', lang: '1' },
+    { label: 'CONTROL wrong-password', args: "{'UserName':'" + u + "','Password':'__wrong__'}", enc: 'multipart' },
+  ];
+  const tests = [];
   let good = null;
-  for (const lang of langs) {
+  for (const v of variants) {
     try {
-      const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', lang, timeout: 10000 });
+      const res = await apiCall('SignIn', 'User', v.args, { token: '', enc: v.enc, lang: v.lang, timeout: 10000 });
       const j = res.json;
-      const row = { lang: lang === '' ? '(empty)' : lang, httpStatus: res.status };
-      if (!j) { row.error = 'non-JSON'; row.bodyHead = (res.text || '').slice(0, 90); }
-      else { row.State = j.State; row.hasToken = !!j.Token; row.serverError = j.Error || null; }
-      sweep.push(row);
-      if (j && String(j.State) === '0') { good = { lang, token: j.Token, data: j.Data }; break; }
-    } catch (e) { sweep.push({ lang: lang === '' ? '(empty)' : lang, error: String(e && e.message || e) }); }
+      const row = { variant: v.label, httpStatus: res.status };
+      if (!j) { row.error = 'non-JSON'; row.bodyHead = (res.text || '').slice(0, 160); }
+      else { row.State = j.State; row.hasToken = !!j.Token; row.serverError = (j.Error ? String(j.Error).slice(0, 80) : null); }
+      tests.push(row);
+      if (!good && j && String(j.State) === '0' && v.label.indexOf('wrong') === -1) {
+        good = { token: j.Token, data: j.Data, enc: v.enc, lang: v.lang };
+      }
+    } catch (e) { tests.push({ variant: v.label, error: String(e && e.message || e) }); }
   }
-  const out = { sweep, success: !!good };
+  const out = { tests, success: !!good };
   if (good) {
     sessionToken = good.token;
-    apiLang = good.lang;
-    out.workingLang = good.lang === '' ? '(empty)' : good.lang;
+    apiEnc = good.enc;
+    if (good.lang != null) apiLang = good.lang;
+    out.workingEnc = good.enc;
     out.dataType = Array.isArray(good.data) ? ('array[' + good.data.length + ']') : typeof good.data;
     out.dataKeys = (good.data && typeof good.data === 'object' && !Array.isArray(good.data)) ? Object.keys(good.data).slice(0, 40) : null;
     out.afterLogin = await probeDeviceOps();
