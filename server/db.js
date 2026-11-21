@@ -176,8 +176,12 @@ function getAlertStatus(company) {
 // encrypted with a key derived from SETTINGS_KEY (falls back to a stable
 // per-install value). The DB file lives on the server's private disk, not the
 // repo, so even the ciphertext is never shipped in source control.
+// Derive the encryption key from a STABLE source so stored secrets survive
+// restarts/redeploys: prefer an explicit SETTINGS_KEY, else the always-set
+// FLEET_SECRET (used for auth), else a fixed fallback. (Earlier this depended on
+// DB_PATH, which could vary between deploys and silently invalidate secrets.)
 const SKEY = crypto.createHash('sha256')
-  .update(process.env.SETTINGS_KEY || ('deluxe-secure-' + (process.env.DB_PATH || 'local')))
+  .update(process.env.SETTINGS_KEY || process.env.FLEET_SECRET || 'deluxe-secure-settings-v1')
   .digest();
 function encSecret(plain) {
   const iv = crypto.randomBytes(12);

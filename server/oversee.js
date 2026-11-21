@@ -359,22 +359,87 @@ async function reconMonitor() {
 }
 
 // ---- live connector ----
+// GetMyTracker returns { Tracker:[...meta], Position:[...live by SystemNo] }.
+// Join them by SystemNo to produce one vehicle record each.
+function buildVehicles(data) {
+  const trackers = data && Array.isArray(data.Tracker) ? data.Tracker : [];
+  const positions = data && Array.isArray(data.Position) ? data.Position : [];
+  const posBySys = {};
+  positions.forEach((p) => { if (p && p.SystemNo != null) posBySys[String(p.SystemNo)] = p; });
+  return trackers.map((t) => {
+    const p = posBySys[String(t.SystemNo)] || null;
+    const lat = p ? Number(p.Latitude) : NaN;
+    const lon = p ? Number(p.Longitude) : NaN;
+    const acc = p ? String(p.Acc || '').toUpperCase() : '';
+    const spd = p ? (Number(p.Velocity) || 0) : null;
+    return {
+      id: String(t.SystemNo || t.ProductID || ''),
+      productId: t.ProductID || '',
+      systemNo: t.SystemNo || '',
+      imei: t.IMEI || '',
+      name: String(t.Name || '').replace(/\s+/g, ' ').trim() || ('Unit ' + (t.SystemNo || '')),
+      model: t.Model || '',
+      phone: t.PhoneNumber1 || '',
+      owner: String(t.OwnerName || '').replace(/\s+/g, ' ').trim(),
+      lat: isFinite(lat) ? lat : null,
+      lon: isFinite(lon) ? lon : null,
+      speed: spd,
+      course: p ? (Number(p.Angle) || 0) : null,
+      ignition: p ? (acc === 'ON') : null,
+      moving: p ? (spd > 0) : null,
+      gps: p ? (String(p.GpsStatus || '').toUpperCase() === 'ON') : null,
+      voltage: p && p.Voltage != null ? Number(p.Voltage) : null,
+      lastUpdate: p ? (p.DateTime || null) : null,
+      kind: 'car',
+      source: 'oversee',
+    };
+  });
+}
+
+async function fetchTrackers() {
+  let res = await apiCall('GetMyTracker', 'Product', "{'TrackerType':'0'}", { timeout: 15000 });
+  let j = res.json;
+  if (!j || String(j.State) !== '0') {
+    // session likely expired - re-login once and retry
+    sessionToken = null;
+    await login();
+    res = await apiCall('GetMyTracker', 'Product', "{'TrackerType':'0'}", { timeout: 15000 });
+    j = res.json;
+  }
+  if (!j || String(j.State) !== '0') {
+    throw new Error('GetMyTracker failed (State ' + (j && j.State) + (j && j.Error ? ': ' + String(j.Error).slice(0, 60) : '') + ')');
+  }
+  return buildVehicles(j.Data);
+}
+
 async function refresh() {
   if (!isConfigured()) {
     snapshot = Object.assign({}, snapshot, { live: false, error: 'not configured' });
-    return;
+    return snapshot;
   }
   try {
     if (!sessionToken) await login();
-    // Device/position fetch is wired once probeDeviceOps/reconMonitor confirm the
-    // exact operation; for now we keep the session established.
-    snapshot = Object.assign({}, snapshot, { error: 'login ok; positions mapping pending' });
+    const vehicles = await fetchTrackers();
+    const withPos = vehicles.filter((v) => v.lat != null && v.lon != null);
+    snapshot = {
+      vehicles: withPos,
+      total: vehicles.length,
+      updatedAt: new Date().toISOString(),
+      source: 'oversee',
+      live: true,
+      error: null,
+    };
+    persist();
   } catch (e) {
     sessionToken = null;
-    snapshot = Object.assign({}, snapshot, { error: (e && e.message) || 'refresh failed' });
+    snapshot = Object.assign({}, snapshot, { live: false, error: (e && e.message) || 'refresh failed' });
     console.error('[oversee] refresh failed:', snapshot.error);
   }
+  return snapshot;
 }
+
+// Force a refresh on demand (used by the setup page's "Refresh" button).
+async function refreshNow() { await refresh(); return snapshot; }
 
 let timer = null;
 function startPolling() {
@@ -391,4 +456,4 @@ function startPolling() {
 
 function getSnapshot() { return snapshot; }
 
-module.exports = { configure, isConfigured, debug, startPolling, getSnapshot };
+module.exports = { configure, isConfigured, debug, startPolling, getSnapshot, refreshNow };
