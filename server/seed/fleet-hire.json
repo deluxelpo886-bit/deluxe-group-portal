@@ -411,12 +411,6 @@
     "note": "Off-hire 31/10/2026 - returned to yard from Al Hashim (Al Reem Island RS3). 40 kVA Kubota. Available."
   },
   {
-    "dg": "DG-459",
-    "offHire": true,
-    "since": "2026-11-03",
-    "note": "Off-hire 03/11/2026 - returned to yard from Hydro Power (Mussafah MN1). 62.5 kVA Kirloskar. Available; air filter pending."
-  },
-  {
     "dg": "DG-502",
     "offHire": true,
     "since": "2026-11-03",
@@ -523,5 +517,11 @@
     "offHire": true,
     "since": "2026-11-21",
     "note": "Off-hire 21/11/2026 - billing stopped; NOT yet returned to yard (still at Hydro Power, Al Bahia). 165 kVA Kirloskar."
+  },
+  {
+    "dg": "DG-459",
+    "offHire": false,
+    "since": "2026-11-18",
+    "note": "On hire 18/11/2026 - MSSL Tooling (FZE), Div Moulding, SAIF Zone Sharjah. PO 27400350, 2500/month. 62.5 kVA Kirloskar."
   }
 ]
