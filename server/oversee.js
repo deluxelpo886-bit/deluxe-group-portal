@@ -222,6 +222,7 @@ async function debug(opts) {
 // LanguageType, Arguments (+ optional PageArguments). The Token is the opaque
 // session token the server issues at SignIn - we just pass it back, no crypto.
 let sessionToken = null;
+let apiLang = process.env.OVERSEE_LANG || '2'; // language suffix the API expects; refined by the login sweep
 function buildForm(fields) {
   const fd = new FormData();
   Object.keys(fields).forEach((k) => fd.append(k, fields[k] == null ? '' : String(fields[k])));
@@ -233,7 +234,7 @@ async function apiCall(operationType, informationType, argStr, opts) {
     Token: opts.token != null ? opts.token : (sessionToken || ''),
     OperationType: operationType,
     InformationType: informationType,
-    LanguageType: process.env.OVERSEE_LANG || '1',
+    LanguageType: opts.lang != null ? opts.lang : apiLang,
     Arguments: argStr || '',
   });
   if (opts.pageSize && opts.pageIndex) fd.append('PageArguments', JSON.stringify({ PageSize: String(opts.pageSize), PageIndex: String(opts.pageIndex) }));
@@ -265,24 +266,34 @@ async function login() {
   return { token: j.Token, data: j.Data };
 }
 
-// Diagnostic SignIn used by the recon probe's ?login=1 - confirms login works
-// and shows the response shape WITHOUT leaking the full token.
+// Diagnostic SignIn used by the recon probe's ?login=1 - sweeps LanguageType
+// values to find the one the API accepts, then (on success) probes the device
+// operations. Shows response shape WITHOUT leaking the full token.
 async function tryLoginFlow() {
-  try {
-    const res = await apiCall('SignIn', 'User', loginArgs(), { token: '' });
-    const j = res.json;
-    const out = { httpStatus: res.status };
-    if (!j) { out.error = 'non-JSON response'; out.bodyHead = (res.text || '').slice(0, 400); return out; }
-    out.State = j.State;
-    out.success = String(j.State) === '0';
-    out.hasToken = !!j.Token;
-    out.tokenLen = j.Token ? String(j.Token).length : 0;
-    out.serverError = j.Error || null;
-    out.dataType = Array.isArray(j.Data) ? ('array[' + j.Data.length + ']') : (j.Data && typeof j.Data === 'object' ? 'object' : typeof j.Data);
-    out.dataKeys = (j.Data && typeof j.Data === 'object' && !Array.isArray(j.Data)) ? Object.keys(j.Data).slice(0, 40) : null;
-    if (out.success) { sessionToken = j.Token; out.afterLogin = await probeDeviceOps(); }
-    return out;
-  } catch (e) { return { error: String(e && e.message || e) }; }
+  const langs = ['2', '1', '3', 'en', 'en-US', 'en-us', '', '0'];
+  const sweep = [];
+  let good = null;
+  for (const lang of langs) {
+    try {
+      const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', lang, timeout: 10000 });
+      const j = res.json;
+      const row = { lang: lang === '' ? '(empty)' : lang, httpStatus: res.status };
+      if (!j) { row.error = 'non-JSON'; row.bodyHead = (res.text || '').slice(0, 90); }
+      else { row.State = j.State; row.hasToken = !!j.Token; row.serverError = j.Error || null; }
+      sweep.push(row);
+      if (j && String(j.State) === '0') { good = { lang, token: j.Token, data: j.Data }; break; }
+    } catch (e) { sweep.push({ lang: lang === '' ? '(empty)' : lang, error: String(e && e.message || e) }); }
+  }
+  const out = { sweep, success: !!good };
+  if (good) {
+    sessionToken = good.token;
+    apiLang = good.lang;
+    out.workingLang = good.lang === '' ? '(empty)' : good.lang;
+    out.dataType = Array.isArray(good.data) ? ('array[' + good.data.length + ']') : typeof good.data;
+    out.dataKeys = (good.data && typeof good.data === 'object' && !Array.isArray(good.data)) ? Object.keys(good.data).slice(0, 40) : null;
+    out.afterLogin = await probeDeviceOps();
+  }
+  return out;
 }
 
 // After login, run the REAL operations the monitor page uses, and show their
