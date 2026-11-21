@@ -224,7 +224,9 @@ async function debug(opts) {
 // LanguageType, Arguments (+ optional PageArguments). The Token is the opaque
 // session token the server issues at SignIn - we just pass it back, no crypto.
 let sessionToken = null;
-let apiLang = process.env.OVERSEE_LANG || '2'; // language suffix the API expects; refined by the login sweep
+// LanguageType is a GUID the server looks up (not '1'/'2'); the wrong value makes
+// User.Do_Response null-ref. This is the English GUID from the site's Public.js.
+let apiLang = process.env.OVERSEE_LANG || '2B72ABC6-19D7-4653-AAEE-0BE542026D46';
 let apiEnc = 'multipart'; // request encoding the API accepts; refined by the login diagnostic
 function buildForm(fields) {
   const fd = new FormData();
@@ -284,33 +286,16 @@ async function login() {
 // real cause of the null-ref. Also primes with a GET in case a session cookie
 // is required. On success, probes the device operations.
 async function tryLoginFlow() {
-  const out = { attempts: [] };
-  let goodJson = null;
-  async function attempt(label, extra) {
-    try {
-      const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', timeout: 12000, extraHeaders: extra });
-      const j = res.json;
-      out.attempts.push({
-        label, httpStatus: res.status,
-        State: j ? j.State : null,
-        hasToken: j ? !!j.Token : false,
-        detail: j ? (j.Error ? String(j.Error).slice(0, 120) : 'OK') : ('nonJSON: ' + (res.text || '').slice(0, 120)),
-      });
-      if (j && String(j.State) === '0' && !goodJson) goodJson = j;
-    } catch (e) { out.attempts.push({ label, error: String(e && e.message || e) }); }
-  }
-  await attempt('plain', null);
-  await attempt('ip+sec-headers', {
-    'X-Forwarded-For': '94.200.1.1', 'X-Real-IP': '94.200.1.1', 'True-Client-IP': '94.200.1.1',
-    'Sec-Fetch-Dest': 'empty', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Site': 'same-site',
-    'sec-ch-ua': '"Chromium";v="120", "Google Chrome";v="120", "Not-A.Brand";v="99"',
-    'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Windows"',
-  });
-  await attempt('ip-only', { 'X-Forwarded-For': '94.200.1.1' });
-  out.success = !!goodJson;
-  if (goodJson) {
-    sessionToken = goodJson.Token;
-    out.dataKeys = (goodJson.Data && typeof goodJson.Data === 'object' && !Array.isArray(goodJson.Data)) ? Object.keys(goodJson.Data).slice(0, 40) : null;
+  const out = { langUsed: apiLang };
+  const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', timeout: 12000 });
+  const j = res.json;
+  out.httpStatus = res.status;
+  out.State = j ? j.State : null;
+  out.success = !!(j && String(j.State) === '0');
+  out.serverError = j ? (j.Error || null) : ('nonJSON: ' + (res.text || '').slice(0, 160));
+  if (out.success) {
+    sessionToken = j.Token;
+    out.userConfigKeys = (j.Data && typeof j.Data === 'object' && !Array.isArray(j.Data)) ? Object.keys(j.Data).slice(0, 40) : null;
     out.afterLogin = await probeDeviceOps();
   }
   return out;
