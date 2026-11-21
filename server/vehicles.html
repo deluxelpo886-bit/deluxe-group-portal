@@ -88,6 +88,7 @@
     <div class="accent blue"></div>
     <h2>① Connection check</h2>
     <p class="cdesc">Tests how your portal server reaches Oversee and reports back. No password needed. Tap it, wait ~15&nbsp;sec, then <b>screenshot the result and send it to me</b>.</p>
+    <div class="msg" id="pingMsg" style="margin:0 0 10px">Checking server…</div>
     <div class="row">
       <button class="btn-primary" id="reconBtn">Run connection check</button>
       <button class="btn-ghost" id="reconLoginBtn" title="Also try logging in (needs login saved below)">Check + test login</button>
@@ -128,8 +129,21 @@
 <script>
 (function(){
   var TOKEN=null; try{TOKEN=localStorage.getItem('deluxeFleetToken');}catch(e){}
-  function H(){return TOKEN?{'Authorization':'Bearer '+TOKEN}:{};}
+  function H(extra){var h=TOKEN?{'Authorization':'Bearer '+TOKEN}:{};return extra?Object.assign(h,extra):h;}
   var $=function(id){return document.getElementById(id);};
+
+  // Robust fetch: never throws, always returns {ok,status,data,text,netErr}.
+  function api(path,opts){
+    opts=opts||{};
+    return fetch(path,{method:opts.method||'GET',headers:H(opts.headers||{}),body:opts.body,credentials:'same-origin'})
+      .then(function(r){
+        return r.text().then(function(t){
+          var data=null; try{data=JSON.parse(t);}catch(e){}
+          return {ok:r.ok,status:r.status,data:data,text:t};
+        });
+      })
+      .catch(function(e){return {ok:false,status:0,data:null,text:'',netErr:(e&&e.message)||String(e)};});
+  }
 
   function setStatus(conf){
     var pill=$('statusPill'),txt=$('statusTxt');
@@ -137,26 +151,33 @@
     else{pill.className='pill off';txt.textContent='Not connected';}
   }
 
-  // initial status
-  fetch('/api/oversee/credentials',{headers:H()}).then(function(r){return r.json();}).then(function(d){
-    setStatus(d&&d.configured);
-    if(d&&d.hasUser) $('u').placeholder='•••••• (saved)';
-  }).catch(function(){});
+  // 1) Ping first — proves the browser can reach the new routes + is signed in.
+  api('/api/oversee/ping').then(function(r){
+    var m=$('pingMsg');
+    if(r.ok&&r.data){m.className='msg ok';m.textContent='✓ Server reachable.';setStatus(r.data.configured);}
+    else if(r.status===401){m.className='msg err';m.textContent='⚠ Not signed in on this device — open the Menu, sign in, then come back.';}
+    else if(r.netErr){m.className='msg err';m.textContent='⚠ Can’t reach the server (still deploying? try again in a minute). ['+r.netErr+']';}
+    else{m.className='msg err';m.textContent='⚠ Server replied HTTP '+r.status+'. '+(r.text||'').slice(0,120);}
+  });
+
+  // credentials status (best-effort; ping already set the pill)
+  api('/api/oversee/credentials').then(function(r){
+    if(r.ok&&r.data){setStatus(r.data.configured); if(r.data.hasUser)$('u').placeholder='•••••• (saved)';}
+  });
 
   function runRecon(withLogin){
     var btn=withLogin?$('reconLoginBtn'):$('reconBtn');
     var m=$('reconMsg'),out=$('reconOut');
     btn.disabled=true;var old=btn.textContent;btn.textContent='Checking…';
-    m.className='msg info';m.textContent='Contacting Oversee from your server… (up to ~20 sec)';
-    fetch('/api/oversee/debug'+(withLogin?'?login=1':''),{headers:H()})
-      .then(function(r){return r.json();})
-      .then(function(d){
-        out.style.display='block';
-        out.textContent=JSON.stringify(d,null,2);
-        m.className='msg ok';m.textContent='✓ Done — please screenshot the box below and send it to me.';
-      })
-      .catch(function(e){m.className='msg err';m.textContent='Could not run the check: '+(e&&e.message||e);})
-      .then(function(){btn.disabled=false;btn.textContent=old;});
+    m.className='msg info';m.textContent='Contacting Oversee from your server… (~10–20 sec)';
+    api('/api/oversee/debug'+(withLogin?'?login=1':'')).then(function(r){
+      out.style.display='block';
+      if(r.data){out.textContent=JSON.stringify(r.data,null,2);}
+      else{out.textContent='HTTP '+r.status+(r.netErr?(' — network error: '+r.netErr):'')+'\n\n'+(r.text||'(empty response)');}
+      if(r.ok){m.className='msg ok';m.textContent='✓ Done — screenshot the box below and send it to me.';}
+      else if(r.status===401){m.className='msg err';m.textContent='⚠ Not signed in — open Menu, sign in, then retry.';}
+      else{m.className='msg err';m.textContent='Returned HTTP '+r.status+' — screenshot the box below and send it to me.';}
+    }).then(function(){btn.disabled=false;btn.textContent=old;});
   }
   $('reconBtn').addEventListener('click',function(){runRecon(false);});
   $('reconLoginBtn').addEventListener('click',function(){runRecon(true);});
@@ -166,23 +187,16 @@
     var m=$('credMsg');
     if(!u||!p){m.className='msg err';m.textContent='Enter both username and password.';return;}
     $('saveBtn').disabled=true;
-    fetch('/api/oversee/credentials',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H()),
-      body:JSON.stringify({username:u,password:p})})
-      .then(function(r){return r.json();})
-      .then(function(d){
-        if(d&&d.ok){m.className='msg ok';m.textContent='✓ Saved securely.';setStatus(d.configured);$('p').value='';}
-        else{m.className='msg err';m.textContent=(d&&d.error)||'Could not save.';}
-      })
-      .catch(function(){m.className='msg err';m.textContent='Could not reach the server.';})
-      .then(function(){$('saveBtn').disabled=false;});
+    api('/api/oversee/credentials',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})})
+      .then(function(r){
+        if(r.ok&&r.data&&r.data.ok){m.className='msg ok';m.textContent='✓ Saved securely.';setStatus(r.data.configured);$('p').value='';}
+        else{m.className='msg err';m.textContent=(r.data&&r.data.error)||('Could not save (HTTP '+r.status+').');}
+      }).then(function(){$('saveBtn').disabled=false;});
   });
 
   $('clearBtn').addEventListener('click',function(){
     var m=$('credMsg');
-    fetch('/api/oversee/credentials',{method:'DELETE',headers:H()})
-      .then(function(r){return r.json();})
-      .then(function(){m.className='msg info';m.textContent='Login removed.';setStatus(false);})
-      .catch(function(){});
+    api('/api/oversee/credentials',{method:'DELETE'}).then(function(){m.className='msg info';m.textContent='Login removed.';setStatus(false);});
   });
 })();
 </script>

@@ -964,6 +964,13 @@ app.get('/api/oversee', fleetProtect, (req, res) => {
   res.json(oversee.getSnapshot());
 });
 
+// Trivial reachability check: confirms the browser can reach these new routes
+// and is authorised, independent of the (slower) external recon probe.
+app.get('/api/oversee/ping', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ ok: true, time: new Date().toISOString(), configured: oversee.isConfigured() });
+});
+
 // Read-only recon probe: learns the live login/data protocol from Render (which
 // can reach Oversee) so the connector can be built against the real thing. Pass
 // ?login=1 to also attempt a login once credentials are configured.
