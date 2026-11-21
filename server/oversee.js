@@ -247,6 +247,7 @@ async function apiCall(operationType, informationType, argStr, opts) {
     Accept: '*/*',
     'Accept-Language': 'en-US,en;q=0.9',
   };
+  if (opts.cookie) headers.Cookie = String(opts.cookie).split(',').map((c) => c.split(';')[0].trim()).filter(Boolean).join('; ');
   const enc = opts.enc || apiEnc;
   if (enc === 'form') {
     const p = new URLSearchParams();
@@ -259,7 +260,7 @@ async function apiCall(operationType, informationType, argStr, opts) {
   const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', { method: 'POST', body, redirect: 'follow', headers }, opts.timeout || 15000);
   const text = await r.text();
   let json = null; try { json = JSON.parse(text); } catch (_) {}
-  return { status: r.status, json, text };
+  return { status: r.status, json, text, setCookie: r.headers.get('set-cookie') || null };
 }
 function argEsc(s) { return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
 function loginArgs() { return "{'UserName':'" + argEsc(user()) + "','Password':'" + argEsc(pass()) + "'}"; }
@@ -275,45 +276,32 @@ async function login() {
   return { token: j.Token, data: j.Data };
 }
 
-// Diagnostic SignIn used by ?login=1 - tries encodings + argument formats to
-// find what the picky .NET endpoint accepts (a wrong-password control tells us
-// whether the null-ref is a format problem or just bad credentials). On success
-// it locks in the working encoding/lang and probes the device operations.
+// Diagnostic SignIn used by ?login=1 - does ONE login and dumps the COMPLETE
+// server response (full error stack + every field + cookies) so we can see the
+// real cause of the null-ref. Also primes with a GET in case a session cookie
+// is required. On success, probes the device operations.
 async function tryLoginFlow() {
-  const u = argEsc(user()), p = argEsc(pass());
-  const sq = "{'UserName':'" + u + "','Password':'" + p + "'}";
-  const dq = '{"UserName":"' + String(user()).replace(/"/g, '\\"') + '","Password":"' + String(pass()).replace(/"/g, '\\"') + '"}';
-  const variants = [
-    { label: 'single-quote / multipart', args: sq, enc: 'multipart' },
-    { label: 'single-quote / urlencoded', args: sq, enc: 'form' },
-    { label: 'double-quote / multipart', args: dq, enc: 'multipart' },
-    { label: 'double-quote / urlencoded', args: dq, enc: 'form' },
-    { label: 'single-quote / mp / lang1', args: sq, enc: 'multipart', lang: '1' },
-    { label: 'CONTROL wrong-password', args: "{'UserName':'" + u + "','Password':'__wrong__'}", enc: 'multipart' },
-  ];
-  const tests = [];
-  let good = null;
-  for (const v of variants) {
-    try {
-      const res = await apiCall('SignIn', 'User', v.args, { token: '', enc: v.enc, lang: v.lang, timeout: 10000 });
-      const j = res.json;
-      const row = { variant: v.label, httpStatus: res.status };
-      if (!j) { row.error = 'non-JSON'; row.bodyHead = (res.text || '').slice(0, 160); }
-      else { row.State = j.State; row.hasToken = !!j.Token; row.serverError = (j.Error ? String(j.Error).slice(0, 80) : null); }
-      tests.push(row);
-      if (!good && j && String(j.State) === '0' && v.label.indexOf('wrong') === -1) {
-        good = { token: j.Token, data: j.Data, enc: v.enc, lang: v.lang };
-      }
-    } catch (e) { tests.push({ variant: v.label, error: String(e && e.message || e) }); }
-  }
-  const out = { tests, success: !!good };
-  if (good) {
-    sessionToken = good.token;
-    apiEnc = good.enc;
-    if (good.lang != null) apiLang = good.lang;
-    out.workingEnc = good.enc;
-    out.dataType = Array.isArray(good.data) ? ('array[' + good.data.length + ']') : typeof good.data;
-    out.dataKeys = (good.data && typeof good.data === 'object' && !Array.isArray(good.data)) ? Object.keys(good.data).slice(0, 40) : null;
+  const out = {};
+  // prime: GET the API (some ASP.NET handlers issue a session cookie here)
+  let primeCookie = null;
+  try {
+    const g = await fetchT(API_BASE + '/WebProcessorApi.ashx', {
+      method: 'GET',
+      headers: { 'User-Agent': 'Mozilla/5.0', Origin: WEB_BASE, Referer: WEB_BASE + '/index.aspx', 'Accept-Language': 'en-US,en;q=0.9' },
+    }, 8000);
+    primeCookie = g.headers.get('set-cookie');
+    out.prime = { status: g.status, setCookie: primeCookie, bodyHead: (await g.text()).slice(0, 200) };
+  } catch (e) { out.prime = { error: String(e && e.message || e) }; }
+
+  // one full login attempt, cookie attached if the prime gave one
+  const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', timeout: 12000, cookie: primeCookie });
+  out.httpStatus = res.status;
+  out.setCookie = res.setCookie || null;
+  out.rawResponse = (res.text || '').slice(0, 1600); // full error stack lives here
+  out.parsed = res.json || null;
+  out.success = !!(res.json && String(res.json.State) === '0');
+  if (out.success) {
+    sessionToken = res.json.Token;
     out.afterLogin = await probeDeviceOps();
   }
   return out;
