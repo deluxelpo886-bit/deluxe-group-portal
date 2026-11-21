@@ -273,7 +273,7 @@
         <b style="color:var(--text)">Team 1</b> · Sonu &amp; Hussain — Veh <b style="color:var(--text)">6692</b><br>
         <b style="color:var(--text)">Team 2</b> · Adil &amp; Sabir <span style="color:var(--amber)">(Electrical)</span> — Veh <b style="color:var(--text)">44137</b><br>
         <b style="color:var(--text)">Team 3</b> · Imran &amp; Jayaraj — Veh <b style="color:var(--text)">44107</b><br>
-        <span style="color:var(--muted)">Only these 3 vehicles tracked · Substitutes: Velu / Imran Khan · Hafeez (procurement) &amp; other vehicles hidden</span><br>
+        <span style="color:var(--muted)">All vehicles now on the map — 🔴 office cars · 🟡 Hafeez · ⚫ Shafiulaah (repair) · 🟤 Kafayat (repair) · 🔵 service teams</span><br>
         <span style="color:var(--amber)">📍 Drag a team's marker to set its base. Live driving routes appear once the Total Secure GPS trackers are connected.</span>
       </div>
       <div id="vehList" style="font-size:12.5px; color:var(--muted); line-height:1.9;"></div>
@@ -1614,6 +1614,21 @@ refreshAll();
     Heavy:  { body:'#3a5c99', cab:'#274377', bed:'#152B54', stroke:'#0a1b3a', glass:'#d3e4ff', beacon:'#ffd34d' },
     Energy: { body:'#e8a93a', cab:'#c88a26', bed:'#a2701a', stroke:'#5e4110', glass:'#fff0cf', beacon:'#ffe08a' }
   };
+  // Extra company / repair vehicles (not the 3 service teams), coloured by driver:
+  // Hafeez = yellow, Shafiulaah (repair) = black, Kafayat (repair) = brown.
+  var EXTRA_PALS = {
+    yellow: { body:'#f4c430', cab:'#d4a017', bed:'#9c7510', stroke:'#5e4410', glass:'#fff6cf', beacon:'#fff0a0' },
+    black:  { body:'#2b2f33', cab:'#191c1f', bed:'#0d0f11', stroke:'#000000', glass:'#cfd7df', beacon:'#ff6b6b' },
+    brown:  { body:'#8a5a2b', cab:'#6e4621', bed:'#50331a', stroke:'#2e1c0c', glass:'#f0ddc4', beacon:'#ffcf8a' },
+    grey:   { body:'#6b7682', cab:'#515a64', bed:'#3a424b', stroke:'#20262c', glass:'#e3e9ef', beacon:'#cbd3db' }
+  };
+  function extraVehPalette(name){
+    var n=(name||'').toLowerCase();
+    if(n.indexOf('hafeez')!==-1 || n.indexOf('hafiz')!==-1) return EXTRA_PALS.yellow;
+    if(n.indexOf('shafi')!==-1) return EXTRA_PALS.black;   // Shafiulaah / Shafiullah (repair)
+    if(n.indexOf('kafay')!==-1 || n.indexOf('kafai')!==-1) return EXTRA_PALS.brown; // Kafayat (repair)
+    return null;
+  }
   // Optional exact device-name -> company overrides. Fill these in once you know
   // how each vehicle is named in Total Secure, e.g. { 'MOTOR-01':'Energy' }.
   var DEVICE_COMPANY = FLEET_SETTINGS.deviceCompany || {};
@@ -1655,14 +1670,10 @@ refreshAll();
     // (Hafeez / Shafiulaah / Kafayet / procurement trucks) is dropped here — no
     // marker, no trail, no dispatch entry.
     var _nm = String(d.name || '');
-    var _tracked = ['66912','6692','43137','44137','44107'].some(function(p){ return _nm.indexOf(p) !== -1; });
-    if(!_tracked){
-      if(vehMarkers[key]){ map.removeLayer(vehMarkers[key]); delete vehMarkers[key]; }
-      if(TRAILS[key]){ delete TRAILS[key]; }
-      var _rm = VEHICLES.findIndex(function(x){ return x.id===key; });
-      if(_rm >= 0){ VEHICLES.splice(_rm,1); }
-      return;
-    }
+    // Show ALL tracked vehicles now: the 3 service teams + Hafeez (yellow) /
+    // Shafiulaah (black) / Kafayat (brown) + any other GPS vehicle (grey).
+    var _isTeam = ['66912','6692','43137','44137','44107'].some(function(p){ return _nm.indexOf(p) !== -1; });
+    var _extraPal = extraVehPalette(_nm);
     let v=VEHICLES.find(function(x){ return x.id===key; });
     if(!v){ v={id:key}; VEHICLES.push(v); }
     v.name=d.name||v.name||('Device '+d.id);
@@ -1686,8 +1697,8 @@ refreshAll();
       +   '<a href="https://wa.me/?text='+encodeURIComponent('Vehicle '+v.name+' location: https://maps.google.com/?q='+d.lat+','+d.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 WhatsApp</a>'
       + '</div>'
       + ((typeof d.lat==='number' && typeof d.lon==='number') ? nearbyGensPopupHtml(d.lat, d.lon) : '');
-    const company=companyOf(v.name);
-    const icon=truckIcon(d.course, TRUCK_COLORS[company], speeding);
+    const _pal = _extraPal || (_isTeam ? TRUCK_COLORS[companyOf(v.name)] : EXTRA_PALS.grey);
+    const icon=truckIcon(d.course, _pal, speeding);
     let m=vehMarkers[key];
     if(!m){
       m=L.marker([d.lat,d.lon],{icon:icon}).addTo(map);
