@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vehicle Tracking</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e13">
+<style>
+  :root{
+    --bg:#0a0e13; --bg2:#0e141c; --card:#141b24; --card2:#171f29; --glass:rgba(23,31,41,.66);
+    --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+    --text:#eef3f7; --muted:#93a1b0; --faint:#5f6b78;
+    --amber:#f4a83a; --teal:#33c6c0; --green:#41c98a; --blue:#5aa2e6; --red:#f0655a; --violet:#a98be6;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+    --sh:0 18px 40px -20px rgba(0,0,0,.7); --sh2:0 8px 22px -12px rgba(0,0,0,.6); --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;background-color:var(--bg);
+    background:radial-gradient(120% 80% at 100% -6%, rgba(240,101,90,.10), transparent 55%),
+      radial-gradient(120% 70% at -10% 4%, rgba(90,162,230,.09), transparent 50%),
+      linear-gradient(180deg,var(--bg2),var(--bg) 340px);min-height:100vh;}
+  .wrap{max-width:720px;margin:0 auto;padding:16px 16px calc(40px + env(safe-area-inset-bottom));}
+  .top{display:flex;align-items:center;gap:12px;padding:6px 2px 2px;}
+  .back{text-decoration:none;color:var(--muted);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;}
+  .spacer{flex:1;}
+  .pill{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;border-radius:999px;padding:6px 12px;}
+  .pill.on{color:var(--green);background:rgba(65,201,138,.12);border:1px solid rgba(65,201,138,.28);}
+  .pill.off{color:var(--faint);background:rgba(255,255,255,.05);border:1px solid var(--line);}
+  .dot{width:8px;height:8px;border-radius:50%;background:currentColor;}
+
+  .hero{position:relative;overflow:hidden;border-radius:22px;padding:20px;margin-top:14px;border:1px solid var(--line2);
+    background:linear-gradient(145deg,rgba(240,101,90,.14),rgba(20,27,36,.55) 44%),var(--card);box-shadow:var(--sh);}
+  .hero::after{content:"🚗";position:absolute;right:16px;top:14px;font-size:40px;opacity:.5;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--red);font-weight:700;}
+  .h1{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px;}
+  .sub{color:var(--muted);font-size:13px;font-weight:600;line-height:1.5;max-width:92%;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-top:14px;box-shadow:var(--sh2);}
+  .card h2{font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
+  .card .cdesc{color:var(--faint);font-size:12.5px;line-height:1.5;margin:0 0 14px;}
+  .accent{height:3px;border-radius:3px;margin:-18px -18px 16px;}
+  .accent.blue{background:linear-gradient(90deg,var(--blue),transparent);}
+  .accent.red{background:linear-gradient(90deg,var(--red),transparent);}
+  .accent.green{background:linear-gradient(90deg,var(--green),transparent);}
+
+  label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 6px;}
+  input[type=text],input[type=password]{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:12px;
+    padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--sans);outline:none;}
+  input:focus{border-color:var(--blue);background:rgba(90,162,230,.06);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  button{cursor:pointer;border:none;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:800;font-family:var(--sans);}
+  .btn-primary{background:linear-gradient(135deg,var(--blue),#4679c9);color:#07121f;}
+  .btn-red{background:linear-gradient(135deg,var(--red),#c94a40);color:#1f0707;}
+  .btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line2);}
+  button:active{transform:scale(.98);}
+  button:disabled{opacity:.5;cursor:default;}
+  .msg{margin-top:12px;font-size:13px;font-weight:700;min-height:18px;}
+  .msg.ok{color:var(--green);} .msg.err{color:var(--red);} .msg.info{color:var(--blue);}
+
+  pre{background:#060a0f;border:1px solid var(--line2);border-radius:12px;padding:14px;overflow:auto;max-height:440px;
+    font-family:var(--mono);font-size:11.5px;line-height:1.5;color:#b9c6d2;white-space:pre-wrap;word-break:break-word;}
+  .hint{background:rgba(90,162,230,.08);border:1px solid rgba(90,162,230,.25);border-radius:12px;padding:12px 14px;
+    font-size:12.5px;color:#bcd4ee;line-height:1.55;margin-top:12px;}
+  .step{display:flex;gap:10px;align-items:flex-start;margin:7px 0;font-size:13px;color:var(--muted);}
+  .step b{color:var(--text);}
+  .num{flex:0 0 auto;width:22px;height:22px;border-radius:7px;background:rgba(240,101,90,.16);color:var(--red);
+    display:grid;place-items:center;font-size:12px;font-weight:800;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="/menu">‹ Menu</a>
+    <div class="spacer"></div>
+    <div class="pill off" id="statusPill"><span class="dot"></span><span id="statusTxt">Checking…</span></div>
+  </div>
+
+  <section class="hero">
+    <div class="eyebrow">Oversee · iCruise</div>
+    <div class="h1">Vehicle Tracking</div>
+    <div class="sub">Connect your company cars from Oversee (Total Secure) and show them as red cars on your Fleet Map — alongside the generators.</div>
+  </section>
+
+  <!-- Step 1: recon (no password needed) -->
+  <section class="card">
+    <div class="accent blue"></div>
+    <h2>① Connection check</h2>
+    <p class="cdesc">Tests how your portal server reaches Oversee and reports back. No password needed. Tap it, wait ~15&nbsp;sec, then <b>screenshot the result and send it to me</b>.</p>
+    <div class="row">
+      <button class="btn-primary" id="reconBtn">Run connection check</button>
+      <button class="btn-ghost" id="reconLoginBtn" title="Also try logging in (needs login saved below)">Check + test login</button>
+    </div>
+    <div class="msg info" id="reconMsg"></div>
+    <pre id="reconOut" style="display:none"></pre>
+  </section>
+
+  <!-- Step 2: credentials -->
+  <section class="card">
+    <div class="accent red"></div>
+    <h2>② Oversee login</h2>
+    <p class="cdesc">Stored <b>encrypted on your server</b> — never shown again, never in the code. Used only to read your vehicle positions.</p>
+    <label for="u">Username</label>
+    <input id="u" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="DELUXE">
+    <label for="p">Password</label>
+    <input id="p" type="password" autocomplete="off" placeholder="••••••••••">
+    <div class="row">
+      <button class="btn-red" id="saveBtn">Save login securely</button>
+      <button class="btn-ghost" id="clearBtn">Remove</button>
+    </div>
+    <div class="msg" id="credMsg"></div>
+  </section>
+
+  <!-- Step 3: cars (filled once the connector is live) -->
+  <section class="card">
+    <div class="accent green"></div>
+    <h2>③ Your vehicles</h2>
+    <p class="cdesc">Once connected, your cars appear here and on the Fleet Map as red cars 🚗.</p>
+    <div class="hint" id="carsBox">
+      <div class="step"><span class="num">1</span><div>Run the <b>connection check</b> above and send me the result.</div></div>
+      <div class="step"><span class="num">2</span><div>I finish wiring the connector to match your platform.</div></div>
+      <div class="step"><span class="num">3</span><div>Your 6 cars show up here and on the map, live.</div></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var TOKEN=null; try{TOKEN=localStorage.getItem('deluxeFleetToken');}catch(e){}
+  function H(){return TOKEN?{'Authorization':'Bearer '+TOKEN}:{};}
+  var $=function(id){return document.getElementById(id);};
+
+  function setStatus(conf){
+    var pill=$('statusPill'),txt=$('statusTxt');
+    if(conf){pill.className='pill on';txt.textContent='Login saved';}
+    else{pill.className='pill off';txt.textContent='Not connected';}
+  }
+
+  // initial status
+  fetch('/api/oversee/credentials',{headers:H()}).then(function(r){return r.json();}).then(function(d){
+    setStatus(d&&d.configured);
+    if(d&&d.hasUser) $('u').placeholder='•••••• (saved)';
+  }).catch(function(){});
+
+  function runRecon(withLogin){
+    var btn=withLogin?$('reconLoginBtn'):$('reconBtn');
+    var m=$('reconMsg'),out=$('reconOut');
+    btn.disabled=true;var old=btn.textContent;btn.textContent='Checking…';
+    m.className='msg info';m.textContent='Contacting Oversee from your server… (up to ~20 sec)';
+    fetch('/api/oversee/debug'+(withLogin?'?login=1':''),{headers:H()})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        out.style.display='block';
+        out.textContent=JSON.stringify(d,null,2);
+        m.className='msg ok';m.textContent='✓ Done — please screenshot the box below and send it to me.';
+      })
+      .catch(function(e){m.className='msg err';m.textContent='Could not run the check: '+(e&&e.message||e);})
+      .then(function(){btn.disabled=false;btn.textContent=old;});
+  }
+  $('reconBtn').addEventListener('click',function(){runRecon(false);});
+  $('reconLoginBtn').addEventListener('click',function(){runRecon(true);});
+
+  $('saveBtn').addEventListener('click',function(){
+    var u=($('u').value||'').trim(),p=$('p').value||'';
+    var m=$('credMsg');
+    if(!u||!p){m.className='msg err';m.textContent='Enter both username and password.';return;}
+    $('saveBtn').disabled=true;
+    fetch('/api/oversee/credentials',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H()),
+      body:JSON.stringify({username:u,password:p})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d&&d.ok){m.className='msg ok';m.textContent='✓ Saved securely.';setStatus(d.configured);$('p').value='';}
+        else{m.className='msg err';m.textContent=(d&&d.error)||'Could not save.';}
+      })
+      .catch(function(){m.className='msg err';m.textContent='Could not reach the server.';})
+      .then(function(){$('saveBtn').disabled=false;});
+  });
+
+  $('clearBtn').addEventListener('click',function(){
+    var m=$('credMsg');
+    fetch('/api/oversee/credentials',{method:'DELETE',headers:H()})
+      .then(function(r){return r.json();})
+      .then(function(){m.className='msg info';m.textContent='Login removed.';setStatus(false);})
+      .catch(function(){});
+  });
+})();
+</script>
+</body>
+</html>
