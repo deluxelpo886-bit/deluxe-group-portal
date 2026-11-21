@@ -1701,7 +1701,7 @@ refreshAll();
     const icon=truckIcon(d.course, _pal, speeding);
     let m=vehMarkers[key];
     if(!m){
-      m=L.marker([d.lat,d.lon],{icon:icon}).addTo(map);
+      m=L.marker([d.lat,d.lon],{icon:icon}).addTo(truckLayer);
       m.bindTooltip(v.name, {permanent:true, direction:'top', offset:[0,-20], className:'dg-label veh-label'});
       vehMarkers[key]=m;
     } else {
@@ -1722,7 +1722,7 @@ refreshAll();
   function removeStale(active){
     Object.keys(vehMarkers).forEach(function(key){
       if(key[0]==='T' && !active.has(key)){
-        map.removeLayer(vehMarkers[key]); delete vehMarkers[key];
+        truckLayer.removeLayer(vehMarkers[key]); delete vehMarkers[key];
         if(trailLines[key]){ trailLayer.removeLayer(trailLines[key]); delete trailLines[key]; } delete TRAILS[key];
         const i=VEHICLES.findIndex(function(x){ return x.id===key; }); if(i>=0) VEHICLES.splice(i,1);
       }
@@ -1735,6 +1735,7 @@ refreshAll();
   // pins and the blue team-service trucks.
   var carMarkers = {};
   var carLayer = L.layerGroup().addTo(map);
+  var truckLayer = L.layerGroup().addTo(map); // team + Hafeez/Shafiulaah/Kafayat trucks
   function carIcon(deg, moving){
     var fill = moving ? '#f0655a' : '#cf4337';
     var svg = '<svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">'
@@ -1785,6 +1786,30 @@ refreshAll();
   }
   pollCars();
   setInterval(pollCars, 60000);
+
+  // ---- Show/Hide all vehicles (cars + trucks + trails) ----
+  var vehiclesOn = true;
+  function setVehiclesVisible(on){
+    vehiclesOn = on;
+    [carLayer, truckLayer, trailLayer].forEach(function(lyr){
+      if(!lyr) return;
+      if(on){ if(!map.hasLayer(lyr)) lyr.addTo(map); } else if(map.hasLayer(lyr)){ map.removeLayer(lyr); }
+    });
+    var b=document.getElementById('vehToggle'); if(b) b.textContent = on ? '🚗 Vehicles: on' : '🚗 Vehicles: off';
+  }
+  var VehCtl = L.Control.extend({
+    options:{position:'topright'},
+    onAdd:function(){
+      var b=L.DomUtil.create('button','');
+      b.id='vehToggle'; b.type='button'; b.textContent='🚗 Vehicles: on';
+      b.title='Show or hide all vehicles (cars & trucks)';
+      b.style.cssText='background:#20262c;color:#e8ecef;border:1px solid #2c333a;padding:7px 11px;border-radius:8px;font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.5);';
+      L.DomEvent.disableClickPropagation(b);
+      L.DomEvent.on(b,'click',function(){ setVehiclesVisible(!vehiclesOn); });
+      return b;
+    }
+  });
+  map.addControl(new VehCtl());
 
   let firstFit=true;
   async function poll(){
