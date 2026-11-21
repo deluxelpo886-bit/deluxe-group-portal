@@ -237,7 +237,16 @@ async function apiCall(operationType, informationType, argStr, opts) {
     Arguments: argStr || '',
   });
   if (opts.pageSize && opts.pageIndex) fd.append('PageArguments', JSON.stringify({ PageSize: String(opts.pageSize), PageIndex: String(opts.pageIndex) }));
-  const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', { method: 'POST', body: fd, headers: { 'User-Agent': 'DeluxePortal/1.0' } }, opts.timeout || 15000);
+  const r = await fetchT(API_BASE + '/WebProcessorApi.ashx', {
+    method: 'POST', body: fd, redirect: 'follow',
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      Origin: WEB_BASE,
+      Referer: WEB_BASE + '/',
+      Accept: 'application/json, text/javascript, */*; q=0.01',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }, opts.timeout || 15000);
   const text = await r.text();
   let json = null; try { json = JSON.parse(text); } catch (_) {}
   return { status: r.status, json, text };
@@ -276,27 +285,35 @@ async function tryLoginFlow() {
   } catch (e) { return { error: String(e && e.message || e) }; }
 }
 
-// After login, try likely "list my devices/positions" operations so we can see
-// which one returns the vehicles (and its data shape). Read-only probing.
+// After login, run the REAL operations the monitor page uses, and show their
+// response shape so we can map lat/lon/name/speed fields. Read-only.
 async function probeDeviceOps() {
-  const combos = [
-    ['Query', 'Device'], ['Query', 'Terminal'], ['Query', 'Vehicle'], ['Query', 'Monitor'],
-    ['Get', 'Device'], ['List', 'Device'], ['Query', 'DeviceList'], ['Query', 'LastPosition'],
-    ['Query', 'GPS'], ['Query', 'Object'], ['Query', 'Car'], ['Query', 'Group'],
-  ];
   const results = {};
-  for (const [op, info] of combos) {
+  async function run(label, op, info, args, opts) {
     try {
-      const res = await apiCall(op, info, '{}', { pageSize: 100, pageIndex: 1, timeout: 9000 });
+      const res = await apiCall(op, info, args, Object.assign({ timeout: 10000 }, opts || {}));
       const j = res.json;
-      results[op + '/' + info] = j
-        ? { State: j.State, DataCount: j.DataCount,
-            dataType: Array.isArray(j.Data) ? ('array[' + j.Data.length + ']') : typeof j.Data,
-            sampleKeys: Array.isArray(j.Data) && j.Data[0] && typeof j.Data[0] === 'object' ? Object.keys(j.Data[0]).slice(0, 24) : null,
-            Error: j.Error || null }
-        : { http: res.status, bodyHead: (res.text || '').slice(0, 80) };
-    } catch (e) { results[op + '/' + info] = { error: String(e && e.message || e) }; }
+      if (!j) { results[label] = { http: res.status, bodyHead: (res.text || '').slice(0, 120) }; return j; }
+      const sample = Array.isArray(j.Data) ? (j.Data[0] || null) : j.Data;
+      results[label] = {
+        State: j.State, DataCount: j.DataCount, Error: j.Error || null,
+        dataType: Array.isArray(j.Data) ? ('array[' + j.Data.length + ']') : typeof j.Data,
+        sample: sample, // first row - reveals the exact field names (ProductID, lat/lon, etc.)
+      };
+      return j;
+    } catch (e) { results[label] = { error: String(e && e.message || e) }; return null; }
   }
+  // validate token, then the device list; then newest position for the 1st tracker
+  await run('ValidToken', 'Query', 'User', "{'ValidToken':'1'}");
+  const trackers = await run('GetMyTracker', 'GetMyTracker', 'Product', "{'TrackerType':'0'}", { pageSize: 200, pageIndex: 1 });
+  try {
+    const first = trackers && Array.isArray(trackers.Data) ? trackers.Data[0] : null;
+    const pid = first && (first.ProductID || first.ProductId || first.productID);
+    if (pid) {
+      await run('NewestPosition', 'Query', 'HistoricalLocation',
+        "{'GetVehicleNewestPosition':'1','ProductID':'" + pid + "'}");
+    }
+  } catch (_) { /* ignore */ }
   return results;
 }
 
