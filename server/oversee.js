@@ -143,6 +143,13 @@ async function debug(opts) {
       inputs,
       // any inline hints at the login/data endpoints or crypto
       endpointHints: excerpts(body, /(WebProcessorApi|GetSession|Login|Logon|\.ashx|\.asmx|:9090)/i, { max: 12 }),
+      // the login page's inline script defines SignIn / SignInByUserName -
+      // pull the full bodies so we can see exactly how Arguments are built.
+      functions: {
+        SignIn: funcBody(body, 'SignIn(', 1400),
+        SignInByUserName: funcBody(body, 'SignInByUserName(', 3000),
+        SignInByPlateNo: funcBody(body, 'SignInByPlateNo(', 2400),
+      },
     };
     report._scriptSrcs = scripts; // used by step 2
   } catch (e) {
