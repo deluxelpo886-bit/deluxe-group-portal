@@ -248,6 +248,7 @@ async function apiCall(operationType, informationType, argStr, opts) {
     'Accept-Language': 'en-US,en;q=0.9',
   };
   if (opts.cookie) headers.Cookie = String(opts.cookie).split(',').map((c) => c.split(';')[0].trim()).filter(Boolean).join('; ');
+  if (opts.extraHeaders) Object.assign(headers, opts.extraHeaders);
   const enc = opts.enc || apiEnc;
   if (enc === 'form') {
     const p = new URLSearchParams();
@@ -281,27 +282,33 @@ async function login() {
 // real cause of the null-ref. Also primes with a GET in case a session cookie
 // is required. On success, probes the device operations.
 async function tryLoginFlow() {
-  const out = {};
-  // prime: GET the API (some ASP.NET handlers issue a session cookie here)
-  let primeCookie = null;
-  try {
-    const g = await fetchT(API_BASE + '/WebProcessorApi.ashx', {
-      method: 'GET',
-      headers: { 'User-Agent': 'Mozilla/5.0', Origin: WEB_BASE, Referer: WEB_BASE + '/index.aspx', 'Accept-Language': 'en-US,en;q=0.9' },
-    }, 8000);
-    primeCookie = g.headers.get('set-cookie');
-    out.prime = { status: g.status, setCookie: primeCookie, bodyHead: (await g.text()).slice(0, 200) };
-  } catch (e) { out.prime = { error: String(e && e.message || e) }; }
-
-  // one full login attempt, cookie attached if the prime gave one
-  const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', timeout: 12000, cookie: primeCookie });
-  out.httpStatus = res.status;
-  out.setCookie = res.setCookie || null;
-  out.rawResponse = (res.text || '').slice(0, 1600); // full error stack lives here
-  out.parsed = res.json || null;
-  out.success = !!(res.json && String(res.json.State) === '0');
-  if (out.success) {
-    sessionToken = res.json.Token;
+  const out = { attempts: [] };
+  let goodJson = null;
+  async function attempt(label, extra) {
+    try {
+      const res = await apiCall('SignIn', 'User', loginArgs(), { token: '', timeout: 12000, extraHeaders: extra });
+      const j = res.json;
+      out.attempts.push({
+        label, httpStatus: res.status,
+        State: j ? j.State : null,
+        hasToken: j ? !!j.Token : false,
+        detail: j ? (j.Error ? String(j.Error).slice(0, 120) : 'OK') : ('nonJSON: ' + (res.text || '').slice(0, 120)),
+      });
+      if (j && String(j.State) === '0' && !goodJson) goodJson = j;
+    } catch (e) { out.attempts.push({ label, error: String(e && e.message || e) }); }
+  }
+  await attempt('plain', null);
+  await attempt('ip+sec-headers', {
+    'X-Forwarded-For': '94.200.1.1', 'X-Real-IP': '94.200.1.1', 'True-Client-IP': '94.200.1.1',
+    'Sec-Fetch-Dest': 'empty', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Site': 'same-site',
+    'sec-ch-ua': '"Chromium";v="120", "Google Chrome";v="120", "Not-A.Brand";v="99"',
+    'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Windows"',
+  });
+  await attempt('ip-only', { 'X-Forwarded-For': '94.200.1.1' });
+  out.success = !!goodJson;
+  if (goodJson) {
+    sessionToken = goodJson.Token;
+    out.dataKeys = (goodJson.Data && typeof goodJson.Data === 'object' && !Array.isArray(goodJson.Data)) ? Object.keys(goodJson.Data).slice(0, 40) : null;
     out.afterLogin = await probeDeviceOps();
   }
   return out;
