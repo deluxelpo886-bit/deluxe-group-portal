@@ -517,5 +517,11 @@
     "offHire": false,
     "since": "2026-11-20",
     "note": "On hire 20/11/2026 - Future Pipe Industries (Energy). 220 kVA Iveco. Meter 9333h."
+  },
+  {
+    "dg": "DG-535",
+    "offHire": true,
+    "since": "2026-11-21",
+    "note": "Off-hire 21/11/2026 - billing stopped; NOT yet returned to yard (still at Hydro Power, Al Bahia). 165 kVA Kirloskar."
   }
 ]
