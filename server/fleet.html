@@ -1718,6 +1718,63 @@ refreshAll();
     });
   }
 
+  // ---- Oversee company cars (red) : a separate live layer from /api/oversee ----
+  // These are the sales / rental / office cars tracked on the Oversee platform
+  // (not Total Secure). Rendered red so they read apart from the amber generator
+  // pins and the blue team-service trucks.
+  var carMarkers = {};
+  var carLayer = L.layerGroup().addTo(map);
+  function carIcon(deg, moving){
+    var fill = moving ? '#f0655a' : '#cf4337';
+    var svg = '<svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">'
+      + '<g transform="rotate('+(deg||0)+' 15 15)">'
+      + '<rect x="9" y="3" width="12" height="24" rx="4.5" fill="'+fill+'" stroke="#2a0b08" stroke-width="1.4"/>'
+      + '<rect x="11" y="5.5" width="8" height="6" rx="1.8" fill="#ffdad4"/>'
+      + '<rect x="11" y="18" width="8" height="5.5" rx="1.6" fill="#7a1a12"/>'
+      + '<circle cx="15" cy="14" r="1.4" fill="#fff"/>'
+      + '</g></svg>';
+    return L.divIcon({ className:'', html:'<div style="line-height:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.55))">'+svg+'</div>', iconSize:[30,30], iconAnchor:[15,15] });
+  }
+  function carTime(s){ if(!s) return null; var d=new Date(String(s).replace(' ','T')); return isNaN(d.getTime())?null:d; }
+  function upsertCar(v){
+    if(v.lat==null || v.lon==null) return;
+    var key='C'+v.id;
+    var d=carTime(v.lastUpdate); var age=d?(Date.now()-d.getTime()):null;
+    var stale=(age!=null && age>24*3600*1000); // > 1 day since last fix = offline
+    var moving=!!v.moving && !stale;
+    var state=stale?'Offline':(moving?('Moving '+(v.speed||0)+' km/h'):(v.ignition?'Idling (ignition on)':'Parked'));
+    var popup='<b>🚗 '+String(v.name||'').replace(/</g,'&lt;')+'</b><br><small>'+state
+      +(v.voltage!=null?(' &middot; '+v.voltage+'V'):'')
+      +'<br>GPS '+v.lat.toFixed(5)+', '+v.lon.toFixed(5)
+      +(d?('<br>last seen: '+d.toLocaleString()):'')
+      +'</small><div style="margin-top:8px;display:flex;gap:6px;">'
+      +'<a href="https://www.google.com/maps/dir/?api=1&destination='+v.lat+','+v.lon+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#20262c;color:#e8ecef;border:1px solid #2c333a;border-radius:6px;padding:6px 8px;font-size:12px;">🧭 Navigate</a>'
+      +'<a href="https://wa.me/?text='+encodeURIComponent('Vehicle '+(v.name||'')+' location: https://maps.google.com/?q='+v.lat+','+v.lon)+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;background:#1a2e24;color:#4caf7d;border:1px solid #2a5c40;border-radius:6px;padding:6px 8px;font-size:12px;">📱 Share</a>'
+      +'</div>';
+    var m=carMarkers[key];
+    if(!m){
+      m=L.marker([v.lat,v.lon],{icon:carIcon(v.course,moving)}).addTo(carLayer);
+      m.bindTooltip(String(v.name||''),{permanent:true,direction:'top',offset:[0,-15],className:'dg-label veh-label'});
+      carMarkers[key]=m;
+    } else { m.setLatLng([v.lat,v.lon]); m.setIcon(carIcon(v.course,moving)); if(m.getTooltip()) m.setTooltipContent(String(v.name||'')); }
+    m.setOpacity(stale?0.45:1);
+    var _tt=m.getTooltip(); if(_tt && _tt._container){ _tt._container.classList.toggle('veh-off', stale); }
+    m.bindPopup(popup);
+  }
+  async function pollCars(){
+    try{
+      var r=await fetch('/api/oversee',{cache:'no-store',headers:{Authorization:'Bearer '+TOKEN}});
+      if(!r.ok) return;
+      var data=await r.json();
+      var list=(data.vehicles||[]).filter(function(v){ return v.lat!=null && v.lon!=null; });
+      var active={};
+      list.forEach(function(v){ upsertCar(v); active['C'+v.id]=1; });
+      Object.keys(carMarkers).forEach(function(k){ if(!active[k]){ carLayer.removeLayer(carMarkers[k]); delete carMarkers[k]; } });
+    }catch(e){}
+  }
+  pollCars();
+  setInterval(pollCars, 60000);
+
   let firstFit=true;
   async function poll(){
     if(!polling) return;
