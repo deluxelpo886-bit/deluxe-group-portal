@@ -971,6 +971,13 @@ app.get('/api/oversee/ping', fleetProtect, (req, res) => {
   res.json({ ok: true, time: new Date().toISOString(), configured: oversee.isConfigured() });
 });
 
+// Force an immediate Oversee refresh and return the fresh vehicle snapshot.
+app.get('/api/oversee/refresh', fleetProtect, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  try { res.json(await oversee.refreshNow()); }
+  catch (e) { res.status(500).json({ error: (e && e.message) || 'refresh failed' }); }
+});
+
 // Read-only recon probe: learns the live login/data protocol from Render (which
 // can reach Oversee) so the connector can be built against the real thing. Pass
 // ?login=1 to also attempt a login once credentials are configured.
