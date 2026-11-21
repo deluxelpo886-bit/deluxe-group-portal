@@ -37,8 +37,10 @@ function setStatus(rec) {
   const entry = {
     dg,
     offHire,
-    // The date it went off-hire (or came back on-hire). Defaults to today.
-    since: (rec.since && String(rec.since).slice(0, 10)) || new Date().toISOString().slice(0, 10),
+    // The date it went off-hire (or came back on-hire). Left blank when not
+    // given, so the dashboard shows no date rather than a misleading "today"
+    // that changes on every deploy.
+    since: (rec.since && String(rec.since).slice(0, 10)) || '',
     note: String((rec && rec.note) || '').trim(),
     updatedAt: new Date().toISOString(),
   };

@@ -28,7 +28,8 @@
   {
     "dg": "DG-492",
     "offHire": true,
-    "note": "Off-hire 10/10/2026 - replaced by DG-564 at EMDAD; bringing to yard."
+    "note": "Off-hire 10/10/2026 - replaced by DG-564 at EMDAD; bringing to yard.",
+    "since": "2026-10-10"
   },
   {
     "dg": "DG-833",
@@ -162,7 +163,8 @@
   },
   {
     "dg": "DG-806",
-    "offHire": true
+    "offHire": true,
+    "since": "2026-02-10"
   },
   {
     "dg": "DG-814",
@@ -208,7 +210,8 @@
   },
   {
     "dg": "DG-840",
-    "offHire": true
+    "offHire": true,
+    "since": "2025-10-26"
   },
   {
     "dg": "DG-860",
