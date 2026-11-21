@@ -1,4 +1,5 @@
 const path = require('path');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const Database = require('better-sqlite3');
 
@@ -43,6 +44,12 @@ db.exec(`
     last_count INTEGER,
     last_email TEXT,
     last_whatsapp TEXT
+  );
+
+  CREATE TABLE IF NOT EXISTS secure_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TEXT DEFAULT (datetime('now'))
   );
 `);
 
@@ -162,7 +169,53 @@ function getAlertStatus(company) {
   return db.prepare('SELECT last_sent_at, last_count, last_email, last_whatsapp FROM alert_status WHERE company = ?').get(company) || null;
 }
 
+// ---- Secure settings (encrypted at rest) ----
+// Small key/value store for third-party credentials the portal needs at runtime
+// (e.g. the Oversee tracking login), so they can be entered from the portal UI
+// without a redeploy and never appear in the repo. Values are AES-256-GCM
+// encrypted with a key derived from SETTINGS_KEY (falls back to a stable
+// per-install value). The DB file lives on the server's private disk, not the
+// repo, so even the ciphertext is never shipped in source control.
+const SKEY = crypto.createHash('sha256')
+  .update(process.env.SETTINGS_KEY || ('deluxe-secure-' + (process.env.DB_PATH || 'local')))
+  .digest();
+function encSecret(plain) {
+  const iv = crypto.randomBytes(12);
+  const c = crypto.createCipheriv('aes-256-gcm', SKEY, iv);
+  const enc = Buffer.concat([c.update(String(plain), 'utf8'), c.final()]);
+  return 'g:' + Buffer.concat([iv, c.getAuthTag(), enc]).toString('base64');
+}
+function decSecret(stored) {
+  try {
+    if (!stored) return null;
+    if (stored.slice(0, 2) === 'g:') {
+      const raw = Buffer.from(stored.slice(2), 'base64');
+      const iv = raw.subarray(0, 12), tag = raw.subarray(12, 28), enc = raw.subarray(28);
+      const d = crypto.createDecipheriv('aes-256-gcm', SKEY, iv);
+      d.setAuthTag(tag);
+      return Buffer.concat([d.update(enc), d.final()]).toString('utf8');
+    }
+    return stored;
+  } catch (_) { return null; }
+}
+function setSecret(key, value) {
+  db.prepare("INSERT INTO secure_settings (key, value, updated_at) VALUES (?, ?, datetime('now')) "
+    + 'ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime(\'now\')')
+    .run(key, encSecret(value));
+}
+function getSecret(key) {
+  const row = db.prepare('SELECT value FROM secure_settings WHERE key = ?').get(key);
+  return row ? decSecret(row.value) : null;
+}
+function hasSecret(key) {
+  return !!db.prepare('SELECT 1 FROM secure_settings WHERE key = ?').get(key);
+}
+function deleteSecret(key) {
+  db.prepare('DELETE FROM secure_settings WHERE key = ?').run(key);
+}
+
 module.exports = {
   db, findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins,
-  getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus
+  getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus,
+  setSecret, getSecret, hasSecret, deleteSecret
 };

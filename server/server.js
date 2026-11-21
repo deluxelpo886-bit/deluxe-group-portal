@@ -30,7 +30,7 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus } = require('./db');
+const { findUser, updateUserPassword, listUsers, createUser, deleteUser, countAdmins, getState, saveState, logActivity, getActivity, recordAlertSent, getAlertStatus, setSecret, getSecret, hasSecret, deleteSecret } = require('./db');
 const { extractFields, extractServiceCard } = require('./extract');
 const { diagnosePanel } = require('./diagnose');
 const { sendWhatsApp } = require('./whatsapp');
@@ -39,6 +39,10 @@ const { computeAlerts, buildMessage, buildHtml } = require('./alerts');
 const createOpsRouter = require('./ops');
 const positions = require('./positions');
 const netsonic = require('./netsonic');
+const oversee = require('./oversee');
+// Oversee reads its login from the encrypted secure-settings store (entered in
+// the portal) first, then OVERSEE_USER/OVERSEE_PASS env vars.
+oversee.configure({ getCred: (key) => getSecret(key) });
 const serviceLog = require('./service');
 const overrides = require('./overrides');
 const schedule = require('./schedule');
@@ -931,6 +935,7 @@ const GATED_PAGES = new Set([
   '/technicians', '/lpo', '/pnl', '/rentals', '/return', '/contract', '/delivery', '/dispatch',
   '/enquiries', '/sites', '/spares', '/specs', '/strategy', '/health', '/breakdowns', '/flags',
   '/growth', '/sales', '/marketing', '/utilisation', '/usage', '/workshop',
+  '/vehicles', '/cars', '/tracking',
 ]);
 app.use((req, res, next) => {
   if (req.method !== 'GET' || FLEET_PAGE_OPEN) return next();
@@ -948,6 +953,68 @@ app.use((req, res, next) => {
 app.get('/api/positions', fleetProtect, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json(positions.getSnapshot());
+});
+
+// ---------- Oversee / Myrope "iCruise" car tracking (overseetracking.com) ----
+// The company cars (sales / rental / accounts sedans) are tracked on the Oversee
+// platform, not Traccar. See server/oversee.js. The feed is disabled until the
+// Oversee login is entered (secure-settings) or OVERSEE_* env vars are set.
+app.get('/api/oversee', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json(oversee.getSnapshot());
+});
+
+// Read-only recon probe: learns the live login/data protocol from Render (which
+// can reach Oversee) so the connector can be built against the real thing. Pass
+// ?login=1 to also attempt a login once credentials are configured.
+app.get('/api/oversee/debug', fleetProtect, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  try {
+    const report = await oversee.debug({ login: req.query.login === '1' });
+    res.json(report);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: (e && e.message) || 'debug failed' });
+  }
+});
+
+// Status of the stored Oversee login (never reveals the password).
+app.get('/api/oversee/credentials', fleetProtect, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    hasUser: hasSecret('oversee_user') || !!process.env.OVERSEE_USER,
+    hasPass: hasSecret('oversee_pass') || !!process.env.OVERSEE_PASS,
+    configured: oversee.isConfigured(),
+  });
+});
+
+// Save the Oversee login into the encrypted secure-settings store. The password
+// is encrypted at rest and never returned to the browser afterwards.
+app.post('/api/oversee/credentials', fleetProtect, (req, res) => {
+  const b = req.body || {};
+  const u = (b.username == null ? '' : String(b.username)).trim();
+  const p = (b.password == null ? '' : String(b.password));
+  if (!u || !p) return res.status(400).json({ ok: false, error: 'username and password are both required' });
+  try {
+    setSecret('oversee_user', u);
+    setSecret('oversee_pass', p);
+    // Start polling now if it wasn't running (no-op if already enabled).
+    try { oversee.startPolling(); } catch (_) {}
+    res.json({ ok: true, configured: oversee.isConfigured() });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: (e && e.message) || 'could not save' });
+  }
+});
+
+// Remove the stored Oversee login (disables the feed).
+app.delete('/api/oversee/credentials', fleetProtect, (req, res) => {
+  try { deleteSecret('oversee_user'); deleteSecret('oversee_pass'); res.json({ ok: true }); }
+  catch (e) { res.status(500).json({ ok: false, error: (e && e.message) || 'could not remove' }); }
+});
+
+// Vehicle Tracking page (Oversee setup + recon + cars). Gated like other office pages.
+app.get(['/vehicles', '/cars', '/tracking'], (req, res) => {
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'vehicles.html'), { cacheControl: false });
 });
 
 // ---------- Netsonic (rental ERP) integration ----------
@@ -2922,6 +2989,7 @@ if (process.env.ENABLE_DAILY_ALERTS === 'true') {
 // server - the last good positions stay on the map and the badge shows status.
 positions.startPolling();
 netsonic.startPolling();
+oversee.startPolling();
 
 // ---------- Keep-alive (stop the free instance sleeping) ----------
 // A free Render web service sleeps after ~15 min without inbound traffic, which
