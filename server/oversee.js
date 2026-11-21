@@ -185,10 +185,12 @@ async function debug(opts) {
         // full function bodies for the exact login + data-request protocol
         functions: js ? {
           SubmitData: funcBody(js, 'SubmitData(', 2600),
-          SubmitDataByToken: funcBody(js, 'SubmitDataByToken(', 2200),
-          SignInByUserName: funcBody(js, 'SignInByUserName(', 2600),
-          SignIn: funcBody(js, 'SignIn(', 1400),
+          CreateXhr: funcBody(js, 'CreateXhr(', 1800),
+          GetMyUrl: funcBody(js, 'GetMyUrl(', 1200),
           GetApiUrl: funcBody(js, 'GetApiUrl(', 400),
+          beforeApiUrl: (function () { const i = js.indexOf('function GetApiUrl'); return i > 0 ? js.slice(Math.max(0, i - 500), i).replace(/[ \t]+/g, ' ').trim() : null; })(),
+          setRequestHeader: excerpts(js, /setRequestHeader\s*\(/i, { before: 20, after: 90, max: 12 }),
+          langSetup: excerpts(js, /LanguageType/i, { before: 40, after: 110, max: 10 }),
         } : null,
       };
     } catch (e) {
