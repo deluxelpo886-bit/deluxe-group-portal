@@ -4126,14 +4126,14 @@
     "oil": true,
     "oilFilter": true,
     "fuelFilter": true,
-    "airFilter": false,
+    "airFilter": true,
     "dailyHours": 6.5,
     "nextService": 1896,
-    "nextServiceDate": "2026-11-26",
+    "nextServiceDate": "2027-01-13",
     "interval": 350,
-    "currentHours": 1546,
-    "currentHoursDate": "2026-10-28",
-    "notes": "Serviced 28/10/2026 @ 1546h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Replacement for DG-503 at Hydro Power, Mussafah MN1. Next 1896h (~26/11), ~6.5 h/day (12h contract floor). 62.5 kVA Kirloskar."
+    "currentHours": 1550,
+    "currentHoursDate": "2026-11-21",
+    "notes": "Serviced 28/10/2026 @1546h by Sonu Hussain - oil + oil/fuel filters; AIR FILTER now FITTED before re-hire. Meter 1550h on 21/11. On hire 18/11/2026 to MSSL Tooling (FZE), SAIF Zone Sharjah (PO 27400350, 2500/month). Next 1896h. 62.5 kVA Kirloskar."
   },
   {
     "dg": "DG-485",
