@@ -1386,6 +1386,22 @@ app.get('/api/service/status', fleetProtect, (req, res) => {
         if (!g.hireNote) g.hireNote = 'in yard';
       }
     }
+    // Manual office edits (entered in the app) win over the static asset list,
+    // so a hire / site / coordinate change typed by hand shows on the map, the
+    // dashboard and the service plan straight away - no file edit needed.
+    if (o) {
+      if (o.customer) g.customer = o.customer;
+      if (o.location) g.location = o.location;
+      if (o.lat != null && isFinite(Number(o.lat))) g.lat = Number(o.lat);
+      if (o.lon != null && isFinite(Number(o.lon))) g.lon = Number(o.lon);
+      // Re-decide yard/off-hire from the edited customer/location.
+      const loc2 = String(g.location || '').toUpperCase();
+      const cust2 = String(g.customer || '').toUpperCase();
+      if (loc2 === 'YARD' || cust2.indexOf('WORK SHOP') >= 0 || cust2.indexOf('WORKSHOP') >= 0) {
+        g.offHire = true;
+        if (!g.hireNote) g.hireNote = 'in yard';
+      }
+    }
     // Attach the hours-first due classification so every view (service list,
     // schedule, dashboard) shares the same "confirm before dispatch" logic.
     g.due = serviceLog.classifyDue(g, todayStr);
