@@ -59,7 +59,7 @@
   .msg{margin-top:12px;font-size:13px;font-weight:700;min-height:18px;}
   .msg.ok{color:var(--green);} .msg.err{color:var(--red);} .msg.info{color:var(--blue);}
 
-  pre{background:#060a0f;border:1px solid var(--line2);border-radius:12px;padding:14px;overflow:auto;max-height:440px;
+  pre{background:#060a0f;border:1px solid var(--line2);border-radius:12px;padding:14px;overflow:auto;
     font-family:var(--mono);font-size:11.5px;line-height:1.5;color:#b9c6d2;white-space:pre-wrap;word-break:break-word;}
   .hint{background:rgba(90,162,230,.08);border:1px solid rgba(90,162,230,.25);border-radius:12px;padding:12px 14px;
     font-size:12.5px;color:#bcd4ee;line-height:1.55;margin-top:12px;}
@@ -94,6 +94,7 @@
       <button class="btn-ghost" id="reconLoginBtn" title="Also try logging in (needs login saved below)">Check + test login</button>
     </div>
     <div class="msg info" id="reconMsg"></div>
+    <button class="btn-ghost" id="copyBtn" style="display:none;margin:10px 0 0">📋 Copy result (paste it to me)</button>
     <pre id="reconOut" style="display:none"></pre>
   </section>
 
@@ -174,11 +175,24 @@
       out.style.display='block';
       if(r.data){out.textContent=JSON.stringify(r.data,null,2);}
       else{out.textContent='HTTP '+r.status+(r.netErr?(' — network error: '+r.netErr):'')+'\n\n'+(r.text||'(empty response)');}
-      if(r.ok){m.className='msg ok';m.textContent='✓ Done — screenshot the box below and send it to me.';}
+      $('copyBtn').style.display='inline-block';
+      if(r.ok){m.className='msg ok';m.textContent='✓ Done — tap "Copy result" and paste it to me (or screenshot the box).';}
       else if(r.status===401){m.className='msg err';m.textContent='⚠ Not signed in — open Menu, sign in, then retry.';}
-      else{m.className='msg err';m.textContent='Returned HTTP '+r.status+' — screenshot the box below and send it to me.';}
+      else{m.className='msg err';m.textContent='Returned HTTP '+r.status+' — tap "Copy result" and paste it to me.';}
     }).then(function(){btn.disabled=false;btn.textContent=old;});
   }
+  $('copyBtn').addEventListener('click',function(){
+    var txt=$('reconOut').textContent||'';
+    var done=function(){var b=$('copyBtn');b.textContent='✓ Copied — now paste it in the chat';setTimeout(function(){b.textContent='📋 Copy result (paste it to me)';},4000);};
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fallback();});}
+      else fallback();
+    }catch(e){fallback();}
+    function fallback(){
+      try{var r=document.createRange();r.selectNodeContents($('reconOut'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');done();}
+      catch(e2){$('copyBtn').textContent='Select the box text and copy manually';}
+    }
+  });
   $('reconBtn').addEventListener('click',function(){runRecon(false);});
   $('reconLoginBtn').addEventListener('click',function(){runRecon(true);});
 
