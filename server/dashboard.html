@@ -31,6 +31,27 @@
   .tile.alert .big{color:var(--red);}
   .tile.warn .big{color:var(--gold);}
   .tile.good .big{color:var(--green);}
+  /* --- Colourful tiles --- */
+  .tile{position:relative;overflow:hidden;padding-left:19px;}
+  .tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);}
+  .tile:nth-child(5n+2)::before{background:var(--purple);}
+  .tile:nth-child(5n+3)::before{background:#2fb8b2;}
+  .tile:nth-child(5n+4)::before{background:var(--amber);}
+  .tile:nth-child(5n)::before{background:var(--gold);}
+  .tile:nth-child(5n+1):not(.good):not(.warn):not(.alert){background:linear-gradient(135deg,rgba(91,155,213,.12),var(--panel) 60%);}
+  .tile:nth-child(5n+1):not(.good):not(.warn):not(.alert) .big{color:var(--blue);}
+  .tile:nth-child(5n+2):not(.good):not(.warn):not(.alert){background:linear-gradient(135deg,rgba(167,139,218,.12),var(--panel) 60%);}
+  .tile:nth-child(5n+2):not(.good):not(.warn):not(.alert) .big{color:var(--purple);}
+  .tile:nth-child(5n+3):not(.good):not(.warn):not(.alert){background:linear-gradient(135deg,rgba(47,184,178,.12),var(--panel) 60%);}
+  .tile:nth-child(5n+3):not(.good):not(.warn):not(.alert) .big{color:#2fb8b2;}
+  .tile:nth-child(5n+4):not(.good):not(.warn):not(.alert){background:linear-gradient(135deg,rgba(232,161,58,.11),var(--panel) 60%);}
+  .tile:nth-child(5n+4):not(.good):not(.warn):not(.alert) .big{color:var(--amber);}
+  .tile:nth-child(5n):not(.good):not(.warn):not(.alert){background:linear-gradient(135deg,rgba(232,193,104,.11),var(--panel) 60%);}
+  .tile:nth-child(5n):not(.good):not(.warn):not(.alert) .big{color:var(--gold);}
+  .tile.good{background:linear-gradient(135deg,rgba(76,175,125,.14),var(--panel) 60%);} .tile.good::before{background:var(--green);}
+  .tile.warn{background:linear-gradient(135deg,rgba(232,193,104,.14),var(--panel) 60%);} .tile.warn::before{background:var(--gold);}
+  .tile.alert::before{background:var(--red);}
+  .tile .lbl{font-weight:700;}
   .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   @media(max-width:760px){.split{grid-template-columns:1fr;}}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;}
