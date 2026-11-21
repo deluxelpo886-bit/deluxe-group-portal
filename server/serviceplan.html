@@ -298,16 +298,17 @@
       html+='<div class="zhead"><span class="rt">'+(zi+1)+'</span><span class="zn">'+esc(zg.zone)+'</span>'
         +'<span class="zc">'+zg.units.length+' unit'+(zg.units.length!==1?'s':'')+'</span>'
         +'<span class="team"><label>Team</label><input type="text" placeholder="assign…" value="'+esc(teams[zg.zone]||'')+'" data-zone="'+esc(zg.zone)+'"></span></div>';
-      html+='<table><thead><tr><th>DG</th><th>Customer / site</th><th>Rating</th><th>Customer usage</th><th>Next service</th><th>Status</th></tr></thead><tbody>';
+      html+='<table><thead><tr><th>DG</th><th>Customer / site</th><th>Rating</th><th>Customer usage</th><th>Next service</th><th>📷 Meter</th><th>Status</th></tr></thead><tbody>';
       zg.units.forEach(function(u){
         html+='<tr><td class="dg">'+esc(u.dg)+(u.noPin?' <span class="flt" title="no exact pin">📍?</span>':'')+'</td>'
           +'<td>'+esc(u.customer||'—')+(u.gatePass?' <span style="display:inline-block;background:#8a6d1a;color:#fff;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:9px;">🎫 GATE PASS</span>':'')+'<div class="flt">'+esc(u.location||'')+'</div></td>'
           +'<td>'+(u.kva?esc(u.kva)+' kVA':'')+'<div class="flt">'+esc(u.brand||'')+'</div></td>'
           +'<td>'+usageCell(u)+'</td>'
           +'<td>'+esc(u.nextHours||'?')+' h<div class="flt">'+esc(u.nextDate)+(u.dateByHours?' <span class="byhrs" title="date set by real running hours (heavy use)">⏱ by hours</span>':'')+'</div></td>'
+          +'<td><input class="mtr" data-dg="'+esc(u.dg)+'" type="text" inputmode="numeric" placeholder="enter hrs" title="Type the controller reading and press Enter — it updates everywhere" style="width:82px;padding:7px 8px;border:1px solid rgba(90,162,230,.45);border-radius:9px;background:rgba(90,162,230,.08);color:#eef3f7;font-size:13px;font-weight:700;text-align:center;"></td>'
           +'<td>'+pill(u)+'</td></tr>';
         var bd=BDMAP[String(u.dg).toUpperCase()];
-        if(bd) html+='<tr><td colspan="6" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
+        if(bd) html+='<tr><td colspan="7" style="color:#e0644a;background:#33201c;font-weight:700;font-size:11px;padding:4px 10px;">🚨 BREAKDOWN — '+esc(bd)+' (fix before servicing)</td></tr>';
       });
       html+='</tbody></table>';
       html+='<div class="zfoot"><a class="maplink" href="'+esc(mapsRoute(zg.units,zg.zone))+'" target="_blank" rel="noopener">🗺️ Open route ('+zg.units.length+' stop'+(zg.units.length!==1?'s':'')+')</a>'
@@ -317,6 +318,20 @@
     $('out').innerHTML=html;
     $('signRow').style.display='';
     $('out').querySelectorAll('input[data-zone]').forEach(function(inp){ inp.addEventListener('input',function(){ saveTeam(inp.getAttribute('data-zone'),inp.value.trim()); }); });
+    // Inline hour-meter entry: type the reading, press Enter (or tab out) and it
+    // saves straight away and refreshes the plan, map and dashboard.
+    $('out').querySelectorAll('input.mtr').forEach(function(inp){
+      inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
+      inp.addEventListener('change',function(){
+        var v=Number(String(inp.value).replace(/[^0-9.]/g,'')); if(!isFinite(v)||v<=0) return;
+        var dg=inp.getAttribute('data-dg'); var date=$('date').value||new Date().toISOString().slice(0,10);
+        inp.disabled=true; inp.style.borderColor='#f4a83a';
+        fetch('/api/service/reading',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authHeaders()),
+          body:JSON.stringify({dg:dg,hours:v,date:date,currentHours:v,currentHoursDate:date})})
+          .then(function(r){ if(!r.ok) throw 0; inp.style.background='rgba(65,201,138,.25)'; inp.style.borderColor='#41c98a'; inp.value='✓ '+v; setTimeout(load,800); })
+          .catch(function(){ inp.disabled=false; inp.style.borderColor='#f0655a'; inp.value=''; inp.placeholder='try again'; });
+      });
+    });
     $('out').querySelectorAll('button[data-wa]').forEach(function(b){ b.addEventListener('click',function(){ var z=LAST[+b.getAttribute('data-wa')]; if(z)shareOrWa(zoneMsg(z)); }); });
   }
 
