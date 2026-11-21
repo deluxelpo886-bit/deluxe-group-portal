@@ -1722,17 +1722,17 @@
     "date": "2026-09-14",
     "technician": "IMRAN&VELU",
     "oil": true,
-    "oilFilter": false,
-    "fuelFilter": false,
+    "oilFilter": true,
+    "fuelFilter": true,
     "airFilter": false,
     "dailyHours": 2.01,
     "nextService": 7881,
     "nextServiceDate": "2027-03-07",
     "interval": 350,
-    "currentHours": 7545,
-    "currentHoursDate": "2026-10-28",
+    "currentHours": 7554,
+    "currentHoursDate": "2026-11-21",
     "fixedDays": 174,
-    "notes": "Serviced 14/09/2026 @ 7531h by IK & Jairaj (card). Controller 7545h on 28/10/2026 (33 starts) - NEAR-STANDBY, only 14h since service (~0.3 h/day). Time-based 6-month next service pinned ~07/03/2027 (fixedDays 174). 20 kVA Kirloskar, moved to Al Bahyah/Al Shahamah Old. Air filter pending."
+    "notes": "Serviced 14/09/2026 @ 7531h by IK & Jairaj - card shows oil, oil filter, fuel filter DONE; air filter X (pending). Time-based 6-month next service pinned ~07/03/2027 (fixedDays 174). 20 kVA Kirloskar, Al Bahyah/Al Shahamah Old. [21/11/2026: controller 7554h, 41 starts - only 9h since 28/10 (7545h), near-standby; 327h to next (7881h). Air filter still pending.]"
   },
   {
     "dg": "DG-833",
@@ -3878,9 +3878,9 @@
     "dailyHours": 8.1,
     "nextService": 21640,
     "interval": 350,
-    "currentHours": 21290,
-    "currentHoursDate": "2026-10-23",
-    "notes": "Serviced 23/10/2026 at 21290h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 21640h (+350). 349h since 10/09 service = ~8.1 h/day -> on 12h plan due ~21/11. 50 kVA, Hydro Power."
+    "currentHours": 21363,
+    "currentHoursDate": "2026-11-21",
+    "notes": "Serviced 23/10/2026 at 21290h by Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 21640h (+350). 50 kVA, Hydro Power. [21/11/2026: DSE controller reads 21363h (73h since service, ~2.5 h/day, 277h to next). NOTE: the controller was hand-labelled '531' but the hours match DG-501, not DG-531 (which is ~14423h) - logged here as DG-501; confirm the label.]"
   },
   {
     "dg": "DG-565",
@@ -4148,9 +4148,9 @@
     "nextService": 4874,
     "nextServiceDate": "2026-11-26",
     "interval": 350,
-    "currentHours": 4524,
-    "currentHoursDate": "2026-10-28",
-    "notes": "Serviced 28/10/2026 @ 4524h by Roland & Adil - oil, oil filter, fuel filter, NEW AIR FILTER all done (controller 4524h, 2097 starts). Next 4874h (~26/11), ~9.0 h/day (12h contract floor). 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix)."
+    "currentHours": 4707,
+    "currentHoursDate": "2026-11-21",
+    "notes": "Serviced 28/10/2026 @ 4524h by Roland & Adil - oil, oil filter, fuel filter, NEW AIR FILTER all done (controller 4524h, 2097 starts). Next 4874h (~26/11). 60 kVA Weber, Hashim Contracting, Al Bahyah (Royal Ready Mix). [21/11/2026: controller 4707h, 2134 starts - 183h since service (~7.6 h/day), 167h to next.]"
   },
   {
     "dg": "DG-502",
