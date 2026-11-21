@@ -96,6 +96,24 @@ function excerpts(text, re, opts) {
   return out;
 }
 
+// Extract a whole JS function body by name (brace-balanced), so we can read the
+// exact login/data calls rather than keyword-sized snippets. `name` may include
+// the trailing "(" for an exact match, e.g. "SignIn(".
+function funcBody(text, name, maxLen) {
+  const idx = text.indexOf('function ' + name);
+  if (idx < 0) return null;
+  const open = text.indexOf('{', idx);
+  if (open < 0) return text.slice(idx, idx + (maxLen || 1500));
+  let depth = 0, i = open;
+  const cap = open + (maxLen || 4000);
+  for (; i < text.length && i < cap; i++) {
+    const c = text[i];
+    if (c === '{') depth++;
+    else if (c === '}') { depth--; if (depth === 0) { i++; break; } }
+  }
+  return text.slice(idx, i).replace(/[ \t]+/g, ' ').trim();
+}
+
 /*
  * SAFE recon probe. Read-only. Fetches the public login page + its scripts from
  * Render and reports how the platform authenticates and fetches data, so we can
@@ -157,6 +175,14 @@ async function debug(opts) {
         token: excerpts(js, /(Token|GetSession|jsession|account_name)/i, { max: 8 }),
         endpoints: excerpts(js, /(WebProcessorApi|\.ashx|GetSession|Login\.aspx|:9090|api\.overseetracking)/i, { max: 10 }),
         loginFn: excerpts(js, /(function\s+\w*[Ll]ogin|[Ll]ogin\s*[:=]\s*function|SignIn|userLogin|doLogin)/i, { max: 6 }),
+        // full function bodies for the exact login + data-request protocol
+        functions: js ? {
+          SubmitData: funcBody(js, 'SubmitData(', 2600),
+          SubmitDataByToken: funcBody(js, 'SubmitDataByToken(', 2200),
+          SignInByUserName: funcBody(js, 'SignInByUserName(', 2600),
+          SignIn: funcBody(js, 'SignIn(', 1400),
+          GetApiUrl: funcBody(js, 'GetApiUrl(', 400),
+        } : null,
       };
     } catch (e) {
       report.steps.scripts[src] = { resolved: url, error: String(e && e.message || e) };
