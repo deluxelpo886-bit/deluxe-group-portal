@@ -244,8 +244,8 @@ async function apiCall(operationType, informationType, argStr, opts) {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     Origin: WEB_BASE,
     Referer: WEB_BASE + '/index.aspx',
-    Accept: 'application/json, text/javascript, */*; q=0.01',
-    'X-Requested-With': 'XMLHttpRequest',
+    Accept: '*/*',
+    'Accept-Language': 'en-US,en;q=0.9',
   };
   const enc = opts.enc || apiEnc;
   if (enc === 'form') {
