@@ -924,6 +924,7 @@ function fleetLoginPageHtml() {
 // Public / technician-app / map pages are deliberately NOT in this set.
 // Escape hatch: FLEET_PAGE_OPEN=1 bypasses gating entirely.
 const GATED_PAGES = new Set([
+  '/entry', '/manual',
   '/dashboard', '/command', '/morning', '/plan', '/schedule', '/service', '/servicecard',
   '/service-monthly', '/monthly-report', '/monthly', '/major-service', '/major', '/team',
   '/service-areas', '/servicebyarea', '/area-plan', '/service-plan-area', '/serviceplan',
@@ -1594,6 +1595,11 @@ app.post('/api/service/remove', fleetProtect, (req, res) => {
 // The technician-facing service page (shareable link). Its CSP additionally
 // permits the Tesseract OCR library (loaded on demand from jsDelivr) for the
 // optional "auto-read hours from photo" feature; everything else is same-origin.
+app.get(['/entry', '/manual'], (req, res) => {
+  res.set('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'entry.html'), { cacheControl: false });
+});
+
 app.get('/service', (req, res) => {
   res.setHeader(
     'Content-Security-Policy',

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deluxe — Manual Entry</title>
+<style>
+  :root{--navy:#17304f;--gold:#b8860b;--green:#0b5d3b;--ink:#1c2733;--line:#d7dee6;--bg:#eef2f6;}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Arial,sans-serif;}
+  .top{background:var(--navy);color:#fff;border-bottom:4px solid var(--gold);padding:14px 18px;display:flex;align-items:center;gap:10px;}
+  .top h1{font-size:17px;margin:0;flex:1;} .top a{color:#cdd9e6;font-size:13px;text-decoration:none;}
+  .wrap{max-width:640px;margin:16px auto;padding:0 14px 60px;}
+  .card{background:#fff;border-radius:14px;box-shadow:0 4px 18px rgba(23,48,79,.1);margin-bottom:16px;overflow:hidden;}
+  .card > h2{font-size:14px;margin:0;padding:12px 16px;color:#fff;letter-spacing:.3px;}
+  .svc > h2{background:var(--navy);} .hrs > h2{background:var(--green);} .hire > h2{background:var(--gold);color:#241c00;}
+  .body{padding:14px 16px;}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--navy);margin:10px 0 4px;}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:15px;font-family:inherit;background:#fff;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.15);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;} .row>div{flex:1;min-width:140px;}
+  .chk{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
+  .chk label{display:flex;align-items:center;gap:6px;font-weight:500;margin:0;cursor:pointer;}
+  .chk input{width:auto;}
+  .btn{margin-top:14px;width:100%;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;color:#fff;letter-spacing:.3px;}
+  .svc .btn{background:var(--navy);} .hrs .btn{background:var(--green);} .hire .btn{background:var(--gold);color:#241c00;}
+  .btn:active{transform:translateY(1px);}
+  .msg{margin-top:10px;font-size:13px;font-weight:700;padding:8px 10px;border-radius:8px;display:none;}
+  .msg.ok{display:block;background:#e9f7ef;color:var(--green);} .msg.err{display:block;background:#fff0f0;color:#8a1c1c;}
+  .hint{font-size:11px;color:#778;margin-top:3px;}
+  .seg{display:flex;gap:0;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-top:4px;}
+  .seg label{flex:1;margin:0;text-align:center;padding:10px;font-weight:700;cursor:pointer;background:#fff;color:#556;}
+  .seg input{display:none;} .seg input:checked + span{color:#fff;}
+  .seg label:has(input:checked){background:var(--navy);color:#fff;}
+</style>
+</head>
+<body>
+<div class="top"><h1>✍️ Manual Entry</h1><a href="/menu">☰ Menu</a></div>
+<div class="wrap">
+
+  <!-- ============ 1. LOG SERVICE ============ -->
+  <div class="card svc">
+    <h2>1 · Log a Service</h2>
+    <div class="body">
+      <div class="row">
+        <div><label>DG Number</label><input id="s_dg" placeholder="DG-545" autocomplete="off"></div>
+        <div><label>Service Date</label><input id="s_date" type="date"></div>
+      </div>
+      <div class="row">
+        <div><label>Meter Hours (at service)</label><input id="s_hours" type="number" inputmode="numeric" placeholder="14219"></div>
+        <div><label>Interval</label>
+          <select id="s_interval"><option value="">Auto (350/450)</option><option value="350">+350</option><option value="450">+450</option></select>
+        </div>
+      </div>
+      <label>Filters changed</label>
+      <div class="chk">
+        <label><input type="checkbox" id="s_oil" checked> Oil</label>
+        <label><input type="checkbox" id="s_oilf" checked> Oil Filter</label>
+        <label><input type="checkbox" id="s_fuelf" checked> Fuel Filter</label>
+        <label><input type="checkbox" id="s_airf"> Air Filter</label>
+      </div>
+      <label>Technician</label><input id="s_tech" placeholder="Sonu & Hussain" autocomplete="off">
+      <label>Notes (optional)</label><input id="s_notes" placeholder="e.g. air filter pending" autocomplete="off">
+      <button class="btn" onclick="logService()">Save Service</button>
+      <div id="s_msg" class="msg"></div>
+    </div>
+  </div>
+
+  <!-- ============ 2. UPDATE METER HOURS ============ -->
+  <div class="card hrs">
+    <h2>2 · Update Meter Hours</h2>
+    <div class="body">
+      <div class="hint">Use this when hours are pending — enter the latest controller reading and date.</div>
+      <div class="row">
+        <div><label>DG Number</label><input id="h_dg" placeholder="DG-860" autocomplete="off"></div>
+        <div><label>Current Hours</label><input id="h_hours" type="number" inputmode="numeric" placeholder="18996"></div>
+        <div><label>Reading Date</label><input id="h_date" type="date"></div>
+      </div>
+      <button class="btn" onclick="updateHours()">Update Hours</button>
+      <div id="h_msg" class="msg"></div>
+    </div>
+  </div>
+
+  <!-- ============ 3. HIRE / MOVE UNIT ============ -->
+  <div class="card hire">
+    <h2>3 · Hire / Move a Unit</h2>
+    <div class="body">
+      <label>DG Number</label><input id="r_dg" placeholder="DG-842" autocomplete="off">
+      <label>Status</label>
+      <div class="seg">
+        <label><input type="radio" name="r_status" value="on" checked><span>🟢 On Hire</span></label>
+        <label><input type="radio" name="r_status" value="off"><span>🟡 Off Hire → Yard</span></label>
+      </div>
+      <div id="onFields">
+        <label>Customer</label><input id="r_cust" placeholder="The Benz General Contracting" autocomplete="off">
+        <label>Site / Location</label><input id="r_loc" placeholder="Saas Heights 12, Abu Dhabi" autocomplete="off">
+        <div class="row">
+          <div><label>Latitude (optional)</label><input id="r_lat" placeholder="24.4320" autocomplete="off"></div>
+          <div><label>Longitude (optional)</label><input id="r_lon" placeholder="54.8118" autocomplete="off"></div>
+        </div>
+        <div class="hint">Tip: long-press the spot in Google Maps to copy the lat, long and paste here for an exact map pin.</div>
+      </div>
+      <div class="row">
+        <div><label>Date</label><input id="r_date" type="date"></div>
+        <div><label>Rate / month (optional)</label><input id="r_rate" placeholder="4500" autocomplete="off"></div>
+      </div>
+      <label>Note (optional)</label><input id="r_note" placeholder="PO / contract ref" autocomplete="off">
+      <button class="btn" onclick="setHire()">Save Hire</button>
+      <div id="r_msg" class="msg"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var TOKEN=localStorage.getItem('deluxeFleetToken')||'';
+  var $=function(id){return document.getElementById(id);};
+  var today=new Date().toISOString().slice(0,10);
+  ['s_date','h_date','r_date'].forEach(function(id){ if($(id)) $(id).value=today; });
+
+  function show(id,ok,txt){ var m=$(id); m.className='msg '+(ok?'ok':'err'); m.textContent=txt; }
+  function up(s){ return String(s||'').trim().toUpperCase(); }
+  function post(url,data){
+    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify(data)})
+      .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j.error||'Error'); return j; }); });
+  }
+
+  window.logService=function(){
+    var dg=up($('s_dg').value); if(!dg) return show('s_msg',false,'Enter a DG number.');
+    var hours=Number($('s_hours').value); if(!isFinite(hours)) return show('s_msg',false,'Enter meter hours.');
+    var iv=Number($('s_interval').value)||0;
+    var data={dg:dg,date:$('s_date').value||today,hours:hours,currentHours:hours,currentHoursDate:$('s_date').value||today,
+      oil:$('s_oil').checked,oilFilter:$('s_oilf').checked,fuelFilter:$('s_fuelf').checked,airFilter:$('s_airf').checked,
+      technician:$('s_tech').value.trim(),notes:$('s_notes').value.trim()};
+    if(iv){ data.interval=iv; data.nextService=hours+iv; }
+    post('/api/service/log',data).then(function(){ show('s_msg',true,'✓ Service saved for '+dg+' — updating map & dashboard.'); $('s_dg').value=''; $('s_hours').value=''; $('s_notes').value=''; })
+      .catch(function(e){ show('s_msg',false,e.message); });
+  };
+
+  window.updateHours=function(){
+    var dg=up($('h_dg').value); if(!dg) return show('h_msg',false,'Enter a DG number.');
+    var hours=Number($('h_hours').value); if(!isFinite(hours)) return show('h_msg',false,'Enter current hours.');
+    var date=$('h_date').value||today;
+    post('/api/service/reading',{dg:dg,hours:hours,date:date,currentHours:hours,currentHoursDate:date})
+      .then(function(){ show('h_msg',true,'✓ '+dg+' meter set to '+hours+'h ('+date+').'); $('h_dg').value=''; $('h_hours').value=''; })
+      .catch(function(e){ show('h_msg',false,e.message); });
+  };
+
+  window.setHire=function(){
+    var dg=up($('r_dg').value); if(!dg) return show('r_msg',false,'Enter a DG number.');
+    var onhire=document.querySelector('input[name="r_status"]:checked').value==='on';
+    var date=$('r_date').value||today;
+    var note=$('r_note').value.trim();
+    var rate=$('r_rate').value.trim();
+    if(onhire){
+      var cust=$('r_cust').value.trim(), loc=$('r_loc').value.trim();
+      if(!cust) return show('r_msg',false,'Enter the customer.');
+      var ovr={dg:dg,customer:cust,location:loc||cust,note:(note||'')+(rate?(' | rate '+rate):'')};
+      var lat=parseFloat($('r_lat').value), lon=parseFloat($('r_lon').value);
+      if(isFinite(lat)&&isFinite(lon)){ ovr.lat=lat; ovr.lon=lon; }
+      Promise.all([
+        post('/api/hire/set',{dg:dg,offHire:false,since:date,note:note||('On hire '+cust)}),
+        post('/api/fleet/override',ovr)
+      ]).then(function(){ show('r_msg',true,'✓ '+dg+' ON HIRE to '+cust+' — now on the map.'); })
+        .catch(function(e){ show('r_msg',false,e.message); });
+    } else {
+      Promise.all([
+        post('/api/hire/set',{dg:dg,offHire:true,since:date,note:note||'Off-hire - returned to yard'}),
+        post('/api/fleet/override',{dg:dg,customer:'WORK SHOP',location:'YARD',note:note||'In yard'})
+      ]).then(function(){ show('r_msg',true,'✓ '+dg+' OFF HIRE → Yard.'); })
+        .catch(function(e){ show('r_msg',false,e.message); });
+    }
+  };
+
+  // toggle on-hire fields
+  document.querySelectorAll('input[name="r_status"]').forEach(function(r){
+    r.addEventListener('change',function(){ $('onFields').style.display=(this.value==='on')?'block':'none'; });
+  });
+})();
+</script>
+</body>
+</html>
