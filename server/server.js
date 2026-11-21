@@ -1019,7 +1019,13 @@ app.delete('/api/oversee/credentials', fleetProtect, (req, res) => {
 });
 
 // Vehicle Tracking page (Oversee setup + recon + cars). Gated like other office pages.
+// Page-scoped CSP that allows the inline script (the global CSP blocks inline JS).
 app.get(['/vehicles', '/cars', '/tracking'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+      + "img-src 'self' data:; connect-src 'self'; font-src 'self' data:; manifest-src 'self';"
+  );
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, 'vehicles.html'), { cacheControl: false });
 });
