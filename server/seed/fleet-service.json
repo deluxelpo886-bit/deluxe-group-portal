@@ -2298,7 +2298,24 @@
     "nextService": 9893,
     "nextServiceDate": "2026-11-11",
     "interval": 350,
-    "notes": "Serviced 13/10/2026 at 9543h by Sonu (service card). On-time (previous target 9559h). ~11.9 h/day (334h in 28 days since 9209h/15-09). Next 9893h / ~11/11. Card logged 'Service - Sonu' without itemising filters - recorded as routine oil + oil/fuel filter; air filter not confirmed. 100 kVA JET, Mirfaq, Ruwais."
+    "notes": "Serviced 13/10/2026 at 9543h by Sonu (service card). On-time (previous target 9559h). ~11.9 h/day (334h in 28 days since 9209h/15-09). Superseded by the 22/11/2026 service at 10010h. 100 kVA JET, Mirfaq, Ruwais."
+  },
+  {
+    "dg": "DG-38",
+    "hours": 10010,
+    "date": "2026-11-22",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 11.7,
+    "nextService": 10360,
+    "nextServiceDate": "2026-12-22",
+    "interval": 350,
+    "currentHours": 10010,
+    "currentHoursDate": "2026-11-22",
+    "notes": "Serviced 22/11/2026 @10010h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - still pending). Controller confirmed 10010h. Next 10360h (+350). 467h since 13/10 (9543h) over 40 days = ~11.7 h/day -> due ~22/12/2026. 100 kVA JET, Mirfaq, Ruwais. CARRY AN AIR FILTER next visit."
   },
   {
     "dg": "DG-481",
@@ -3842,10 +3859,25 @@
     "dailyHours": 12.1,
     "nextService": 18996,
     "interval": 450,
-    "currentHours": 18848,
-    "currentHoursDate": "2026-11-16",
-    "notes": "Serviced 22/10/2026 @18546h by Sonu & Hussain. Controller 18848h on 16/11 (~12.1 h/day). Next service 18996h - 148h left, due ~28/11/2026. 400 kVA, City Const, Ruwais.",
+    "notes": "Serviced 22/10/2026 @18546h by Sonu & Hussain. Superseded by the 22/11/2026 service at 18913h. 400 kVA Kirloskar, City Const, Ruwais.",
     "nextServiceDate": "2026-11-28"
+  },
+  {
+    "dg": "DG-860",
+    "hours": 18913,
+    "date": "2026-11-22",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 11.8,
+    "nextService": 19363,
+    "nextServiceDate": "2026-12-29",
+    "interval": 450,
+    "currentHours": 18913,
+    "currentHoursDate": "2026-11-22",
+    "notes": "Serviced 22/11/2026 @18913h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - still pending). Next 19363h (+450). 367h since 22/10 (18546h) over 31 days = ~11.8 h/day -> due ~29/12/2026. 400 kVA Kirloskar, City Const, Ruwais. CARRY AN AIR FILTER next visit."
   },
   {
     "dg": "DG-850",
