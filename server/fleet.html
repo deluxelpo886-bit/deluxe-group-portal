@@ -1811,6 +1811,35 @@ refreshAll();
   });
   map.addControl(new VehCtl());
 
+  // ---- Collapsible on-map colour key / legend ----
+  var LegendCtl = L.Control.extend({
+    options:{position:'bottomleft'},
+    onAdd:function(){
+      var sw=function(c){return '<span style="display:inline-block;width:13px;height:9px;border-radius:2px;background:'+c+';border:1px solid rgba(0,0,0,.55);vertical-align:0;margin-right:8px;"></span>';};
+      var dot=function(c){return '<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+c+';border:1px solid rgba(0,0,0,.4);vertical-align:-1px;margin-right:8px;"></span>';};
+      var ring=function(c){return '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:transparent;border:3px solid '+c+';box-sizing:border-box;vertical-align:-2px;margin-right:7px;"></span>';};
+      var car='<span style="display:inline-block;width:15px;height:10px;border-radius:3px;background:#f0655a;border:1px solid #2a0b08;vertical-align:-1px;margin-right:6px;"></span>';
+      var w=L.DomUtil.create('div','');
+      w.innerHTML='<div style="background:rgba(14,18,24,.95);border:1px solid #2c333a;border-radius:11px;box-shadow:0 2px 12px rgba(0,0,0,.55);color:#e8ecef;font-family:Inter,-apple-system,Segoe UI,sans-serif;overflow:hidden;min-width:150px;">'
+        +'<div id="lgHd" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 12px;font-weight:700;font-size:12px;letter-spacing:.3px;">🗺️ Map key<span id="lgTg" style="color:#8b95a1;margin-left:10px;">▸</span></div>'
+        +'<div id="lgBd" style="display:none;padding:2px 12px 11px;font-size:11.5px;line-height:1.95;border-top:1px solid #222a31;">'
+        +'<div style="color:#8b95a1;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.6px;margin:7px 0 3px;">Generators</div>'
+        +dot('#e8a93a')+'Heavy generator<br>'+dot('#5aa2e6')+'Energy generator'
+        +'<div style="margin:5px 0 2px;color:#aeb8c2;">Ring = status</div>'
+        +ring('#4caf7d')+'On hire<br>'+ring('#e8a93a')+'Available<br>'+ring('#e8c168')+'Service due<br>'+ring('#e0644a')+'Breakdown'
+        +'<div style="color:#8b95a1;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.6px;margin:9px 0 3px;">Vehicles</div>'
+        +car+'Office car<br>'+sw('#3a5c99')+'Service team<br>'+sw('#f4c430')+'Hafeez<br>'+sw('#2b2f33')+'Shafiulaah (repair)<br>'+sw('#8a5a2b')+'Kafayat (repair)'
+        +'<div style="margin-top:7px;">'+dot('#a78bda')+'Office / home base</div>'
+        +'</div></div>';
+      L.DomEvent.disableClickPropagation(w);
+      L.DomEvent.disableScrollPropagation(w);
+      var hd=w.querySelector('#lgHd'), bd=w.querySelector('#lgBd'), tg=w.querySelector('#lgTg'), open=false;
+      L.DomEvent.on(hd,'click',function(){ open=!open; bd.style.display=open?'block':'none'; tg.textContent=open?'▾':'▸'; });
+      return w;
+    }
+  });
+  map.addControl(new LegendCtl());
+
   let firstFit=true;
   async function poll(){
     if(!polling) return;
