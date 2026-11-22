@@ -3368,9 +3368,24 @@
     "nextServiceDate": "2026-11-25",
     "interval": 450,
     "dailyHours": 14,
-    "currentHours": 5924,
-    "currentHoursDate": "2026-11-19",
-    "notes": "450h service done 18/10/2026 @5474h by Sonu & Hussain - oil + all filters. Meter now 5924h on 19/11 (controller photo, 2591 starts) = AT next-service point (5924h, +450) -> DUE NOW. ~14 h/day since service. 800 kVA Caterpillar, EMDAD, KIZAD."
+    "notes": "450h service done 18/10/2026 @5474h by Sonu & Hussain - oil + all filters. Superseded by the 22/11/2026 service at 5968h. 800 kVA Caterpillar, EMDAD, KIZAD."
+  },
+  {
+    "dg": "DG-828",
+    "hours": 5968,
+    "date": "2026-11-22",
+    "technician": "ROLAND/ADIL/OMKAR",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "nextService": 6418,
+    "nextServiceDate": "2026-12-24",
+    "interval": 450,
+    "dailyHours": 14,
+    "currentHours": 5968,
+    "currentHoursDate": "2026-11-22",
+    "notes": "450h service done 22/11/2026 @5968h by Roland, Adil & Omkar - ALL FOUR done (oil, oil filter, fuel filter, air filter). Next 6418h (+450). 494h since 18/10 service (5474h) over 35 days = ~14 h/day -> due ~24/12/2026. 800 kVA Caterpillar, EMDAD, KIZAD."
   },
   {
     "dg": "DG-453",
