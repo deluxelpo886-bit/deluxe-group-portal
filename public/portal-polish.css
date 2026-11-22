@@ -1,0 +1,41 @@
+/* Deluxe portal — shared polish layer (screen only, print-safe).
+   Conservative, additive refinements that unify the feel across every page
+   without changing any page's layout, colours or print output. */
+@media screen {
+  /* branded text selection */
+  ::selection { background: rgba(244,168,58,.28); }
+  ::-moz-selection { background: rgba(244,168,58,.28); }
+
+  /* kill the grey mobile tap flash */
+  * { -webkit-tap-highlight-color: transparent; }
+
+  /* slim, premium scrollbars */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(140,150,165,.35);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(140,150,165,.6); background-clip: content-box; }
+  * { scrollbar-width: thin; scrollbar-color: rgba(140,150,165,.4) transparent; }
+
+  /* smooth, consistent micro-interactions (animates existing state changes only) */
+  a, button, input, select, textarea, [role="button"], .btn, .card, .tile, .kpi {
+    transition: transform .12s ease, box-shadow .16s ease, border-color .16s ease,
+                background-color .16s ease, color .16s ease, filter .16s ease, opacity .16s ease;
+  }
+
+  /* clear, branded keyboard focus ring (does not affect mouse/touch) */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
+  textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid rgba(244,168,58,.6);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a, button, input, select, textarea, [role="button"], .btn, .card, .tile, .kpi { transition: none !important; }
+  }
+}
