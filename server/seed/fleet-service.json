@@ -4073,9 +4073,24 @@
     "dailyHours": 12.8,
     "nextService": 6962,
     "interval": 350,
-    "currentHours": 6612,
-    "currentHoursDate": "2026-10-26",
-    "notes": "Serviced 26/10/2026 at 6612h by Roland & Adil - oil, oil filter, fuel filter AND air filter all done (air filter finally changed - clears the pending). Controller CAOLEI 6612h (1747 starts, 375098 kWh, running normal). Next 6962h (+350). ~12.8 h/day -> due ~22/11. STILL OPEN: arrange bearing + pulley (from DG-847). 375 kVA Weichai, Al Farjhan, Al Rahah."
+    "notes": "Serviced 26/10/2026 at 6612h by Roland & Adil - oil + all four filters (air filter done). Superseded by the 22/11/2026 service at 6904h. 375 kVA Weichai, Al Farjhan, Al Rahah."
+  },
+  {
+    "dg": "DG-846",
+    "hours": 6904,
+    "date": "2026-11-22",
+    "technician": "JAYRAJ/IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 10.8,
+    "nextService": 7254,
+    "nextServiceDate": "2026-12-24",
+    "interval": 350,
+    "currentHours": 6904,
+    "currentHoursDate": "2026-11-22",
+    "notes": "Serviced 22/11/2026 @6904h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending again). Next 7254h (+350). 292h since 26/10 (6612h) over 27 days = ~10.8 h/day -> due ~24/12/2026. 375 kVA Weichai, Al Farjhan, Al Rahah."
   },
   {
     "dg": "DG-545",
