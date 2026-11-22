@@ -475,9 +475,15 @@
   },
   {
     "dg": "DG-844",
+    "offHire": false,
+    "since": "2026-11-22",
+    "note": "Deployed 22/11/2026 to SIX SIGMA, KIZAD - KHIA 8 (Al Ma'mourah) - replaced DG-549. 125 kVA Kirloskar. Controller 31294h; next service 31406h (~26/11/2026)."
+  },
+  {
+    "dg": "DG-549",
     "offHire": true,
-    "since": "2026-11-16",
-    "note": "Off-hire 16/11/2026 - returned to yard from XDAM Interior Design Works, Baniyas (Al Nahdhah School). Available. 125 kVA Kirloskar."
+    "since": "2026-11-22",
+    "note": "Off-hire 22/11/2026 - removed from SIX SIGMA, KIZAD - KHIA 8, replaced by DG-844; returned to workshop. 100 kVA CAT. Air filter still pending from 21/10 service."
   },
   {
     "dg": "DG-558",

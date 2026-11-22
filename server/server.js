@@ -111,7 +111,7 @@ try {
   const seedPath = path.join(__dirname, 'seed', 'fleet-service.json');
   if (fs.existsSync(seedPath)) {
     const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r323');
+    const r = serviceLog.applySeed(seed, 'fleet-asset-list-2026-10-03-r324');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' generator service records');
   }
 } catch (e) { console.warn('[seed] service import skipped:', e && e.message); }
@@ -123,7 +123,7 @@ try {
   const hireSeedPath = path.join(__dirname, 'seed', 'fleet-hire.json');
   if (fs.existsSync(hireSeedPath)) {
     const hs = JSON.parse(fs.readFileSync(hireSeedPath, 'utf8'));
-    const r = hire.applySeed(hs, 'fleet-hire-2026-11-22a-dg815saifzone');
+    const r = hire.applySeed(hs, 'fleet-hire-2026-11-22b-dg844replacedg549');
     if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
@@ -251,7 +251,7 @@ try {
   const rentalSeedPath = path.join(__dirname, 'seed', 'fleet-rentals.json');
   if (fs.existsSync(rentalSeedPath)) {
     const rs = JSON.parse(fs.readFileSync(rentalSeedPath, 'utf8'));
-    const r = rentals.applySeed(rs, 'fleet-rentals-2026-10-13-dg450');
+    const r = rentals.applySeed(rs, 'fleet-rentals-2026-11-22-dg844-sixsigma');
     if (r && r.applied) console.log('[seed] imported ' + r.applied + ' rental contracts');
   }
 } catch (e) { console.warn('[seed] rentals import skipped:', e && e.message); }
