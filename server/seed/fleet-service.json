@@ -3163,10 +3163,9 @@
     "nextService": 31406,
     "nextServiceDate": "2026-11-20",
     "interval": 350,
-    "notes": "Serviced 14/10/2026 at 31056h by Adeel & Jairaj - ALL FOUR done (oil, oil filter, fuel filter, air filter). Next 31406h (350h), ~8.2 h/day -> due ~26/11. 125 kVA Kirlosker, XDAM, Baniyas (Al Nahdhah School). [10/11/2026: meter 31278h (128h to next 31406). Next service POSTPONED 10 days per ops head -> 06/12/2026 (fixedDays=53 from the 14/10 service). [Corrected: next service date set to 20/11/2026 (fixedDays=37).",
-    "fixedDays": 37,
-    "currentHours": 31278,
-    "currentHoursDate": "2026-11-10"
+    "notes": "Serviced 14/10/2026 at 31056h by Adeel & Jairaj - ALL FOUR done (oil, oil filter, fuel filter, air filter). Next 31406h (350h), ~8.2 h/day. 125 kVA Kirlosker. [10/11/2026: meter 31278h.] [16/11/2026: off-hire from XDAM Baniyas, returned to yard.] [22/11/2026: REDEPLOYED to SIX SIGMA, KIZAD - KHIA 8 (Al Ma'mourah) - REPLACED DG-549. Controller 31294h -> 112h to next service (31406h), due ~26/11/2026.]",
+    "currentHours": 31294,
+    "currentHoursDate": "2026-11-22"
   },
   {
     "dg": "DG-856",
@@ -3767,7 +3766,7 @@
     "fixedDays": 28,
     "currentHours": 6837,
     "currentHoursDate": "2026-10-21",
-    "notes": "Serviced 21/10/2026 at 6837h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 7187h (+350). 363h since 22/09 service (6474h) = ~12.5 h/day -> due ~18/11. Six Sigma, KIZAD KHIA 8, 100 kVA CAT."
+    "notes": "Serviced 21/10/2026 at 6837h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 7187h (+350). 363h since 22/09 service (6474h) = ~12.5 h/day. 100 kVA CAT. [22/11/2026: OFF-HIRE - removed from Six Sigma, KIZAD KHIA 8, REPLACED by DG-844; returned to workshop. Fit the pending air filter before next deployment.]"
   },
   {
     "dg": "DG-506",
