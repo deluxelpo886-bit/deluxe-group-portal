@@ -500,9 +500,9 @@
   },
   {
     "dg": "DG-802",
-    "offHire": false,
-    "since": "2026-11-14",
-    "note": "CORRECTION 23/11/2026: the 14/11 ADNOC Al Shamkha deployment that replaced DG-868 was actually DG-806, not DG-802. DG-802's real current location is UNCONFIRMED. Controller 3000h (meter changed, was 24008h), last service 04/11. 250 kVA FG Wilson. CONFIRM where DG-802 is."
+    "offHire": true,
+    "since": "2026-11-23",
+    "note": "In yard - available (confirmed 23/11/2026). The 14/11 ADNOC Al Shamkha deployment logged earlier was DG-806, not DG-802. Controller 3000h (meter changed, was 24008h), last service 04/11 (air filter pending). 250 kVA FG Wilson."
   },
   {
     "dg": "DG-868",
