@@ -4761,9 +4761,24 @@
     "nextServiceDate": "2026-11-27",
     "interval": 350,
     "dailyHours": 16.9,
-    "currentHours": 23366,
-    "currentHoursDate": "2026-11-06",
-    "notes": "Serviced 06/11/2026 @ 23366h by Rol & Adil - oil, oil filter, fuel filter, air filter ALL done. Controller 23366h confirmed. Ran 304h since 19/10 (~16.9 h/day). Next 23716h (+350) -> due ~27/11/2026. 45 kVA Perkins, Trojan, Al Reem."
+    "notes": "Serviced 06/11/2026 @ 23366h by Rol & Adil - oil + all four filters done. Superseded by the 23/11/2026 service at 23683h. 45 kVA Perkins, Trojan, Al Reem."
+  },
+  {
+    "dg": "DG-819",
+    "hours": 23683,
+    "date": "2026-11-23",
+    "technician": "SONU & ROLAND",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 18.6,
+    "nextService": 24033,
+    "nextServiceDate": "2026-12-12",
+    "interval": 350,
+    "currentHours": 23683,
+    "currentHoursDate": "2026-11-23",
+    "notes": "Serviced 23/11/2026 @ 23683h by Sonu & Roland - oil, oil filter, fuel filter done; AIR FILTER NOT done (blank on card - pending). Controller DSE 23683h confirmed. Next 24033h (+350). 317h since 06/11 (23366h) over 17 days = ~18.6 h/day (heavy) -> due ~12/12/2026. 45 kVA Perkins, Trojan, Al Reem."
   },
   {
     "dg": "DG-564",
