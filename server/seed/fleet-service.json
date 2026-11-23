@@ -416,7 +416,7 @@
     "interval": 450,
     "currentHours": 15102,
     "currentHoursDate": "2026-11-23",
-    "notes": "Engine overhaul completed in yard (under service since 10/02/2026 @14863h). RECOMMISSIONED & redeployed ON HIRE 14/11/2026 at 14928h (controller ENGINE HRS 14928.6). Controller 15102.2h on 23/11/2026 (4.02 bar, 143C, 1499 rpm, RUNNING) -> 174h in 9 days = ~19.3 h/day (heavy use). 211h to next service (15313h) -> due ~04/12/2026. 500 kVA FG Wilson. SITE/CUSTOMER TBC - confirm where it was deployed and which unit it replaced."
+    "notes": "Engine overhaul completed in yard (under service since 10/02/2026 @14863h). RECOMMISSIONED & redeployed ON HIRE 14/11/2026 at 14928h (controller ENGINE HRS 14928.6). Controller 15102.2h on 23/11/2026 (4.02 bar, 143C, 1499 rpm, RUNNING) -> 174h in 9 days = ~19.3 h/day (heavy use). 211h to next service (15313h) -> due ~04/12/2026. 500 kVA FG Wilson. On hire to ADNOC Fuel Station, Al Shamkha (replaced DG-868)."
   },
   {
     "dg": "DG-506",
