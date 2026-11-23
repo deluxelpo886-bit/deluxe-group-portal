@@ -163,8 +163,9 @@
   },
   {
     "dg": "DG-806",
-    "offHire": true,
-    "since": "2026-02-10"
+    "offHire": false,
+    "since": "2026-11-14",
+    "note": "Recommissioned after engine overhaul and redeployed ON HIRE 14/11/2026 at 14928h. Controller 15102h on 23/11 (~19 h/day, heavy). 500 kVA FG Wilson. Site/customer to confirm."
   },
   {
     "dg": "DG-814",
