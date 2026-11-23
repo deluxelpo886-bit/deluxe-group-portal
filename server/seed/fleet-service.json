@@ -1462,9 +1462,24 @@
     "nextService": 10704,
     "nextServiceDate": "2026-11-24",
     "interval": 350,
-    "currentHours": 10624,
-    "currentHoursDate": "2026-11-16",
-    "notes": "Serviced 10/10/2026 at 10354h by Roland - oil + oil/fuel filters; air NOT. Controller 10624h on 16/11 (~9.5 h/day). Next service 10704h - DUE ~24/11/2026. 40 kVA Kirloskar, on hire Trojan, Al Reem Island RT8."
+    "notes": "Serviced 10/10/2026 at 10354h by Roland - oil + oil/fuel filters; air NOT. Superseded by the 23/11/2026 service at 10642h. 40 kVA Kirloskar, Trojan, Al Reem Island RT8."
+  },
+  {
+    "dg": "DG-817",
+    "hours": 10642,
+    "date": "2026-11-23",
+    "technician": "SONU & ROLAND",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 6.5,
+    "nextService": 10992,
+    "nextServiceDate": "2027-01-16",
+    "interval": 350,
+    "currentHours": 10642,
+    "currentHoursDate": "2026-11-23",
+    "notes": "Serviced 23/11/2026 @ 10642h by Sonu & Roland - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Controller 10642h confirmed. Next 10992h (+350). 288h since 10/10 (10354h) over 44 days = ~6.5 h/day (ran light; ~18h in the last week). Due ~16/01/2027 at this rate. 40 kVA Kirloskar, Trojan, Al Reem Island RT8."
   },
   {
     "dg": "DG-830",
