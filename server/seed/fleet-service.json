@@ -4140,9 +4140,24 @@
     "nextService": 11841,
     "nextServiceDate": "2026-11-25",
     "interval": 350,
-    "currentHours": 11491,
-    "currentHoursDate": "2026-10-27",
-    "notes": "Serviced 27/10/2026 @ 11491h by Sonu Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Next 11841h (~25/11), ~10.8 h/day (12h contract floor applied). 45 kVA Kubota, City Const, Al Shawamekh SHM11."
+    "notes": "Serviced 27/10/2026 @ 11491h by Sonu Hussain - oil + oil/fuel filters; air NOT. Superseded by the 23/11/2026 service at 11752h. 45 kVA Kubota, City Const, Al Shawamekh SHM11."
+  },
+  {
+    "dg": "DG-832",
+    "hours": 11752,
+    "date": "2026-11-23",
+    "technician": "JAYRAJ & IMRAN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "dailyHours": 9.7,
+    "nextService": 12102,
+    "nextServiceDate": "2026-12-29",
+    "interval": 350,
+    "currentHours": 11752,
+    "currentHoursDate": "2026-11-23",
+    "notes": "Serviced 23/11/2026 @ 11752h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending). Next 12102h (+350). 261h since 27/10 (11491h) over 27 days = ~9.7 h/day -> due ~29/12/2026 (card wrote est. 12/02/2027). 45 kVA Kubota, City Const, Al Shawamekh SHM11."
   },
   {
     "dg": "DG-822",
