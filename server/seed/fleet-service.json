@@ -4140,11 +4140,11 @@
     "airFilter": true,
     "dailyHours": 12.8,
     "nextService": 7506,
-    "nextServiceDate": "2026-11-23",
+    "nextServiceDate": "2026-12-13",
     "interval": 350,
-    "currentHours": 7156,
-    "currentHoursDate": "2026-10-27",
-    "notes": "Serviced 27/10/2026 @ 7156h by Roland & Adeel - oil, oil filter, fuel filter, AIR FILTER all DONE. WATER PUMP FIXED (was the breakdown flagged 13/10) - breakdown cleared, back on hire. Next 7506h (~23/11), ~12.8 h/day. 380 kVA CAT, City Const, Al Faya."
+    "currentHours": 7251,
+    "currentHoursDate": "2026-11-23",
+    "notes": "Serviced 27/10/2026 @ 7156h by Roland & Adeel - oil, oil filter, fuel filter, AIR FILTER all DONE. WATER PUMP FIXED (was the breakdown flagged 13/10) - breakdown cleared, back on hire. Next 7506h. 380 kVA CAT, City Const, Al Faya. [23/11/2026: controller 7251h (Iqbal) - 255h left to next service (7506h), NOT due yet. Ran light since service: 95h in 27 days = ~3.5 h/day; due ~13/12 if usage returns to normal, later if it stays light.]"
   },
   {
     "dg": "DG-864",
