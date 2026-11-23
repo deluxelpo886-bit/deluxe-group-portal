@@ -165,7 +165,7 @@
     "dg": "DG-806",
     "offHire": false,
     "since": "2026-11-14",
-    "note": "Recommissioned after engine overhaul and redeployed ON HIRE 14/11/2026 at 14928h. Controller 15102h on 23/11 (~19 h/day, heavy). 500 kVA FG Wilson. Site/customer to confirm."
+    "note": "Recommissioned after engine overhaul and redeployed ON HIRE 14/11/2026 at 14928h to ADNOC Fuel Station, Al Shamkha (replaced DG-868). Controller 15102h on 23/11 (~19 h/day, heavy). 500 kVA FG Wilson."
   },
   {
     "dg": "DG-814",
@@ -502,13 +502,13 @@
     "dg": "DG-802",
     "offHire": false,
     "since": "2026-11-14",
-    "note": "On hire to ADNOC Fuel Station, Al Shamkha from 14/11/2026 (replaced DG-868). Controller reads 3000h (meter changed, was 24008h). 250 kVA FG Wilson."
+    "note": "CORRECTION 23/11/2026: the 14/11 ADNOC Al Shamkha deployment that replaced DG-868 was actually DG-806, not DG-802. DG-802's real current location is UNCONFIRMED. Controller 3000h (meter changed, was 24008h), last service 04/11. 250 kVA FG Wilson. CONFIRM where DG-802 is."
   },
   {
     "dg": "DG-868",
     "offHire": true,
     "since": "2026-11-14",
-    "note": "Off-hire 14/11/2026 - returned from ADNOC Fuel Station Al Shamkha to yard; replaced by DG-802. 500 kVA CAT, ~18h."
+    "note": "Off-hire 14/11/2026 - returned from ADNOC Fuel Station Al Shamkha to yard; replaced by DG-806. 500 kVA CAT, ~18h."
   },
   {
     "dg": "DG-838",
