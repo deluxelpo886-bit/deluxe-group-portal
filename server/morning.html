@@ -135,6 +135,46 @@
   .actbar select{flex:1;min-width:120px;}
   .signin{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px;font-size:13.5px;color:var(--muted);}
   .signin input{display:block;width:100%;margin:8px 0;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:14px;}
+  /* ===== Interactive service cards (meter entry + log service) ===== */
+  .svc-filters{display:flex;gap:7px;flex-wrap:wrap;margin:2px 2px 12px;}
+  .svc-chip{font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform .1s,background .15s,color .15s;}
+  .svc-chip:active{transform:scale(.96);}
+  .svc-chip.on{background:var(--amber);color:#231500;border-color:var(--amber);}
+  .svc-chip .c{font-variant-numeric:tabular-nums;background:rgba(0,0,0,.18);border-radius:20px;padding:0 7px;font-size:11px;}
+  .svc-chip.on .c{background:rgba(0,0,0,.14);}
+  .scard{background:linear-gradient(168deg,rgba(255,255,255,.035),transparent 55%),var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin:9px 0;position:relative;overflow:hidden;}
+  .scard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--uc,var(--faint));}
+  .scard.u-over{--uc:var(--red);} .scard.u-due{--uc:var(--gold);} .scard.u-soon{--uc:var(--blue);} .scard.u-confirm{--uc:var(--purple);}
+  .scard .shead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .scard .sdg2{font-family:var(--mono);font-weight:800;font-size:15.5px;}
+  .scard .skva2{font-family:var(--mono);color:var(--amber);font-size:12px;}
+  .scard .scust{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:42vw;}
+  .scard .upill{margin-left:auto;font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .upill.over{background:rgba(236,106,82,.18);color:var(--red);}
+  .upill.due{background:rgba(232,193,104,.18);color:var(--gold);}
+  .upill.soon{background:rgba(90,162,230,.16);color:var(--blue);}
+  .upill.confirm{background:rgba(177,139,230,.18);color:var(--purple);}
+  .pbar{height:7px;border-radius:5px;background:rgba(255,255,255,.08);margin:10px 0 7px;overflow:hidden;}
+  .pbar .fill{height:100%;border-radius:5px;background:var(--uc,var(--amber));transition:width .55s cubic-bezier(.2,.7,.2,1);min-width:2px;}
+  .pbar.over .fill{background:var(--red);}
+  .sstat{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--faint);flex-wrap:wrap;}
+  .sstat b{color:var(--muted);font-family:var(--mono);}
+  .sstale{color:var(--gold);font-weight:700;}
+  .meterbar{display:flex;gap:7px;align-items:center;margin-top:10px;}
+  .meterbar input,.meterbar select{flex:1;min-width:0;background:var(--card2);border:1px solid var(--line2);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14.5px;font-family:var(--mono);}
+  .meterbar input:focus,.meterbar select:focus{border-color:var(--amber);outline:none;}
+  .mbtn{padding:10px 13px;border-radius:10px;font-size:12.5px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;transition:transform .1s,filter .15s;}
+  .mbtn:active{transform:scale(.96);}
+  .mbtn.upd{background:var(--blue);color:#06121f;}
+  .mbtn.svc{background:rgba(67,192,136,.16);color:var(--green);border:1px solid rgba(67,192,136,.4);}
+  .scard.open .mbtn.svc{background:var(--green);color:#042016;border-color:var(--green);}
+  .svclog{margin-top:10px;padding-top:11px;border-top:1px dashed var(--line2);display:none;animation:slidein .25s ease;}
+  .scard.open .svclog{display:block;}
+  @keyframes slidein{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:none;}}
+  .filtrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  .fchk{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;cursor:pointer;user-select:none;transition:background .15s,color .15s;}
+  .fchk.on{background:rgba(67,192,136,.15);color:var(--green);border-color:rgba(67,192,136,.4);}
+  .svchint{font-size:11.5px;color:var(--faint);margin:0 2px 10px;line-height:1.5;}
 </style>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/portal-sw.js').catch(function(){});});}</script>
   <link rel="stylesheet" href="/portal-polish.css?v=1">
@@ -534,6 +574,65 @@ function resolveBd(id){
 }
 function reopenBd(id){apiPost('/api/breakdowns/reopen',{id:id}).then(function(){toast('Reopened');loadAll();}).catch(function(){toast('Failed');});}
 
+var svcFilter='all'; var svcOpen={};
+function svcUrg(g){ var s=g.due&&g.due.state; if(s==='due')return 'over'; if(s==='plan')return 'due'; if(s==='confirm')return 'confirm'; return 'soon'; }
+function setSvcFilter(f){ svcFilter=f; renderServices(); }
+function toggleSvcCard(dg){ svcOpen[dg]=!svcOpen[dg]; renderServices(); if(svcOpen[dg]){ setTimeout(function(){ var el=document.getElementById('sl-h-'+dg); if(el){el.focus();} },60); } }
+function tglChk(el){ el.classList.toggle('on'); }
+function ddmm2(s){ s=String(s||''); return s.length>=10?(s.slice(8,10)+'/'+s.slice(5,7)):(s||'—'); }
+function svcChip(key,label,n){ return '<span class="svc-chip'+(svcFilter===key?' on':'')+'" onclick="setSvcFilter(\''+key+'\')">'+label+' <span class="c">'+n+'</span></span>'; }
+
+function svcCard(g){
+  var urg=svcUrg(g); var dg=esc(g.dg);
+  var hoursLeft=(g.due&&g.due.hoursLeft!=null)?g.due.hoursLeft:null;
+  var proj=(g.due&&(g.due.projectedOver!=null||g.due.projectedLeft!=null));
+  var pill;
+  if(urg==='over'){ pill=(hoursLeft!=null&&hoursLeft<0)?(Math.abs(hoursLeft)+'h OVER'):'DUE NOW'; }
+  else if(urg==='due'){ pill=(hoursLeft!=null?hoursLeft+'h left':'due soon'); }
+  else if(urg==='confirm'){ pill=(g.due&&g.due.projectedOver!=null)?('~'+g.due.projectedOver+'h over?'):'confirm meter'; }
+  else { pill=(hoursLeft!=null?hoursLeft+'h left':'soon'); }
+  var lastH=Number(g.hours), nextH=Number(g.nextService), curH=Number(g.currentHours);
+  var total=(isFinite(nextH)&&isFinite(lastH)&&nextH>lastH)?(nextH-lastH):(Number(g.interval)||350);
+  var used=(isFinite(curH)&&isFinite(lastH))?(curH-lastH):(total-(hoursLeft!=null?hoursLeft:0));
+  var pct=total>0?Math.max(0,Math.min(100,used/total*100)):0;
+  var over=used>total;
+  var mAge=g.currentHoursDate?daysSince(g.currentHoursDate):null;
+  var staleTxt=(mAge!=null&&mAge>=7)?('<span class="sstale">· meter '+mAge+'d old, re-read</span>'):'';
+  var confirmNote=(urg==='confirm'&&g.due&&g.due.label)?('<div class="svchint" style="margin:7px 0 0;color:var(--purple)">🟣 '+esc(g.due.label)+'</div>'):'';
+  var statLine='<div class="sstat"><span>last svc <b>'+esc(ddmm2(g.date))+'</b> @ <b>'+(isFinite(lastH)?lastH:'?')+'h</b></span>'+
+    '<span>next <b>'+(isFinite(nextH)?nextH:'?')+'h</b></span>'+
+    '<span>'+(isFinite(curH)?('meter <b>'+curH+'h</b>'):'no reading')+' '+staleTxt+'</span></div>';
+  var contactLine=(contactOf(g)||g.maps_link)?('<div style="margin-top:8px;font-size:12px">'+(contactOf(g)?telHtml(contactOf(g)):'')+(contactOf(g)&&g.maps_link?' · ':'')+(g.maps_link?'<a href="'+esc(g.maps_link)+'" target="_blank" style="color:var(--blue);text-decoration:none">📍 Map</a>':'')+'</div>'):'';
+  var phe=isFinite(curH)?curH:(isFinite(nextH)?nextH:'');
+  return '<div class="scard u-'+urg+(svcOpen[g.dg]?' open':'')+'">'+
+    '<div class="shead"><span class="sdg2">'+dg+'</span><span class="skva2">'+esc(g.kva||'?')+'kVA</span>'+
+      '<span class="scust">'+esc(g.customer||'')+'</span>'+
+      '<span class="upill '+urg+'">'+esc(pill)+'</span></div>'+
+    '<div class="pbar'+(over?' over':'')+'"><div class="fill" style="width:'+pct.toFixed(0)+'%"></div></div>'+
+    statLine+confirmNote+
+    '<div class="meterbar">'+
+      '<input id="mi-'+dg+'" type="number" inputmode="decimal" placeholder="enter current hrs… e.g. '+phe+'" onkeydown="if(event.key===\'Enter\')svcUpdateMeter(\''+dg+'\')">'+
+      '<button class="mbtn upd" onclick="svcUpdateMeter(\''+dg+'\')">📟 Update</button>'+
+      '<button class="mbtn svc" onclick="toggleSvcCard(\''+dg+'\')">🔧 Serviced'+(svcOpen[g.dg]?' ▾':'')+'</button>'+
+    '</div>'+
+    contactLine+
+    '<div class="svclog">'+
+      '<div style="font-weight:700;font-size:12.5px;margin-bottom:8px">🔧 Log completed service — advances to the next '+(Number(g.interval)||350)+'h cycle</div>'+
+      '<div class="meterbar"><input id="sl-h-'+dg+'" type="number" inputmode="decimal" placeholder="serviced at hrs… e.g. '+phe+'"></div>'+
+      '<div class="filtrow" style="margin-top:9px">'+
+        '<span class="fchk on" id="sl-oil-'+dg+'" onclick="tglChk(this)">✓ Oil</span>'+
+        '<span class="fchk on" id="sl-oilf-'+dg+'" onclick="tglChk(this)">✓ Oil filter</span>'+
+        '<span class="fchk on" id="sl-fuelf-'+dg+'" onclick="tglChk(this)">✓ Fuel filter</span>'+
+        '<span class="fchk" id="sl-airf-'+dg+'" onclick="tglChk(this)">Air filter</span>'+
+      '</div>'+
+      '<div class="meterbar" style="margin-top:9px">'+
+        '<select id="sl-team-'+dg+'"><option value="">— technician / team —</option>'+TEAMS.map(function(t){return '<option>'+esc(t.name)+'</option>';}).join('')+'</select>'+
+        '<button class="mbtn svc" style="background:var(--green);color:#042016" onclick="svcLogService(\''+dg+'\','+(Number(g.kva)||0)+')">✓ Log service</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
 function renderServices(){
   // due = on-hire units flagged due/plan/confirm/overdue (not ok/paused)
   var due=DATA.gens.filter(function(g){
@@ -542,28 +641,48 @@ function renderServices(){
     return st&&st!=='ok'&&st!=='paused';
   });
   document.getElementById('svcCount').textContent=due.length+' due';
-  // active breakdown areas (for combine tags)
+  var el=document.getElementById('svcList');
+  if(!due.length){ el.innerHTML='<div class="empty">No services due right now. ✅ Every on-hire unit is within schedule.</div>'; return; }
+  var cOver=due.filter(function(g){return svcUrg(g)==='over';}).length;
+  var cDue=due.filter(function(g){return svcUrg(g)==='due';}).length;
+  var cConf=due.filter(function(g){return svcUrg(g)==='confirm';}).length;
+  var chips='<div class="svc-filters">'+svcChip('all','All',due.length)+(cOver?svcChip('over','🔴 Overdue',cOver):'')+(cDue?svcChip('due','🟠 Due soon',cDue):'')+(cConf?svcChip('confirm','🟣 Confirm',cConf):'')+'</div>'+
+    '<div class="svchint">📟 Tap a unit\'s field, type the controller hours and <b>Update</b> — the schedule recalculates instantly. Hit <b>🔧 Serviced</b> once done to roll it to the next cycle.</div>';
+  var show=due.filter(function(g){return svcFilter==='all'||svcUrg(g)===svcFilter;});
+  var rank={over:0,due:1,confirm:2,soon:3};
   var bdAreas={};DATA.bd.filter(function(b){return b.status!=='Resolved';}).forEach(function(b){var a=areaKey(b.location||genFor(b.dg).location);if(a)bdAreas[a]=true;});
-  // group by area
   var byArea={};
-  due.forEach(function(g){var a=areaKey(g.location);(byArea[a]=byArea[a]||[]).push(g);});
+  show.forEach(function(g){var a=areaKey(g.location);(byArea[a]=byArea[a]||[]).push(g);});
   var areas=Object.keys(byArea).sort(function(a,b){return byArea[b].length-byArea[a].length;});
-  var html='';
-  if(!due.length){html='<div class="empty">No services due right now. ✅</div>';}
+  var html=chips;
+  if(!show.length){ html+='<div class="empty">Nothing in this filter.</div>'; }
   areas.forEach(function(a){
-    var list=byArea[a];var label=list[0].location||a;
+    var list=byArea[a].sort(function(x,y){return rank[svcUrg(x)]-rank[svcUrg(y)];});
+    var label=list[0].location||a;
     var combine=bdAreas[a]?'<span class="combine">🔗 breakdown here — combine trip</span>':'';
     html+='<div class="svc-area"><div class="ah">📍 '+esc(label)+' <span class="pill" style="background:rgba(255,255,255,.08);border-radius:20px;padding:1px 9px;font-size:11px;color:var(--muted)">'+list.length+'</span>'+combine+'</div>';
-    list.forEach(function(g){
-      var st=g.due&&g.due.state;var lab=(g.due&&g.due.label)||'';
-      var tagcls='soon',tagtxt=lab;
-      if(st==='due'){tagcls='OVERDUE';tagtxt=(g.due.hoursLeft!=null&&g.due.hoursLeft<0)?Math.abs(g.due.hoursLeft)+'h over':'DUE';}
-      else if(st==='plan'||st==='confirm'){tagcls='DUE';tagtxt=(g.due.hoursLeft!=null?g.due.hoursLeft+'h left':'due soon');}
-      html+='<div class="svc"><span class="sdg">'+esc(g.dg)+'</span><span class="skva">'+esc(g.kva||'?')+'kVA</span><span style="color:var(--muted)">'+esc((g.customer||'').slice(0,16))+'</span>'+(contactOf(g)?'<span>'+telHtml(contactOf(g))+'</span>':'')+'<span class="stag '+tagcls+'">'+esc(tagtxt)+'</span></div>';
-    });
+    list.forEach(function(g){ html+=svcCard(g); });
     html+='</div>';
   });
-  document.getElementById('svcList').innerHTML=html;
+  el.innerHTML=html;
+}
+function svcUpdateMeter(dg){
+  var inp=document.getElementById('mi-'+dg); if(!inp)return;
+  var hrs=parseFloat(inp.value); if(!isFinite(hrs)||hrs<0){toast('Enter the current hours first');inp.focus();return;}
+  var today=new Date().toISOString().slice(0,10);
+  apiPost('/api/service/reading',{dg:dg,hours:hrs,date:today,source:'morning'}).then(function(){ toast('📟 '+dg+' → '+hrs+'h · schedule updated'); loadAll(); }).catch(function(){toast('Update failed — check connection');});
+}
+function svcLogService(dg,kva){
+  var hi=document.getElementById('sl-h-'+dg); var h=parseFloat(hi?hi.value:'');
+  if(!isFinite(h)||h<0){toast('Enter the hours it was serviced at');if(hi)hi.focus();return;}
+  var team=(document.getElementById('sl-team-'+dg)||{}).value||'';
+  var body={dg:dg,hours:h,date:new Date().toISOString().slice(0,10),kva:kva||undefined,
+    oil:document.getElementById('sl-oil-'+dg).classList.contains('on'),
+    oilFilter:document.getElementById('sl-oilf-'+dg).classList.contains('on'),
+    fuelFilter:document.getElementById('sl-fuelf-'+dg).classList.contains('on'),
+    airFilter:document.getElementById('sl-airf-'+dg).classList.contains('on'),
+    technician:team};
+  apiPost('/api/service/log',body).then(function(){ toast('✅ '+dg+' serviced — rolled to next cycle'); svcOpen[dg]=false; loadAll(); }).catch(function(){toast('Log failed — check connection');});
 }
 
 function renderDispatch(){
