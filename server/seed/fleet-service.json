@@ -4076,9 +4076,24 @@
     "dailyHours": 12.4,
     "nextService": 9207,
     "interval": 350,
-    "currentHours": 8857,
-    "currentHoursDate": "2026-10-26",
-    "notes": "Serviced 26/10/2026 at 8857h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT DONE AGAIN (dash on card - now skipped 4x: 24/08, 13/09, 28/09, 26/10). Dusty KIZAD site - URGENT: carry an air filter and fit it. Next 9207h (+350). 346h since 28/09 service = ~12.4 h/day -> due ~22/11. 60 kVA Kirloskar, Mawaad, KIZAD."
+    "notes": "Serviced 26/10/2026 at 8857h by Roland & Adil - oil + oil/fuel filters; air NOT (skipped 4x). Superseded by the 24/11/2026 service at 9232h. 60 kVA Kirloskar, Mawaad, KIZAD."
+  },
+  {
+    "dg": "DG-448",
+    "hours": 9232,
+    "date": "2026-11-24",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "dailyHours": 12.9,
+    "nextService": 9582,
+    "nextServiceDate": "2026-12-21",
+    "interval": 350,
+    "currentHours": 9232,
+    "currentHoursDate": "2026-11-24",
+    "notes": "Serviced 24/11/2026 @9232h by Sonu & Hussain - oil, oil filter, fuel filter done, and AIR FILTER finally FITTED (card ticked all four - clears the long-pending air filter that was skipped 4x). Controller 9232h confirmed. Next 9582h (+350). 375h since 26/10 (8857h) over 29 days = ~12.9 h/day -> due ~21/12/2026. 60 kVA Kirloskar, Mawaad, KIZAD. (Dusty site - keep air filter on the cycle.)"
   },
   {
     "dg": "DG-846",
