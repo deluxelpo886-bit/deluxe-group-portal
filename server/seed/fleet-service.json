@@ -973,12 +973,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "nextService": 42720,
-    "nextServiceDate": "2026-11-25",
+    "nextService": 42620,
+    "nextServiceDate": "2026-11-21",
     "interval": 450,
-    "notes": "ON HIRE to ALI AND SONS from 17/11/2026, 24 h/day. Controller 42517.6h (16/11). Interval 450 (confirmed) -> next service 42720h, ~202h left, DUE ~25/11/2026 at 24 h/day. 350 kVA CAT. Site & rate to confirm.",
-    "currentHours": 42518,
-    "currentHoursDate": "2026-11-16",
+    "fixedDays": 18,
+    "notes": "ON HIRE to ALI AND SONS (Ali & Sons Marine, Mussafah) from 17/11/2026, 24 h/day. [24/11/2026: controller 42701.0h (48C, 27.7V). Real next-service is 42620h -> 81h OVERDUE, SERVICE NOW. ROOT CAUSE: the system had a stale meter (42518h on 16/11) and the next-service target was 100h too high (42720 vs 42620), so the overdue was not flagged in time. Corrected. Fuel + air filter pending for this service. 24 h/day, 450h interval -> strict 18-day cycle. 350 kVA CAT.]",
+    "currentHours": 42701,
+    "currentHoursDate": "2026-11-24",
     "dailyHours": 24
   },
   {
