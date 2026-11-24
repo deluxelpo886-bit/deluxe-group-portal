@@ -222,7 +222,15 @@
     try{
       var r=await fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})});
       var d=await r.json().catch(function(){return{};});
-      if(!r.ok||!d.token) throw new Error(d.error||'Login failed');
+      if(d&&d.otpRequired&&d.pendingId){
+        var code=prompt('A 6-digit login code was emailed to '+(d.sentTo||'the registered email')+'.\nEnter it to finish signing in:');
+        if(code==null||!String(code).trim()) throw new Error('Login code needed to continue.');
+        var vr=await fetch('/api/fleet/login/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pendingId:d.pendingId,code:String(code).trim()})});
+        var vd=await vr.json().catch(function(){return{};});
+        if(!vr.ok||!vd.token) throw new Error(vd.error||'Code not accepted — try again');
+        TOKEN=vd.token; localStorage.setItem(LS,TOKEN); hideLogin(); return;
+      }
+      if(!r.ok||!d.token) throw new Error(d.error||(r.status>=500?'Server busy — try again':'Login failed'));
       TOKEN=d.token; localStorage.setItem(LS,TOKEN); hideLogin();
     }catch(e){ $('loginErr').textContent=e.message||'Login failed'; }
     finally{ $('loginBtn').textContent='Sign in'; $('loginBtn').disabled=false; }

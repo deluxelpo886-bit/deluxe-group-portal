@@ -298,7 +298,20 @@ function loadAll(){
 function doLogin(){
   var em=document.getElementById('email').value.trim(),pw=document.getElementById('pass').value;
   fetch('/api/fleet/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})})
-   .then(function(r){return r.json();}).then(function(d){if(d&&d.token){tok=d.token;try{localStorage.setItem('deluxeFleetToken',tok);}catch(_){}loadAll();}else{document.getElementById('loginErr').textContent='Wrong login';}})
+   .then(function(r){return r.json().catch(function(){return{};});}).then(function(d){
+     if(d&&d.token){tok=d.token;try{localStorage.setItem('deluxeFleetToken',tok);}catch(_){}loadAll();return;}
+     if(d&&d.otpRequired&&d.pendingId){
+       var code=prompt('A 6-digit login code was emailed to '+(d.sentTo||'the registered email')+'.\nEnter it to finish signing in:');
+       if(code==null||!String(code).trim()){document.getElementById('loginErr').textContent='Login code needed.';return;}
+       fetch('/api/fleet/login/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pendingId:d.pendingId,code:String(code).trim()})})
+        .then(function(r){return r.json().catch(function(){return{};});}).then(function(vd){
+          if(vd&&vd.token){tok=vd.token;try{localStorage.setItem('deluxeFleetToken',tok);}catch(_){}loadAll();}
+          else{document.getElementById('loginErr').textContent=(vd&&vd.error)||'Code not accepted';}
+        }).catch(function(){document.getElementById('loginErr').textContent='Code check failed';});
+       return;
+     }
+     document.getElementById('loginErr').textContent=(d&&d.error)||'Wrong login';
+   })
    .catch(function(){document.getElementById('loginErr').textContent='Login failed';});
 }
 
