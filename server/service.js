@@ -401,8 +401,27 @@ function classifyDue(g, todayStr, opts) {
 
   const hasReading = g.currentHours != null && isFinite(Number(g.currentHours));
   if (hasReading) {
-    const left = Math.round(Number(g.nextService) - Number(g.currentHours));
+    const reading = Number(g.currentHours);
+    const left = Math.round(Number(g.nextService) - reading);
     if (left <= 0) return { state: 'due', send: true, confirmed: true, hoursLeft: left, label: 'Due now — ' + Math.abs(left) + ' h over (confirmed)' };
+    // Project a STALE reading forward by the unit's real daily run-rate before
+    // trusting "x h left". A 24 h/day machine read two weeks ago has already run
+    // ~340h since, so the raw reading badly understates the hours used and can
+    // hide a unit that is actually due (this is exactly how a 24h genset slips
+    // past a tight 15-day cycle). If the projection reaches the service hours we
+    // surface it to CONFIRM (verify the meter) - never auto-dispatch on an
+    // estimate, matching the confirmed-hours rule above.
+    const daily = Number(g.dailyHours);
+    const readDate = String(g.currentHoursDate || '').slice(0, 10);
+    if (daily > 0 && /^\d{4}-\d\d-\d\d$/.test(readDate)) {
+      const daysOld = Math.round((new Date(todayStr + 'T00:00:00') - new Date(readDate + 'T00:00:00')) / 86400000);
+      if (daysOld >= 2) {
+        const projected = reading + daily * daysOld;
+        const leftProj = Math.round(Number(g.nextService) - projected);
+        if (leftProj <= 0) return { state: 'confirm', send: false, confirmed: false, hoursLeft: left, projectedOver: Math.abs(leftProj), daysOld, label: 'Likely DUE — ~' + Math.abs(leftProj) + ' h over by projection (' + daily + ' h/day, meter ' + daysOld + 'd old) — confirm meter' };
+        if (leftProj <= hoursSoon) return { state: 'confirm', send: false, confirmed: false, hoursLeft: left, projectedLeft: leftProj, daysOld, label: 'Likely due soon — ~' + leftProj + ' h left by projection (' + daily + ' h/day) — confirm meter' };
+      }
+    }
     if (left <= hoursSoon) return { state: 'plan', send: false, confirmed: true, hoursLeft: left, label: left + ' h left (confirmed) — plan soon' };
     return { state: 'ok', send: false, confirmed: true, hoursLeft: left, label: left + ' h left (confirmed)' };
   }
