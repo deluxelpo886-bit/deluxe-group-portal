@@ -976,10 +976,25 @@
     "nextService": 42720,
     "nextServiceDate": "2026-11-25",
     "interval": 450,
-    "notes": "ON HIRE to ALI AND SONS (Ali & Sons Marine, Mussafah) from 17/11/2026, 24 h/day. [24/11/2026: controller 42701.0h (48C, 27.7V) - 19h to next service (42720h), DUE ~25/11/2026 at 24 h/day. 350 kVA CAT. Fuel + air filter pending for the upcoming service.]",
+    "notes": "ON HIRE to ALI AND SONS (Ali & Sons Marine, Mussafah) from 17/11/2026, 24 h/day. Superseded by the 24/11/2026 service at 42701h. 350 kVA CAT.",
+    "dailyHours": 24
+  },
+  {
+    "dg": "DG-532",
+    "hours": 42701,
+    "date": "2026-11-24",
+    "technician": "ROLAND & ADIL",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 43151,
+    "nextServiceDate": "2026-12-13",
+    "interval": 450,
+    "dailyHours": 24,
     "currentHours": 42701,
     "currentHoursDate": "2026-11-24",
-    "dailyHours": 24
+    "notes": "Serviced 24/11/2026 @42701h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). Controller 42701.5h confirmed (RUNNING, 1797 rpm, 68C). Next 43151h (+450). 24 h/day unit (Ali & Sons Marine, Mussafah) -> due ~13/12/2026. 350 kVA CAT. Fit the air filter next service."
   },
   {
     "dg": "DG-37",
