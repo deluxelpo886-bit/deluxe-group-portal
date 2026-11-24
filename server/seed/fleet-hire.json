@@ -73,9 +73,21 @@
   },
   {
     "dg": "DG-473",
-    "offHire": false,
-    "since": "2026-08-24",
-    "note": "On hire — EL MASRIA CEMENT INDUSTRIES"
+    "offHire": true,
+    "since": "2026-11-24",
+    "note": "Off-hire (confirmed 24/11/2026) - returned from EL MASRIA CEMENT INDUSTRIES, in yard/available. Service paused. 24 h/day unit - meter to re-read on next deployment."
+  },
+  {
+    "dg": "DG-812",
+    "offHire": true,
+    "since": "2026-11-24",
+    "note": "Off-hire (confirmed 24/11/2026) - in yard/available. Service paused; re-read meter on next deployment."
+  },
+  {
+    "dg": "DG-503",
+    "offHire": true,
+    "since": "2026-11-24",
+    "note": "Off-hire (confirmed 24/11/2026) - in yard/available. Service paused; re-read meter on next deployment."
   },
   {
     "dg": "DG-476",
