@@ -3619,12 +3619,12 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 34022,
-    "nextServiceDate": "2026-11-26",
+    "nextServiceDate": "2026-12-04",
     "interval": 450,
-    "dailyHours": 12,
-    "currentHours": 33572,
-    "currentHoursDate": "2026-10-19",
-    "notes": "450h service done 19/10/2026 at 33572h (controller 33572h 15m, 7162 starts) - oil, oil filter & fuel filter done; AIR FILTER NOT done (card X) - pending, fit at next service. Ran 121h since 09/10 (33451h) = ~12 h/day. Next 34022h; next date by usage/450-cycle -> ~26/11/2026. 250 kVA Kirloskar, Trojan, Al Bahyah. GASKET LEAK was outstanding - VERIFY the head gasket was fitted at this service; if not, still pending. ARRANGE for next schedule: head gasket + broken bolt."
+    "dailyHours": 10,
+    "currentHours": 33924,
+    "currentHoursDate": "2026-11-24",
+    "notes": "450h service done 19/10/2026 at 33572h (controller 33572h 15m, 7162 starts) - oil, oil filter & fuel filter done; AIR FILTER NOT done (card X) - pending, fit at next service. 250 kVA Kirloskar, Trojan, Al Bahyah. GASKET LEAK was outstanding - VERIFY the head gasket was fitted; ARRANGE for next schedule: head gasket + broken bolt. [24/11/2026: controller 33924h (7418 starts, Imran) - 352h since service = ~9.8 h/day. 98h to next service (34022h) -> due ~04/12/2026. NB: the service card was labelled 'DG-500' but the hours/next match DG-508 - logged to DG-508.]"
   },
   {
     "dg": "DG-501",
