@@ -4737,13 +4737,13 @@
     "fuelFilter": true,
     "airFilter": false,
     "nextService": 8753,
-    "nextServiceDate": "2026-11-27",
+    "nextServiceDate": "2026-11-20",
     "interval": 350,
     "dailyHours": 24.0,
-    "currentHours": 8403,
-    "currentHoursDate": "2026-11-05",
-    "notes": "Serviced 05/11/2026 @ 8403h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. Heavy 24 h/day (KAT). Next 8753h (+350) -> due ~20/11/2026. 160 kVA Kirloskar, KAT, Dubai Al Jadaf. [09/11/2026: Dubai service run deferred 7 days (ops head) - next service moved 20/11/2026 -> 27/11/2026.",
-    "fixedDays": 22
+    "currentHours": 8858,
+    "currentHoursDate": "2026-11-24",
+    "notes": "Serviced 05/11/2026 @ 8403h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (card X) - pending. 24 h/day unit (KAT) -> MUST hold a strict 15-DAY cycle (350h / 24h = ~14.6 days). Next 8753h. 160 kVA Kirloskar, KAT, Dubai Al Jadaf. [24/11/2026: controller 8858h - 105h PAST the 8753h service point = OVERDUE. The earlier 22-day defer was wrong for a 24h unit; reset to 15-day cycle. SERVICE NOW and fit the pending air filter.]",
+    "fixedDays": 15
   },
   {
     "dg": "DG-531",
