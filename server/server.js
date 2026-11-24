@@ -227,8 +227,8 @@ try {
 // fresh embedded fleet data show. Version-gated so it runs ONCE and never wipes
 // a legitimate office edit made later; add a new version string to clear more.
 try {
-  const OV_CLEAR = ['DG-844'];
-  const OV_CLEAR_VERSION = 'ov-clear-2026-11-24a-dg844';
+  const OV_CLEAR = ['DG-844', 'DG-459', 'DG-815'];
+  const OV_CLEAR_VERSION = 'ov-clear-2026-11-24b-saifzone';
   const ovMarkerFile = path.join(DATA_DIR, 'override-clear.json');
   let ovApplied = {};
   try { if (fs.existsSync(ovMarkerFile)) ovApplied = JSON.parse(fs.readFileSync(ovMarkerFile, 'utf8')) || {}; } catch (_) { ovApplied = {}; }
