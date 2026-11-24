@@ -219,6 +219,28 @@ try {
   if (removed) console.log('[prune] removed ' + removed + ' superseded reminder(s)');
 } catch (e) { console.warn('[prune] reminders skipped:', e && e.message); }
 
+// One-time clear of stale manual map overrides that would otherwise shadow a
+// newer seed deployment. Example: DG-844 was moved from the yard to Six Sigma,
+// but an old "WORK SHOP / YARD" override (saved while it sat in the yard) kept
+// masking the new customer/location on the map (mergeOverrides applies an
+// override's customer/location unconditionally). Clearing the override lets the
+// fresh embedded fleet data show. Version-gated so it runs ONCE and never wipes
+// a legitimate office edit made later; add a new version string to clear more.
+try {
+  const OV_CLEAR = ['DG-844'];
+  const OV_CLEAR_VERSION = 'ov-clear-2026-11-24a-dg844';
+  const ovMarkerFile = path.join(DATA_DIR, 'override-clear.json');
+  let ovApplied = {};
+  try { if (fs.existsSync(ovMarkerFile)) ovApplied = JSON.parse(fs.readFileSync(ovMarkerFile, 'utf8')) || {}; } catch (_) { ovApplied = {}; }
+  if (!ovApplied[OV_CLEAR_VERSION]) {
+    let cleared = 0;
+    OV_CLEAR.forEach((dg) => { try { if (overrides.clear(dg)) cleared += 1; } catch (_) { /* skip */ } });
+    ovApplied[OV_CLEAR_VERSION] = { at: new Date().toISOString(), count: cleared, dgs: OV_CLEAR };
+    try { if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true }); fs.writeFileSync(ovMarkerFile, JSON.stringify(ovApplied, null, 2)); } catch (_) { /* best-effort */ }
+    if (cleared) console.log('[prune] cleared ' + cleared + ' stale map override(s): ' + OV_CLEAR.join(', '));
+  }
+} catch (e) { console.warn('[override-clear] skipped:', e && e.message); }
+
 // DG-508 gasket leak: the office cleared it from the pulled-forward RED "service
 // now" state back to the NORMAL 450h schedule (33559h / 22-10). The service
 // record replaces on the seed version bump, but the data-flag and spare note
