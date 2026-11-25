@@ -2946,13 +2946,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": false,
-    "dailyHours": 0.1,
+    "dailyHours": 8.0,
     "nextService": 34641,
-    "nextServiceDate": "2026-12-21",
+    "nextServiceDate": "2027-01-04",
     "interval": 350,
-    "notes": "Serviced 26/08 @34291h (air filter pending). Controller 34297h 29m on 23/10/2026 (Kirloskar Green, 2835 starts). Only 6h since service in 58 days = ~0.1 h/day - STANDBY, barely running. 344h left to next (34641h). 165 kVA Kirloskar, Hydro Power, Al Bahyah.",
-    "currentHours": 34297,
-    "currentHoursDate": "2026-10-23"
+    "notes": "Serviced 26/08 @34291h - AIR FILTER STILL PENDING (fit at next service). REDEPLOYED 25/11/2026: off-hire from Hydro Power -> ON HIRE to Smart Home Technology (SHT), Candor PV2 solar site, Sweihan. Delivery controller 34317h 47m / 2860 starts (Kirloskar). 324h left to next service (34641h). Daily rate 8 h/day PROVISIONAL (was ~0.6 h/day standby at Hydro Power; PO allows 12 h/day) - recalibrate at first reading. 165 kVA Kirloskar.",
+    "currentHours": 34317,
+    "currentHoursDate": "2026-11-25"
   },
   {
     "dg": "DG-494",
