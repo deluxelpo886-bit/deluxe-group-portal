@@ -410,13 +410,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 19.3,
+    "dailyHours": 12,
     "nextService": 15313,
-    "nextServiceDate": "2026-12-04",
+    "nextServiceDate": "2026-12-11",
     "interval": 450,
     "currentHours": 15102,
     "currentHoursDate": "2026-11-23",
-    "notes": "Engine overhaul completed in yard (under service since 10/02/2026 @14863h). RECOMMISSIONED & redeployed ON HIRE 14/11/2026 at 14928h (controller ENGINE HRS 14928.6). Controller 15102.2h on 23/11/2026 (4.02 bar, 143C, 1499 rpm, RUNNING) -> 174h in 9 days = ~19.3 h/day (heavy use). 211h to next service (15313h) -> due ~04/12/2026. 500 kVA FG Wilson. On hire to ADNOC Fuel Station, Al Shamkha (replaced DG-868)."
+    "notes": "Engine overhaul completed in yard (under service since 10/02/2026 @14863h). RECOMMISSIONED & redeployed ON HIRE 14/11/2026 at 14928h. Controller 15102h on 23/11/2026 (RUNNING; ~19 h/day during commissioning week). *** ROTATING PAIR with DG-562 at ADNOC Fuel Station, Al Shamkha - each genset runs 24h on ALTERNATE days, so ~12 h/day AVERAGE each. *** 211h to next service (15313h) -> ~11/12/2026 at 12 h/day avg. SERVICE BOTH UNITS TOGETHER on the ADNOC visit. 500 kVA FG Wilson. (Replaced DG-868.)"
   },
   {
     "dg": "DG-506",
@@ -3774,7 +3774,7 @@
     "nextService": 29033,
     "nextServiceDate": "2026-12-11",
     "interval": 450,
-    "notes": "On hire to ADNOC fuel station from 08/10/2026 (was new 500 kVA Perkins genset in yard). Meter counting from 0; service at 450h on a 450h cycle, ~12 h/day -> first service due ~15/11. [11/11/2026: CORRECTED baseline - unit given to ADNOC at 28583h (used Perkins, not 0h). Controller 28587h / 8537 starts. Service schedule SKIPPED 30 days per ops head -> next 11/12/2026 (fixedDays=64). Next hours 29033 (+450).",
+    "notes": "On hire to ADNOC fuel station from 08/10/2026 (used 500 kVA Perkins). [11/11/2026: CORRECTED baseline - unit given to ADNOC at 28583h. Controller 28587h / 8537 starts. Service schedule SKIPPED 30 days per ops head -> next 11/12/2026 (fixedDays=64). Next hours 29033 (+450).] *** ROTATING PAIR with DG-806 at ADNOC - each genset runs 24h on ALTERNATE days, so ~12 h/day AVERAGE each; SERVICE BOTH TOGETHER ~11/12/2026. ***",
     "fixedDays": 64
   },
   {
