@@ -530,9 +530,9 @@
   },
   {
     "dg": "DG-470",
-    "offHire": true,
+    "offHire": false,
     "since": "2026-11-20",
-    "note": "Off-hire 20/11/2026 - FUTURE PIPE INDUSTRIES, ICAD I (ERP OFF1-000217, Collected to yard). Serviced 20/11 @9333h (200h re-hire check) - ready for next deployment. 220 kVA Iveco. [Portal earlier showed a new hire here - ERP shows off-hire; confirm with ops.]"
+    "note": "On hire - FUTURE PIPE INDUSTRIES, ICAD I (Energy div). The ERP off-hire OFF1-000217 (20/11) was ONLY a division correction (wrong-division contract closed) - unit remains ON HIRE. Serviced 20/11 @9333h (200h check). 220 kVA Iveco."
   },
   {
     "dg": "DG-535",
