@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deluxe Supplier Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e5a3c">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{
+    --green:#0e5a3c; --green2:#127a51; --amber:#e0872a; --ink:#17212b; --muted:#5d6b78;
+    --line:#dfe5ea; --bg:#eef2f4; --card:#ffffff; --soft:#f4f7f8; --red:#c0392b;
+    --sans:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:radial-gradient(120% 60% at 50% -10%,rgba(14,90,60,.10),transparent 60%);
+    min-height:100vh;padding:0 0 50px;font-size:15px;line-height:1.5;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 max(14px,env(safe-area-inset-left)) 0 max(14px,env(safe-area-inset-right));}
+  .topbar{height:7px;background:linear-gradient(90deg,var(--green),var(--green2) 60%,var(--amber));}
+  .head{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;padding:20px 22px 18px;margin-bottom:16px;box-shadow:0 10px 30px -22px rgba(0,0,0,.4);}
+  .logos{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .logos img{height:42px;}
+  .logos .div{width:1px;height:34px;background:var(--line);}
+  h1{font-size:23px;margin:16px 0 4px;letter-spacing:-.01em;}
+  .sub{color:var(--muted);font-size:13.5px;margin:0;}
+  .req-note{margin-top:12px;font-size:12.5px;color:var(--muted);}
+  .req-note b{color:var(--red);}
+  form{display:flex;flex-direction:column;gap:14px;}
+  .sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 10px 30px -24px rgba(0,0,0,.35);}
+  .sec-h{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin:0 0 4px;color:var(--green);}
+  .sec-h .n{width:24px;height:24px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:13px;}
+  .sec-note{font-size:12.5px;color:var(--muted);margin:0 0 12px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;}}
+  .f{display:flex;flex-direction:column;gap:5px;}
+  .f.full{grid-column:1/-1;}
+  label{font-size:12.5px;font-weight:600;color:#38454f;}
+  label .star{color:var(--red);}
+  input,select,textarea{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:var(--soft);
+    border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:none;transition:border-color .15s,background .15s,box-shadow .15s;}
+  input:focus,select:focus,textarea:focus{border-color:var(--green2);background:#fff;box-shadow:0 0 0 3px rgba(18,122,81,.12);}
+  textarea{resize:vertical;min-height:70px;}
+  .hint{font-size:11.5px;color:var(--muted);}
+  .err{color:var(--red);font-size:12px;min-height:1px;}
+  .actions{display:flex;flex-direction:column;gap:10px;align-items:stretch;}
+  .submit{width:100%;background:linear-gradient(160deg,var(--green2),var(--green));color:#fff;border:none;border-radius:12px;
+    padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);box-shadow:0 14px 30px -14px rgba(14,90,60,.7);transition:transform .1s,filter .15s;}
+  .submit:active{transform:scale(.99);}
+  .submit:disabled{filter:grayscale(.4) opacity(.7);cursor:default;}
+  .privacy{font-size:11.5px;color:var(--muted);text-align:center;}
+  .foot{text-align:center;color:var(--muted);font-size:11.5px;margin-top:18px;line-height:1.6;}
+  /* Thank-you */
+  .thanks{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:34px 24px;text-align:center;box-shadow:0 14px 34px -22px rgba(0,0,0,.4);}
+  .thanks .tick{width:64px;height:64px;border-radius:50%;background:rgba(18,122,81,.12);display:grid;place-items:center;margin:0 auto 14px;}
+  .thanks .tick svg{width:34px;height:34px;}
+  .thanks h2{margin:0 0 6px;font-size:21px;color:var(--green);}
+  .thanks p{margin:0 auto;color:var(--muted);max-width:420px;}
+  .thanks .again{margin-top:18px;background:transparent;border:1px solid var(--line);color:var(--green);border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;font-family:var(--sans);font-size:14px;}
+</style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <div class="wrap">
+    <div class="head">
+      <div class="logos">
+        <img src="/logo-heavy.png" alt="Deluxe Heavy Equipment Rental">
+        <span class="div"></span>
+        <img src="/logo-energy.png" alt="Deluxe Energy Solutions">
+      </div>
+      <h1>Supplier Registration</h1>
+      <p class="sub">Deluxe Heavy Equipment Rental L.L.C &nbsp;·&nbsp; Deluxe Energy Solutions L.L.C</p>
+      <p class="req-note">Please share your company details to register as a supplier. Fields marked <b>*</b> are required.</p>
+    </div>
+
+    <form id="form" novalidate>
+      <!-- 1. Company -->
+      <div class="sec">
+        <div class="sec-h"><span class="n">1</span> Company information</div>
+        <div class="grid">
+          <div class="f full"><label>Legal company name <span class="star">*</span></label><input id="companyName" autocomplete="organization" required></div>
+          <div class="f"><label>Trade name (if different)</label><input id="tradeName"></div>
+          <div class="f"><label>Category of goods / services supplied <span class="star">*</span></label><input id="category" placeholder="e.g. spare parts, filters, transport" required></div>
+          <div class="f"><label>Trade licence no.</label><input id="tradeLicenseNo"></div>
+          <div class="f"><label>Trade licence expiry</label><input id="tradeLicenseExpiry" type="date"></div>
+          <div class="f"><label>TRN (VAT number)</label><input id="trn" inputmode="numeric"></div>
+          <div class="f"><label>Emirate</label><select id="emirate">
+            <option value="">— select —</option><option>Abu Dhabi</option><option>Dubai</option><option>Sharjah</option><option>Ajman</option><option>Umm Al Quwain</option><option>Ras Al Khaimah</option><option>Fujairah</option><option>Outside UAE</option>
+          </select></div>
+          <div class="f full"><label>Address</label><textarea id="address" placeholder="Office / warehouse address"></textarea></div>
+        </div>
+      </div>
+
+      <!-- 2. Contact -->
+      <div class="sec">
+        <div class="sec-h"><span class="n">2</span> Contact person</div>
+        <div class="grid">
+          <div class="f"><label>Contact person name <span class="star">*</span></label><input id="contactPerson" autocomplete="name" required></div>
+          <div class="f"><label>Designation</label><input id="designation" placeholder="e.g. Sales Manager"></div>
+          <div class="f"><label>Mobile / phone <span class="star">*</span></label><input id="mobile" type="tel" inputmode="tel" placeholder="+971 5X XXX XXXX" required></div>
+          <div class="f"><label>Email <span class="star">*</span></label><input id="email" type="email" inputmode="email" autocomplete="email" required></div>
+          <div class="f full"><label>Website</label><input id="website" placeholder="https://"></div>
+        </div>
+      </div>
+
+      <!-- 3. Trading / bank -->
+      <div class="sec">
+        <div class="sec-h"><span class="n">3</span> Trading &amp; bank details</div>
+        <p class="sec-note">Bank details are optional now — they help us set up supplier payments later.</p>
+        <div class="grid">
+          <div class="f"><label>Years in business</label><input id="yearsInBusiness" inputmode="numeric"></div>
+          <div class="f"><label>Bank name</label><input id="bankName"></div>
+          <div class="f"><label>Account name</label><input id="accountName"></div>
+          <div class="f"><label>IBAN</label><input id="iban" placeholder="AE.. .. .. .."></div>
+          <div class="f full"><label>Anything else we should know?</label><textarea id="notes" placeholder="Products, brands you distribute, lead time, etc."></textarea></div>
+        </div>
+      </div>
+
+      <div class="err" id="err"></div>
+      <div class="actions">
+        <button type="submit" class="submit" id="submitBtn">Submit registration</button>
+        <p class="privacy">Your details go directly to Deluxe Operations. We don't share them with anyone else.</p>
+      </div>
+    </form>
+
+    <!-- Thank you (hidden until submit) -->
+    <div class="thanks" id="thanks" hidden>
+      <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#127a51" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h2>Thank you!</h2>
+      <p>Your company has been registered with Deluxe. Our procurement team will be in touch. You may close this page.</p>
+      <button class="again" id="againBtn">Register another company</button>
+    </div>
+
+    <div class="foot">
+      Deluxe Heavy Equipment Rental L.L.C · Mussafah 37, Abu Dhabi<br>
+      ☎ 02 554 5718 &nbsp;·&nbsp; 📱 055 335 6428
+    </div>
+  </div>
+
+<script>
+  var FIELDS=['companyName','tradeName','tradeLicenseNo','tradeLicenseExpiry','trn','emirate','address','contactPerson','designation','mobile','email','website','category','yearsInBusiness','bankName','iban','accountName','notes'];
+  var form=document.getElementById('form'), errEl=document.getElementById('err'), btn=document.getElementById('submitBtn');
+  function val(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    errEl.textContent='';
+    var required=[['companyName','Legal company name'],['category','Category of goods / services'],['contactPerson','Contact person name'],['mobile','Mobile / phone'],['email','Email']];
+    for(var i=0;i<required.length;i++){ if(!val(required[i][0])){ errEl.textContent='Please fill in: '+required[i][1]+'.'; var el=document.getElementById(required[i][0]); if(el){el.focus();} return; } }
+    var em=val('email'); if(em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ errEl.textContent='Please enter a valid email address.'; document.getElementById('email').focus(); return; }
+    var body={}; FIELDS.forEach(function(f){ body[f]=val(f); });
+    btn.disabled=true; btn.textContent='Submitting…';
+    fetch('/api/supplier/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      .then(function(r){ return r.json().catch(function(){return{};}).then(function(d){ return {ok:r.ok,d:d}; }); })
+      .then(function(res){
+        if(!res.ok || !res.d.ok){ throw new Error((res.d&&res.d.error)||'Could not submit — please try again.'); }
+        form.hidden=true; document.getElementById('thanks').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
+      })
+      .catch(function(err){ errEl.textContent=err.message||'Could not submit — check your connection and try again.'; })
+      .finally(function(){ btn.disabled=false; btn.textContent='Submit registration'; });
+  });
+  document.getElementById('againBtn').addEventListener('click', function(){
+    form.reset(); form.hidden=false; document.getElementById('thanks').hidden=true; errEl.textContent=''; window.scrollTo({top:0,behavior:'smooth'});
+  });
+</script>
+</body>
+</html>
