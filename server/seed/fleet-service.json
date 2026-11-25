@@ -4929,12 +4929,12 @@
     "fuelFilter": true,
     "airFilter": true,
     "nextService": 2686,
-    "nextServiceDate": "2027-05-06",
+    "nextServiceDate": "2026-12-01",
     "interval": 350,
-    "dailyHours": 0.5,
-    "currentHours": 2336,
-    "currentHoursDate": "2026-11-06",
-    "notes": "Periodic service done 06/11/2026 @ 2336h by Miya Khan - oil, oil filter, fuel filter & air filter ALL done. STANDBY unit (Dreams Cricket Academy, Zayed City) - meter still 2336h, unchanged since 16/09 service (ran ~0h in ~7 weeks); controller 0V on standby. Hours-based next 2686h will not be reached at standby use, so serviced on a time/periodic basis - next periodic service ~06/05/2027. 45 kVA Kubota."
+    "dailyHours": 13.7,
+    "currentHours": 2597,
+    "currentHoursDate": "2026-11-25",
+    "notes": "Periodic service done 06/11/2026 @ 2336h by Miya Khan - oil, oil filter, fuel filter & air filter ALL done. [25/11/2026: controller 2597h - RAN 261h since 06/11 (19 days) = ~13.7 h/day. NO LONGER STANDBY - now running HEAVY (Dreams Cricket Academy, Zayed City). Only 89h to next service (2686h) -> DUE ~01/12/2026 on hours. Plan the service this week.] 45 kVA Kubota."
   },
   {
     "dg": "DG-849",
