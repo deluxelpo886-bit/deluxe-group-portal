@@ -4023,9 +4023,24 @@
     "nextService": 5323,
     "nextServiceDate": "2026-11-27",
     "interval": 450,
-    "currentHours": 5267,
-    "currentHoursDate": "2026-11-23",
-    "notes": "Serviced 24/10/2026 at 4873h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (dash on card - pending). Next 5323h (+450). 810 kVA, Noor Al Shahra, Al Faya. [23/11/2026: controller 5267h (DSE, 1720 starts) - only 56h to next service (5323h), DUE ~27/11/2026 at ~13 h/day. Service it this week; AIR FILTER still pending - fit it this service.]"
+    "notes": "Serviced 24/10/2026 at 4873h by Roland & Adil - oil, oil filter, fuel filter done; AIR FILTER NOT done (dash on card - pending). Next 5323h (+450). 810 kVA, Noor Al Shahra, Al Faya. [Superseded by 25/11 service - air filter fitted.]"
+  },
+  {
+    "dg": "DG-831",
+    "hours": 5283,
+    "date": "2026-11-25",
+    "technician": "ROLAND & ADIL",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "dailyHours": 13,
+    "nextService": 5733,
+    "nextServiceDate": "2026-12-29",
+    "interval": 450,
+    "currentHours": 5284,
+    "currentHoursDate": "2026-11-25",
+    "notes": "Serviced 25/11/2026 @ 5283h by Roland & Adil - oil, oil filter, fuel filter AND AIR FILTER all done (air filter was pending from 24/10 - now fitted). Controller 5284h / 1747 starts (DSE 8610 MKII). Ran 410h since 24/10 (~13 h/day). Next 5733h (+450) -> ~29/12/2026. 810 kVA, Noor Al Shahra, Al Faya."
   },
   {
     "dg": "DG-477",
