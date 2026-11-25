@@ -61,15 +61,15 @@
   },
   {
     "dg": "DG-457",
-    "offHire": false,
-    "since": "2026-09-02",
-    "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000220)"
+    "offHire": true,
+    "since": "2026-11-21",
+    "note": "Off-hire 21/11/2026 - GULF CONTRACTING & LANDSCAPING, Abu Dhabi (Al Hisn W6). Contract finished; PENDING COLLECTION (ERP OFF1-000219, entered 24/11). 62.5 kVA Kirloskar."
   },
   {
     "dg": "DG-36",
-    "offHire": false,
-    "since": "2026-09-02",
-    "note": "On hire — GULF CONTRACTING & LANDSCAPING, Abu Dhabi (HPP1-000221)"
+    "offHire": true,
+    "since": "2026-11-21",
+    "note": "Off-hire 21/11/2026 - GULF CONTRACTING & LANDSCAPING, Abu Dhabi. Contract finished; PENDING COLLECTION (ERP OFF1-000218, entered 24/11). 45 kVA Jet."
   },
   {
     "dg": "DG-473",
@@ -92,8 +92,8 @@
   {
     "dg": "DG-476",
     "offHire": false,
-    "since": "2026-11-09",
-    "note": "Redeployed 09/11/2026 to site near Khalifa Industrial City B (replaced Malwan cross-hire CH-MAL-100). Joseph Industries (Dubai JVC) hire ended 09/11/2026."
+    "since": "2026-11-07",
+    "note": "On hire 07/11/2026 - OSAIPOWER ELECTROMECHANICAL CONT, KIZAD (hire HPP1-000261, 30 credit days, contact Mohd Yousf). REPLACED the Malwan cross-hire 'G-54' (150 kVA Weber/Perkins) at this site. Previously off-hired from Joseph Industries 03/11/2026. 150 kVA Weber."
   },
   {
     "dg": "DG-478",
@@ -530,9 +530,9 @@
   },
   {
     "dg": "DG-470",
-    "offHire": false,
+    "offHire": true,
     "since": "2026-11-20",
-    "note": "On hire 20/11/2026 - Future Pipe Industries (Energy). 220 kVA Iveco. Meter 9333h."
+    "note": "Off-hire 20/11/2026 - FUTURE PIPE INDUSTRIES, ICAD I (ERP OFF1-000217, Collected to yard). Serviced 20/11 @9333h (200h re-hire check) - ready for next deployment. 220 kVA Iveco. [Portal earlier showed a new hire here - ERP shows off-hire; confirm with ops.]"
   },
   {
     "dg": "DG-535",
