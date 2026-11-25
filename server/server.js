@@ -123,7 +123,7 @@ try {
   const hireSeedPath = path.join(__dirname, 'seed', 'fleet-hire.json');
   if (fs.existsSync(hireSeedPath)) {
     const hs = JSON.parse(fs.readFileSync(hireSeedPath, 'utf8'));
-    const r = hire.applySeed(hs, 'fleet-hire-2026-11-25-dg535sht');
+    const r = hire.applySeed(hs, 'fleet-hire-2026-11-25b-offhire');
     if (r && r.applied) console.log('[seed] set ' + r.applied + ' generators off-hire');
   }
 } catch (e) { console.warn('[seed] hire import skipped:', e && e.message); }
@@ -227,8 +227,8 @@ try {
 // fresh embedded fleet data show. Version-gated so it runs ONCE and never wipes
 // a legitimate office edit made later; add a new version string to clear more.
 try {
-  const OV_CLEAR = ['DG-844', 'DG-459', 'DG-815', 'DG-842', 'DG-507', 'DG-856', 'DG-535'];
-  const OV_CLEAR_VERSION = 'ov-clear-2026-11-25-dg535sht';
+  const OV_CLEAR = ['DG-844', 'DG-459', 'DG-815', 'DG-842', 'DG-507', 'DG-856', 'DG-535', 'DG-476', 'DG-470', 'DG-36', 'DG-457'];
+  const OV_CLEAR_VERSION = 'ov-clear-2026-11-25b-offhire';
   const ovMarkerFile = path.join(DATA_DIR, 'override-clear.json');
   let ovApplied = {};
   try { if (fs.existsSync(ovMarkerFile)) ovApplied = JSON.parse(fs.readFileSync(ovMarkerFile, 'utf8')) || {}; } catch (_) { ovApplied = {}; }
