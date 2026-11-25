@@ -4665,9 +4665,24 @@
     "nextServiceDate": "2026-11-30",
     "interval": 350,
     "dailyHours": 13.0,
-    "currentHours": 2378,
-    "currentHoursDate": "2026-11-03",
-    "notes": "Serviced 03/11/2026 @ 2378h by Jayraj & Imran - oil, oil filter, fuel filter, air filter ALL done (previous pending air filter now fitted). Controller 2378h confirmed 03/11. Ran 380h since 23/09 (~9-16 h/day, heavy recent) - using ~13 h/day. Next 2728h (+350) -> due ~30/11/2026. NOTE: Jayraj flagged an item to be REPLACED at next service - confirm what part. 100 kVA Perkins, Trojan, Yas Island."
+    "notes": "Serviced 03/11/2026 @ 2378h by Jayraj & Imran - oil, oil filter, fuel filter, air filter ALL done. Next 2728h (+350). 100 kVA Perkins, Trojan, Yas Island. [Superseded by 25/11 service.]"
+  },
+  {
+    "dg": "DG-542",
+    "hours": 2783,
+    "date": "2026-11-25",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 3133,
+    "nextServiceDate": "2026-12-14",
+    "interval": 350,
+    "dailyHours": 18.0,
+    "currentHours": 2783,
+    "currentHoursDate": "2026-11-25",
+    "notes": "Serviced 25/11/2026 @ 2783h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card - pending, fit next service). Controller 2783h. Ran 405h since 03/11 (22 days) = ~18 h/day (HEAVY, up from ~13). Was 55h past the 2728 target (slightly overdue when serviced). Next 3133h (+350) -> ~14/12/2026. NOTE: Jayraj had flagged a part to replace at this service - confirm if done. 100 kVA Perkins, Trojan, Yas Island."
   },
   {
     "dg": "DG-804",
