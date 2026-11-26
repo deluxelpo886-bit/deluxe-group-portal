@@ -4963,9 +4963,24 @@
     "nextServiceDate": "2026-11-29",
     "interval": 350,
     "dailyHours": 16.9,
-    "currentHours": 10073,
-    "currentHoursDate": "2026-11-08",
-    "notes": "350h service done 08/11/2026 @ 10073h by Rol & Adil - oil, oil filter & fuel filter done; AIR FILTER NOT done (dash on card) - pending, fit next service. Controller 10073h 43m / 209 starts confirmed. Ran 372h since 17/10 (9701h) over 22 days = ~16.9 h/day (heavy). Next 10423h (+350) -> due ~29/11/2026. 125 kVA Weichai, Trojan, Yas Island."
+    "notes": "350h service 08/11/2026 @ 10073h by Rol & Adil - oil, oil filter, fuel filter done; air filter pending. 125 kVA Weichai, Trojan, Yas Island. [Superseded by 26/11 service.]"
+  },
+  {
+    "dg": "DG-849",
+    "hours": 10406,
+    "date": "2026-11-26",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": false,
+    "nextService": 10756,
+    "nextServiceDate": "2026-12-15",
+    "interval": 350,
+    "dailyHours": 18.5,
+    "currentHours": 10406,
+    "currentHoursDate": "2026-11-26",
+    "notes": "Serviced 26/11/2026 @ 10406h by Sonu & Hussain - oil, oil filter, fuel filter done; AIR FILTER NOT done (X on card) - STILL PENDING (2nd service in a row - 08/11 also pending). *** FIT AIR FILTER NEXT VISIT - do not skip again. *** Serviced 17h early (target was 10423). Ran 333h since 08/11 (18 days) = ~18.5 h/day (heavy). Next 10756h (+350) -> ~15/12/2026. 125 kVA Weichai, Trojan, Yas Island."
   },
   {
     "dg": "DG-854",
