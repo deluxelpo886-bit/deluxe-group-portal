@@ -4363,14 +4363,14 @@
     "oil": true,
     "oilFilter": true,
     "fuelFilter": true,
-    "airFilter": false,
-    "dailyHours": 8.5,
+    "airFilter": true,
+    "dailyHours": 6,
     "nextService": 18300,
-    "nextServiceDate": "2026-12-06",
+    "nextServiceDate": "2027-01-11",
     "interval": 450,
-    "currentHours": 17850,
-    "currentHoursDate": "2026-10-29",
-    "notes": "Serviced 29/10/2026 @ 17850h by Jayraj & Imran - oil, oil filter, fuel filter done; AIR FILTER NOT done (pending). (This is the REAL DG-853; the earlier card marked 'DG-853' @4073h was DG-859.) Next 18300h (~06/12), ~8.5 h/day. 250 kVA Kirloskar, Trojan, Al Bahyah (Al Safarjal St)."
+    "currentHours": 18020,
+    "currentHoursDate": "2026-11-26",
+    "notes": "Serviced 29/10/2026 @ 17850h by Jayraj & Imran - oil, oil filter, fuel filter done. AIR FILTER now FITTED (was pending; confirmed on card 26/11). [26/11/2026: controller DSE 18020h / ~1988 starts - ran 170h since 29/10 (28 days) = ~6 h/day. 280h to next service (18300h) -> ~11/01/2027.] 250 kVA Kirloskar, Trojan, Al Bahyah (Al Safarjal St)."
   },
   {
     "dg": "DG-505",
