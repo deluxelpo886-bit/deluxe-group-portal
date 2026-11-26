@@ -3860,10 +3860,25 @@
     "nextService": 17884,
     "nextServiceDate": "2026-12-02",
     "interval": 350,
+    "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil - oil, oil filter, fuel filter done; air filter pending. Hashim, Al Bahia, 40 kVA Tata. [Superseded by 26/11 service - air filter now fitted.]"
+  },
+  {
+    "dg": "DG-506",
+    "hours": 17853,
+    "date": "2026-11-26",
+    "technician": "SONU & HUSSAIN",
+    "oil": true,
+    "oilFilter": true,
+    "fuelFilter": true,
+    "airFilter": true,
+    "dailyHours": 8.9,
+    "nextService": 18203,
+    "nextServiceDate": "2027-01-07",
+    "interval": 350,
     "fixedDays": 42,
-    "currentHours": 17534,
-    "currentHoursDate": "2026-10-21",
-    "notes": "Serviced 21/10/2026 at 17534h by Roland & Adil (controller DSE 17534h 55m) - oil, oil filter, fuel filter done; AIR FILTER NOT done (card blank - pending). Service CONFIRMED by ops. Next 17884h (+350). ~8.35 h/day -> due ~02/12. ARRANGE: rear (crank) seal leak repair - schedule the program. Cleared the urgent/under-check flag. Hashim, Al Bahia, 40 kVA Tata."
+    "currentHours": 17853,
+    "currentHoursDate": "2026-11-26",
+    "notes": "Serviced 26/11/2026 @ 17853h by Sonu & Hussain (controller DSE 17853h 37m) - oil, oil filter, fuel filter AND AIR FILTER all done (air filter was pending from 21/10 - now fitted). Ran 319h since 21/10 (36 days) = ~8.9 h/day. Next 18203h (+350) -> ~07/01/2027 (42-day cycle). STILL PENDING: rear (crank) seal leak repair - schedule the program. Hashim, Al Bahia, 40 kVA Tata."
   },
   {
     "dg": "DG-456",
