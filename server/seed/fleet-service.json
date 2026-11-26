@@ -1694,14 +1694,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 0.25,
-    "currentHours": 37264,
-    "currentHoursDate": "2026-11-09",
+    "dailyHours": 20,
+    "currentHours": 37609,
+    "currentHoursDate": "2026-11-26",
     "nextService": 37611,
-    "nextServiceDate": "2026-11-29",
+    "nextServiceDate": "2026-11-26",
     "interval": 350,
-    "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins. [09/11/2026: controller checked - ~37264h, STOPPED (0 rpm). Standby unit at OSAI/Motherson, barely runs (~0.25 h/day). Service card seen on set is the 23/08 Adeel service (meter mis-written 33259 = 37259), already logged. [09/11/2026: next service date pinned to 29/11/2026 (20 days) per ops head - periodic check on this standby unit.",
-    "fixedDays": 64
+    "notes": "Deployed from YARD to CUSTOMER 26/09/2026 - replaces DG-537 at OSAI, KIZAD. Checked/serviced at 37261h, next 37611h. Meter 37264.5h on 10/10/2026 (controller photo, Imran Deluxe; 3.58 bar, 57C, 1509 rpm, running). VERY LOW USE ~0.25 h/day (only 3.5h in 14 days) -> 347h to the hours target is years away, so NOT due 25/10 - plan a TIME-BASED annual service (~Aug-2027) instead. Gate pass required. 30 kVA Perkins. [09/11/2026: controller checked - ~37264h, STOPPED (0 rpm). Standby unit at OSAI/Motherson, barely runs (~0.25 h/day). Service card seen on set is the 23/08 Adeel service (meter mis-written 33259 = 37259), already logged. [09/11/2026: next service date pinned to 29/11/2026 (20 days) per ops head - periodic check on this standby unit. [26/11/2026: controller 37609h (tech calc 37609-37351=258h run). RAN ~345h since 09/11 (37264h) = ~20 h/day — NO LONGER STANDBY, now running HEAVY at MSSL Tooling/Motherson KEZAD. Only 2h to the 37611h target -> SERVICE DUE NOW; arrange immediately (gate pass required for KEZAD).]"
   },
   {
     "dg": "DG-542",
