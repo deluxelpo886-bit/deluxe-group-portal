@@ -4245,13 +4245,13 @@
     "oilFilter": true,
     "fuelFilter": true,
     "airFilter": true,
-    "dailyHours": 9.1,
+    "dailyHours": 7.9,
     "nextService": 2494,
-    "nextServiceDate": "2026-11-25",
+    "nextServiceDate": "2026-12-10",
     "interval": 350,
-    "currentHours": 2144,
-    "currentHoursDate": "2026-10-27",
-    "notes": "Serviced 27/10/2026 @ 2144h by Jayraj & Imran - oil, oil filter, fuel filter, AIR FILTER all DONE (air filter cleared). Next 2494h (~25/11), ~9.1 h/day (12h contract floor applied). 125 kVA Kirloskar, Gulf Contracting, Al Ain (Eidan Al Ridda)."
+    "currentHours": 2396,
+    "currentHoursDate": "2026-11-28",
+    "notes": "Serviced 27/10/2026 @ 2144h by Jayraj & Imran - oil, oil filter, fuel filter, AIR FILTER all DONE. [28/11/2026: controller 2396h - ran 252h since 27/10 (32 days) = ~7.9 h/day. 98h to next service (2494h) -> due ~10/12/2026.] 125 kVA Kirloskar, Gulf Contracting, Al Ain (Eidan Al Ridda)."
   },
   {
     "dg": "DG-841",
