@@ -228,7 +228,7 @@ try {
 // a legitimate office edit made later; add a new version string to clear more.
 try {
   const OV_CLEAR = ['DG-844', 'DG-459', 'DG-815', 'DG-842', 'DG-507', 'DG-856', 'DG-535', 'DG-476', 'DG-470', 'DG-36', 'DG-457'];
-  const OV_CLEAR_VERSION = 'ov-clear-2026-11-25b-offhire';
+  const OV_CLEAR_VERSION = 'ov-clear-2026-11-29-dg844';
   const ovMarkerFile = path.join(DATA_DIR, 'override-clear.json');
   let ovApplied = {};
   try { if (fs.existsSync(ovMarkerFile)) ovApplied = JSON.parse(fs.readFileSync(ovMarkerFile, 'utf8')) || {}; } catch (_) { ovApplied = {}; }
